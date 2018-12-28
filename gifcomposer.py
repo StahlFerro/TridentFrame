@@ -23,7 +23,7 @@ def gifcomposer(dir_path, fps, output_name):
     if not output_name:
         output_name = dirname
 
-    frames = os.listdir('.')
+    frames = [f for f in os.listdir('.') if '.' in f and str.lower(f.split('.')[-1]) != 'gif']
     frames.sort()
     click.secho(f"Frame count: {len(frames)}", fg="cyan")
     click.secho(f"FPS: {fps}", fg="cyan")
