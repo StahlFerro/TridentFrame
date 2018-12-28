@@ -8,7 +8,7 @@ from PIL import Image
 @click.command()
 @click.argument('file_path', type=click.Path(exists=True))
 @click.option('-o', '--output_name', help='Name of the split gif images')
-def splitter(file_path, output_name):
+def gifsplitter(file_path, output_name):
     if not os.path.isfile(file_path):
         raise FileError(file_path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
     file = os.path.basename(file_path)
@@ -50,4 +50,4 @@ def splitter(file_path, output_name):
 
 
 if __name__ == '__main__':
-    splitter()
+    gifsplitter()
