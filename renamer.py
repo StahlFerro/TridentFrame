@@ -21,7 +21,7 @@ def renamer(name, directory):
     click.secho(f"Renaming {len(images)} images...", fg='blue')
     for index, (img, ext) in enumerate(images):
         new_name = f"{name}_{str.zfill(str(index), pad_count)}.{ext}"
-        os.renamer(img, new_name)
+        os.rename(img, new_name)
         click.secho(f"{index + 1}. {img} -> {new_name}", fg='cyan')
     click.secho(f"Done!!1", fg='blue')
 
