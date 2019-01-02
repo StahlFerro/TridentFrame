@@ -45,6 +45,7 @@ def gifcomposer(dir_path, fps, output_name, transparent):
     frames[0].save(f"{output_name}.gif",
                    save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
     click.secho(f"Created GIF {output_name}.gif in the directory!!1", fg="cyan")
+    deinit()
 
 
 if __name__ == '__main__':
