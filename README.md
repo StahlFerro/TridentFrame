@@ -5,12 +5,24 @@ renaming, and perhaps more tools in the future
 
 ### Available tools
 1. `renamer.py`  
-    Name says it all, a simple tool for batch-renaming multiple images into files with incrementing 
-    sequence numbers.
+    Renames multiple images with incrementing sequence numbers, in the same folder it's executed.
+    
 2.  `gifsplitter.py`  
-    Splits an animated GIF into a directory of PNG frames
+    Splits an animated GIF into a directory of PNG frames.  
+    Example:  
+    ```
+    python3.7 gifsplitter.py sodis.gif
+    ```
+    The directory will be created in the same folder containing the gif
+
 3.  `gifcomposer.py`  
-    Opposite of gifsplitter, creates an animated GIF out of a directory of PNG frames
+    Creates an animated GIF out of a directory of PNG frames.  
+    Example:  
+    ```
+    python3.7 gifcomposer.py animation/
+    ```
+    Where `animation` is the name of the directory containing the image frames. The resulting GIF 
+    will have its frames ordered from their names alphabetically.
 
 ### Built with
 *   [Click](http://click.palletsprojects.com/en/7.x/) : CLI interface

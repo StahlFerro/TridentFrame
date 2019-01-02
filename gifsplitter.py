@@ -30,7 +30,7 @@ def gifsplitter(file_path, output_name):
         os.mkdir(dirname)
         click.secho(f"Creating directory {dirname}...", fg='cyan')
     else:
-        click.secho(f"Directory {dirname} already exists, replacing the gifs inside it...", fg='cyan')
+        click.secho(f"Directory {dirname} already exists, replacing the PNGs inside it...", fg='cyan')
 
     # Image processing
     try:
