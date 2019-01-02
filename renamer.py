@@ -1,7 +1,9 @@
 import os
-import click
 from random import choices
 import string
+
+import click
+from colorama import init, deinit
 
 
 img_exts = ['png', 'jpg', 'jpeg', 'gif', 'bmp']
@@ -11,6 +13,7 @@ img_exts = ['png', 'jpg', 'jpeg', 'gif', 'bmp']
 @click.option('-n', '--name', help='Custom filename')
 @click.option('-d', '--directory', help='Target a specific directory of images')
 def renamer(name, directory):
+    init()
     if directory:
         os.chdir(directory)
     images = [(f, str.lower(f.split('.')[-1])) for f in os.listdir('.')
@@ -24,6 +27,7 @@ def renamer(name, directory):
         os.rename(img, new_name)
         click.secho(f"{index + 1}. {img} -> {new_name}", fg='cyan')
     click.secho(f"Done!!1", fg='blue')
+    deinit()
 
 
 if __name__ == '__main__':

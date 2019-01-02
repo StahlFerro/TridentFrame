@@ -3,12 +3,14 @@ import os
 import click
 from click import FileError
 from PIL import Image
+from colorama import init, deinit
 
 
 @click.command()
 @click.argument('file_path', type=click.Path(exists=True))
 @click.option('-o', '--output_name', help='Name of the split gif images')
 def gifsplitter(file_path, output_name):
+    init()
     if not os.path.isfile(file_path):
         raise FileError(file_path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
     file = os.path.basename(file_path)
@@ -41,12 +43,17 @@ def gifsplitter(file_path, output_name):
     if gif.format != 'GIF' or not gif.is_animated:
         raise FileError(file, "Sorry m9, the image you specified is not a valid animated GIF")
 
-    click.secho(f"Obtained GIF: {file}. Frame count: {gif.n_frames}. Splitting...", fg='cyan')
+    click.secho(f"{file} ({gif.n_frames} frames). Splitting...", fg='cyan')
     pad_count = max(len(str(gif.n_frames)), 3)
-    for fcount in range(0, gif.n_frames):
-        gif.seek(fcount)
-        gif.save(os.path.join(dirname, f"{output_name}_{str.zfill(str(fcount), pad_count)}.png"), 'PNG')
+    frame_nums = list(range(0, gif.n_frames))
+
+    with click.progressbar(frame_nums, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
+        for f in frames:
+            gif.seek(f)
+            gif.save(os.path.join(dirname, f"{output_name}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
+
     click.secho(f"Done!!1", fg='cyan')
+    deinit()
 
 
 if __name__ == '__main__':
