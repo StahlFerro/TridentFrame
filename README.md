@@ -1,4 +1,4 @@
-# ImagoWerkzeuge
+# ImagoForm
 
 A personal collection of various python CLI tools made to assist on GIF splitting, sequential file 
 renaming, and perhaps more tools in the future
