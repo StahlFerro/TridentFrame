@@ -105,3 +105,6 @@ venv.bak/
 
 # Jetbrains ignores
 .idea/
+
+# ImagoForm custom ignores
+test/
