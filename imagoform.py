@@ -89,7 +89,7 @@ def split(file_path, output_name, verbose):
         if gif.format != 'GIF' or not gif.is_animated:
             raise FileError(file, "Sorry m9, the image you specified is not a valid animated GIF")
 
-        click.secho(f"{file} ({gif.n_frames} frames). Splitting...", fg='cyan')
+        click.secho(f"{file} ({gif.n_frames} frames). Splitting GIF...", fg='cyan')
         pad_count = max(len(str(gif.n_frames)), 3)
         frame_nums = list(range(0, gif.n_frames))
 
@@ -100,9 +100,11 @@ def split(file_path, output_name, verbose):
 
     elif ext == 'png':
         img: APNG = APNG.open(file)
-        pad_count = max(len(str(len(img.frames))), 3)
+        iframes = img.frames
+        pad_count = max(len(str(len(iframes))), 3)
+        click.secho(f"{file} ({len(iframes)} frames). Splitting APNG...", fg='cyan')
         # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
-        with click.progressbar(img.frames, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
+        with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
             for i, (png, control) in enumerate(frames):
                 png.save(os.path.join(dirname, f"{output_name}_{str.zfill(str(i), pad_count)}.png"))
 
@@ -155,11 +157,11 @@ def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose
     #     raise click.ClickException('Images contain inconsistent file extensions')
 
     duration = round(1000 / fps)
+    click.secho(f"{len(imgs)} frames @ {fps}fps", fg="cyan")
 
     if extension == 'gif':
         frames = [Image.open(i) for i in imgs]
         frames.sort(key=lambda i: i.filename, reverse=reverse)
-        click.secho(f"{len(frames)} frames @ {fps}fps", fg="cyan")
 
         disposal = 0
         if transparent:
@@ -170,6 +172,8 @@ def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose
         click.secho(f"Created GIF {output_name}.gif", fg="cyan")
 
     elif extension == 'apng':
+        click.secho("Generating APNG...", fg="cyan")
+        click.secho(f"Created APNG {output_name}.png", fg="cyan")
         APNG.from_files(imgs, delay=duration).save(f"{output_name}.png")
 
     deinit()
