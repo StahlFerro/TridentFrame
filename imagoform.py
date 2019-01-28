@@ -19,7 +19,7 @@ static_img_exts = ['png', 'jpg']
 animated_img_exts = ['gif', 'png']
 
 
-@cli.command()
+@cli.command('rename')
 @click.option('-n', '--name', help='Custom filename')
 @click.argument('directory',  type=click.Path(exists=True))
 def rename(name, directory):
@@ -45,15 +45,19 @@ def rename(name, directory):
 @cli.command('split')
 @click.argument('file_path', type=click.Path(exists=True))
 @click.option('-o', '--output_name', help='Name of the split gif images')
-def split(file_path, output_name):
+@click.option('-v', '--verbose', is_flag=True, help='Outputs more detailed information')
+def split(file_path, output_name, verbose):
     init()
     if not os.path.isfile(file_path):
         raise FileError(file_path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
     file = str(os.path.basename(file_path))
     abspath = os.path.abspath(file_path)
-    workdir = os.path.dirname(abspath)
-    if os.getcwd() != workdir:
-        os.chdir(workdir)
+    workpath = os.path.dirname(abspath)
+    if verbose:
+        click.secho(f"dir_path: {file_path}\nabspath: {abspath}\nworkpath: {workpath}\nfile: {file}",
+                    fg='bright_cyan')
+    if os.getcwd() != workpath:
+        os.chdir(workpath)
 
     # Custom output dirname and frame names if specified on the cli
     if '.' not in file:
@@ -112,27 +116,31 @@ def split(file_path, output_name):
               help='Output format extension (gif or apng). Defaults to gif')
 @click.option('-f', '--fps', type=click.IntRange(1, 50), default=50, help='Frame rate of the output (1 to 50)')
 @click.option('-o', '--output_name', help='Name of the resulting animated image')
-@click.option('--transparent', is_flag=True, help='Use this for images with transparent background')
-@click.option('--reverse', is_flag=True, help='Reverse the frames')
-def compose(dir_path, extension, fps, output_name, transparent, reverse):
+@click.option('-t', '--transparent', is_flag=True, help='Use this for images with transparent background')
+@click.option('-r', '--reverse', is_flag=True, help='Reverse the frames')
+@click.option('-v', '--verbose', is_flag=True, help='Outputs more detailed information')
+def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose):
     init()
     if not os.path.isdir(dir_path):
         raise FileError(dir_path, "Oi skrubman the path here seems to be a bloody file, should've been a directory")
-    framesdir = os.path.abspath(dir_path)
-    outdir = os.path.dirname(framesdir)
-    basename = os.path.basename(framesdir)
+    framesdir = str(os.path.basename(dir_path))
+    abspath = os.path.abspath(dir_path)
+    workpath = os.path.dirname(abspath)
+    if verbose:
+        click.secho(f"dir_path: {dir_path}\nabspath: {abspath}\nworkpath: {workpath}\nframesdir: {framesdir}",
+                    fg='bright_cyan')
     # print('argument', dir_path)
     # print('framesdir absolute', framesdir)
     # print('framesdir dirname', outdir)
     # print('basename', basename)
-    if os.getcwd() != framesdir:
-        os.chdir(framesdir)
+    if os.getcwd() != abspath:
+        os.chdir(abspath)
 
-    click.secho(f"Directory: {framesdir}", fg="cyan")
-    # print('now cd', os.getcwd())
+    # If no name supplied, default name will be the framesdir folder name. Output will be in the same parent directory
+    # as the framesdir
     if not output_name:
-        output_name = basename
-    output_name = f"{outdir}/{output_name}"
+        output_name = framesdir
+    output_name = os.path.join(workpath, output_name)
 
     imgs = [f for f in os.listdir('.') if '.' in f and str.lower(f.split('.')[-1]) in img_exts]
     # First check to make sure every file name have extensions
