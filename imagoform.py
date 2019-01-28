@@ -93,8 +93,9 @@ def split(file_path, output_name):
 
 @cli.command('compose')
 @click.argument('dir_path', type=click.Path(exists=True))
-@click.option('-x', '--format', type=click.Choice(['gif', 'apng']), default='gif', help='Output format (gif or apng)')
-@click.option('-f', '--fps', default=60)
+@click.option('-x', '--format', type=click.Choice(['gif', 'apng']), default='gif',
+              help='Output format (gif or apng). Defaults to gif')
+@click.option('-f', '--fps', type=click.IntRange(1, 50), default=50, help='Frame rate of the output (1 to 50)')
 @click.option('-o', '--output_name', help='Name of the resulting animated image')
 @click.option('--transparent', is_flag=True, help='Use this for images with transparent background')
 @click.option('--reverse', is_flag=True, help='Reverse the frames')
@@ -130,10 +131,6 @@ def compose(dir_path, format, fps, output_name, transparent, reverse):
     # if len(set(extensions)) > 1:
     #     raise click.ClickException('Images contain inconsistent file extensions')
 
-    if fps > 50:
-        fps = 50  # GIFs are actually limited to 50fps max. RIP 60fps dreams
-    elif fps < 1:
-        fps = 1  # Smallest fps limit
     duration = round(1000 / fps)
 
     if format == 'gif':
