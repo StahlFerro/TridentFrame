@@ -93,13 +93,13 @@ def split(file_path, output_name):
 
 @cli.command('compose')
 @click.argument('dir_path', type=click.Path(exists=True))
-@click.option('-x', '--format', type=click.Choice(['gif', 'apng']), default='gif',
-              help='Output format (gif or apng). Defaults to gif')
+@click.option('-x', '--extension', type=click.Choice(['gif', 'apng']), default='gif',
+              help='Output format extension (gif or apng). Defaults to gif')
 @click.option('-f', '--fps', type=click.IntRange(1, 50), default=50, help='Frame rate of the output (1 to 50)')
 @click.option('-o', '--output_name', help='Name of the resulting animated image')
 @click.option('--transparent', is_flag=True, help='Use this for images with transparent background')
 @click.option('--reverse', is_flag=True, help='Reverse the frames')
-def compose(dir_path, format, fps, output_name, transparent, reverse):
+def compose(dir_path, extension, fps, output_name, transparent, reverse):
     init()
     if not os.path.isdir(dir_path):
         raise FileError(dir_path, "Oi skrubman the path here seems to be a bloody file, should've been a directory")
@@ -133,7 +133,7 @@ def compose(dir_path, format, fps, output_name, transparent, reverse):
 
     duration = round(1000 / fps)
 
-    if format == 'gif':
+    if extension == 'gif':
         frames = [Image.open(i) for i in imgs]
         frames.sort(key=lambda i: i.filename, reverse=reverse)
         click.secho(f"{len(frames)} frames @ {fps}fps", fg="cyan")
@@ -146,7 +146,7 @@ def compose(dir_path, format, fps, output_name, transparent, reverse):
                        save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
         click.secho(f"Created GIF {output_name}.gif", fg="cyan")
 
-    elif format == 'apng':
+    elif extension == 'apng':
         APNG.from_files(imgs, delay=duration).save(f"{output_name}.png")
 
     deinit()
