@@ -3,6 +3,7 @@ import string
 from random import choices
 
 import click
+from click import ClickException
 from click import FileError
 from PIL import Image
 from apng import APNG
@@ -61,14 +62,14 @@ def split(file_path, output_name, verbose):
 
     # Custom output dirname and frame names if specified on the cli
     if '.' not in file:
-        raise click.ClickException('Where the fuk is the extension mate?!')
+        raise ClickException('Where the fuk is the extension mate?!')
 
     if not output_name:
         output_name = '_'.join(file.split('.')[:-1])
 
     ext = str.lower(file.split('.')[-1])
     if ext not in animated_img_exts:
-        raise click.ClickException('Only supported extensions are gif and apng. Sry lad')
+        raise ClickException('Only supported extensions are gif and apng. Sry lad')
 
     # Output directory handling
     dirname = output_name
@@ -147,14 +148,14 @@ def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose
     imgs = [f for f in os.listdir('.') if '.' in f and str.lower(f.split('.')[-1]) in img_exts]
     # First check to make sure every file name have extensions
     # if not all('.' in i for i in imgs):
-    #     raise click.ClickException('Not all the file names have extensions')
+    #     raise ClickException('Not all the file names have extensions')
 
     # Second checks to make sure extensions are PNG and JPG, and are all uniform
     # extensions = [str.lower(i.split('.')[-1]) for i in imgs]
     # if any(x not in static_img_exts for x in extensions):
-    #     raise click.ClickException('Only accepted extensions are PNG and JPG')
+    #     raise ClickException('Only accepted extensions are PNG and JPG')
     # if len(set(extensions)) > 1:
-    #     raise click.ClickException('Images contain inconsistent file extensions')
+    #     raise ClickException('Images contain inconsistent file extensions')
 
     duration = round(1000 / fps)
     click.secho(f"{len(imgs)} frames @ {fps}fps", fg="cyan")
