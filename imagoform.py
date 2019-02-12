@@ -175,6 +175,7 @@ def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose
     elif extension == 'apng':
         click.secho("Generating APNG...", fg="cyan")
         click.secho(f"Created APNG {output_name}.png", fg="cyan")
+        imgs.sort(reverse=reverse)
         APNG.from_files(imgs, delay=duration).save(f"{output_name}.png")
 
     deinit()

@@ -1,4 +1,4 @@
-apng==0.3.2
+apng==0.3.3
 Click==7.0
 colorama==0.4.1
 Pillow==5.4.1
