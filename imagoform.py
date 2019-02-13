@@ -1,6 +1,7 @@
 import os
 import string
 from random import choices
+from pprint import pprint
 
 import click
 from click import ClickException
@@ -41,6 +42,55 @@ def rename(name, directory):
         click.secho(f"{index + 1}. {img} -> {new_name}", fg='cyan')
     click.secho(f"Done!!1", fg='blue')
     deinit()
+
+
+@cli.command('inspect')
+@click.argument('file_path', type=click.Path(exists=True))
+@click.option('-v', '--verbose', is_flag=True, help='Outputs more detailed information')
+def inspect(file_path, verbose):
+    init()
+    if not os.path.isfile(file_path):
+        raise FileError(file_path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
+    file = str(os.path.basename(file_path))
+    abspath = os.path.abspath(file_path)
+    workpath = os.path.dirname(abspath)
+    if verbose:
+        click.secho(f"dir_path: {file_path}\nabspath: {abspath}\nworkpath: {workpath}\nfile: {file}",
+                    fg='bright_cyan')
+    if os.getcwd() != workpath:
+        os.chdir(workpath)
+
+    ext = str.lower(os.path.splitext(file)[1])
+    print(ext)
+    if ext == '.gif':
+        try:
+            gif: Image = Image.open(file)
+        except Exception:
+            raise FileError(file, "M8 I don't even think this file is even an image file in the first place")
+
+        if gif.format != 'GIF' or not gif.is_animated:
+            raise FileError(file, "Sorry m9, the image you specified is not a valid animated GIF")
+
+        click.secho(f"Total frames: {gif.n_frames}", fg="cyan")
+        click.secho(f"First frame information", fg="cyan")
+        pprint(gif.info)
+        durations = []
+        for f in range(0, gif.n_frames):
+            gif.seek(f)
+            durations.append(gif.info['duration'])
+        duration = sum(durations) / len(durations)
+        fps = 1000 / duration
+        click.secho(f"Average duration per frame: {duration}ms", fg="cyan")
+        click.secho(f"Image FPS: {fps}", fg="cyan")
+
+    elif ext == '.png':
+        try:
+            apng: APNG = APNG.open(file)
+        except Exception:
+            raise FileError(file, "M8 I don't even think this file is even an image file in the first place")
+
+    else:
+        raise ClickException("Only GIFs and PNGs are supported")
 
 
 @cli.command('split')
@@ -126,8 +176,8 @@ def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose
     init()
     if not os.path.isdir(dir_path):
         raise FileError(dir_path, "Oi skrubman the path here seems to be a bloody file, should've been a directory")
-    framesdir = str(os.path.basename(dir_path))
     abspath = os.path.abspath(dir_path)
+    framesdir = str(os.path.basename(abspath))
     workpath = os.path.dirname(abspath)
     if verbose:
         click.secho(f"dir_path: {dir_path}\nabspath: {abspath}\nworkpath: {workpath}\nframesdir: {framesdir}",
