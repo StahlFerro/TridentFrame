@@ -4,7 +4,7 @@ A python command-line tool made to assist on GIF/APNG splitting/building, sequen
 and perhaps more tools in the future
 
 ### Available subcommands
-1. `rename`  
+1.  `rename`  
     Renames multiple images with incrementing sequence numbers, in the same folder it's executed.
     
 2.  `split`  
