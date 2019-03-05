@@ -1,4 +1,4 @@
-# ImagoForm
+# Cascader
 
 A python command-line tool made to assist on GIF/APNG splitting/building, sequential file renaming, 
 and perhaps more tools in the future
@@ -11,7 +11,7 @@ and perhaps more tools in the future
     Splits an animated GIF into a directory of PNG frames.  
     Example:  
     ```
-    python3.7 imagoform.py split sodis.gif
+    python3.7 cascader.py split sodis.gif
     ```
     The directory will be created in the same folder containing the gif
 
@@ -19,7 +19,7 @@ and perhaps more tools in the future
     Creates an animated GIF out of a directory of PNG frames.  
     Example:  
     ```
-    python3.7 imagoform.py compose animation/
+    python3.7 cascader.py compose animation/
     ```
     Where `animation` is the name of the directory containing the image frames. The resulting GIF 
     will have its frames ordered from their names alphabetically.

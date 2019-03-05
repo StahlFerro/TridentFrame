@@ -172,7 +172,8 @@ def split(file_path, output_name, verbose):
 @click.option('-t', '--transparent', is_flag=True, help='Use this for images with transparent background')
 @click.option('-r', '--reverse', is_flag=True, help='Reverse the frames')
 @click.option('-v', '--verbose', is_flag=True, help='Outputs more detailed information')
-def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose):
+@click.option('-s', '--scale', type=click.FloatRange(0.1, 100), default=1.0, help='Rescale factor.')
+def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose, scale):
     init()
     if not os.path.isdir(dir_path):
         raise FileError(dir_path, "Oi skrubman the path here seems to be a bloody file, should've been a directory")
@@ -213,12 +214,17 @@ def compose(dir_path, extension, fps, output_name, transparent, reverse, verbose
     if extension == 'gif':
         frames = [Image.open(i) for i in imgs]
         frames.sort(key=lambda i: i.filename, reverse=reverse)
+        if scale != 1.0:
+            click.secho(f"Resizing image by {scale}...", fg="cyan")
+            frames = [f.resize((round(f.width * scale), round(f.height * scale))) for f in frames]
+
+        # pprint(frames[0].filename)
 
         disposal = 0
         if transparent:
             disposal = 2
         click.secho("Generating GIF...", fg="cyan")
-        frames[0].save(f"{output_name}.gif",
+        frames[0].save(f"{output_name}.gif", optimize=False,
                        save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
         click.secho(f"Created GIF {output_name}.gif", fg="cyan")
 
