@@ -106,5 +106,5 @@ venv.bak/
 # Jetbrains ignores
 .idea/
 
-# Cascader custom ignores
+# Ril custom ignores
 test/

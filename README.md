@@ -1,7 +1,9 @@
-# Cascader
+# Ril
 
 A python command-line tool made to assist on GIF/APNG splitting/building, sequential file renaming, 
-and perhaps more tools in the future
+and perhaps more tools in the future.
+
+A graphical UI is currently under development, and will replace it's command line interface once it's finished
 
 ### Available subcommands
 1.  `rename`  
