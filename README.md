@@ -1,4 +1,4 @@
-# Ril
+# TridentFrame
 
 A python command-line tool made to assist on GIF/APNG splitting/building, sequential file renaming, 
 and perhaps more tools in the future.
@@ -13,7 +13,7 @@ A graphical UI is currently under development, and will replace it's command lin
     Splits an animated GIF into a directory of PNG frames.  
     Example:  
     ```
-    python3.7 cascader.py split sodis.gif
+    python3.7 tridentframe.py split sodis.gif
     ```
     The directory will be created in the same folder containing the gif
 
@@ -21,7 +21,7 @@ A graphical UI is currently under development, and will replace it's command lin
     Creates an animated GIF out of a directory of PNG frames.  
     Example:  
     ```
-    python3.7 cascader.py compose animation/
+    python3.7 tridentframe.py compose animation/
     ```
     Where `animation` is the name of the directory containing the image frames. The resulting GIF 
     will have its frames ordered from their names alphabetically.

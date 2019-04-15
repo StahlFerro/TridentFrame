@@ -1,4 +1,14 @@
 apng==0.3.3
+certifi==2019.3.9
+chardet==3.0.4
 Click==7.0
 colorama==0.4.1
+Cython==0.29.7
+docutils==0.14
+idna==2.8
+Kivy==1.10.1
+Kivy-Garden==0.1.4
 Pillow==5.4.1
+Pygments==2.3.1
+requests==2.21.0
+urllib3==1.24.1
