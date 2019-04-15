@@ -3,6 +3,8 @@ from kivy.uix.gridlayout import GridLayout
 from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.button import Button
+from kivy.uix.image import Image
+from kivy.uix.filechooser import FileChooserListView
 
 
 class TestScreen(GridLayout):
@@ -11,7 +13,7 @@ class TestScreen(GridLayout):
         print('self:', self)
         print('btn_obj:', btn_obj)
         print('**kwargs:', **kwargs)
-        self.result_field.text = f"{self.name_field.text} {self.password_field.text}"
+        self.result_field.text = f"{self.drawer.path} {self.drawer.selection}"
 
     def __init__(self, **kwargs):
         super(TestScreen, self).__init__(**kwargs)
@@ -27,6 +29,10 @@ class TestScreen(GridLayout):
         self.add_widget(self.button)
         self.result_field = Label()
         self.add_widget(self.result_field)
+        self.image_field = Image()
+        self.add_widget(self.image_field)
+        self.drawer = FileChooserListView(path='~')
+        self.add_widget(self.drawer)
 
 
 class MainApp(App):
