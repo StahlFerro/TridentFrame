@@ -18,8 +18,8 @@ msgpack-python==0.5.6
 Pillow==6.0.0
 pycparser==2.19
 Pygments==2.3.1
-pypiwin32==223
-pywin32==224
+pypiwin32==223 ; sys_platform == 'win32'
+pywin32==224 ; sys_platform == 'win32'
 pyzmq==18.0.1
 requests==2.21.0
 urllib3==1.24.1
