@@ -1,0 +1,31 @@
+{
+  "name": "tridentframe",
+  "version": "0.0.1",
+  "description": "GIF/APNG manipulation tool",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
+    "css-watch": "npm run css-build -- --watch",
+    "css-start": "npm run css-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+htPtps://github.com/StahlFerro/TridentFrame.git"
+  },
+  "author": "StahlFerro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/StahlFerro/TridentFrame/issues"
+  },
+  "homepage": "https://github.com/StahlFerro/TridentFrame#readme",
+  "dependencies": {
+    "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
+  },
+  "devDependencies": {
+    "bulma": "^0.7.4",
+    "electron": "^1.8.8",
+    "electron-packager": "^9.0.1",
+    "node-sass": "^4.11.0"
+  }
+}

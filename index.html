@@ -1,0 +1,72 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en" class="has-navbar-fixed-top">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="author" content="StahlFerro"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>TridentFrame</title>
+    <link rel="stylesheet" type="text/css" href="./css/bulmamods.css"/>
+    <style>
+        .table.is-borderless
+        td,
+        th {
+            border: 0
+        }
+        .img-container {
+            height: 300px; width: 300px; overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<section class="section">
+    <div class="container">
+        <div class="content">
+            <table class="table is-borderless" style="overflow: scroll; padding: 5px;">
+                <tr>
+                    <td><div class="img-container"><img id="image_stage" src=""/></div></td>
+                    <td rowspan="2"><table class="table">
+                        <tbody>
+                        <tr>
+                            <td>Name</td>
+                            <td id="td_fname"></td>
+                        </tr>
+                        <tr>
+                            <td>Dimensions</td>
+                            <td id="td_dimens"></td>
+                        </tr>
+                        <tr>
+                            <td>File Size</td>
+                            <td id="td_fsize"></td>
+                        </tr>
+                        <tr>
+                            <td>Frame count</td>
+                            <td id="td_fcount"></td>
+                        </tr>
+                        <tr>
+                            <td>FPS (frames per second)</td>
+                            <td id="td_fps"></td>
+                        </tr>
+                        <tr>
+                            <td>Loop duration</td>
+                            <td id="td_loopdur"></td>
+                        </tr>
+                        </tbody>
+                    </table></td>
+                </tr>
+                <tr>
+                    <td>
+                        <button class="button is-info" id="load_image_button">Load Image</button>
+                    </td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</section>
+</body>
+<script>
+        require('./renderer.js')
+
+</script>
+</html>
