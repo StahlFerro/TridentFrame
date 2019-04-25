@@ -4,8 +4,10 @@ const { dialog } = require('electron').remote
 let client = new zerorpc.Client()
 client.connect("tcp://127.0.0.1:4242")
 
-let load_image_button = document.querySelector('#load_image_button')
+let open_image_button = document.querySelector('#open_image_button')
+let target_dir_button = document.querySelector('#target_dir_button')
 let image_stage = document.querySelector('#image_stage')
+let target_path = document.querySelector('#target_path')
 let info_header = document.querySelector('#info_header')
 let td_fname = document.querySelector('#td_fname')
 let td_dimens = document.querySelector('#td_dimens')
@@ -22,10 +24,11 @@ let extension_filters = [
 //    { name: 'All Files', extensions: ['*'] }
 ]
 
-let dialog_properties = ['openfile']
+let file_dialog_prop = ['openfile']
+let dir_dialog_prop = ['openDirectory']
 
-load_image_button.addEventListener('click', () => {
-    var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: dialog_properties })
+open_image_button.addEventListener('click', () => {
+    var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: file_dialog_prop })
     console.log(`chosen path: ${chosen_path}`)
     if (chosen_path === undefined) {return}
     client.invoke("inspect_image", chosen_path[0], (error, res) => {
@@ -45,6 +48,12 @@ load_image_button.addEventListener('click', () => {
     })
 })
 
+target_dir_button.addEventListener('click', () => {
+    var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_prop })
+    console.log(`Chosen dir: ${choosen_dir}`)
+    if (choosen_dir === undefined) {return}
+    target_path.innerHTML = choosen_dir
+})
 
 
 //formula.addEventListener('input', () => {

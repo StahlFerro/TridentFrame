@@ -195,6 +195,10 @@
   fieldset[disabled] .pagination-ellipsis {
     cursor: not-allowed; }
 
+body {
+  -ms-overflow-style: scrollbar;
+  -webkit-app-region: drag; }
+
 /*! bulma.io v0.7.4 | MIT License | github.com/jgthms/bulma */
 @keyframes spinAround {
   from {
@@ -3479,12 +3483,12 @@ a.box:active {
 
 .table {
   background-color: #363636;
-  color: #ff3860; }
+  color: white; }
   .table td,
   .table th {
     border: 1px solid #dbdbdb;
     border-width: 0 0 1px;
-    padding: 0.5em 0.75em;
+    padding: 0.5em 0.3em;
     vertical-align: top; }
     .table td.is-white,
     .table th.is-white {
@@ -4175,7 +4179,7 @@ a.list-item {
     display: block;
     padding: 0.5em 0.75em; }
     .menu-list a:hover {
-      background-color: whitesmoke;
+      background-color: #34a1f9;
       color: #363636; }
     .menu-list a.is-active {
       background-color: #3273dc;

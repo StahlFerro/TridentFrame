@@ -2,29 +2,13 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 
 $navbar-breakpoint: 0;
-
-// $purple: #8A4D76;
-// $pink: #FA7C91;
-// $brown: #757763;
-// $beige-light: #D0D1CD;
-// $beige-lighter: #EFF0EB;
-
-// $grey-dark: $brown;
-// $grey-light: $beige-light;
-// $primary: $purple;
-// $link: $pink;
-// $widescreen-enabled: false;
-// $fullhd-enabled: false;
-
-// Update some of Bulma's component variables
-// $body-background-color: $beige-lighter;
-// $control-border-width: 2px;
-// $input-border-color: transparent;
-// $input-shadow: none;
-
+$body-background-color: $dark;
 
 $table-color: $white;
 $table-background-color: $dark;
-$body-background-color: $dark;
+$table-cell-padding: 0.5em 0.3em;
+
+$menu-item-hover-background-color: #34a1f9;
+
 
 @import "../node_modules/bulma/bulma.sass";
