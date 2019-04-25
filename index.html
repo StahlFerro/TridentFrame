@@ -24,6 +24,32 @@
     </style>
 </head>
 <body>
+<nav class="navbar is-fixed-top is-dark" role="navigation" aria-label="main navigation">
+    <!-- <div class="navbar-brand">
+        <a class="navbar-item" href="/">
+            <img src="/static/favicons/android-chrome-256x256.png" alt="StahlFerro" width="30"
+                    height="30"/><span style="padding-left:10px;">StahlFerro</span>
+        </a>
+        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div> -->
+    <div id="navbar-main" class="navbar-menu">
+        <div class="navbar-start">
+            <div class="navbar-item has-dropdown is-boxed is-hoverable">
+                <a class="navbar-item has-text-white" href="/wip.html">File</a>
+                <div class="navbar-dropdown">
+                    <a class="navbar-item">Open</a>
+                    <a class="navbar-item">Exit</a>
+                </div>
+            </div>
+            <a class="navbar-item" href="/softwares/index.html">Split GIF/APNG</a>
+        </div>
+    </div>
+</nav>
+            
 <section class="section has-background-dark">
     <div class="container">
         <div class="content">
@@ -32,37 +58,41 @@
                     <td style="text-align: center;" width="50%">
                         <div class="img-container"><span class="helper"></span><img id="image_stage" src=""/></div>
                     </td>
-                    <td width="50%" rowspan="2"><table class="table">
+                    <td width="50%" rowspan="2">
+                        <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="has-text-white" id="info_header" colspan="2" style="text-align: left;">Information</th>
+                            </tr>
+                        </thead>
                         <tbody>
                         <tr>
-                            <th id="info_header" colspan="2" style="text-align: center;">Information</th>
-                        </tr>
-                        <tr>
                             <td>Name</td>
-                            <td id="td_fname"></td>
+                            <td id="td_fname">-</td>
                         </tr>
                         <tr>
                             <td>Dimensions</td>
-                            <td id="td_dimens"></td>
+                            <td id="td_dimens">-</td>
                         </tr>
                         <tr>
                             <td>File Size</td>
-                            <td id="td_fsize"></td>
+                            <td id="td_fsize">-</td>
                         </tr>
                         <tr>
                             <td>Frame count</td>
-                            <td id="td_fcount"></td>
+                            <td id="td_fcount">-</td>
                         </tr>
                         <tr>
                             <td>FPS (frames per second)</td>
-                            <td id="td_fps"></td>
+                            <td id="td_fps">-</td>
                         </tr>
                         <tr>
                             <td>Loop duration</td>
-                            <td id="td_loopdur"></td>
+                            <td id="td_loopdur">-</td>
                         </tr>
                         </tbody>
-                    </table></td>
+                        </table>
+                    </td>
                 </tr>
                 <tr>
                     <td class="has-text-centered">

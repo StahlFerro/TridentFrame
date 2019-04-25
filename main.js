@@ -6,8 +6,8 @@ const path = require('path')
 let mainWindow = null
 const createWindow = () => {
     mainWindow = new BrowserWindow({
-        width: 900, height: 600,
-        minWidth: 900, minHeight: 600,
+        width: 900, height: 700,
+        minWidth: 900, minHeight: 700,
         center: true
     })
     mainWindow.setMenu(null);
