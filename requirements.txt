@@ -1,4 +1,4 @@
-apng==0.3.3
+﻿apng==0.3.3
 cffi==1.12.3
 Click==7.0
 colorama==0.4.1
