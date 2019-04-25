@@ -14,19 +14,29 @@
             border: 0
         }
         .img-container {
-            height: 300px; width: 300px; overflow: hidden;
+            height: 300px; width: 300px; overflow: hidden; text-align: center; display: inline-block;
+        }
+        .helper {
+            display: inline-block;
+            height: 100%;
+            vertical-align: middle;
         }
     </style>
 </head>
 <body>
-<section class="section">
+<section class="section has-background-dark">
     <div class="container">
         <div class="content">
-            <table class="table is-borderless" style="overflow: scroll; padding: 5px;">
+            <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
                 <tr>
-                    <td><div class="img-container"><img id="image_stage" src=""/></div></td>
-                    <td rowspan="2"><table class="table">
+                    <td style="text-align:right;" width="50%">
+                        <div class="img-container"><span class="helper"></span><img id="image_stage" src=""/></div>
+                    </td>
+                    <td width="50%" rowspan="2"><table class="table">
                         <tbody>
+                        <tr>
+                            <th id="info_header" colspan="2" style="text-align: center;">Information</th>
+                        </tr>
                         <tr>
                             <td>Name</td>
                             <td id="td_fname"></td>
@@ -55,7 +65,7 @@
                     </table></td>
                 </tr>
                 <tr>
-                    <td>
+                    <td class="has-text-centered">
                         <button class="button is-info" id="load_image_button">Load Image</button>
                     </td>
                     <td></td>

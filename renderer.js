@@ -6,6 +6,7 @@ client.connect("tcp://127.0.0.1:4242")
 
 let load_image_button = document.querySelector('#load_image_button')
 let image_stage = document.querySelector('#image_stage')
+let info_header = document.querySelector('#info_header')
 let td_fname = document.querySelector('#td_fname')
 let td_dimens = document.querySelector('#td_dimens')
 let td_fsize = document.querySelector('#td_fsize')
@@ -26,13 +27,15 @@ let dialog_properties = ['openfile']
 load_image_button.addEventListener('click', () => {
     var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: dialog_properties })
     console.log(`chosen path: ${chosen_path}`)
+    if (chosen_path === undefined) {return}
     client.invoke("inspect_image", chosen_path[0], (error, res) => {
     if (error) {
         console.error(error)
     } else {
         console.log(res)
         td_fname.innerHTML = res.name
-        td_fsize.innerHTML = `${res.size} bytes`
+        info_header.innerHTML = `${res.extension} Information`
+        td_fsize.innerHTML = `${res.fsize}`
         td_fcount.innerHTML = res.frame_count
         td_fps.innerHTML = res.fps
         td_dimens.innerHTML = `${res.width} x ${res.height}`

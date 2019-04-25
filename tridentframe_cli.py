@@ -84,10 +84,19 @@ def inspect(file_path, verbose):
         click.secho(f"Image FPS: {fps}", fg="cyan")
 
     elif ext == '.png':
-        try:
-            apng: APNG = APNG.open(file)
-        except Exception:
-            raise FileError(file, "M8 I don't even think this file is even an image file in the first place")
+        # try:
+        apng: APNG = APNG.open(file)
+        frames = apng.frames
+        frame_count = len(frames)
+        png_one, controller_one = frames[0]
+        pprint(png_one.__dict__)
+        pprint(controller_one.__dict__)
+        print(png_one.width)
+        # width = apng.width
+        # height = apng.height
+        # print(frame_count, width, height)
+        # except Exception:
+        #     raise FileError(file, "M8 I don't even think this file is even an image file in the first place")
 
     else:
         raise ClickException("Only GIFs and PNGs are supported")
