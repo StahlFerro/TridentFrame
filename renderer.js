@@ -16,6 +16,7 @@ let td_fsize = document.querySelector('#td_fsize')
 let td_fcount = document.querySelector('#td_fcount')
 let td_fps = document.querySelector('#td_fps')
 let td_loopdur = document.querySelector('#td_loopdur')
+let td_message_box = document.querySelector('#td_message_box')
 
 
 let extension_filters = [
@@ -56,6 +57,21 @@ target_dir_button.addEventListener('click', () => {
     target_path.innerHTML = choosen_dir
 })
 
+split_button.addEventListener('click', () => {
+    var image_path = image_stage.src
+    var out_path = target_path.innerHTML
+    console.log(`${image_path} ${out_path}`)
+    if (out_path === undefined || image_path === undefined) {return}
+    client.invoke('split_image', image_path, out_path, (error, res) => {
+        if (error || !res){
+            console.log(error)
+        } else {
+            if (res){
+                td_message_box.innerHTML = "Success!"
+            }
+        }
+    })
+})
 
 //formula.addEventListener('input', () => {
 //  console.log(formula.value)

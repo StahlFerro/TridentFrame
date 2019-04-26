@@ -5,14 +5,18 @@ import string
 
 import zerorpc
 
-from pythonbrain.fileops import _inspect_image
+from pythonbrain.fileops import _inspect_image, _split_image
 
 
 class API(object):
 
-    def inspect_image(self, file_path):
-        docs = _inspect_image(file_path)
+    def inspect_image(self, image_path):
+        docs = _inspect_image(image_path)
         return docs
+
+    def split_image(self, image_path, out_path):
+        res = _split_image(image_path, out_path)
+        return res
 
 
 def parse_port():
