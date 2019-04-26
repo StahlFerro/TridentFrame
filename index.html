@@ -9,39 +9,11 @@
     <title>TridentFrame</title>
     <link rel="stylesheet" type="text/css" href="./css/bulmamods.css" />
     <link rel="stylesheet" type="text/css" href="./css/fontawesome.css" />
-    <style>
-        .table.is-borderless td,
-        th {
-            border: 0
-        }
-
-        .img-container {
-            height: 300px;
-            width: 300px;
-            overflow: hidden;
-            text-align: center;
-            display: inline-block;
-        }
-
-        .helper {
-            display: inline-block;
-            height: 100%;
-            vertical-align: middle;
-        }
-
-        body {
-            -ms-overflow-style: scrollbar;
-            -webkit-app-region:drag;
-        }
-        button, a {
-            -webkit-app-region:no-drag;
-        }
-    </style>
 </head>
 
 <body>
-    <!-- <nav class="navbar is-fixed-top is-dark" role="navigation" aria-label="main navigation"> -->
-    <!-- <div class="navbar-brand">
+    <!-- <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
         <a class="navbar-item" href="/">
             <img src="/static/favicons/android-chrome-256x256.png" alt="StahlFerro" width="30"
                     height="30"/><span style="padding-left:10px;">StahlFerro</span>
@@ -51,8 +23,8 @@
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
         </a>
-    </div> -->
-    <!-- <div id="navbar-main" class="navbar-menu">
+    </div>
+    <div id="navbar-main" class="navbar-menu">
         <div class="navbar-start">
             <div class="navbar-item has-dropdown is-boxed is-hoverable">
                 <a class="navbar-item has-text-white" href="/wip.html">File</a>
@@ -67,23 +39,23 @@
 </nav> -->
 
 
-    <table id="master_table" class="table is-borderless" width="100%">
+    <table id="master_table" class="table is-borderless" style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
         <tbody>
             <tr>
-                <td width="10%">
-                    <aside class="menu has-text-centered">
+                <td width="10%" class="has-background-dark">
+                    <aside class="menu has-text-centered" style="margin: 0;">
                         <p class="menu-label">
                         </p>
                         <ul class="menu-list">
                             <li><a>
-                                    <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
-                                    <span class="has-text-white">Create</span>
+                                <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
+                                <span class="has-text-white">Create</span>
                             </a></li>
                             <li><a>
-                                    <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
-                                    <span class="has-text-white">Split</span>
+                                <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
+                                <span class="has-text-white">Split</span>
                             </a></li>
-                            <li><a id="exit_button">
+                            <li><a class="red-bg-hover" id="exit_button">
                                 <span class="icon is-large"><i class="fas fa-power-off fa-2x fa-inverse"></i></span>
                                 <span class="has-text-white">Quit</span>
                             </a></li>
@@ -91,7 +63,7 @@
                     </aside>
                 </td>
                 <td width="90%">
-                    <div class="container has-background-dark">
+                    <div class="container">
                         <div class="content">
 
                             <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
@@ -139,19 +111,19 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <button class="button is-info" id="open_image_button">Load Image</button>
+                                        <button class="button " id="open_image_button">Load Image</button>
                                     </td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <button class="button is-primary" id="target_dir_button">Output folder</button>
+                                        <button class="button " id="target_dir_button">Output folder</button>
                                     </td>
-                                    <td id="target_path"></td>
+                                    <td><p class="horizontal-scroll" id="target_path"></p></td>
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <button class="button is-primary" id="target_dir_button">Output folder</button>
+                                        <button class="button is-primary" id="split_button">Split Images</button>
                                     </td>
                                     <td id="target_path"></td>
                                 </tr>

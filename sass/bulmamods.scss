@@ -5,10 +5,37 @@ $navbar-breakpoint: 0;
 $body-background-color: $dark;
 
 $table-color: $white;
-$table-background-color: $dark;
+$table-background-color: $grey-dark;
 $table-cell-padding: 0.5em 0.3em;
 
 $menu-item-hover-background-color: #34a1f9;
 
-
 @import "../node_modules/bulma/bulma.sass";
+
+.table.is-borderless td,
+th {
+    border: 0
+}
+.img-container {
+    height: 300px;
+    width: 300px;
+    overflow: hidden;
+    text-align: center;
+    display: inline-block;
+}
+.helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+body {
+    -ms-overflow-style: scrollbar;
+    -webkit-app-region:drag;
+}
+button, a {
+    -webkit-app-region:no-drag;
+}
+a.red-bg-hover:hover {
+    background-color: rgb(197, 29, 29);
+    color: #363636; 
+}

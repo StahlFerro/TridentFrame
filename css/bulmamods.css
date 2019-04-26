@@ -195,10 +195,6 @@
   fieldset[disabled] .pagination-ellipsis {
     cursor: not-allowed; }
 
-body {
-  -ms-overflow-style: scrollbar;
-  -webkit-app-region: drag; }
-
 /*! bulma.io v0.7.4 | MIT License | github.com/jgthms/bulma */
 @keyframes spinAround {
   from {
@@ -3482,7 +3478,7 @@ a.box:active {
     background-position: -200% 0; } }
 
 .table {
-  background-color: #363636;
+  background-color: #4a4a4a;
   color: white; }
   .table td,
   .table th {
@@ -7126,3 +7122,30 @@ label.panel-block {
 .footer {
   background-color: #fafafa;
   padding: 3rem 1.5rem 6rem; }
+
+.table.is-borderless td,
+th {
+  border: 0; }
+
+.img-container {
+  height: 300px;
+  width: 300px;
+  overflow: hidden;
+  text-align: center;
+  display: inline-block; }
+
+.helper {
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle; }
+
+body {
+  -ms-overflow-style: scrollbar;
+  -webkit-app-region: drag; }
+
+button, a {
+  -webkit-app-region: no-drag; }
+
+a.red-bg-hover:hover {
+  background-color: #c51d1d;
+  color: #363636; }

@@ -6,6 +6,7 @@ client.connect("tcp://127.0.0.1:4242")
 
 let open_image_button = document.querySelector('#open_image_button')
 let target_dir_button = document.querySelector('#target_dir_button')
+let split_button = document.querySelector('#split_button')
 let image_stage = document.querySelector('#image_stage')
 let target_path = document.querySelector('#target_path')
 let info_header = document.querySelector('#info_header')
