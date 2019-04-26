@@ -2,6 +2,7 @@ import os
 import string
 from random import choices
 from pprint import pprint
+from urllib.parse import urlparse
 
 from PIL import Image
 from apng import APNG
@@ -87,14 +88,12 @@ def _inspect_image(image_path):
 
 
 def _split_image(image_path: str, out_path: str):
-    fslash = 'file://'
-    if fslash in image_path:
-        image_path = image_path.replace(fslash, '')
+    upath = urlparse(image_path)
+    abspath = os.path.abspath(upath.path)
     init()
-    if not os.path.isfile(image_path):
-        raise Exception(image_path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
-    filename = str(os.path.basename(image_path))
-    abspath = os.path.abspath(image_path)
+    if not os.path.isfile(abspath):
+        raise Exception(abspath, upath.path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
+    filename = str(os.path.basename(abspath))
     workpath = os.path.dirname(abspath)
     # if verbose:
     #     click.secho(f"dir_path: {file_path}\nabspath: {abspath}\nworkpath: {workpath}\nfile: {filename}",
@@ -138,7 +137,7 @@ def _split_image(image_path: str, out_path: str):
         # with click.progressbar(frame_nums, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         for f in frame_nums:
             gif.seek(f)
-            gif.save(os.path.join(out_path, f"{image_path}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
+            gif.save(os.path.join(out_path, f"{filename}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
 
     elif ext == 'png':
         img: APNG = APNG.open(filename)

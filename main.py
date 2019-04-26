@@ -5,7 +5,7 @@ import string
 
 import zerorpc
 
-from pythonbrain.fileops import _inspect_image, _split_image
+from pybrain.fileops import _inspect_image, _split_image
 
 
 class API(object):
