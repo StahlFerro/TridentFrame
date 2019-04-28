@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/StahlFerro/TridentFrame#readme",
   "dependencies": {
+    "jquery": "^3.4.0",
+    "jsdom": "^15.0.0",
     "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
   },
   "devDependencies": {

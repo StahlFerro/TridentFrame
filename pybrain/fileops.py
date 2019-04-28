@@ -16,10 +16,10 @@ animated_img_exts = ['gif', 'png']
 
 
 def _inspect_image(image_path):
-    file = str(os.path.basename(image_path))
+    filename = str(os.path.basename(image_path))
     abspath = os.path.abspath(image_path)
     workpath = os.path.dirname(abspath)
-    ext = str.lower(os.path.splitext(file)[1])
+    ext = str.lower(os.path.splitext(filename)[1])
 
     if os.getcwd() != workpath:
         os.chdir(workpath)
@@ -27,7 +27,7 @@ def _inspect_image(image_path):
     frame_count = 0
     fps = 0
     duration = 0
-    fsize = size(os.stat(file).st_size, system=alternative)
+    fsize = size(os.stat(filename).st_size, system=alternative)
     # fsize = 0
     width = height = 0
     loop_duration = 0
@@ -35,14 +35,12 @@ def _inspect_image(image_path):
 
     if ext == '.gif':
         try:
-            gif: Image = Image.open(file)
+            gif: Image = Image.open(filename)
         except Exception:
             return
+        if gif.format != 'GIF' or not gif.is_animated:
+            raise Exception(f"The chosen GIF ({filename}) is not an animated GIF!")
         width, height = gif.size
-        #     raise FileError(file, "M8 I don't even think this file is even an image file in the first place")
-        #
-        # if gif.format != 'GIF' or not gif.is_animated:
-        #     raise FileError(file, "Sorry m9, the image you specified is not a valid animated GIF")
         frame_count = gif.n_frames
         # pprint(gif.info)
         durations = []
@@ -56,11 +54,13 @@ def _inspect_image(image_path):
     
     elif ext == '.png':
         try:
-            apng: APNG = APNG.open(file)
+            apng: APNG = APNG.open(filename)
         except Exception:
-            return
+            pass
         frames = apng.frames
         frame_count = len(frames)
+        if frame_count <= 1:
+            raise Exception(f"The chosen PNG ({filename}) is not an APNG!")
         png_one, controller_one = frames[0]
         # pprint(png_one.__dict__)
         # pprint(controller_one.__dict__)
@@ -73,7 +73,7 @@ def _inspect_image(image_path):
         
 
     image_info = {
-        "name": file,
+        "name": filename,
         "fps": fps,
         "duration": duration,
         "fsize": fsize,
