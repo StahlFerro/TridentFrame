@@ -94,5 +94,3 @@ split_button.addEventListener('click', () => {
 //})
 
 //formula.dispatchEvent(new Event('input'))
-
-

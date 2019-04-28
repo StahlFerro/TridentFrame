@@ -30,3 +30,5 @@ A graphical UI is currently under development, and will replace it's command lin
 *   [Click](http://click.palletsprojects.com/en/7.x/) : CLI interface
 *   [Pillow](https://python-pillow.org/) : Image parsing library
 *   [pyAPNG](https://github.com/eight04/pyAPNG) : APNG parsing
+
+Note: `npm rebuild zeromq --runtime=electron --target=1.8.8`
