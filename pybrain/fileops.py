@@ -152,8 +152,3 @@ def _split_image(image_path: str, out_path: str):
     # click.secho(f"Done!!1", fg='cyan')
     deinit()
     return True
-
-
-if __name__ == "__main__":
-    info = _inspect_image('/home/andreas/Pictures/fortfade_80px_download.png')
-    pprint(info)
