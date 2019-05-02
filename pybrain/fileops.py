@@ -105,8 +105,8 @@ def _split_image(image_path: str, out_path: str):
     if '.' not in filename:
         raise Exception('Where the fuk is the extension mate?!')
 
-    # if not out_path:
-    #     out_path = '_'.join(filename.split('.')[:-1])
+    if not out_path:
+        raise Exception("No output folder selected, please select it first")
 
     ext = str.lower(filename.split('.')[-1])
     if ext not in animated_img_exts:

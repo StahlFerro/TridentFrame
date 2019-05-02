@@ -39,7 +39,8 @@
 </nav> -->
 
 
-    <table id="master_table" class="table is-borderless" style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
+    <table id="master_table" class="table is-borderless"
+        style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
         <tbody>
             <tr>
                 <td width="10%" class="has-background-dark">
@@ -47,23 +48,32 @@
                         <p class="menu-label">
                         </p>
                         <ul class="menu-list">
-                            <li><a id="create_fragment_menu">
-                                <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
-                                <span class="has-text-white">Create</span>
-                            </a></li>
-                            <li><a id="split_fragment_menu">
-                                <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
-                                <span class="has-text-white">Split</span>
-                            </a></li>
+                            <li><a id="create_menu">
+                                    <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
+                                    <span class="has-text-white">Create</span>
+                                </a></li>
+                            <li><a id="split_menu">
+                                    <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
+                                    <span class="has-text-white">Split</span>
+                                </a></li>
                             <li><a id="exit_button" class="red-bg-hover">
-                                <span class="icon is-large"><i class="fas fa-power-off fa-2x fa-inverse"></i></span>
-                                <span class="has-text-white">Quit</span>
-                            </a></li>
+                                    <span class="icon is-large"><i class="fas fa-power-off fa-2x fa-inverse"></i></span>
+                                    <span class="has-text-white">Quit</span>
+                                </a></li>
                         </ul>
                     </aside>
                 </td>
-                <td width="90%" id ="display_panel">
-                    <!-- <div class="container">
+                <td width="90%" id="panel_container">
+                    <div id="create_panel" class="container">
+                        <div class="content">
+                            <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
+                                <tr>
+                                    <td>xdr</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div id="split_panel" class="container">
                         <div class="content">
 
                             <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
@@ -71,14 +81,15 @@
                                     <td style="text-align: center;" width="50%">
                                         <div class="img-container"><span class="helper"></span><img id="image_stage"
                                                 src="" /></div>
-                                                <input id="image_path" name="imgpath_field" type="hidden" value=""/>
+                                        <input id="image_path" name="imgpath_field" type="hidden" value="" />
                                     </td>
                                     <td width="50%" rowspan="2" padding="0">
                                         <table class="table">
                                             <thead>
                                                 <tr>
                                                     <th class="has-text-white" id="info_header" colspan="2"
-                                                        style="text-align: left;">Information</th>
+                                                        style="text-align: left;">
+                                                        Information</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -120,7 +131,9 @@
                                     <td class="has-text-centered">
                                         <button class="button " id="target_dir_button">Output folder</button>
                                     </td>
-                                    <td><p class="horizontal-scroll" id="target_path"></p></td>
+                                    <td>
+                                        <p class="horizontal-scroll" id="target_path"></p>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
@@ -130,7 +143,7 @@
                                 </tr>
                             </table>
                         </div>
-                    </div> -->
+                    </div>
                 </td>
             </tr>
         </tbody>
@@ -138,8 +151,9 @@
 
 </body>
 <script>
-    require('./jsbrain/menu_handler.js')
     require('./jsbrain/renderer.js')
+    require('./jsbrain/menu_handler.js')
+    require('./jsbrain/splitfragment.js')
 </script>
 
 </html>

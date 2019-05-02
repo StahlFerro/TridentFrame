@@ -30,12 +30,12 @@ let file_dialog_prop = ['openfile']
 let dir_dialog_prop = ['openDirectory']
 
 
-function registerListeners() {
-    open_image_button.addEventListener("click", openImage);
-    console.log("registerListener called");
-}
+// function registerListeners() {
+//     open_image_button.addEventListener("click", openImage);
+//     console.log("registerListener called");
+// }
 
-function openImage() {
+open_image_button.addEventListener("click", () => {
     var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: file_dialog_prop })
     console.log(`chosen path: ${chosen_path}`)
     if (chosen_path === undefined) {return}
@@ -58,30 +58,33 @@ function openImage() {
         }
     })
     console.log('registered!');
-}
+});
 
 target_dir_button.addEventListener('click', () => {
-    var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_prop })
-    console.log(`Chosen dir: ${choosen_dir}`)
+    var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_prop });
+    console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
-    target_path.innerHTML = choosen_dir
-})
+    target_path.innerHTML = choosen_dir;
+    td_message_box.classList.remove('has-text-danger');
+    td_message_box.innerHTML = "";
+});
 
 split_button.addEventListener('click', () => {
-    var img_path = image_path.value
-    var out_path = target_path.innerHTML
-    console.log(`${image_path} ${out_path}`)
+    var img_path = image_path.value;
+    var out_path = target_path.innerHTML;
+    console.log(`${image_path} ${out_path}`);
     if (out_path === undefined || img_path === undefined) {return}
     client.invoke('split_image', img_path, out_path, (error, res) => {
         if (error || !res){
             console.log(error);
-
+            td_message_box.innerHTML = error;
+            td_message_box.classList.add("has-text-danger");
         } else {
             if (res){
-                td_message_box.innerHTML = "Success!"
+                td_message_box.innerHTML = "Success!";
             }
         }
     })
-})
+});
 
-module.exports.registerListeners = registerListeners;
+// module.exports.registerListeners = registerListeners;
