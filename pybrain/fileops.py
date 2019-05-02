@@ -87,6 +87,53 @@ def _inspect_image(image_path):
     return image_info
 
 
+def _combine_image(dir_path: str, out_path: str, scale: float = 1.0):
+    upath = urlparse(dir_path)
+    abspath = os.path.abspath(upath.path)
+    init()
+    if not os.path.isdir(abspath):
+        framesdir = str(os.path.basename(abspath))
+    workpath = os.path.dirname(abspath)
+    if os.getcwd() != abspath:
+        os.chdir(abspath)
+
+    # If no name supplied, default name will be the framesdir folder name. Output will be in the same parent directory
+    # as the framesdir
+    if not output_name:
+        output_name = framesdir
+    output_name = os.path.join(workpath, output_name)
+
+    imgs = [f for f in os.listdir('.') if '.' in f and str.lower(f.split('.')[-1]) in img_exts]
+
+    duration = round(1000 / fps)
+    # click.secho(f"{len(imgs)} frames @ {fps}fps", fg="cyan")
+
+    if extension == 'gif':
+        frames = [Image.open(i) for i in imgs]
+        frames.sort(key=lambda i: i.filename, reverse=reverse)
+        if scale != 1.0:
+            # click.secho(f"Resizing image by {scale}...", fg="cyan")
+            frames = [f.resize((round(f.width * scale), round(f.height * scale))) for f in frames]
+
+        # pprint(frames[0].filename)
+
+        disposal = 0
+        if transparent:
+            disposal = 2
+        # click.secho("Generating GIF...", fg="cyan")
+        frames[0].save(f"{output_name}.gif", optimize=False,
+                       save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
+        # click.secho(f"Created GIF {output_name}.gif", fg="cyan")
+
+    elif extension == 'apng':
+        # click.secho("Generating APNG...", fg="cyan")
+        # click.secho(f"Created APNG {output_name}.png", fg="cyan")
+        imgs.sort(reverse=reverse)
+        APNG.from_files(imgs, delay=duration).save(f"{output_name}.png")
+
+    deinit()
+
+
 def _split_image(image_path: str, out_path: str):
     upath = urlparse(image_path)
     abspath = os.path.abspath(upath.path)

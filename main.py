@@ -5,7 +5,7 @@ import string
 
 import zerorpc
 
-from pybrain.fileops import _inspect_image, _split_image
+from pybrain.fileops import _inspect_image, _split_image, _combine_image
 
 
 class API(object):
@@ -13,6 +13,10 @@ class API(object):
     def inspect_image(self, image_path):
         docs = _inspect_image(image_path)
         return docs
+
+    def combine_image(self, dir_path, out_path):
+        res = _combine_image(dir_path, out_path)
+        return res
 
     def split_image(self, image_path, out_path):
         res = _split_image(image_path, out_path)
