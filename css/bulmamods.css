@@ -7140,7 +7140,6 @@ th {
   vertical-align: middle; }
 
 body {
-  -ms-overflow-style: scrollbar;
   -webkit-app-region: drag; }
 
 button, a {
@@ -7149,3 +7148,6 @@ button, a {
 a.red-bg-hover:hover {
   background-color: #c51d1d;
   color: #363636; }
+
+::-webkit-scrollbar {
+  display: none; }

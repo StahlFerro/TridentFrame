@@ -3,6 +3,8 @@ window.$ = window.jQuery = require('jquery');
 
 let display_panel = document.getElementById('display_panel');
 
+// window.addEventListener("load", show_create_panel);
+
 function hideAll() {
     $(create_panel).hide();
     $(split_panel).hide();

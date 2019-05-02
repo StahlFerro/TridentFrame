@@ -29,7 +29,7 @@ th {
     vertical-align: middle;
 }
 body {
-    -ms-overflow-style: scrollbar;
+    // -ms-overflow-style: scrollbar;
     -webkit-app-region:drag;
 }
 button, a {
@@ -39,3 +39,11 @@ a.red-bg-hover:hover {
     background-color: rgb(197, 29, 29);
     color: #363636; 
 }
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+// ::-webkit-scrollbar{
+//     none;
+// }

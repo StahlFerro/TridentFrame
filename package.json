@@ -7,7 +7,6 @@
     "start": "electron .",
     "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "npm run css-build -- --watch",
-    "css-start": "npm run css-watch",
     "rebuild-start": "npm run css-build && npm run start"
   },
   "repository": {
