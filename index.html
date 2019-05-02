@@ -41,11 +41,30 @@
     <table id="master_table" class="table is-borderless is-desktop"
         style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
         <tbody>
+            <tr class="has-background-black-ter" style="height: 3%;">
+                <td width="10%" class="is-paddingless"></td>
+                <td width="90%" class="is-paddingless">
+                    <nav class="level is-marginless">
+                        <div class="level-left"></div>
+                        <div class="level-right has-text-centered">
+                            <div class="level-item">
+                                <a id="minimize_button" class="minimize-button">
+                                    <span class="icon is-medium"><i class="far fa-window-minimize fa-inverse"></i></span>
+                                </a>
+                                <a id="exit_button" class="exit-button">
+                                    <span class="icon is-medium"><i class="fas fa-times fa-inverse"></i></span>
+                                </a>
+                            </div>
+                            <!-- <div class="level-item">
+                                    </div> -->
+
+                        </div>
+                    </nav>
+                </td>
+            </tr>
             <tr>
-                <td width="10%" class="has-background-dark">
+                <td class="has-background-dark">
                     <aside class="menu has-text-centered" style="margin: 0;">
-                        <p class="menu-label">
-                        </p>
                         <ul class="menu-list">
                             <li><a id="create_menu">
                                     <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
@@ -62,25 +81,8 @@
                         </ul>
                     </aside>
                 </td>
-                <td width="90%" id="panel_container" class="is-paddingless">
-                    <nav class="level has-background-dark is-marginless">
-                        <div class="level-left"></div>
-                        <div class="level-right has-text-centered">
-                            <div class="level-item">
-                                <a id="minimize_button" class="minimize-button">
-                                    <span class="icon is-large"><i class="far fa-window-minimize fa-inverse"></i></span>
-                                </a>
-                                <a id="exit_button" class="exit-button">
-                                    <span class="icon is-large"><i class="fas fa-times fa-inverse"></i></span>
-                                </a>
-                            </div>
-                            <!-- <div class="level-item">
-                            </div> -->
-
-                        </div>
-                    </nav>
-
-                    <div id="create_panel" class="container">
+                <td id="panel_container">
+                    <div id="create_panel" class="container" style="padding:10px;">
                         <div class="content">
                             <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
                                 <tr>
@@ -89,18 +91,18 @@
                             </table>
                         </div>
                     </div>
-                    <div id="split_panel" class="container" style="display: none;">
+                    <div id="split_panel" class="container" style="display: none; padding:5px;">
                         <div class="content">
 
                             <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
                                 <tr>
-                                    <td style="text-align: center;" width="50%">
+                                    <td style="text-align: center; border: 1px solid white;" width="40%">
                                         <div class="img-container"><span class="helper"></span><img id="image_stage"
                                                 src="" /></div>
                                         <input id="image_path" name="imgpath_field" type="hidden" value="" />
                                     </td>
-                                    <td width="50%" rowspan="2" padding="0">
-                                        <table class="table">
+                                    <td width="60%" padding="0">
+                                        <table class="table" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th class="has-text-white" id="info_header" colspan="2"
@@ -110,27 +112,27 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td>Name</td>
-                                                    <td id="td_fname">-</td>
+                                                    <td class="has-text-cyan" width="35%">Name</td>
+                                                    <td width="65%" id="td_fname">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Dimensions</td>
+                                                    <td class="has-text-cyan">Dimensions</td>
                                                     <td id="td_dimens">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>File Size</td>
+                                                    <td class="has-text-cyan">File Size</td>
                                                     <td id="td_fsize">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Frame count</td>
+                                                    <td class="has-text-cyan">Frame count</td>
                                                     <td id="td_fcount">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>FPS (frames per second)</td>
+                                                    <td class="has-text-cyan">FPS</td>
                                                     <td id="td_fps">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td>Loop duration</td>
+                                                    <td class="has-text-cyan">Loop duration</td>
                                                     <td id="td_loopdur">-</td>
                                                 </tr>
                                             </tbody>
@@ -139,9 +141,11 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <button class="button " id="open_image_button">Load Image</button>
+                                        <button class="button" id="open_image_button">Load Image</button>
                                     </td>
-                                    <td></td>
+                                    <td>
+                                        <!-- <input id="target_button" type="text" class="input" placeholder="Choose output folder"/> -->
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
@@ -153,7 +157,7 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <button class="button is-primary" id="split_button">Split Images</button>
+                                        <a class="button is-link" id="split_button">SPLIT</a>
                                     </td>
                                     <td id="td_message_box"></td>
                                 </tr>

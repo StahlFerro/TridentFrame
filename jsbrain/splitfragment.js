@@ -42,8 +42,7 @@ open_image_button.addEventListener("click", () => {
     client.invoke("inspect_image", chosen_path[0], (error, res) => {
         if (error) {
             console.error(error)
-            td_message_box.innerHTML = error
-            td_message_box.classList.add("has-text-danger")
+            msg_error(error);
         } else {
             console.log(res)
             td_fname.innerHTML = res.name
@@ -55,6 +54,7 @@ open_image_button.addEventListener("click", () => {
             td_loopdur.innerHTML = `${res.loop_duration} seconds`
             image_stage.src = res.absolute_url
             image_path.value = res.absolute_url
+            msg_clear();
         }
     })
     console.log('registered!');
@@ -65,26 +65,41 @@ target_dir_button.addEventListener('click', () => {
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
     target_path.innerHTML = choosen_dir;
-    td_message_box.classList.remove('has-text-danger');
-    td_message_box.innerHTML = "";
+    msg_clear();
 });
 
 split_button.addEventListener('click', () => {
+    msg_clear();
+    split_button.classList.add("is-loading");
     var img_path = image_path.value;
     var out_path = target_path.innerHTML;
     console.log(`${image_path} ${out_path}`);
-    if (out_path === undefined || img_path === undefined) {return}
     client.invoke('split_image', img_path, out_path, (error, res) => {
         if (error || !res){
             console.log(error);
-            td_message_box.innerHTML = error;
-            td_message_box.classList.add("has-text-danger");
+            msg_error(error);
         } else {
             if (res){
-                td_message_box.innerHTML = "Success!";
+                msg_success("GIF now splitted! Check the output directory");
             }
         }
+        split_button.classList.remove("is-loading");
     })
 });
+
+function msg_clear() {
+    td_message_box.classList.remove('has-text-danger');
+    td_message_box.innerHTML = "";
+}
+
+function msg_error(text) {
+    td_message_box.classList.add("has-text-danger");
+    td_message_box.innerHTML = text;
+}
+
+function msg_success(text) {
+    td_message_box.classList.add("has-text-success");
+    td_message_box.innerHTML = text;
+}
 
 // module.exports.registerListeners = registerListeners;

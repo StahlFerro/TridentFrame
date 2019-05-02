@@ -8,9 +8,16 @@ $table-color: $white;
 $table-background-color: $dark;
 $table-cell-padding: 0.5em 0.3em;
 
-$menu-item-hover-background-color: #34a1f9;
+$cyan: #34a1f9;
+
+$menu-item-hover-background-color: $cyan;
 
 @import "../node_modules/bulma/bulma.sass";
+
+@font-face {
+    font-family: 'Share Tech', sans-serif;
+    src: url('/webfonts/ShareTech-Regular.ttf');
+}
 
 .table.is-borderless td,
 th {
@@ -31,13 +38,15 @@ th {
 body {
     // -ms-overflow-style: scrollbar;
     -webkit-app-region:drag;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 18px;
 }
-button, a {
+button, a, input {
     -webkit-app-region:no-drag;
 }
 
 a.minimize-button:hover {
-    background-color: $link;
+    background-color: $cyan;
     color: #363636; 
 }
 
@@ -48,6 +57,16 @@ a.exit-button:hover {
 
 ::-webkit-scrollbar {
     display: none;
+}
+
+.has-text-cyan {
+    color: $cyan;
+}
+
+.button.is-cyan {
+    background-color: $cyan;
+    color: $white;
+    border: none;
 }
 
 // ::-webkit-scrollbar{

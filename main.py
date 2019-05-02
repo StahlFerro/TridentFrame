@@ -5,14 +5,19 @@ import string
 
 import zerorpc
 
-from pybrain.fileops import _inspect_image, _split_image, _combine_image
+from pybrain.inspect_ops import _inspect_image, _inspect_sequence
+from pybrain.render_ops import _split_image, _combine_image
 
 
 class API(object):
 
     def inspect_image(self, image_path):
-        docs = _inspect_image(image_path)
-        return docs
+        info = _inspect_image(image_path)
+        return info
+
+    def inspect_sequence(self, dir_path):
+        info = _inspect_sequence(dir_path)
+        return info
 
     def combine_image(self, dir_path, out_path):
         res = _combine_image(dir_path, out_path)

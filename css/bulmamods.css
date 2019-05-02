@@ -7123,6 +7123,10 @@ label.panel-block {
   background-color: #fafafa;
   padding: 3rem 1.5rem 6rem; }
 
+@font-face {
+  font-family: 'Share Tech', sans-serif;
+  src: url("/webfonts/ShareTech-Regular.ttf"); }
+
 .table.is-borderless td,
 th {
   border: 0; }
@@ -7140,13 +7144,15 @@ th {
   vertical-align: middle; }
 
 body {
-  -webkit-app-region: drag; }
+  -webkit-app-region: drag;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 18px; }
 
-button, a {
+button, a, input {
   -webkit-app-region: no-drag; }
 
 a.minimize-button:hover {
-  background-color: #3273dc;
+  background-color: #34a1f9;
   color: #363636; }
 
 a.exit-button:hover {
@@ -7155,3 +7161,11 @@ a.exit-button:hover {
 
 ::-webkit-scrollbar {
   display: none; }
+
+.has-text-cyan {
+  color: #34a1f9; }
+
+.button.is-cyan {
+  background-color: #34a1f9;
+  color: white;
+  border: none; }
