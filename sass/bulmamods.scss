@@ -35,7 +35,13 @@ body {
 button, a {
     -webkit-app-region:no-drag;
 }
-a.red-bg-hover:hover {
+
+a.minimize-button:hover {
+    background-color: $link;
+    color: #363636; 
+}
+
+a.exit-button:hover {
     background-color: rgb(197, 29, 29);
     color: #363636; 
 }

@@ -7145,7 +7145,11 @@ body {
 button, a {
   -webkit-app-region: no-drag; }
 
-a.red-bg-hover:hover {
+a.minimize-button:hover {
+  background-color: #3273dc;
+  color: #363636; }
+
+a.exit-button:hover {
   background-color: #c51d1d;
   color: #363636; }
 
