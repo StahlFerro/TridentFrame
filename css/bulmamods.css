@@ -7124,8 +7124,9 @@ label.panel-block {
   padding: 3rem 1.5rem 6rem; }
 
 @font-face {
-  font-family: 'Share Tech', sans-serif;
-  src: url("/webfonts/ShareTech-Regular.ttf"); }
+  font-family: 'Share Tech';
+  font-style: normal;
+  src: url("../webfonts/ShareTech-Regular.ttf") format("truetype"); }
 
 .table.is-borderless td,
 th {
@@ -7145,7 +7146,7 @@ th {
 
 body {
   -webkit-app-region: drag;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: 'Share Tech', 'sans-serif';
   font-size: 18px; }
 
 button, a, input {

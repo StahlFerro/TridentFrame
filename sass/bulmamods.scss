@@ -15,8 +15,10 @@ $menu-item-hover-background-color: $cyan;
 @import "../node_modules/bulma/bulma.sass";
 
 @font-face {
-    font-family: 'Share Tech', sans-serif;
-    src: url('/webfonts/ShareTech-Regular.ttf');
+    font-family: 'Share Tech';
+    font-style: normal;
+    // font-weight: 400;
+    src: url('../webfonts/ShareTech-Regular.ttf') format('truetype');
 }
 
 .table.is-borderless td,
@@ -38,7 +40,7 @@ th {
 body {
     // -ms-overflow-style: scrollbar;
     -webkit-app-region:drag;
-    font-family: 'Share Tech Mono', monospace;
+    font-family: 'Share Tech', 'sans-serif';
     font-size: 18px;
 }
 button, a, input {
