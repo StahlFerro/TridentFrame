@@ -9,6 +9,7 @@ $table-background-color: $dark;
 $table-cell-padding: 0.5em 0.3em;
 
 $cyan: #34a1f9;
+$white-d: #dddddd;
 
 $menu-item-hover-background-color: $cyan;
 $input-icon-active-color: $white;
@@ -77,9 +78,8 @@ a.exit-button:hover {
 
 .button.is-neon-cyan{
     background-color: $dark;
-    border-color: $cyan;
     color: $cyan;
-    border-width: 2px; 
+    border: 2px solid $cyan;
 }
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered{
     border-color: $white;
@@ -94,7 +94,18 @@ a.exit-button:hover {
     background-color: $dark;
     color: $white;
     box-shadow: none;
+    border: 2px solid $white;
+    border-right: none;
 }
+.input.is-neon-white:hover{
+    border: 2px solid $white;
+    border-right: none;
+}
+
+// .td.white-box {
+//     text-align: center;
+//     border: 1px solid $white-d;
+// }
 
 .horizontal-scroll {
     overflow-x: scroll;
@@ -110,6 +121,9 @@ a.exit-button:hover {
     overflow: hidden;
 }
 
+::placeholder {
+    color: $white-d;
+}
 // .window-title {
 //     vertical-align: middle;
 // }

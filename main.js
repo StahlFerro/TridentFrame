@@ -17,7 +17,8 @@ const createWindow = () => {
         width: 950, height: 700,
         minWidth: 950, minHeight: 700,
         maxWidth: 950, maxHeight: 700,
-        center: true, frame: false,
+        center: true, 
+        frame: false,
     })
     mainWindow.setMenu(null);
     mainWindow.loadURL(require('url').format({

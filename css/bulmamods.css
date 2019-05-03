@@ -7174,9 +7174,8 @@ a.exit-button:hover {
 
 .button.is-neon-cyan {
   background-color: #363636;
-  border-color: #34a1f9;
   color: #34a1f9;
-  border-width: 2px; }
+  border: 2px solid #34a1f9; }
 
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered {
   border-color: white; }
@@ -7189,7 +7188,13 @@ a.exit-button:hover {
 .input.is-neon-white {
   background-color: #363636;
   color: white;
-  box-shadow: none; }
+  box-shadow: none;
+  border: 2px solid white;
+  border-right: none; }
+
+.input.is-neon-white:hover {
+  border: 2px solid white;
+  border-right: none; }
 
 .horizontal-scroll {
   overflow-x: scroll;
@@ -7202,3 +7207,6 @@ a.exit-button:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden; }
+
+::placeholder {
+  color: #dddddd; }

@@ -83,7 +83,7 @@ def _inspect_image(image_path):
     return image_info
 
 
-def _inspect_sequence(dir_path):
+def _inspect_sequence(dir_path: str):
     abspath = os.path.abspath(dir_path)
 
     print("absolute sequence path", abspath)

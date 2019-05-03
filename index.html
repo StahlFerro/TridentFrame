@@ -52,7 +52,8 @@
                         <div class="level-right has-text-centered">
                             <div class="level-item">
                                 <a id="minimize_button" class="minimize-button">
-                                    <span class="icon is-medium"><i class="far fa-window-minimize fa-inverse"></i></span>
+                                    <span class="icon is-medium"><i
+                                            class="far fa-window-minimize fa-inverse"></i></span>
                                 </a>
                                 <a id="exit_button" class="exit-button">
                                     <span class="icon is-medium"><i class="fas fa-times fa-inverse"></i></span>
@@ -90,17 +91,21 @@
                         <div class="content">
                             <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
                                 <tr>
-                                    <div class="field has-addons">
-                                        <div class="control has-icons-left">
-                                            <span class="icon is-small is-left">
-                                                <i class="fas fa-folder-open"></i>
-                                            </span>
-                                            <input class="input is-neon-white" type="text" placeholder="Sequence Folder">
+                                    <td colspan="2">
+                                        <div class="field has-addons">
+                                            <div class="control is-expanded">
+                                                <!-- <div class="control has-icons-left"> -->
+                                                <!-- <span class="icon is-small is-left">
+                                                                    <i class="fas fa-folder-open"></i>
+                                                                </span> -->
+                                                <input id="sequence_dir" value="" class="input is-neon-white" type="text"
+                                                    placeholder="Sequence Folder" readonly>
+                                            </div>
+                                            <div class="control">
+                                                <a id="load_dir_button" class="button is-neon-cyan">Choose Folder</a>
+                                            </div>
                                         </div>
-                                        <div class="control">
-                                            <a class="button is-neon-cyan">Choose Folder</a>
-                                        </div>
-                                    </div>                                    
+                                    </td>
                                 </tr>
                             </table>
                         </div>
@@ -108,10 +113,9 @@
 
                     <div id="split_panel" class="container" style="display: none; padding:5px;">
                         <div class="content">
-
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td style="text-align: center; border: 1px solid white;" width="40%">
+                                    <td style="text-align: center; border: 2px solid #dddddd;" width="40%">
                                         <div class="img-container"><span class="helper"></span><img id="image_stage"
                                                 src="" /></div>
                                         <input id="image_path" name="imgpath_field" type="hidden" value="" />
@@ -189,6 +193,7 @@
 <script>
     require('./jsbrain/renderer.js')
     require('./jsbrain/menu_handler.js')
+    require('./jsbrain/createfragment.js')
     require('./jsbrain/splitfragment.js')
 </script>
 
