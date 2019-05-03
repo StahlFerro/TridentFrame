@@ -7170,3 +7170,15 @@ a.exit-button:hover {
   background-color: #34a1f9;
   color: white;
   border: none; }
+
+.horizontal-scroll {
+  overflow-x: scroll;
+  white-space: nowrap; }
+
+.truncate {
+  display: inline-block;
+  vertical-align: middle;
+  width: 480px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden; }

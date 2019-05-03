@@ -43,7 +43,9 @@
         style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
         <tbody>
             <tr class="has-background-black-ter" style="height: 3%;">
-                <td width="10%" class="is-paddingless"></td>
+                <td width="10%" class="is-paddingless" style="vertical-align: middle;">
+                    <span style="padding-left: 10px;">TridentFrame</span>
+                </td>
                 <td width="90%" class="is-paddingless">
                     <nav class="level is-marginless">
                         <div class="level-left"></div>
@@ -95,7 +97,7 @@
                     <div id="split_panel" class="container" style="display: none; padding:5px;">
                         <div class="content">
 
-                            <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
+                            <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
                                     <td style="text-align: center; border: 1px solid white;" width="40%">
                                         <div class="img-container"><span class="helper"></span><img id="image_stage"
@@ -153,7 +155,7 @@
                                         <button class="button " id="target_dir_button">Output folder</button>
                                     </td>
                                     <td>
-                                        <p class="horizontal-scroll" id="target_path"></p>
+                                        <span id="target_path" class="truncate"></span>
                                     </td>
                                 </tr>
                                 <tr>

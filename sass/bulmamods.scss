@@ -39,12 +39,12 @@ th {
 }
 body {
     // -ms-overflow-style: scrollbar;
-    -webkit-app-region:drag;
+    -webkit-app-region: drag;
     font-family: 'Share Tech', 'sans-serif';
     font-size: 18px;
 }
 button, a, input {
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 }
 
 a.minimize-button:hover {
@@ -54,7 +54,7 @@ a.minimize-button:hover {
 
 a.exit-button:hover {
     background-color: rgb(197, 29, 29);
-    color: #363636; 
+    color: #363636;
 }
 
 ::-webkit-scrollbar {
@@ -71,6 +71,23 @@ a.exit-button:hover {
     border: none;
 }
 
+.horizontal-scroll {
+    overflow-x: scroll;
+    white-space: nowrap;
+}
+
+.truncate {
+    display: inline-block;
+    vertical-align:middle;
+    width: 480px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+// .window-title {
+//     vertical-align: middle;
+// }
 // ::-webkit-scrollbar{
 //     none;
 // }
