@@ -11,6 +11,8 @@ $table-cell-padding: 0.5em 0.3em;
 $cyan: #34a1f9;
 
 $menu-item-hover-background-color: $cyan;
+$input-icon-active-color: $white;
+$input-icon-color: $white;
 
 @import "../node_modules/bulma/bulma.sass";
 
@@ -21,8 +23,7 @@ $menu-item-hover-background-color: $cyan;
     src: url('../webfonts/ShareTech-Regular.ttf') format('truetype');
 }
 
-.table.is-borderless td,
-th {
+.table.is-borderless td, th {
     border: 0
 }
 .img-container {
@@ -39,12 +40,19 @@ th {
 }
 body {
     // -ms-overflow-style: scrollbar;
-    -webkit-app-region: drag;
+    // -webkit-app-region: drag;
     font-family: 'Share Tech', 'sans-serif';
     font-size: 18px;
 }
+
+::-webkit-scrollbar {
+    display: none;
+}
 button, a, input {
     -webkit-app-region: no-drag;
+}
+#title-bar {
+    -webkit-app-region: drag;
 }
 
 a.minimize-button:hover {
@@ -57,10 +65,6 @@ a.exit-button:hover {
     color: #363636;
 }
 
-::-webkit-scrollbar {
-    display: none;
-}
-
 .has-text-cyan {
     color: $cyan;
 }
@@ -69,6 +73,27 @@ a.exit-button:hover {
     background-color: $cyan;
     color: $white;
     border: none;
+}
+
+.button.is-neon-cyan{
+    background-color: $dark;
+    border-color: $cyan;
+    color: $cyan;
+    border-width: 2px; 
+}
+.button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered{
+    border-color: $white;
+}
+.button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
+    background-color: $cyan;
+    border-color: $cyan;
+    color: $dark;
+}
+
+.input.is-neon-white{
+    background-color: $dark;
+    color: $white;
+    box-shadow: none;
 }
 
 .horizontal-scroll {

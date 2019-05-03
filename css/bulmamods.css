@@ -3158,7 +3158,7 @@ a.box:active {
   .control.has-icons-left .input:focus ~ .icon,
   .control.has-icons-left .select:focus ~ .icon, .control.has-icons-right .input:focus ~ .icon,
   .control.has-icons-right .select:focus ~ .icon {
-    color: #7a7a7a; }
+    color: white; }
   .control.has-icons-left .input.is-small ~ .icon,
   .control.has-icons-left .select.is-small ~ .icon, .control.has-icons-right .input.is-small ~ .icon,
   .control.has-icons-right .select.is-small ~ .icon {
@@ -3172,7 +3172,7 @@ a.box:active {
   .control.has-icons-right .select.is-large ~ .icon {
     font-size: 1.5rem; }
   .control.has-icons-left .icon, .control.has-icons-right .icon {
-    color: #dbdbdb;
+    color: white;
     height: 2.25em;
     pointer-events: none;
     position: absolute;
@@ -7128,8 +7128,7 @@ label.panel-block {
   font-style: normal;
   src: url("../webfonts/ShareTech-Regular.ttf") format("truetype"); }
 
-.table.is-borderless td,
-th {
+.table.is-borderless td, th {
   border: 0; }
 
 .img-container {
@@ -7145,12 +7144,17 @@ th {
   vertical-align: middle; }
 
 body {
-  -webkit-app-region: drag;
   font-family: 'Share Tech', 'sans-serif';
   font-size: 18px; }
 
+::-webkit-scrollbar {
+  display: none; }
+
 button, a, input {
   -webkit-app-region: no-drag; }
+
+#title-bar {
+  -webkit-app-region: drag; }
 
 a.minimize-button:hover {
   background-color: #34a1f9;
@@ -7160,9 +7164,6 @@ a.exit-button:hover {
   background-color: #c51d1d;
   color: #363636; }
 
-::-webkit-scrollbar {
-  display: none; }
-
 .has-text-cyan {
   color: #34a1f9; }
 
@@ -7170,6 +7171,25 @@ a.exit-button:hover {
   background-color: #34a1f9;
   color: white;
   border: none; }
+
+.button.is-neon-cyan {
+  background-color: #363636;
+  border-color: #34a1f9;
+  color: #34a1f9;
+  border-width: 2px; }
+
+.button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered {
+  border-color: white; }
+
+.button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
+  background-color: #34a1f9;
+  border-color: #34a1f9;
+  color: #363636; }
+
+.input.is-neon-white {
+  background-color: #363636;
+  color: white;
+  box-shadow: none; }
 
 .horizontal-scroll {
   overflow-x: scroll;

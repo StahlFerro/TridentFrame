@@ -42,7 +42,7 @@
     <table id="master_table" class="table is-borderless is-desktop"
         style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
         <tbody>
-            <tr class="has-background-black-ter" style="height: 3%;">
+            <tr class="has-background-black-ter" style="height: 3%;" id="title-bar">
                 <td width="10%" class="is-paddingless" style="vertical-align: middle;">
                     <span style="padding-left: 10px;">TridentFrame</span>
                 </td>
@@ -85,15 +85,27 @@
                     </aside>
                 </td>
                 <td id="panel_container">
+
                     <div id="create_panel" class="container" style="padding:10px;">
                         <div class="content">
                             <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
                                 <tr>
-                                    <td>xdr</td>
+                                    <div class="field has-addons">
+                                        <div class="control has-icons-left">
+                                            <span class="icon is-small is-left">
+                                                <i class="fas fa-folder-open"></i>
+                                            </span>
+                                            <input class="input is-neon-white" type="text" placeholder="Sequence Folder">
+                                        </div>
+                                        <div class="control">
+                                            <a class="button is-neon-cyan">Choose Folder</a>
+                                        </div>
+                                    </div>                                    
                                 </tr>
                             </table>
                         </div>
                     </div>
+
                     <div id="split_panel" class="container" style="display: none; padding:5px;">
                         <div class="content">
 
@@ -144,7 +156,7 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <button class="button" id="open_image_button">Load Image</button>
+                                        <a class="button is-neon-cyan" id="open_image_button">Load Image</a>
                                     </td>
                                     <td>
                                         <!-- <input id="target_button" type="text" class="input" placeholder="Choose output folder"/> -->
@@ -152,7 +164,7 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <button class="button " id="target_dir_button">Output folder</button>
+                                        <a class="button is-neon-cyan" id="target_dir_button">Output folder</a>
                                     </td>
                                     <td>
                                         <span id="target_path" class="truncate"></span>
@@ -160,13 +172,14 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <a class="button is-link" id="split_button">SPLIT</a>
+                                        <a class="button is-neon-cyan" id="split_button">SPLIT</a>
                                     </td>
-                                    <td id="td_message_box"></td>
+                                    <td class="has-text-left" style="vertical-align: middle;" id="td_message_box"></td>
                                 </tr>
                             </table>
                         </div>
                     </div>
+
                 </td>
             </tr>
         </tbody>
