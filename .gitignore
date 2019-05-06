@@ -240,6 +240,17 @@ typings/
 
 
 
+##### Sass ignores
+
+
+
+.sass-cache/
+*.css.map
+*.sass.map
+*.scss.map
+
+
+
 ##### TridentFrame custom ignores
 
 
