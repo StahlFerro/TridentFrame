@@ -12,9 +12,10 @@ from hurry.filesize import size, alternative
 from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 
 
-def _inspect_image(image_path):
-    filename = str(os.path.basename(image_path))
-    abspath = os.path.abspath(image_path)
+def _inspect_image(animage_path):
+    """Returns information of an animted GIF/APNG"""
+    filename = str(os.path.basename(animage_path))
+    abspath = os.path.abspath(animage_path)
     workpath = os.path.dirname(abspath)
     ext = str.lower(os.path.splitext(filename)[1])
 
@@ -83,27 +84,26 @@ def _inspect_image(image_path):
     return image_info
 
 
-def _inspect_sequence(dir_path: str):
-    abspath = os.path.abspath(dir_path)
-
-    print("absolute sequence path", abspath)
-    if os.getcwd() != abspath:
-        os.chdir(abspath)
-
-    print(os.listdir("."))
-    imgs = [f for f in os.listdir('.') if '.' in f and str.lower(f.split('.')[-1]) in STATIC_IMG_EXTS]
+def _inspect_sequence(image_paths):
+    """Returns information of a selected sequence of images"""
+    abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
+    imgs = [f for f in abs_image_paths if '.' in f and str.lower(f.split('.')[-1]) in STATIC_IMG_EXTS]
+    print("imgs count", len(imgs))
+    # pprint(imgs)
     if not imgs:
-        raise Exception("Directory does not contain any PNG/JPG images!")
+        raise Exception("No images selected. Make sure the path to them are correct")
     first_img = imgs[0].split('.')[0]
-    filename = first_img.split('_')[0] if '_' in first_img else first_img.split('.')[0]
+    filename = os.path.basename(first_img.split('_')[0] if '_' in first_img else first_img)
+    # apngs = [apng for apng in (APNG.open(i) for i in imgs) if len(apng.frames) > 1]
+    # gifs = [gif for gif in (Image.open(i) for i in imgs) if gif.format == "GIF" and gif.is_animated]
+    statics = [i for i in imgs if len(APNG.open(i).frames) == 1 and Image.open(i).format != "GIF"]
+    print("statics count", len(statics))
+    # pprint(apngs)
+    # pprint(gifs)
+    # if any(APNG.open(i) for i in imgs)):
 
     sequence_info = {
         "name": filename,
         "total": len(imgs),
     }
     return sequence_info
-
-
-if __name__ == "__main__":
-    pprint(_inspect_sequence("../test"))
-
