@@ -1,15 +1,18 @@
 @charset "utf-8";
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 
-$navbar-breakpoint: 0;
-$body-background-color: $dark;
-
-$table-color: $white;
-$table-background-color: $dark;
-$table-cell-padding: 0.5em 0.3em;
-
 $cyan: #34a1f9;
 $white-d: #dddddd;
+$dark-2: #232629;
+$dark-3: #31363b;
+
+$navbar-breakpoint: 0;
+$body-background-color: $dark-3;
+
+$table-color: $white;
+$table-background-color: $dark-3;
+$table-cell-padding: 0.5em 0.3em;
+
 
 $menu-item-hover-background-color: $cyan;
 $input-icon-active-color: $white;
@@ -66,7 +69,21 @@ a.exit-button:hover {
     color: #363636;
 }
 
-.has-text-cyan {
+.has-background-dark-2 {
+    background-color: $dark-2;
+}
+.has-background-dark-3 {
+    background-color: $dark-3;
+}
+
+.is-dark-2 {
+    color: $dark-2;
+}
+.is-dark-3 {
+    color: $dark-3;
+}
+
+.is-cyan {
     color: $cyan;
 }
 
@@ -77,7 +94,7 @@ a.exit-button:hover {
 }
 
 .button.is-neon-cyan{
-    background-color: $dark;
+    background-color: $dark-3;
     color: $cyan;
     border: 2px solid $cyan;
 }
@@ -87,11 +104,11 @@ a.exit-button:hover {
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
     background-color: $cyan;
     border-color: $cyan;
-    color: $dark;
+    color: $dark-3;
 }
 
 .input.is-neon-white{
-    background-color: $dark;
+    background-color: $dark-3;
     color: $white;
     box-shadow: none;
     border: 2px solid $white;

@@ -1,8 +1,9 @@
-console.log("splitfragment.js loaded!");
+console.log('splitfragment.js loaded!');
 const { dialog } = require('electron').remote
 const { client } = require("./renderer.js");
 
 let open_image_button = document.querySelector('#open_image_button')
+let clear_image_button = document.querySelector('#clear_image_button')
 let target_dir_button = document.querySelector('#target_dir_button')
 let split_button = document.querySelector('#split_button')
 
@@ -12,12 +13,12 @@ let image_path = document.querySelector('#image_path')
 let target_path = document.querySelector('#target_path')
 
 let info_header = document.querySelector('#info_header')
-let td_fname = document.querySelector('#td_fname')
-let td_dimens = document.querySelector('#td_dimens')
-let td_fsize = document.querySelector('#td_fsize')
-let td_fcount = document.querySelector('#td_fcount')
-let td_fps = document.querySelector('#td_fps')
-let td_loopdur = document.querySelector('#td_loopdur')
+let aimg_name = document.querySelector('#aimg_name')
+let aimg_dimens = document.querySelector('#aimg_dimens')
+let aimg_file_size = document.querySelector('#aimg_file_size')
+let aimg_frame_count = document.querySelector('#aimg_frame_count')
+let aimg_fps = document.querySelector('#aimg_fps')
+let aimg_duration = document.querySelector('#aimg_duration')
 
 let td_message_box = document.querySelector('#td_message_box')
 
@@ -45,19 +46,31 @@ open_image_button.addEventListener("click", () => {
             msg_error(error);
         } else {
             console.log(res)
-            td_fname.innerHTML = res.name
+            aimg_name.innerHTML = res.name
             info_header.innerHTML = `${res.extension} Information`
-            td_fsize.innerHTML = `${res.fsize}`
-            td_fcount.innerHTML = res.frame_count
-            td_fps.innerHTML = res.fps
-            td_dimens.innerHTML = `${res.width} x ${res.height}`
-            td_loopdur.innerHTML = `${res.loop_duration} seconds`
+            aimg_file_size.innerHTML = `${res.fsize}`
+            aimg_frame_count.innerHTML = res.frame_count
+            aimg_fps.innerHTML = res.fps
+            aimg_dimens.innerHTML = `${res.width} x ${res.height}`
+            aimg_duration.innerHTML = `${res.loop_duration} seconds`
             image_stage.src = res.absolute_url
             image_path.value = res.absolute_url
             msg_clear();
         }
     })
     console.log('registered!');
+});
+
+clear_image_button.addEventListener('click', () => {
+    aimg_name.innerHTML = '-'
+    info_header.innerHTML = 'Information'
+    aimg_file_size.innerHTML = '-'
+    aimg_frame_count.innerHTML = '-'
+    aimg_fps.innerHTML = '-'
+    aimg_dimens.innerHTML = '-'
+    aimg_duration.innerHTML = '-'
+    image_stage.src = ''
+    image_path.value = ''
 });
 
 target_dir_button.addEventListener('click', () => {
@@ -80,25 +93,25 @@ split_button.addEventListener('click', () => {
             msg_error(error);
         } else {
             if (res){
-                msg_success("GIF now splitted! Check the output directory");
+                msg_success('GIF splitted successfully!!1 Check the output directory');
             }
         }
-        split_button.classList.remove("is-loading");
+        split_button.classList.remove('is-loading');
     })
 });
 
 function msg_clear() {
     td_message_box.classList.remove('has-text-danger');
-    td_message_box.innerHTML = "";
+    td_message_box.innerHTML = '';
 }
 
 function msg_error(text) {
-    td_message_box.classList.add("has-text-danger");
+    td_message_box.classList.add('has-text-danger');
     td_message_box.innerHTML = text;
 }
 
 function msg_success(text) {
-    td_message_box.classList.add("has-text-success");
+    td_message_box.classList.add('has-text-success');
     td_message_box.innerHTML = text;
 }
 

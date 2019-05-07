@@ -42,7 +42,7 @@
     <table id="master_table" class="table is-borderless is-desktop"
         style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
         <tbody>
-            <tr class="has-background-black-ter" style="height: 3%;" id="title-bar">
+            <tr class="has-background-dark-2" style="height: 3%;" id="title-bar">
                 <td width="10%" class="is-paddingless" style="vertical-align: middle;">
                     <span style="padding-left: 10px;">TridentFrame</span>
                 </td>
@@ -67,7 +67,7 @@
                 </td>
             </tr>
             <tr>
-                <td class="has-background-dark">
+                <td class="has-background-dark-2">
                     <aside class="menu has-text-centered" style="margin: 0;">
                         <ul class="menu-list">
                             <li><a id="create_menu">
@@ -89,7 +89,7 @@
 
                     <div id="create_panel" class="container" style="padding:10px;">
                         <div class="content">
-                            <table class="table is-borderless" style="overflow: scroll; padding: 5px;" width="100%">
+                            <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
                                     <td colspan="2">
                                         <div class="field has-addons">
@@ -114,19 +114,20 @@
                                             <div class="control">
                                                 <div class="select">
                                                     <select>
-                                                        <option>Select dropdown</option>
-                                                        <option>With options</option>
+                                                        <option>GIF</option>
+                                                        <option>APNG</option>
                                                     </select>
                                                 </div>
                                             </div>
                                         </div>
                                     </td>
+                                    <td></td>
                                 </tr>
                             </table>
                         </div>
                     </div>
 
-                    <div id="split_panel" class="container" style="display: none; padding:5px;">
+                    <div id="split_panel" class="container" style="display: none; padding:10px;">
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
@@ -146,28 +147,28 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td class="has-text-cyan" width="35%">Name</td>
-                                                    <td width="65%" id="td_fname">-</td>
+                                                    <td class="is-cyan" width="35%">Name</td>
+                                                    <td width="65%" id="aimg_name">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="has-text-cyan">Dimensions</td>
-                                                    <td id="td_dimens">-</td>
+                                                    <td class="is-cyan">Dimensions</td>
+                                                    <td id="aimg_dimens">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="has-text-cyan">File Size</td>
-                                                    <td id="td_fsize">-</td>
+                                                    <td class="is-cyan">File Size</td>
+                                                    <td id="aimg_file_size">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="has-text-cyan">Frame count</td>
-                                                    <td id="td_fcount">-</td>
+                                                    <td class="is-cyan">Frame count</td>
+                                                    <td id="aimg_frame_count">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="has-text-cyan">FPS</td>
-                                                    <td id="td_fps">-</td>
+                                                    <td class="is-cyan">FPS</td>
+                                                    <td id="aimg_fps">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="has-text-cyan">Loop duration</td>
-                                                    <td id="td_loopdur">-</td>
+                                                    <td class="is-cyan">Loop duration</td>
+                                                    <td id="aimg_duration">-</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -176,6 +177,7 @@
                                 <tr>
                                     <td class="has-text-centered">
                                         <a class="button is-neon-cyan" id="open_image_button">Load Image</a>
+                                        <a class="button is-neon-cyan" id="clear_image_button">Clear Image</a>
                                     </td>
                                     <td>
                                         <!-- <input id="target_button" type="text" class="input" placeholder="Choose output folder"/> -->

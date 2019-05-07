@@ -31,4 +31,8 @@ A graphical UI is currently under development, and will replace it's command lin
 *   [Pillow](https://python-pillow.org/) : Image parsing library
 *   [pyAPNG](https://github.com/eight04/pyAPNG) : APNG parsing
 
-Note: `npm rebuild zeromq --runtime=electron --target=1.8.8`
+Notes: 
+
+ZeroMQ fix: `npm rebuild zeromq --runtime=electron --target=1.8.8`
+
+CSS auto-buiild: `npm run css-watch`
