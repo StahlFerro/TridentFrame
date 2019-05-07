@@ -2,7 +2,7 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 
 $cyan: #34a1f9;
-$white-d: #dddddd;
+$white-d: #30aa22;
 $dark-2: #232629;
 $dark-3: #31363b;
 
@@ -137,9 +137,11 @@ a.exit-button:hover {
 .is-dark-3 {
     color: $dark-3;
 }
-
 .is-cyan {
     color: $cyan;
+}
+.is-white-d {
+    color: $white-d;
 }
 
 .button.is-cyan {
@@ -162,16 +164,14 @@ a.exit-button:hover {
     color: $dark-3;
 }
 
-.input.is-neon-white{
+.is-neon-white{
     background-color: $dark-3;
-    color: $white;
+    color: $white-d;
     box-shadow: none;
-    border: 2px solid $white;
-    border-right: none;
+    border: 2px solid $white-d;
 }
-.input.is-neon-white:hover{
-    border: 2px solid $white;
-    border-right: none;
+.is-neon-white:hover{
+    border: 2px solid $white-d;
 }
 
 // .td.white-box {

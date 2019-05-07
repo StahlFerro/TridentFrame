@@ -7200,6 +7200,9 @@ a.exit-button:hover {
 .is-cyan {
   color: #34a1f9; }
 
+.is-white-d {
+  color: #30aa22; }
+
 .button.is-cyan {
   background-color: #34a1f9;
   color: white;
@@ -7218,16 +7221,14 @@ a.exit-button:hover {
   border-color: #34a1f9;
   color: #31363b; }
 
-.input.is-neon-white {
+.is-neon-white {
   background-color: #31363b;
-  color: white;
+  color: #30aa22;
   box-shadow: none;
-  border: 2px solid white;
-  border-right: none; }
+  border: 2px solid #30aa22; }
 
-.input.is-neon-white:hover {
-  border: 2px solid white;
-  border-right: none; }
+.is-neon-white:hover {
+  border: 2px solid #30aa22; }
 
 .truncate {
   display: inline-block;
@@ -7238,4 +7239,4 @@ a.exit-button:hover {
   overflow: hidden; }
 
 ::placeholder {
-  color: #dddddd; }
+  color: #30aa22; }

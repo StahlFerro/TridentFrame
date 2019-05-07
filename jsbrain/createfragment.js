@@ -4,6 +4,7 @@ const { client } = require("./renderer.js");
 
 let sequence_carousel = document.getElementById('sequence_carousel')
 let load_imgs_button = document.getElementById('load_imgs_button')
+let clear_imgs_button = document.getElementById('clear_imgs_button')
 let sequence_dir = document.getElementById("sequence_dir")
 
 let extension_filters = [
@@ -33,4 +34,8 @@ load_imgs_button.addEventListener("click", () => {
         }
     })
     // msg_clear();
+});
+
+clear_imgs_button.addEventListener('click', () => {
+    sequence_carousel.innerHTML = ''
 });
