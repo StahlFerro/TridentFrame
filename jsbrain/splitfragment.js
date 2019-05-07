@@ -2,8 +2,8 @@ console.log('splitfragment.js loaded!');
 const { dialog } = require('electron').remote
 const { client } = require("./renderer.js");
 
-let open_image_button = document.querySelector('#open_image_button')
-let clear_image_button = document.querySelector('#clear_image_button')
+let open_aimg_button = document.querySelector('#open_aimg_button')
+let clear_aimg_button = document.querySelector('#clear_aimg_button')
 let target_dir_button = document.querySelector('#target_dir_button')
 let split_button = document.querySelector('#split_button')
 
@@ -27,17 +27,17 @@ let extension_filters = [
     { name: 'Images', extensions: ['png', 'gif'] },
 ]
 
-let file_dialog_prop = ['openfile']
-let dir_dialog_prop = ['openDirectory']
+let file_dialog_props = ['openfile']
+let dir_dialog_props = ['openDirectory', 'createDirectory']
 
 
 // function registerListeners() {
-//     open_image_button.addEventListener("click", openImage);
+//     open_aimg_button.addEventListener("click", openImage);
 //     console.log("registerListener called");
 // }
 
-open_image_button.addEventListener("click", () => {
-    var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: file_dialog_prop })
+open_aimg_button.addEventListener("click", () => {
+    var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: file_dialog_props })
     console.log(`chosen path: ${chosen_path}`)
     if (chosen_path === undefined) {return}
     client.invoke("inspect_image", chosen_path[0], (error, res) => {
@@ -61,7 +61,7 @@ open_image_button.addEventListener("click", () => {
     console.log('registered!');
 });
 
-clear_image_button.addEventListener('click', () => {
+clear_aimg_button.addEventListener('click', () => {
     aimg_name.innerHTML = '-'
     info_header.innerHTML = 'Information'
     aimg_file_size.innerHTML = '-'
@@ -75,7 +75,7 @@ clear_image_button.addEventListener('click', () => {
 });
 
 target_dir_button.addEventListener('click', () => {
-    var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_prop });
+    var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
     target_path.innerHTML = choosen_dir;

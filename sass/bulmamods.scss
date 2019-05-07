@@ -49,9 +49,64 @@ body {
     font-size: 18px;
 }
 
-::-webkit-scrollbar {
+.no-scroll::-webkit-scrollbar {
     display: none;
 }
+
+// $finalHeight: 250px;
+// $finalWidth: 3 * $finalHeight;
+// $scrollBarHeight: 1px;
+
+.horizontal-scroll-train {
+    display:inline-block;
+    height: 200px;
+    width: 100%;
+}
+.carousel {
+    width: 100%;
+    height: 170px;
+    
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.carousel-slide {
+    display: inline;
+}
+
+// ::-webkit-scrollbar {
+//   width: $scrollBarHeight;
+//   height: $scrollBarHeight;
+// }
+// ::-webkit-scrollbar-button {
+//     width: $scrollBarHeight;
+//     height: $scrollBarHeight;
+// }
+
+// .horizontal-scroll-wrapper {
+//     width: 150px;
+//     height: 300px;
+//     overflow-y: auto;
+//     overflow-x: hidden;
+//     transform:rotate(-90deg) translateY(-100px);
+//     transform-origin: right top;
+// }
+// .horizontal-scroll-wrapper > div {
+//     // width: 100px;
+//     // height: 100px;
+//     transform: rotate(90deg);
+//     transform-origin: right top;
+// }
+
+::-webkit-scrollbar {
+    width: 7px;
+}
+   
+::-webkit-scrollbar-thumb {
+    background: #666; 
+}
+
 button, a, input {
     -webkit-app-region: no-drag;
 }
@@ -124,10 +179,10 @@ a.exit-button:hover {
 //     border: 1px solid $white-d;
 // }
 
-.horizontal-scroll {
-    overflow-x: scroll;
-    white-space: nowrap;
-}
+// .horizontal-scroll {
+//     overflow-x: scroll;
+//     white-space: nowrap;
+// }
 
 .truncate {
     display: inline-block;
