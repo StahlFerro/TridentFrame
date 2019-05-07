@@ -106,5 +106,6 @@ def _inspect_sequence(image_paths):
     sequence_info = {
         "name": filename,
         "total": len(imgs),
+        "sequences": statics,
     }
     return sequence_info

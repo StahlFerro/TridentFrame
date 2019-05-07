@@ -38,8 +38,10 @@
         </div>
     </div>
 </nav> -->
+    <!-- <script src="jsbrain/dragdropcarousel.js" type="text/javascript">
+    </script> -->
 
-    <table id="master_table" class="table is-borderless is-desktop"
+    <table id="main_table" class="table is-borderless is-desktop"
         style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
         <tbody>
             <tr class="has-background-dark-2" style="height: 3%;" id="title-bar">
@@ -72,11 +74,11 @@
                         <ul class="menu-list">
                             <li><a id="create_menu">
                                     <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
-                                    <span class="has-text-white">Create</span>
+                                    <p>Create</p>
                                 </a></li>
                             <li><a id="split_menu">
                                     <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
-                                    <span class="has-text-white">Split</span>
+                                    <span style="color: blue;">Split</span>
                                 </a></li>
                             <!-- <li><a id="" class="red-bg-hover">
                                     <span class="icon is-large"><i class="fas fa-power-off fa-2x fa-inverse"></i></span>
@@ -89,18 +91,25 @@
 
                     <div id="create_panel" class="container" style="padding:10px;">
                         <div class="content">
-                            <table class="table is-borderless" style="padding: 5px;" width="100%">
+                            <table class="table" style="padding: 5px;" width="100%">
                                 <tr>
+                                    <td width="75%">
+                                        <table class="table" style="height:480px; border: 2px solid rebeccapurple !important; border-collapse: collapse;">
+                                        </table>
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="has-text-centered">
+                                        <a id="load_imgs_button" class="button is-neon-cyan">Choose Images</a>
+                                        <a id="clear_imgs_button" class="button is-neon-white">Clear Images</a>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
                                     <td colspan="4">
                                         <div class="field has-addons">
-                                            <div class="control is-expanded">
-                                                <!-- <div class="control has-icons-left"> -->
-                                                <!-- <span class="icon is-small is-left">
-                                                                    <i class="fas fa-folder-open"></i>
-                                                                </span> -->
-                                                <input id="sequence_dir" value="" class="input is-neon-white"
-                                                    type="text" placeholder="Sequence Folder" readonly>
-                                            </div>
                                             <div class="control">
                                                 <a id="load_imgs_button" class="button is-neon-cyan">Choose Images</a>
                                             </div>
@@ -113,31 +122,32 @@
                                 <tr>
                                     <td colspan="4">
                                         <div id="sequence_carousel" class="carousel">
-                                            <!-- <div class="carousel-slide">
-                                                <img class="carousel-img" src="imgs/fortfade.png_040.png" width="150px" height="150px"/>
+                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                1 <img class="carousel-img" src="imgs/fortfade.png_040.png" width="150px" height="150px"
+                                                draggable="true" ondragstart="drag(event)"/> 
                                             </div>
-                                            <div class="carousel-slide">
-                                                <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px">
+                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                2 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px" draggable="true" ondragstart="drag(event)"/> 
                                             </div>
-                                            <div class="carousel-slide">
+                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                3 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
+                                            </div>
+                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                4 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
+                                            </div>
+                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                                5 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
+                                            </div>
+                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
                                                 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
                                             </div>
-                                            <div class="carousel-slide">
-                                                <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
-                                            </div>
-                                            <div class="carousel-slide">
-                                                <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
-                                            </div>
-                                            <div class="carousel-slide">
-                                                <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
-                                            </div> -->
                                         </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td width="25%">
                                         <div class="field">
-                                            <label class="label has-text-white">FPS</label>
+                                            <label class="label">FPS</label>
                                             <div class="control">
                                                 <input class="input" type="number"/>
                                             </div>
@@ -145,7 +155,7 @@
                                     </td>
                                     <td width="25%">
                                         <div class="field">
-                                            <label class="label has-text-white">Format</label>
+                                            <label class="label">Format</label>
                                             <div class="control">
                                                 <div class="select is-info">
                                                     <select>
@@ -157,16 +167,15 @@
                                         </div>
                                     </td>
                                     <td width="25%">
-                                        <label class="checkbox is-inverted">
-                                            <input type="checkbox"/>
-                                            Reverse
+                                        <label class="label">Reverse</label>
+                                        <label class="checkbox">
+                                            <input class="checkbox" type="checkbox"/>
                                         </label>
                                     </td>
                                     <td width="25%">
                                         
                                     </td>
-                                    
-                                </tr>
+                                </tr> -->
                             </table>
                         </div>
                     </div>
@@ -175,18 +184,17 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td style="text-align: center; border: 2px solid #dddddd;" width="40%">
-                                        <div class="img-container"><span class="helper"></span><img id="image_stage"
-                                                src="" /></div>
+                                    <td class="aimg-cell" width="40%">
+                                        <div class="img-container"><span class="helper"></span><img id="image_stage"src="" /></div>
                                         <input id="image_path" name="imgpath_field" type="hidden" value="" />
                                     </td>
                                     <td width="60%" padding="0">
                                         <table class="table" width="100%">
                                             <thead>
                                                 <tr>
-                                                    <th class="has-text-white" id="info_header" colspan="2"
-                                                        style="text-align: left;">
-                                                        Information</th>
+                                                    <th colspan="2">
+                                                        <p id="info_header">Information</p>
+                                                    </th>
                                                 </tr>
                                             </thead>
                                             <tbody>

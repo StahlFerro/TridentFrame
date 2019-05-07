@@ -3158,7 +3158,7 @@ a.box:active {
   .control.has-icons-left .input:focus ~ .icon,
   .control.has-icons-left .select:focus ~ .icon, .control.has-icons-right .input:focus ~ .icon,
   .control.has-icons-right .select:focus ~ .icon {
-    color: white; }
+    color: #30aa22; }
   .control.has-icons-left .input.is-small ~ .icon,
   .control.has-icons-left .select.is-small ~ .icon, .control.has-icons-right .input.is-small ~ .icon,
   .control.has-icons-right .select.is-small ~ .icon {
@@ -3172,7 +3172,7 @@ a.box:active {
   .control.has-icons-right .select.is-large ~ .icon {
     font-size: 1.5rem; }
   .control.has-icons-left .icon, .control.has-icons-right .icon {
-    color: white;
+    color: #30aa22;
     height: 2.25em;
     pointer-events: none;
     position: absolute;
@@ -3479,7 +3479,7 @@ a.box:active {
 
 .table {
   background-color: #31363b;
-  color: white; }
+  color: #30aa22; }
   .table td,
   .table th {
     border: 1px solid #dbdbdb;
@@ -7138,6 +7138,15 @@ label.panel-block {
   text-align: center;
   display: inline-block; }
 
+p {
+  color: #30aa22 !important; }
+
+span {
+  color: #30aa22 !important; }
+
+label {
+  color: #30aa22 !important; }
+
 .helper {
   display: inline-block;
   height: 100%;
@@ -7157,13 +7166,14 @@ body {
 
 .carousel {
   width: 100%;
-  height: 170px;
+  height: 200px;
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap; }
 
 .carousel-slide {
-  display: inline; }
+  display: inline;
+  margin: 10px; }
 
 ::-webkit-scrollbar {
   width: 7px; }
@@ -7171,11 +7181,11 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #666; }
 
-button, a, input {
-  -webkit-app-region: no-drag; }
+::-webkit-scrollbar-track #title-bar {
+  -webkit-app-region: drag !important; }
 
-#title-bar {
-  -webkit-app-region: drag; }
+button, a, input {
+  -webkit-app-region: no-drag !important; }
 
 a.minimize-button:hover {
   background-color: #34a1f9;
@@ -7201,7 +7211,11 @@ a.exit-button:hover {
   color: #34a1f9; }
 
 .is-white-d {
-  color: #30aa22; }
+  color: #30aa22 !important; }
+
+.aimg-cell {
+  text-align: center !important;
+  border: 2px solid #30aa22 !important; }
 
 .button.is-cyan {
   background-color: #34a1f9;

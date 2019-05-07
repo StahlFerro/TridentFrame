@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/StahlFerro/TridentFrame#readme",
   "dependencies": {
+    "file-uri-to-path": "^1.0.0",
     "jquery": "^3.4.0",
     "jsdom": "^15.0.0",
     "tar": "^4.4.8",

@@ -9,14 +9,14 @@ $dark-3: #31363b;
 $navbar-breakpoint: 0;
 $body-background-color: $dark-3;
 
-$table-color: $white;
+$table-color: $white-d;
 $table-background-color: $dark-3;
 $table-cell-padding: 0.5em 0.3em;
 
 
 $menu-item-hover-background-color: $cyan;
-$input-icon-active-color: $white;
-$input-icon-color: $white;
+$input-icon-active-color: $white-d;
+$input-icon-color: $white-d;
 
 @import "../node_modules/bulma/bulma.sass";
 
@@ -37,6 +37,13 @@ $input-icon-color: $white;
     text-align: center;
     display: inline-block;
 }
+
+// Color overrides for common text tags
+p { color: $white-d !important; }
+span { color: $white-d !important; }
+label { color: $white-d !important; }
+
+
 .helper {
     display: inline-block;
     height: 100%;
@@ -64,40 +71,16 @@ body {
 }
 .carousel {
     width: 100%;
-    height: 170px;
+    height: 200px;
     
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
 }
-
 .carousel-slide {
     display: inline;
+    margin: 10px;
 }
-
-// ::-webkit-scrollbar {
-//   width: $scrollBarHeight;
-//   height: $scrollBarHeight;
-// }
-// ::-webkit-scrollbar-button {
-//     width: $scrollBarHeight;
-//     height: $scrollBarHeight;
-// }
-
-// .horizontal-scroll-wrapper {
-//     width: 150px;
-//     height: 300px;
-//     overflow-y: auto;
-//     overflow-x: hidden;
-//     transform:rotate(-90deg) translateY(-100px);
-//     transform-origin: right top;
-// }
-// .horizontal-scroll-wrapper > div {
-//     // width: 100px;
-//     // height: 100px;
-//     transform: rotate(90deg);
-//     transform-origin: right top;
-// }
 
 ::-webkit-scrollbar {
     width: 7px;
@@ -107,11 +90,13 @@ body {
     background: #666; 
 }
 
-button, a, input {
-    -webkit-app-region: no-drag;
-}
+::-webkit-scrollbar-track 
+
 #title-bar {
-    -webkit-app-region: drag;
+    -webkit-app-region: drag !important;
+}
+button, a, input {
+    -webkit-app-region: no-drag !important;
 }
 
 a.minimize-button:hover {
@@ -141,7 +126,12 @@ a.exit-button:hover {
     color: $cyan;
 }
 .is-white-d {
-    color: $white-d;
+    color: $white-d !important;
+}
+
+.aimg-cell {
+    text-align: center !important; 
+    border: 2px solid $white-d !important;
 }
 
 .button.is-cyan {
