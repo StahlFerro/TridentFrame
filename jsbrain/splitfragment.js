@@ -71,6 +71,7 @@ clear_image_button.addEventListener('click', () => {
     aimg_duration.innerHTML = '-'
     image_stage.src = ''
     image_path.value = ''
+    msg_clear();
 });
 
 target_dir_button.addEventListener('click', () => {

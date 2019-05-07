@@ -35,4 +35,4 @@ Notes:
 
 ZeroMQ fix: `npm rebuild zeromq --runtime=electron --target=1.8.8`
 
-CSS auto-buiild: `npm run css-watch`
+CSS auto-build: `npm run css-watch`
