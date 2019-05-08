@@ -7192,7 +7192,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #666; }
 
-::-webkit-scrollbar-track #title-bar {
+::-webkit-scrollbar-track .frame-title-bar {
   -webkit-app-region: drag !important; }
 
 button, a, input {
