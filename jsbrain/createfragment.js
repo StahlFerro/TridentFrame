@@ -3,7 +3,7 @@ const { dialog } = require('electron').remote
 const { client } = require("./renderer.js");
 window.$ = window.jQuery = require('jquery');
 
-let sequence_carousel = document.getElementById('sequence_carousel')
+// let sequence_carousel = document.getElementById('sequence_carousel')
 let sequences = null;
 let load_imgs_button = document.getElementById('load_imgs_button')
 let clear_imgs_button = document.getElementById('clear_imgs_button')

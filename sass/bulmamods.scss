@@ -82,6 +82,19 @@ body {
     margin: 10px;
 }
 
+.sequence-grid tbody {
+    height:400px;
+    border: 2px solid rebeccapurple !important;
+    border-collapse: collapse;
+    overflow: auto;
+    display: block;
+}
+
+.sequence-grid thead tr{
+    display: block;
+    border: 2px solid rebeccapurple !important;
+}
+
 ::-webkit-scrollbar {
     width: 7px;
 }
