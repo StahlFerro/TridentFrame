@@ -82,8 +82,22 @@ target_dir_button.addEventListener('click', () => {
     msg_clear();
 });
 
+function activate_buttons () {
+    open_aimg_button.classList.remove('is-static')
+    clear_aimg_button.classList.remove('is-static')
+    target_dir_button.classList.remove('is-static')
+
+}
+
+function deactivate_buttons () {
+    open_aimg_button.classList.add('is-static')
+    clear_aimg_button.classList.add('is-static')
+    target_dir_button.classList.add('is-static')
+}
+
 split_button.addEventListener('click', () => {
     msg_clear();
+    deactivate_buttons();
     split_button.classList.add("is-loading");
     var img_path = image_path.value;
     var out_path = target_path.innerHTML;
@@ -98,6 +112,7 @@ split_button.addEventListener('click', () => {
             }
         }
         split_button.classList.remove('is-loading');
+        activate_buttons();
     })
 });
 

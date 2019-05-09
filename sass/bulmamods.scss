@@ -2,7 +2,7 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 
 $cyan: #34a1f9;
-$white-d: #30aa22;
+$white-d: #dddddd;
 $dark-2: #232629;
 $dark-3: #31363b;
 
@@ -83,8 +83,8 @@ body {
 }
 
 .sequence-grid tbody {
-    height:400px;
-    border: 2px solid rebeccapurple !important;
+    height:500px;
+    // border: 2px solid rebeccapurple !important;
     border-collapse: collapse;
     overflow: auto;
     display: block;
@@ -92,13 +92,19 @@ body {
 
 .sequence-grid tr{
     display: block;
-    border: 2px solid rebeccapurple !important;
+    // border: 2px solid rebeccapurple !important;
+    // border-collapse: collapse;
 }
 .sequence-grid td {
     border: 2px solid rebeccapurple !important;
+    border-collapse: collapse;
     padding: 3px !important;
-    width: 20%;
-    height: 100px;
+    width: 120px;
+    height: 120px;
+}
+
+.control-cell td {
+    
 }
 
 ::-webkit-scrollbar {
@@ -106,7 +112,7 @@ body {
 }
    
 ::-webkit-scrollbar-thumb {
-    background: #666; 
+    background: #777; 
 }
 
 

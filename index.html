@@ -92,7 +92,7 @@
                         <div class="content">
                             <table class="table" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td width="65%">
+                                    <td id="sequence_cell" class="is-paddingless" width="610px;">
                                         <table class="sequence-grid is-paddingless" width="100%">
                                             <!-- <thead>
                                                 <tr>
@@ -103,7 +103,7 @@
                                                     <th width="20%">head5</th>
                                                 </tr>
                                             </thead> -->
-                                            <tbody width="100%">
+                                            <tbody>
                                                 <tr>
                                                     <td><img src="http://placehold.it/300x150"/></td>
                                                     <td><img src="http://placehold.it/300x150"/></td>
@@ -117,12 +117,25 @@
                                                     <td></td>
                                                     <td></td>
                                                     <td></td>
-                                                </tr>
+                                                </tr>                                                                                                                                                                                                                                                                                                           
                                             </tbody>
                                         </table>
                                     </td>
-                                    <td width="35%">
-                                        <p>|||| limit</p>
+                                    <td id="control_cell" class="is-paddingless">
+                                        <table class="table">
+                                            <tr><td>                                                    
+                                                <div class="field">
+                                                    <label class="label">Output name</label>
+                                                    <div class="control"><input class="input" type="text"/></div>
+                                                </div>
+                                            </td></tr>
+                                            <tr><td>
+                                                <div class="field">
+                                                    <label class="label">FPS</label>
+                                                    <div class="control"><input class="input" type="number"/></div>
+                                                </div>
+                                            </td></tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr>
@@ -210,7 +223,7 @@
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
                                     <td class="aimg-cell" width="40%">
-                                        <div class="img-container"><span class="helper"></span><img id="image_stage"src="" /></div>
+                                        <div class="aimg-container"><span class="helper"></span><img id="image_stage"src="" /></div>
                                         <input id="image_path" name="imgpath_field" type="hidden" value="" />
                                     </td>
                                     <td width="60%" padding="0">
