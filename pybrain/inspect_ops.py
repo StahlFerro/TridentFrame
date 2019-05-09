@@ -25,7 +25,7 @@ def _inspect_image(animage_path):
 
     frame_count = 0
     fps = 0
-    delay = 0
+    avg_delay = 0
     fsize = size(os.stat(filename).st_size, system=alternative)
     # fsize = 0
     width = height = 0
@@ -48,7 +48,6 @@ def _inspect_image(animage_path):
             delays.append(gif.info['duration'])
         avg_delay = sum(delays) / len(delays)
         fps = round(1000.0 / avg_delay, 3)
-        delay = avg_delay
         loop_duration = round(frame_count / fps, 3)
         extension = 'GIF'
 
