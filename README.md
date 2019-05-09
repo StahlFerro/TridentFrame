@@ -1,38 +1,22 @@
 # TridentFrame
 
-A python command-line tool made to assist on GIF/APNG splitting/building, sequential file renaming, 
-and perhaps more tools in the future.
+The cross-platform desktop swiss-army knife for GIFs and APNGs. Create, split, convert or alter GIFs and animated PNGs with easy-to-use-but-powerful-when-needed controls.
 
-A graphical UI is currently under development, and will replace it's command line interface once it's finished
+<aside class="warning">
+The app is currently under rigorous daily development and is incomplete. Clone it at your own risk. All feedbacks appreciated
+</aside>
 
-### Available subcommands
-1.  `rename`  
-    Renames multiple images with incrementing sequence numbers, in the same folder it's executed.
-    
-2.  `split`  
-    Splits an animated GIF into a directory of PNG frames.  
-    Example:  
-    ```
-    python3.7 tridentframe.py split sodis.gif
-    ```
-    The directory will be created in the same folder containing the gif
-
-3.  `compose`  
-    Creates an animated GIF out of a directory of PNG frames.  
-    Example:  
-    ```
-    python3.7 tridentframe.py compose animation/
-    ```
-    Where `animation` is the name of the directory containing the image frames. The resulting GIF 
-    will have its frames ordered from their names alphabetically.
+TridentFrame consists of two main parts. The python backend handling image processing, and the web frontend (HTML-CSS-JS) for the UI, image previews and input controls.
 
 ### Built with
-*   [Click](http://click.palletsprojects.com/en/7.x/) : CLI interface
+*   [Electron](https://electronjs.org/) : Main framework
 *   [Pillow](https://python-pillow.org/) : Image parsing library
 *   [pyAPNG](https://github.com/eight04/pyAPNG) : APNG parsing
+*   [jQuery](http://jquery.com/) : Menu handling
+*   [zeroRPC](https://www.zerorpc.io/) : Connecting the python backend to the electron frontend
+*   [Bulma](https://bulma.io/) : For the pretty and clean UI
 
-Notes: 
+Devnotes: 
 
 ZeroMQ fix: `npm rebuild zeromq --runtime=electron --target=1.8.8`
-
 CSS auto-build: `npm run css-watch`
