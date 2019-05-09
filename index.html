@@ -226,7 +226,7 @@
                                         <div class="aimg-container"><span class="helper"></span><img id="image_stage"src="" /></div>
                                         <input id="image_path" name="imgpath_field" type="hidden" value="" />
                                     </td>
-                                    <td width="60%" padding="0">
+                                    <td width="60%" class="is-paddingless">
                                         <table class="table" width="100%">
                                             <thead>
                                                 <tr>
@@ -249,12 +249,16 @@
                                                     <td id="aimg_file_size">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">Frame count</td>
+                                                    <td class="is-cyan">Total frames</td>
                                                     <td id="aimg_frame_count">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">FPS</td>
+                                                    <td class="is-cyan">Frame rate</td>
                                                     <td id="aimg_fps">-</td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="is-cyan">Frame delay</td>
+                                                    <td id="aimg_frame_delay"></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan">Loop duration</td>
@@ -270,16 +274,23 @@
                                         <a class="button is-neon-cyan" id="clear_aimg_button">Clear Image</a>
                                     </td>
                                     <td>
-                                        <!-- <input id="target_button" type="text" class="input" placeholder="Choose output folder"/> -->
+                                        <div class="field has-addons">
+                                            <div class="control is-expanded">
+                                              <input id="target_path" class="input is-neon-white" type="text" placeholder="Find a repository" readonly/>
+                                            </div>
+                                            <div class="control">
+                                                <a class="button is-neon-cyan" id="target_dir_button">Output folder</a>
+                                            </div>
+                                          </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="has-text-centered">
+                                    <!-- <td class="has-text-centered">
                                         <a class="button is-neon-cyan" id="target_dir_button">Output folder</a>
                                     </td>
                                     <td>
                                         <span id="target_path" class="truncate"></span>
-                                    </td>
+                                    </td> -->
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">

@@ -1,5 +1,5 @@
 console.log('splitfragment.js loaded!');
-const { dialog } = require('electron').remote
+const { dialog } = require('electron').remote;
 const { client } = require("./renderer.js");
 
 let open_aimg_button = document.querySelector('#open_aimg_button')
@@ -18,6 +18,7 @@ let aimg_dimens = document.querySelector('#aimg_dimens')
 let aimg_file_size = document.querySelector('#aimg_file_size')
 let aimg_frame_count = document.querySelector('#aimg_frame_count')
 let aimg_fps = document.querySelector('#aimg_fps')
+let aimg_frame_delay = document.querySelector('#aimg_frame_delay')
 let aimg_duration = document.querySelector('#aimg_duration')
 
 let td_message_box = document.querySelector('#td_message_box')
@@ -49,9 +50,10 @@ open_aimg_button.addEventListener("click", () => {
             aimg_name.innerHTML = res.name
             info_header.innerHTML = `${res.extension} Information`
             aimg_file_size.innerHTML = `${res.fsize}`
-            aimg_frame_count.innerHTML = res.frame_count
-            aimg_fps.innerHTML = res.fps
+            aimg_frame_count.innerHTML = `${res.frame_count} frames`
+            aimg_fps.innerHTML = `${res.fps} fps`
             aimg_dimens.innerHTML = `${res.width} x ${res.height}`
+            aimg_frame_delay.innerHTML = `${res.avg_delay} seconds`
             aimg_duration.innerHTML = `${res.loop_duration} seconds`
             image_stage.src = res.absolute_url
             image_path.value = res.absolute_url
@@ -78,7 +80,7 @@ target_dir_button.addEventListener('click', () => {
     var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
-    target_path.innerHTML = choosen_dir;
+    target_path.value = choosen_dir;
     msg_clear();
 });
 
@@ -100,7 +102,7 @@ split_button.addEventListener('click', () => {
     deactivate_buttons();
     split_button.classList.add("is-loading");
     var img_path = image_path.value;
-    var out_path = target_path.innerHTML;
+    var out_path = target_path.value;
     console.log(`${image_path} ${out_path}`);
     client.invoke('split_image', img_path, out_path, (error, res) => {
         if (error || !res){

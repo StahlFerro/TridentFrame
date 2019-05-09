@@ -1,5 +1,6 @@
 import os
 import string
+import math
 from random import choices
 from pprint import pprint
 from urllib.parse import urlparse
@@ -24,7 +25,7 @@ def _inspect_image(animage_path):
 
     frame_count = 0
     fps = 0
-    duration = 0
+    delay = 0
     fsize = size(os.stat(filename).st_size, system=alternative)
     # fsize = 0
     width = height = 0
@@ -41,13 +42,14 @@ def _inspect_image(animage_path):
         width, height = gif.size
         frame_count = gif.n_frames
         # pprint(gif.info)
-        durations = []
+        delays = []
         for f in range(0, gif.n_frames):
             gif.seek(f)
-            durations.append(gif.info['duration'])
-        duration = sum(durations) / len(durations)
-        fps = 1000.0 / duration
-        loop_duration = frame_count / fps
+            delays.append(gif.info['duration'])
+        avg_delay = sum(delays) / len(delays)
+        fps = round(1000.0 / avg_delay, 3)
+        delay = avg_delay
+        loop_duration = round(frame_count / fps, 3)
         extension = 'GIF'
 
     elif ext == '.png':
@@ -65,14 +67,14 @@ def _inspect_image(animage_path):
         extension = 'APNG'
         width = png_one.width
         height = png_one.height
-        duration = controller_one.delay
-        fps = 1000.0 / duration
-        loop_duration = frame_count / fps
+        avg_delay = sum([f[1].delay for f in frames]) / frame_count
+        fps = round(1000.0 / avg_delay, 3)
+        loop_duration = round(frame_count / fps, 3)
 
     image_info = {
         "name": filename,
         "fps": fps,
-        "duration": duration,
+        "avg_delay": avg_delay / 1000,
         "fsize": fsize,
         "extension": extension,
         "frame_count": frame_count,

@@ -42,6 +42,10 @@ clear_imgs_button.addEventListener('click', () => {
     // sequence_carousel.innerHTML = ''
 });
 
+function quintcell_generator(paths) {
+
+}
+
 // (function () {
 //     function scrollHorizontally(e) {
 //         e = window.event || e;

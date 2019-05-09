@@ -7131,7 +7131,7 @@ label.panel-block {
 .table.is-borderless td, th {
   border: 0; }
 
-.img-container {
+.aimg-container {
   height: 300px;
   width: 300px;
   overflow: hidden;
@@ -7260,6 +7260,12 @@ a.exit-button:hover {
 .is-neon-white:hover {
   border: 2px solid #dddddd; }
 
+.is-neon-white:focus {
+  border: 2px solid white; }
+
+.is-neon-white::placeholder {
+  color: #444851; }
+
 .truncate {
   display: inline-block;
   vertical-align: middle;
@@ -7267,6 +7273,3 @@ a.exit-button:hover {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden; }
-
-::placeholder {
-  color: #dddddd; }

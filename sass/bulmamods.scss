@@ -5,6 +5,7 @@ $cyan: #34a1f9;
 $white-d: #dddddd;
 $dark-2: #232629;
 $dark-3: #31363b;
+$dark-4: #444851;
 
 $navbar-breakpoint: 0;
 $body-background-color: $dark-3;
@@ -30,7 +31,7 @@ $input-icon-color: $white-d;
 .table.is-borderless td, th {
     border: 0
 }
-.img-container {
+.aimg-container {
     height: 300px;
     width: 300px;
     overflow: hidden;
@@ -101,10 +102,6 @@ body {
     padding: 3px !important;
     width: 120px;
     height: 120px;
-}
-
-.control-cell td {
-    
 }
 
 ::-webkit-scrollbar {
@@ -187,6 +184,12 @@ a.exit-button:hover {
 .is-neon-white:hover{
     border: 2px solid $white-d;
 }
+.is-neon-white:focus{
+    border: 2px solid $white;
+}
+.is-neon-white::placeholder{
+    color: $dark-4;
+}
 
 // .td.white-box {
 //     text-align: center;
@@ -207,9 +210,6 @@ a.exit-button:hover {
     overflow: hidden;
 }
 
-::placeholder {
-    color: $white-d;
-}
 // .window-title {
 //     vertical-align: middle;
 // }
