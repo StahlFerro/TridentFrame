@@ -7182,9 +7182,15 @@ body {
   overflow: auto;
   display: block; }
 
-.sequence-grid thead tr {
+.sequence-grid tr {
   display: block;
   border: 2px solid rebeccapurple !important; }
+
+.sequence-grid td {
+  border: 2px solid rebeccapurple !important;
+  padding: 3px !important;
+  width: 20%;
+  height: 100px; }
 
 ::-webkit-scrollbar {
   width: 7px; }
@@ -7192,7 +7198,7 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #666; }
 
-::-webkit-scrollbar-track .frame-title-bar {
+.frame-title-bar {
   -webkit-app-region: drag !important; }
 
 button, a, input {
