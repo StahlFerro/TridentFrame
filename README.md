@@ -2,9 +2,10 @@
 
 The cross-platform desktop swiss-army knife for GIFs and APNGs. Create, split, convert or alter GIFs and animated PNGs with easy-to-use-but-powerful-when-needed controls.
 
-<aside class="warning">
+```
+⚠️ WARNING ⚠ ️
 The app is currently under rigorous daily development and is incomplete. Clone it at your own risk. All feedbacks appreciated
-</aside>
+```
 
 TridentFrame consists of two main parts. The python backend handling image processing, and the web frontend (HTML-CSS-JS) for the UI, image previews and input controls.
 
