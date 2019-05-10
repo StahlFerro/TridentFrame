@@ -112,13 +112,13 @@
                                             <tr><td>                                                    
                                                 <div class="field">
                                                     <label class="label">Output name</label>
-                                                    <div class="control"><input class="input" type="text"/></div>
+                                                    <div class="control"><input class="input is-neon-white" type="text"/></div>
                                                 </div>
                                             </td></tr>
                                             <tr><td>
                                                 <div class="field">
                                                     <label class="label">FPS</label>
-                                                    <div class="control"><input class="input" type="number"/></div>
+                                                    <div class="control"><input class="input is-neon-white" type="number"/></div>
                                                 </div>
                                             </td></tr>
                                         </table>
@@ -257,7 +257,7 @@
                                 <tr>
                                     <td class="has-text-centered">
                                         <a class="button is-neon-cyan" id="open_aimg_button">Load Image</a>
-                                        <a class="button is-neon-cyan" id="clear_aimg_button">Clear Image</a>
+                                        <a class="button is-neon-white" id="clear_aimg_button">Clear Image</a>
                                     </td>
                                     <td>
                                         <div class="field has-addons">
@@ -295,10 +295,11 @@
 
 </body>
 <script>
-    require('./jsbrain/renderer.js')
-    require('./jsbrain/menu_handler.js')
-    require('./jsbrain/createfragment.js')
-    require('./jsbrain/splitfragment.js')
+    require('./jsbrain/Client.js')
+    require('./jsbrain/MenuHandler.js')
+    require('./jsbrain/CreateFragment.js')
+    require('./jsbrain/SplitFragment.js')
+    require('./jsbrain/MessageBox.js')
 </script>
 
 </html>

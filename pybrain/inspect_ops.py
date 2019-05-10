@@ -73,7 +73,7 @@ def _inspect_image(animage_path):
     image_info = {
         "name": filename,
         "fps": fps,
-        "avg_delay": avg_delay / 1000,
+        "avg_delay": round(avg_delay / 1000, 3),
         "fsize": fsize,
         "extension": extension,
         "frame_count": frame_count,

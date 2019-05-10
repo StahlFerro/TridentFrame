@@ -3160,7 +3160,7 @@ a.box:active {
   .control.has-icons-left .input:focus ~ .icon,
   .control.has-icons-left .select:focus ~ .icon, .control.has-icons-right .input:focus ~ .icon,
   .control.has-icons-right .select:focus ~ .icon {
-    color: #dddddd; }
+    color: #cccccc; }
   .control.has-icons-left .input.is-small ~ .icon,
   .control.has-icons-left .select.is-small ~ .icon, .control.has-icons-right .input.is-small ~ .icon,
   .control.has-icons-right .select.is-small ~ .icon {
@@ -3174,7 +3174,7 @@ a.box:active {
   .control.has-icons-right .select.is-large ~ .icon {
     font-size: 1.5rem; }
   .control.has-icons-left .icon, .control.has-icons-right .icon {
-    color: #dddddd;
+    color: #cccccc;
     height: 2.25em;
     pointer-events: none;
     position: absolute;
@@ -3481,7 +3481,7 @@ a.box:active {
 
 .table {
   background-color: #31363b;
-  color: #dddddd; }
+  color: #cccccc; }
   .table td,
   .table th {
     border: 1px solid #dbdbdb;
@@ -7137,13 +7137,13 @@ body {
 
 /* Color override for paragraphs, spans and labels */
 p {
-  color: #dddddd !important; }
+  color: #cccccc !important; }
 
 span {
-  color: #dddddd !important; }
+  color: #cccccc !important; }
 
 label {
-  color: #dddddd !important; }
+  color: #cccccc !important; }
 
 /* Global scrollbar definition */
 ::-webkit-scrollbar {
@@ -7159,6 +7159,15 @@ label {
 button, a, input {
   -webkit-app-region: no-drag !important; }
 
+/* Window minimize and maximize buttons */
+a.minimize-button:hover {
+  background-color: #34a1f9;
+  color: #363636; }
+
+a.exit-button:hover {
+  background-color: #c51d1d;
+  color: #363636; }
+
 /* Color helpers */
 .is-dark-2 {
   color: #232629; }
@@ -7170,7 +7179,7 @@ button, a, input {
   color: #34a1f9; }
 
 .is-white-d {
-  color: #dddddd !important; }
+  color: #cccccc !important; }
 
 .has-background-dark-2 {
   background-color: #232629; }
@@ -7198,15 +7207,6 @@ button, a, input {
   width: 120px;
   height: 120px; }
 
-/* Window minimize and maximize buttons */
-a.minimize-button:hover {
-  background-color: #34a1f9;
-  color: #363636; }
-
-a.exit-button:hover {
-  background-color: #c51d1d;
-  color: #363636; }
-
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .aimg-container {
   height: 300px;
@@ -7222,7 +7222,7 @@ a.exit-button:hover {
 
 .aimg-cell {
   text-align: center !important;
-  border: 2px solid #dddddd !important; }
+  border: 2px solid #cccccc !important; }
 
 /* Neon-cyan buttons. $cyan outlines with $dark-3 BG to match the global $dark-3 BG color */
 .button.is-neon-cyan {
@@ -7231,22 +7231,36 @@ a.exit-button:hover {
   border: 2px solid #34a1f9; }
 
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered {
-  border-color: white; }
+  border-color: #a3d6ff; }
 
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
   background-color: #34a1f9;
   border-color: #34a1f9;
   color: #31363b; }
 
-/* Neon-white inputs. $white-d outlines with $dark-3 BG to match the global $dark-3 color */
+/* Neon-white buttons. */
+.button.is-neon-white {
+  background-color: #31363b;
+  color: #cccccc;
+  border: 2px solid #cccccc; }
+
+.button.is-neon-white:hover, .button.is-neon-white.is-hovered {
+  border-color: white; }
+
+.button.is-neon-white:active, .button.is-neon-white.is-active {
+  background-color: #cccccc;
+  border-color: #cccccc;
+  color: #31363b; }
+
+/* Neon-white inputs. */
 .input.is-neon-white {
   background-color: #31363b;
-  color: #dddddd;
+  color: #cccccc;
   box-shadow: none;
-  border: 2px solid #dddddd; }
+  border: 2px solid #cccccc; }
 
 .input.is-neon-white:hover {
-  border: 2px solid #dddddd; }
+  border: 2px solid #cccccc; }
 
 .input.is-neon-white:focus {
   border: 2px solid white; }
