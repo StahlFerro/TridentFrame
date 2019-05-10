@@ -71,11 +71,11 @@
                 <td class="has-background-dark-2">
                     <aside class="menu has-text-centered" style="margin: 0;">
                         <ul class="menu-list">
-                            <li><a id="create_menu">
+                            <li id="create_box" class="is-selected"><a id="create_menu">
                                     <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
                                     <p>Create</p>
                                 </a></li>
-                            <li><a id="split_menu">
+                            <li id="split_box" class=""><a id="split_menu">
                                     <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
                                     <p>Split</p>
                                 </a></li>
@@ -92,17 +92,8 @@
                         <div class="content">
                             <table class="table" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="sequence_cell" class="is-paddingless" width="610px;">
+                                    <td id="sequence_cell" class="sequence-cell is-paddingless" width="610px;">
                                         <table class="sequence-grid is-paddingless" width="100%">
-                                            <!-- <thead>
-                                                <tr>
-                                                    <th width="20%">head1</th>
-                                                    <th width="20%">head2</th>
-                                                    <th width="20%">head3</th>
-                                                    <th width="20%">head4</th>
-                                                    <th width="20%">head5</th>
-                                                </tr>
-                                            </thead> -->
                                             <tbody id="sequence_body">                                                                                                                                                                                                                                                                                                        
                                             </tbody>
                                         </table>
@@ -126,80 +117,11 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <a id="load_imgs_button" class="button is-neon-cyan">Choose Images</a>
+                                        <a id="load_imgs_button" class="button is-neon-cyan">Load Images</a>
                                         <a id="clear_imgs_button" class="button is-neon-white">Clear Images</a>
                                     </td>
                                     <td><p>xdddddddddddddddddddd</p></td>
                                 </tr>
-                                <!-- <tr>
-                                    <td colspan="4">
-                                        <div class="field has-addons">
-                                            <div class="control">
-                                                <a id="load_imgs_button" class="button is-neon-cyan">Choose Images</a>
-                                            </div>
-                                            <div class="control">
-                                                    <a id="clear_imgs_button" class="button is-neon-white">Clear Images</a>
-                                                </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="4">
-                                        <div id="sequence_carousel" class="carousel">
-                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                                1 <img class="carousel-img" src="imgs/fortfade.png_040.png" width="150px" height="150px"
-                                                draggable="true" ondragstart="drag(event)"/> 
-                                            </div>
-                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                                2 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px" draggable="true" ondragstart="drag(event)"/> 
-                                            </div>
-                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                                3 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
-                                            </div>
-                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                                4 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
-                                            </div>
-                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                                5 <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
-                                            </div>
-                                            <div class="carousel-slide" ondrop="drop(event)" ondragover="allowDrop(event)">
-                                                <img class="carousel-img" src="http://placehold.it/300x150" width="150px" height="150px"/>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td width="25%">
-                                        <div class="field">
-                                            <label class="label">FPS</label>
-                                            <div class="control">
-                                                <input class="input" type="number"/>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td width="25%">
-                                        <div class="field">
-                                            <label class="label">Format</label>
-                                            <div class="control">
-                                                <div class="select is-info">
-                                                    <select>
-                                                        <option>GIF</option>
-                                                        <option>APNG</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td width="25%">
-                                        <label class="label">Reverse</label>
-                                        <label class="checkbox">
-                                            <input class="checkbox" type="checkbox"/>
-                                        </label>
-                                    </td>
-                                    <td width="25%">
-                                        
-                                    </td>
-                                </tr> -->
                             </table>
                         </div>
                     </div>
@@ -244,7 +166,7 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan">Frame delay</td>
-                                                    <td id="aimg_frame_delay"></td>
+                                                    <td id="aimg_frame_delay">-</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan">Loop duration</td>
@@ -256,16 +178,16 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <a class="button is-neon-cyan" id="open_aimg_button">Load Image</a>
-                                        <a class="button is-neon-white" id="clear_aimg_button">Clear Image</a>
+                                        <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
+                                        <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
                                     </td>
                                     <td>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
-                                              <input id="target_path" class="input is-neon-white" type="text" placeholder="Find a repository" readonly/>
+                                              <input id="target_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
                                             </div>
                                             <div class="control">
-                                                <a class="button is-neon-cyan" id="target_dir_button">Output folder</a>
+                                                <a class="button is-neon-cyan" id="target_dir_button">Choose</a>
                                             </div>
                                           </div>
                                     </td>
@@ -280,7 +202,7 @@
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <a class="button is-neon-cyan" id="split_button">SPLIT</a>
+                                        <a class="button is-neon-cyan" id="split_button">Split to folder</a>
                                     </td>
                                     <td class="has-text-left" style="vertical-align: middle;" id="td_message_box"></td>
                                 </tr>

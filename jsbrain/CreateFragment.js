@@ -1,7 +1,8 @@
 console.log("splitfragment.js loaded!");
-const { dialog } = require('electron').remote
+const { dialog, session} = require('electron').remote
 const { client } = require("./Client.js");
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js')
+// const { ses } = require('../main.js')
 window.$ = window.jQuery = require('jquery');
 
 // let sequence_carousel = document.getElementById('sequence_carousel')
@@ -20,6 +21,8 @@ load_imgs_button.addEventListener("click", () => {
     console.log(`chosen path: ${img_paths}`)
     if (img_paths === undefined) { return }
     console.log(img_paths);
+    deactivate_buttons();
+    load_imgs_button.classList.add("is-loading");
     client.invoke("inspect_sequence", img_paths, (error, res) => {
         if (error) {
             console.error(error);
@@ -31,12 +34,29 @@ load_imgs_button.addEventListener("click", () => {
             console.log(res);
             mboxClear();
         }
+        load_imgs_button.classList.remove('is-loading');
+        activate_buttons();
     })
 });
 
 clear_imgs_button.addEventListener('click', () => {
-    sequence_body.innerHTML = '';
+    // sequence_body.innerHTML = '';
+    while (sequence_body.hasChildNodes()){
+        sequence_body.removeChild(sequence_body.firstChild);
+    }
+    sequences = null;
 });
+
+function activate_buttons () {
+    load_imgs_button.classList.remove('is-static');
+    clear_imgs_button.classList.remove('is-static');
+}
+
+function deactivate_buttons () {
+    load_imgs_button.classList.add('is-static');
+    clear_imgs_button.classList.add('is-static');
+    
+}
 
 function quintcell_generator(paths) {
     sequence_body.innerHTML = '';

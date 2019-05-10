@@ -4177,7 +4177,7 @@ a.list-item {
     display: block;
     padding: 0.5em 0.75em; }
     .menu-list a:hover {
-      background-color: #34a1f9;
+      background-color: #34caf8;
       color: #363636; }
     .menu-list a.is-active {
       background-color: #3273dc;
@@ -7135,6 +7135,25 @@ body {
   font-family: 'Share Tech', 'sans-serif';
   font-size: 18px; }
 
+/* Color helpers */
+.is-dark-2 {
+  color: #232629; }
+
+.is-dark-3 {
+  color: #31363b; }
+
+.is-cyan {
+  color: #34caf8; }
+
+.is-white-d {
+  color: #cccccc !important; }
+
+.has-background-dark-2 {
+  background-color: #232629; }
+
+.has-background-dark-3 {
+  background-color: #31363b; }
+
 /* Color override for paragraphs, spans and labels */
 p {
   color: #cccccc !important; }
@@ -7161,36 +7180,28 @@ button, a, input {
 
 /* Window minimize and maximize buttons */
 a.minimize-button:hover {
-  background-color: #34a1f9;
+  background-color: #34caf8;
   color: #363636; }
 
 a.exit-button:hover {
   background-color: #c51d1d;
   color: #363636; }
 
-/* Color helpers */
-.is-dark-2 {
-  color: #232629; }
+/* Selected menu box */
+.is-selected {
+  border: 2px solid #34caf8; }
 
-.is-dark-3 {
-  color: #31363b; }
+.is-unselected {
+  border: 2px solid #232629; }
 
-.is-cyan {
-  color: #34a1f9; }
-
-.is-white-d {
-  color: #cccccc !important; }
-
-.has-background-dark-2 {
-  background-color: #232629; }
-
-.has-background-dark-3 {
-  background-color: #31363b; }
-
+/* Borderless table helper css */
 .table.is-borderless td, th {
   border: 0; }
 
 /* Image sequences scrollable grid-like table in Create panel */
+.sequence-cell {
+  border: 2px solid #cccccc !important; }
+
 .sequence-grid tbody {
   height: 320px;
   border-collapse: collapse;
@@ -7227,15 +7238,15 @@ a.exit-button:hover {
 /* Neon-cyan buttons. $cyan outlines with $dark-3 BG to match the global $dark-3 BG color */
 .button.is-neon-cyan {
   background-color: #31363b;
-  color: #34a1f9;
-  border: 2px solid #34a1f9; }
+  color: #34caf8;
+  border: 2px solid #34caf8; }
 
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered {
-  border-color: #a3d6ff; }
+  border-color: #98e7ff; }
 
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
-  background-color: #34a1f9;
-  border-color: #34a1f9;
+  background-color: #34caf8;
+  border-color: #34caf8;
   color: #31363b; }
 
 /* Neon-white buttons. */
@@ -7266,4 +7277,4 @@ a.exit-button:hover {
   border: 2px solid white; }
 
 .input.is-neon-white::placeholder {
-  color: #444851; }
+  color: #616877; }

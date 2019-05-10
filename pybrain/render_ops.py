@@ -62,11 +62,11 @@ def _combine_image(dir_path: str, out_path: str, scale: float = 1.0, fps: int = 
 
 def _split_image(image_path: str, out_path: str):
     if not image_path and not out_path:
-        raise Exception("Please load an image and choose the output folder!")
+        raise Exception("Please load a GIF or APNG and choose the output folder!")
     elif not image_path:
-        raise Exception("Please load an image first!")
+        raise Exception("Please load a GIF or APNG!")
     elif not out_path:
-        raise Exception("Please choose an output folder first!")
+        raise Exception("Please choose an output folder!")
 
     upath = urlparse(image_path)
     abspath = os.path.abspath(upath.path)

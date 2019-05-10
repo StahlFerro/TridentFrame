@@ -88,13 +88,14 @@ function activate_buttons () {
     open_aimg_button.classList.remove('is-static');
     clear_aimg_button.classList.remove('is-static');
     target_dir_button.classList.remove('is-static');
-
+    split_button.classList.remove('is-static');
 }
 
 function deactivate_buttons () {
     open_aimg_button.classList.add('is-static');
     clear_aimg_button.classList.add('is-static');
     target_dir_button.classList.add('is-static');
+    split_button.classList.add('is-static');
 }
 
 split_button.addEventListener('click', () => {
