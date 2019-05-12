@@ -1,9 +1,13 @@
 console.log("splitfragment.js loaded!");
-const { dialog, session} = require('electron').remote
-const { client } = require("./Client.js");
-const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js')
-// const { ses } = require('../main.js')
+const remote = require('electron').remote;
+const dialog = remote.dialog;
+const session = remote.getCurrentWebContents().session;
+const { client } = require('./Client.js');
+const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 window.$ = window.jQuery = require('jquery');
+
+console.log(`session ${session}`);
+console.log(`session ${session.defaultSession}`);
 
 // let sequence_carousel = document.getElementById('sequence_carousel')
 let sequences = null;
@@ -45,7 +49,12 @@ clear_imgs_button.addEventListener('click', () => {
         sequence_body.removeChild(sequence_body.firstChild);
     }
     sequences = null;
+    session.clearCache(testcallback);
 });
+
+function testcallback(){
+    console.log("cache cleared!!1");
+}
 
 function activate_buttons () {
     load_imgs_button.classList.remove('is-static');

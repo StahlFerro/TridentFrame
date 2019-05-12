@@ -86,8 +86,8 @@ def _split_image(image_path: str, out_path: str):
         raise Exception('Where the fuk is the extension mate?!')
 
 
-    ext = str.lower(filename.split('.')[-1])
-    if ext not in ANIMATED_IMG_EXTS:
+    fname, ext = os.path.splitext(filename)
+    if str.lower(ext) not in ANIMATED_IMG_EXTS:
         return
         # raise ClickException('Only supported extensions are gif and apng. Sry lad')
 
@@ -115,7 +115,7 @@ def _split_image(image_path: str, out_path: str):
         # with click.progressbar(frame_nums, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         for f in frame_nums:
             gif.seek(f)
-            gif.save(os.path.join(out_path, f"{filename}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
+            gif.save(os.path.join(out_path, f"{fname}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
 
     elif ext == 'png':
         img: APNG = APNG.open(filename)
@@ -125,7 +125,7 @@ def _split_image(image_path: str, out_path: str):
         # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
         # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         for i, (png, control) in enumerate(iframes):
-            png.save(os.path.join(out_path, f"{filename}_{str.zfill(str(i), pad_count)}.png"))
+            png.save(os.path.join(out_path, f"{fname}_{str.zfill(str(i), pad_count)}.png"))
 
     # click.secho(f"Done!!1", fg='cyan')
     deinit()

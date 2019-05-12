@@ -31,8 +31,6 @@ const createWindow = () => {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
-    const ses = mainWindow.webContents.session;
-    module.exports.ses = ses;
 }
 
 app.on('ready', createWindow);
