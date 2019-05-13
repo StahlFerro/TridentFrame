@@ -2,6 +2,7 @@ from __future__ import print_function
 import sys
 import random
 import string
+from typing import List
 
 import zerorpc
 
@@ -19,8 +20,9 @@ class API(object):
         info = _inspect_sequence(dir_path)
         return info
 
-    def combine_image(self, dir_path, out_path):
-        res = _combine_image(dir_path, out_path)
+    def combine_image(self, image_paths: List[str], out_path: str, filename: str, fps: int = 50, extension: str = "gif", reverse: bool=False, transparent: bool = True):
+        # raise Exception(image_paths, out_path, filename, fps, extension, fps, reverse, transparent)
+        res = _combine_image(image_paths, out_path, filename, fps, extension, reverse, transparent)
         return res
 
     def split_image(self, image_path, out_path):

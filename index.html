@@ -9,37 +9,10 @@
     <title>TridentFrame</title>
     <link rel="stylesheet" type="text/css" href="./css/bulmamods.css" />
     <link rel="stylesheet" type="text/css" href="./css/fontawesome.css" />
-    <!-- <link href="https://fonts.googleapis.com/css?family=Share+Tech" rel="stylesheet"> -->
+    
 </head>
 
 <body>
-    <!-- <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-            <img src="/static/favicons/android-chrome-256x256.png" alt="StahlFerro" width="30"
-                    height="30"/><span style="padding-left:10px;">StahlFerro</span>
-        </a>
-        <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-    <div id="navbar-main" class="navbar-menu">
-        <div class="navbar-start">
-            <div class="navbar-item has-dropdown is-boxed is-hoverable">
-                <a class="navbar-item has-text-white" href="/wip.html">File</a>
-                <div class="navbar-dropdown">
-                    <a class="navbar-item">Open</a>
-                    <a class="navbar-item">Exit</a>
-                </div>
-            </div>
-            <a class="navbar-item" href="/softwares/index.html">Split GIF/APNG</a>
-        </div>
-    </div>
-</nav> -->
-    <!-- <script src="jsbrain/dragdropcarousel.js" type="text/javascript">
-    </script> -->
 
     <table id="main_table" class="table is-borderless is-desktop"
         style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
@@ -60,9 +33,6 @@
                                     <span class="icon is-medium"><i class="fas fa-times fa-inverse"></i></span>
                                 </a>
                             </div>
-                            <!-- <div class="level-item">
-                                    </div> -->
-
                         </div>
                     </nav>
                 </td>
@@ -71,18 +41,14 @@
                 <td class="has-background-dark-2">
                     <aside class="menu has-text-centered" style="margin: 0;">
                         <ul class="menu-list">
-                            <li id="create_box" class="is-selected"><a id="create_menu">
+                            <li id="create_box" class="menu-item is-selected"><a id="create_menu">
                                     <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
                                     <p>Create</p>
                                 </a></li>
-                            <li id="split_box" class=""><a id="split_menu">
+                            <li id="split_box" class="menu-item"><a id="split_menu">
                                     <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
                                     <p>Split</p>
                                 </a></li>
-                            <!-- <li><a id="" class="red-bg-hover">
-                                    <span class="icon is-large"><i class="fas fa-power-off fa-2x fa-inverse"></i></span>
-                                    <span class="has-text-white">Quit</span>
-                                </a></li> -->
                         </ul>
                     </aside>
                 </td>
@@ -103,13 +69,32 @@
                                             <tr><td>                                                    
                                                 <div class="field">
                                                     <label class="label">Output name</label>
-                                                    <div class="control"><input class="input is-neon-white" type="text"/></div>
+                                                    <div class="control"><input id="create_name" class="input is-neon-white" type="text"/></div>
                                                 </div>
                                             </td></tr>
                                             <tr><td>
                                                 <div class="field">
-                                                    <label class="label">FPS</label>
-                                                    <div class="control"><input class="input is-neon-white" type="number"/></div>
+                                                    <label class="label">Frame rate</label>
+                                                    <div class="control"><input id="create_fps" class="input is-neon-white" type="number"/></div>
+                                                </div>
+                                            </td></tr>
+                                            <tr><td>
+                                                <label class="checkbox">
+                                                    <input id="is_disposed" type="checkbox" value="on"/>
+                                                    Disposal
+                                                </label>
+                                            </td></tr>
+                                            <tr><td>
+                                                <div class="field">
+                                                    <label class="label">Format</label>
+                                                    <div class="control">
+                                                        <div class="select is-primary">
+                                                            <select id="create_format">
+                                                                <option value="gif">GIF</option>
+                                                                <option value="apng">APNG</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </td></tr>
                                         </table>
@@ -120,7 +105,20 @@
                                         <a id="load_imgs_button" class="button is-neon-cyan">Load Images</a>
                                         <a id="clear_imgs_button" class="button is-neon-white">Clear Images</a>
                                     </td>
-                                    <td><p>xdddddddddddddddddddd</p></td>
+                                    <td><a id="create_aimg_button" class="button is-neon-cyan">Create</a></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="field has-addons">
+                                            <div class="control is-expanded">
+                                              <input id="create_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                            </div>
+                                            <div class="control">
+                                                <a class="button is-neon-cyan" id="choose_outdir_button">Choose</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td></td>
                                 </tr>
                             </table>
                         </div>
@@ -184,21 +182,15 @@
                                     <td>
                                         <div class="field has-addons">
                                             <div class="control is-expanded">
-                                              <input id="target_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                              <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
                                             </div>
                                             <div class="control">
-                                                <a class="button is-neon-cyan" id="target_dir_button">Choose</a>
+                                                <a class="button is-neon-cyan" id="target_seq_button">Choose</a>
                                             </div>
-                                          </div>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <!-- <td class="has-text-centered">
-                                        <a class="button is-neon-cyan" id="target_dir_button">Output folder</a>
-                                    </td>
-                                    <td>
-                                        <span id="target_path" class="truncate"></span>
-                                    </td> -->
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">

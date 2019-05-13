@@ -6,13 +6,13 @@ const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 
 let open_aimg_button = document.querySelector('#open_aimg_button');
 let clear_aimg_button = document.querySelector('#clear_aimg_button');
-let target_dir_button = document.querySelector('#target_dir_button');
+let target_seq_button = document.querySelector('#target_seq_button');
 let split_button = document.querySelector('#split_button');
 
 let image_stage = document.querySelector('#image_stage');
 let image_path = document.querySelector('#image_path');
 
-let target_path = document.querySelector('#target_path');
+let target_seq_path = document.getElementById('target_seq_path');
 
 let info_header = document.querySelector('#info_header');
 let aimg_name = document.querySelector('#aimg_name');
@@ -76,25 +76,25 @@ clear_aimg_button.addEventListener('click', () => {
     mboxClear();
 });
 
-target_dir_button.addEventListener('click', () => {
+target_seq_button.addEventListener('click', () => {
     var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
-    target_path.value = choosen_dir;
+    target_seq_path.value = choosen_dir;
     mboxClear();
 });
 
 function activate_buttons () {
     open_aimg_button.classList.remove('is-static');
     clear_aimg_button.classList.remove('is-static');
-    target_dir_button.classList.remove('is-static');
+    target_seq_button.classList.remove('is-static');
     split_button.classList.remove('is-static');
 }
 
 function deactivate_buttons () {
     open_aimg_button.classList.add('is-static');
     clear_aimg_button.classList.add('is-static');
-    target_dir_button.classList.add('is-static');
+    target_seq_button.classList.add('is-static');
     split_button.classList.add('is-static');
 }
 
@@ -103,7 +103,7 @@ split_button.addEventListener('click', () => {
     deactivate_buttons();
     split_button.classList.add("is-loading");
     var img_path = image_path.value;
-    var out_path = target_path.value;
+    var out_path = target_seq_path.value;
     console.log(`${image_path} ${out_path}`);
     client.invoke('split_image', img_path, out_path, (error, res) => {
         if (error || !res){

@@ -4172,12 +4172,12 @@ a.list-item {
 .menu-list {
   line-height: 1.25; }
   .menu-list a {
-    border-radius: 2px;
+    border-radius: 0px;
     color: #4a4a4a;
     display: block;
     padding: 0.5em 0.75em; }
     .menu-list a:hover {
-      background-color: #34caf8;
+      background-color: #444851;
       color: #363636; }
     .menu-list a.is-active {
       background-color: #3273dc;
@@ -7188,11 +7188,14 @@ a.exit-button:hover {
   color: #363636; }
 
 /* Selected menu box */
-.is-selected {
-  border: 2px solid #34caf8; }
-
-.is-unselected {
+.menu-item {
   border: 2px solid #232629; }
+
+.menu-item:hover {
+  border: 2px solid #444851; }
+
+.menu-item.is-selected {
+  border: 2px solid #34caf8; }
 
 /* Borderless table helper css */
 .table.is-borderless td, th {

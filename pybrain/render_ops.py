@@ -3,6 +3,7 @@ import string
 from random import choices
 from pprint import pprint
 from urllib.parse import urlparse
+from typing import List
 
 from PIL import Image
 from apng import APNG
@@ -12,49 +13,63 @@ from hurry.filesize import size, alternative
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 
 
-def _combine_image(dir_path: str, out_path: str, scale: float = 1.0, fps: int = 50, extension: str = "gif", reverse: bool=False, transparent: bool = True):
-    upath = urlparse(dir_path)
-    abspath = os.path.abspath(upath.path)
+def transparentize_frames(frames: List):
+    tr_frames = []
+    for im in frames:
+        alpha = im.getchannel('A')
+        im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
+        mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+        im.paste(255, mask)
+        im.info['transparency'] = 255
+        tr_frames.append(im)
+    return tr_frames
+
+
+def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int, extension: str, reverse: bool, transparent: bool):
+    abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
+    img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
+    # workpath = os.path.dirname(img_paths[0])
     init()
+    fname, ext = os.path.splitext(filename)
+    if ext:
+        filename = fname
     # if not os.path.isdir(abspath):
     #     framesdir = str(os.path.basename(abspath))
     # workpath = os.path.dirname(abspath)
-    if os.getcwd() != abspath:
-        os.chdir(abspath)
+    # if os.getcwd() != workpath:
+    #     os.chdir(workpath)
 
     # If no name supplied, default name will be the framesdir folder name. Output will be in the same parent directory
     # as the framesdir
-    if not out_path:
+    if not out_dir:
         raise Exception("No output folder selected, please select it first")
-
-    imgs = [f for f in os.listdir('.') if '.' in f and str.lower(f.split('.')[-1]) in IMG_EXTS]
-    filename = imgs[0].split('.')[0]
 
     duration = round(1000 / fps)
     # click.secho(f"{len(imgs)} frames @ {fps}fps", fg="cyan")
-
     if extension == 'gif':
-        frames = [Image.open(i) for i in imgs]
-        frames.sort(key=lambda i: i.filename, reverse=reverse)
-        if scale != 1.0:
+        out_full_path = os.path.join(out_dir, f"{filename}.gif")
+        frames = [Image.open(i) for i in img_paths]
+        # frames.sort(key=lambda i: i.filename, reverse=reverse)
+        # if scale != 1.0:
             # click.secho(f"Resizing image by {scale}...", fg="cyan")
-            frames = [f.resize((round(f.width * scale), round(f.height * scale))) for f in frames]
+            # frames = [f.resize((round(f.width * scale), round(f.height * scale))) for f in frames]
 
         # pprint(frames[0].filename)
-
+        filename = f"{filename}.gif"
         disposal = 0
         if transparent:
             disposal = 2
+            frames = transparentize_frames(frames)
         # click.secho("Generating GIF...", fg="cyan")
-        frames[0].save(f"{filename}.gif", optimize=False,
+        frames[0].save(out_full_path, optimize=False,
                        save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
         # click.secho(f"Created GIF {output_name}.gif", fg="cyan")
 
     elif extension == 'apng':
+        out_full_path = os.path.join(out_dir, f"{filename}.png")
         # click.secho("Generating APNG...", fg="cyan")
         # click.secho(f"Created APNG {output_name}.png", fg="cyan")
-        imgs.sort(reverse=reverse)
-        APNG.from_files(imgs, delay=duration).save(f"{filename}.png")
+        APNG.from_files(img_paths, delay=duration).save(out_full_path)
 
     deinit()
     return True
@@ -85,9 +100,10 @@ def _split_image(image_path: str, out_path: str):
     if '.' not in filename:
         raise Exception('Where the fuk is the extension mate?!')
 
-
     fname, ext = os.path.splitext(filename)
-    if str.lower(ext) not in ANIMATED_IMG_EXTS:
+    ext = str.lower(ext[1:])
+    # raise Exception(fname, ext)
+    if ext not in ANIMATED_IMG_EXTS:
         return
         # raise ClickException('Only supported extensions are gif and apng. Sry lad')
 

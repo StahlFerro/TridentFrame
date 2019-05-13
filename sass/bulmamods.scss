@@ -20,7 +20,10 @@ $table-color: $white-d;
 $table-background-color: $dark-3;
 $table-cell-padding: 0.5em 0.3em;
 
-$menu-item-hover-background-color: $cyan;
+$menu-item-hover-background-color: $dark-4;
+$menu-item-radius: 0px;
+
+$input-radius: 0px;
 $input-icon-active-color: $white-d;
 $input-icon-color: $white-d;
 
@@ -98,11 +101,14 @@ a.exit-button:hover {
 
 
 /* Selected menu box */
-.is-selected {
-    border: 2px solid $cyan;
-}
-.is-unselected {
+.menu-item {
     border: 2px solid $dark-2;
+}
+.menu-item:hover {
+    border: 2px solid $dark-4;
+}
+.menu-item.is-selected {
+    border: 2px solid $cyan;
 }
 
 
