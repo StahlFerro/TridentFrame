@@ -15,10 +15,12 @@ setInterval(() => {
 }, 3000);
 
 
+let create_msgbox = document.getElementById('create_msgbox');
 // let sequence_carousel = document.getElementById('sequence_carousel')
 let load_imgs_button = document.getElementById('load_imgs_button');
 let clear_imgs_button = document.getElementById('clear_imgs_button');
 let choose_outdir_button = document.getElementById('choose_outdir_button');
+let background_button = document.getElementById('background_button')
 let create_aimg_button = document.getElementById('create_aimg_button');
 
 var sequence_body = document.getElementById('sequence_body');
@@ -46,7 +48,7 @@ load_imgs_button.addEventListener("click", () => {
     client.invoke("inspect_sequence", img_paths, (error, res) => {
         if (error) {
             console.error(error);
-            mboxError(error);
+            mboxError(create_msgbox, error);
         } else {
             sequence_paths = res.sequences;
             console.log("obtained sequences", sequence_paths);
@@ -54,7 +56,7 @@ load_imgs_button.addEventListener("click", () => {
             create_name.value = res.name;
             create_fps.value = 50;
             console.log(res);
-            mboxClear();
+            mboxClear(create_msgbox);
         }
         load_imgs_button.classList.remove('is-loading');
         activate_buttons();
@@ -75,7 +77,7 @@ choose_outdir_button.addEventListener('click', () => {
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
     create_outdir.value = choosen_dir;
-    mboxClear();
+    mboxClear(create_msgbox);
 });
 
 create_aimg_button.addEventListener('click', () => {

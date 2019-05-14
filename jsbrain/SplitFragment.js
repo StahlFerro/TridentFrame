@@ -2,13 +2,15 @@ console.log('splitfragment.js loaded!');
 const { dialog } = require('electron').remote;
 const { client } = require('./Client.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
-
+let split_msgbox = document.getElementById('split_msgbox');
 
 let open_aimg_button = document.querySelector('#open_aimg_button');
 let clear_aimg_button = document.querySelector('#clear_aimg_button');
 let target_seq_button = document.querySelector('#target_seq_button');
 let split_button = document.querySelector('#split_button');
 
+let aimg_cell = document.getElementById('aimg_cell');
+let is_bg_active = false;
 let image_stage = document.querySelector('#image_stage');
 let image_path = document.querySelector('#image_path');
 
@@ -43,7 +45,7 @@ open_aimg_button.addEventListener("click", () => {
     client.invoke("inspect_image", chosen_path[0], (error, res) => {
         if (error) {
             console.error(error);
-            mboxError(error);
+            mboxError(split_msgbox, error);
         } else {
             console.log(res);
             aimg_name.innerHTML = res.name;
@@ -56,7 +58,7 @@ open_aimg_button.addEventListener("click", () => {
             aimg_duration.innerHTML = `${res.loop_duration} seconds`;
             image_stage.src = res.absolute_url;
             image_path.value = res.absolute_url;
-            mboxClear();
+            mboxClear(split_msgbox);
         }
     })
     console.log('registered!');
@@ -73,7 +75,17 @@ clear_aimg_button.addEventListener('click', () => {
     aimg_duration.innerHTML = '-';
     image_stage.src = '';
     image_path.value = '';
-    mboxClear();
+    mboxClear(split_msgbox);
+});
+
+background_button.addEventListener('click', () => {
+    if (!is_bg_active) {
+        aimg_cell.style.background = "url('./imgs/Transparency500.png')";
+        is_bg_active = true;
+    } else {
+        aimg_cell.style.background = ''
+        is_bg_active = false;
+    }
 });
 
 target_seq_button.addEventListener('click', () => {
@@ -81,7 +93,7 @@ target_seq_button.addEventListener('click', () => {
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
     target_seq_path.value = choosen_dir;
-    mboxClear();
+    mboxClear(split_msgbox);
 });
 
 function activate_buttons () {
@@ -99,7 +111,7 @@ function deactivate_buttons () {
 }
 
 split_button.addEventListener('click', () => {
-    mboxClear();
+    mboxClear(split_msgbox);
     deactivate_buttons();
     split_button.classList.add("is-loading");
     var img_path = image_path.value;
@@ -108,10 +120,10 @@ split_button.addEventListener('click', () => {
     client.invoke('split_image', img_path, out_path, (error, res) => {
         if (error || !res){
             console.log(error);
-            mboxError(error);
+            mboxError(split_msgbox, error);
         } else {
             if (res){
-                mboxSuccess('GIF splitted successfully!!1 Check the output directory');
+                mboxSuccess(split_msgbox, 'GIF splitted successfully!!1 Check the output directory');
             }
         }
         split_button.classList.remove('is-loading');

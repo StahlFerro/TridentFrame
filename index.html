@@ -120,6 +120,9 @@
                                     </td>
                                     <td></td>
                                 </tr>
+                                <tr>
+                                    <td class="has-text-left" style="vertical-align: middle;" id="create_msgbox"></td>
+                                </tr>
                             </table>
                         </div>
                     </div>
@@ -128,7 +131,7 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td class="aimg-cell" width="40%">
+                                    <td id="aimg_cell" class="aimg-cell" width="40%">
                                         <div class="aimg-container"><span class="aimg-helper"></span><img id="image_stage"src="" /></div>
                                         <input id="image_path" name="imgpath_field" type="hidden" value="" />
                                     </td>
@@ -178,6 +181,8 @@
                                     <td class="has-text-centered">
                                         <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
                                         <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
+                                        <a class="button is-neon-white" id="background_button">
+                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span></a>
                                     </td>
                                     <td>
                                         <div class="field has-addons">
@@ -196,7 +201,7 @@
                                     <td class="has-text-centered">
                                         <a class="button is-neon-cyan" id="split_button">Split to folder</a>
                                     </td>
-                                    <td class="has-text-left" style="vertical-align: middle;" id="td_message_box"></td>
+                                    <td class="has-text-left" style="vertical-align: middle;" id="split_msgbox"></td>
                                 </tr>
                             </table>
                         </div>

@@ -1,18 +1,16 @@
-let td_message_box = document.querySelector('#td_message_box')
-
-function mboxClear() {
-    td_message_box.classList.remove('has-text-danger');
-    td_message_box.innerHTML = '';
+function mboxClear(msgbox) {
+    msgbox.classList.remove('has-text-danger');
+    msgbox.innerHTML = '';
 }
 
-function mboxError(text) {
-    td_message_box.classList.add('has-text-danger');
-    td_message_box.innerHTML = text;
+function mboxError(msgbox, text) {
+    msgbox.classList.add('has-text-danger');
+    msgbox.innerHTML = text;
 }
 
-function mboxSuccess(text) {
-    td_message_box.classList.add('has-text-success');
-    td_message_box.innerHTML = text;
+function mboxSuccess(msgbox, text) {
+    msgbox.classList.add('has-text-success');
+    msgbox.innerHTML = text;
 }
 
 module.exports = { mboxClear, mboxError, mboxSuccess }
