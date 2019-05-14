@@ -118,9 +118,22 @@ function quintcell_generator(paths) {
             const data = paths[index];
             if (data === undefined) {continue;}
             var td = document.createElement('TD');
+            var div = document.createElement('DIV');
+            div.id = 'seqdiv'
+            div.style.cssText = 'position: relative;';
             var img = document.createElement('IMG');
             img.src = data;
-            td.appendChild(img);
+            var a = document.createElement('A');
+            a.innerHTML = '<span class="icon"><i class="fas fa-minus-circle"></i></span>'
+            a.id = 'del_frame_button'
+            // a.classList.add('button');
+            // a.classList.add('is-neon-cyan')
+            a.style.position = 'absolute';
+            a.style.top = 0;
+            a.style.right = 0;
+            div.appendChild(img);
+            div.appendChild(a);
+            td.appendChild(div);
             tr.appendChild(td);
         }
         sequence_body.appendChild(tr);

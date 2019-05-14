@@ -7281,3 +7281,6 @@ a.exit-button:hover {
 
 .input.is-neon-white::placeholder {
   color: #616877; }
+
+#seqdiv:hover > #del_frame_button {
+  right: 5px; }

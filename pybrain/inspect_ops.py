@@ -93,7 +93,7 @@ def _inspect_sequence(image_paths):
     print("imgs count", len(img_paths))
     # pprint(imgs)
     if not img_paths:
-        raise Exception("No images selected. Make sure the path to them are correct")
+        raise Exception("No images selected. Make sure they are static images and the path to them are correct")
     first_img_name = os.path.splitext(img_paths[0])[0]
     filename = os.path.basename(first_img_name.split('_')[0] if '_' in first_img_name else first_img_name)
     # apngs = [apng for apng in (APNG.open(i) for i in imgs) if len(apng.frames) > 1]
