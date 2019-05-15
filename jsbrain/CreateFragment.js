@@ -19,7 +19,7 @@ let create_msgbox = document.getElementById('create_msgbox');
 // let sequence_carousel = document.getElementById('sequence_carousel')
 let load_imgs_button = document.getElementById('load_imgs_button');
 let clear_imgs_button = document.getElementById('clear_imgs_button');
-let choose_outdir_button = document.getElementById('choose_outdir_button');
+let choose_aimg_outdir_button = document.getElementById('choose_aimg_outdir_button');
 let background_button = document.getElementById('background_button')
 let create_aimg_button = document.getElementById('create_aimg_button');
 
@@ -72,7 +72,7 @@ clear_imgs_button.addEventListener('click', () => {
     session.clearCache(testcallback);
 });
 
-choose_outdir_button.addEventListener('click', () => {
+choose_aimg_outdir_button.addEventListener('click', () => {
     var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
@@ -84,6 +84,7 @@ create_aimg_button.addEventListener('click', () => {
     console.log(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), 
     create_format.value, false, is_disposed.checked);
     console.log('console log', is_disposed.checked);
+    create_aimg_button.classList.add('is-loading');
     client.invoke("combine_image", sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), 
         create_format.value, false, is_disposed.checked, (error, res) => {
         if (error) {
@@ -91,6 +92,7 @@ create_aimg_button.addEventListener('click', () => {
         } else {
             console.log("SUCCESS!");
         }
+        create_aimg_button.classList.remove('is-loading');
     });
 });
 
@@ -119,13 +121,13 @@ function quintcell_generator(paths) {
             if (data === undefined) {continue;}
             var td = document.createElement('TD');
             var div = document.createElement('DIV');
-            div.id = 'seqdiv'
+            div.classList.add('seqdiv');
             div.style.cssText = 'position: relative;';
             var img = document.createElement('IMG');
             img.src = data;
             var a = document.createElement('A');
-            a.innerHTML = '<span class="icon"><i class="fas fa-minus-circle"></i></span>'
-            a.id = 'del_frame_button'
+            a.innerHTML = '<span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>'
+            // a.classList.add('del-frame-button');
             // a.classList.add('button');
             // a.classList.add('is-neon-cyan')
             a.style.position = 'absolute';

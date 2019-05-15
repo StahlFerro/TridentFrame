@@ -210,7 +210,10 @@ a.exit-button:hover {
     color: $dark-6;
 }
 
+.del-icon {
+    opacity: 0.3;
+}
 
-#seqdiv:hover > #del_frame_button {
-    right: 5px;
+.del-icon:hover {
+    opacity: 1.0;
 }

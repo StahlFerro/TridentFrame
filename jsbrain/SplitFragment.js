@@ -6,8 +6,8 @@ let split_msgbox = document.getElementById('split_msgbox');
 
 let open_aimg_button = document.querySelector('#open_aimg_button');
 let clear_aimg_button = document.querySelector('#clear_aimg_button');
-let target_seq_button = document.querySelector('#target_seq_button');
-let split_button = document.querySelector('#split_button');
+let choose_seq_outdir_button = document.querySelector('#choose_seq_outdir_button');
+let creaete_seq_button = document.querySelector('#creaete_seq_button');
 
 let aimg_cell = document.getElementById('aimg_cell');
 let is_bg_active = false;
@@ -88,7 +88,7 @@ background_button.addEventListener('click', () => {
     }
 });
 
-target_seq_button.addEventListener('click', () => {
+choose_seq_outdir_button.addEventListener('click', () => {
     var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
     console.log(`Chosen dir: ${choosen_dir}`);
     if (choosen_dir === undefined) {return}
@@ -99,21 +99,21 @@ target_seq_button.addEventListener('click', () => {
 function activate_buttons () {
     open_aimg_button.classList.remove('is-static');
     clear_aimg_button.classList.remove('is-static');
-    target_seq_button.classList.remove('is-static');
-    split_button.classList.remove('is-static');
+    choose_seq_outdir_button.classList.remove('is-static');
+    creaete_seq_button.classList.remove('is-static');
 }
 
 function deactivate_buttons () {
     open_aimg_button.classList.add('is-static');
     clear_aimg_button.classList.add('is-static');
-    target_seq_button.classList.add('is-static');
-    split_button.classList.add('is-static');
+    choose_seq_outdir_button.classList.add('is-static');
+    creaete_seq_button.classList.add('is-static');
 }
 
-split_button.addEventListener('click', () => {
+creaete_seq_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
     deactivate_buttons();
-    split_button.classList.add("is-loading");
+    creaete_seq_button.classList.add("is-loading");
     var img_path = image_path.value;
     var out_path = target_seq_path.value;
     console.log(`${image_path} ${out_path}`);
@@ -126,7 +126,7 @@ split_button.addEventListener('click', () => {
                 mboxSuccess(split_msgbox, 'GIF splitted successfully!!1 Check the output directory');
             }
         }
-        split_button.classList.remove('is-loading');
+        creaete_seq_button.classList.remove('is-loading');
         activate_buttons();
     })
 });

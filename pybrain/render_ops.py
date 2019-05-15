@@ -13,16 +13,17 @@ from hurry.filesize import size, alternative
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 
 
-def transparentize_frames(frames: List):
-    tr_frames = []
-    for im in frames:
-        alpha = im.getchannel('A')
-        im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
-        mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-        im.paste(255, mask)
-        im.info['transparency'] = 255
-        tr_frames.append(im)
-    return tr_frames
+def gify_images(images: List, transparent: bool=False):
+    new_images = []
+    for im in images:
+        im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255 if transparent else 256)
+        if transparent:
+            alpha = im.getchannel('A') if transparent else None
+            mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+            im.paste(255, mask)
+            im.info['transparency'] = 255
+        new_images.append(im)
+    return new_images
 
 
 def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int, extension: str, reverse: bool, transparent: bool):
@@ -57,9 +58,9 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int
         # pprint(frames[0].filename)
         filename = f"{filename}.gif"
         disposal = 0
+        frames = gify_images(frames, transparent=transparent)
         if transparent:
             disposal = 2
-            frames = transparentize_frames(frames)
         # click.secho("Generating GIF...", fg="cyan")
         frames[0].save(out_full_path, optimize=False,
                        save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
