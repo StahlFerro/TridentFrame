@@ -16,12 +16,14 @@ from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 def gify_images(images: List, transparent: bool=False):
     new_images = []
     for im in images:
-        im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255 if transparent else 256)
         if transparent:
             alpha = im.getchannel('A') if transparent else None
+            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
             mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
             im.paste(255, mask)
             im.info['transparency'] = 255
+        else:
+            im = im.convert('RGB').convert('P', pallete=Image.ADAPTIVE, colors=256)
         new_images.append(im)
     return new_images
 
