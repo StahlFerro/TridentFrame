@@ -23,7 +23,7 @@ def gify_images(images: List, transparent: bool=False):
             im.paste(255, mask)
             im.info['transparency'] = 255
         else:
-            im = im.convert('RGB').convert('P', pallete=Image.ADAPTIVE, colors=256)
+            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=256)
         new_images.append(im)
     return new_images
 

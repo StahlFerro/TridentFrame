@@ -117,6 +117,15 @@ a.exit-button:hover {
     border: 0
 }
 
+/* Horizontal and vertical paddingless */
+.is-hpaddingless {
+    padding-left: 0px !important;
+    padding-right: 0px !important;
+}
+.is-vpaddingless {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+}
 
 /* Image sequences scrollable grid-like table in Create panel */
 .sequence-cell {
@@ -141,6 +150,22 @@ a.exit-button:hover {
     width: 120px;
     height: 120px;
 }
+.seqdiv {
+    position: relative;
+}
+.del-anchor {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.del-icon {
+    opacity: 0.3;
+    color: $danger;
+}
+.del-icon:hover {
+    opacity: 1.0;
+}
+
 
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
@@ -210,10 +235,3 @@ a.exit-button:hover {
     color: $dark-6;
 }
 
-.del-icon {
-    opacity: 0.3;
-}
-
-.del-icon:hover {
-    opacity: 1.0;
-}

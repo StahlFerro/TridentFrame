@@ -25,6 +25,7 @@ let create_aimg_button = document.getElementById('create_aimg_button');
 
 var sequence_body = document.getElementById('sequence_body');
 let sequence_paths = null;
+let sequence_counter = document.getElementById('sequence_counter');
 let create_name = document.getElementById('create_name');
 let create_fps = document.getElementById('create_fps');
 let is_disposed = document.getElementById('is_disposed')
@@ -55,6 +56,7 @@ load_imgs_button.addEventListener("click", () => {
             quintcell_generator(sequence_paths);
             create_name.value = res.name;
             create_fps.value = 50;
+            sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
             console.log(res);
             mboxClear(create_msgbox);
         }
@@ -63,12 +65,16 @@ load_imgs_button.addEventListener("click", () => {
     })
 });
 
+
 clear_imgs_button.addEventListener('click', () => {
     // sequence_body.innerHTML = '';
     while (sequence_body.hasChildNodes()){
         sequence_body.removeChild(sequence_body.firstChild);
     }
     sequence_paths = null;
+    create_name.value = '';
+    create_fps.value = '';
+    sequence_counter.innerHTML = ''
     session.clearCache(testcallback);
 });
 
@@ -117,22 +123,25 @@ function quintcell_generator(paths) {
         var tr = document.createElement('TR');
         for (var c = 0; c < 5; c++) {
             const index = (row * 5) + c;
-            const data = paths[index];
-            if (data === undefined) {continue;}
+            const img_path = paths[index];
+            if (img_path === undefined) {continue;}
             var td = document.createElement('TD');
             var div = document.createElement('DIV');
             div.classList.add('seqdiv');
-            div.style.cssText = 'position: relative;';
             var img = document.createElement('IMG');
-            img.src = data;
+            img.src = img_path;
+            var i = document.createElement('I');
+            i.className = 'fas fa-minus-circle del-icon'
+            i.onclick = del_frame;
+
+            var span = document.createElement('SPAN');
+            span.classList.add('icon');
+            span.appendChild(i);
+
             var a = document.createElement('A');
-            a.innerHTML = '<span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>'
-            // a.classList.add('del-frame-button');
-            // a.classList.add('button');
-            // a.classList.add('is-neon-cyan')
-            a.style.position = 'absolute';
-            a.style.top = 0;
-            a.style.right = 0;
+            a.className = 'del-anchor'
+            a.append(span)
+
             div.appendChild(img);
             div.appendChild(a);
             td.appendChild(div);
@@ -140,4 +149,8 @@ function quintcell_generator(paths) {
         }
         sequence_body.appendChild(tr);
     }
+}
+
+function del_frame() {
+    console.log("delet");
 }

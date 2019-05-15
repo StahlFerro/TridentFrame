@@ -7201,6 +7201,15 @@ a.exit-button:hover {
 .table.is-borderless td, th {
   border: 0; }
 
+/* Horizontal and vertical paddingless */
+.is-hpaddingless {
+  padding-left: 0px !important;
+  padding-right: 0px !important; }
+
+.is-vpaddingless {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important; }
+
 /* Image sequences scrollable grid-like table in Create panel */
 .sequence-cell {
   border: 2px solid #cccccc !important; }
@@ -7220,6 +7229,21 @@ a.exit-button:hover {
   padding: 3px !important;
   width: 120px;
   height: 120px; }
+
+.seqdiv {
+  position: relative; }
+
+.del-anchor {
+  position: absolute;
+  top: 0;
+  right: 0; }
+
+.del-icon {
+  opacity: 0.3;
+  color: #ff3860; }
+
+.del-icon:hover {
+  opacity: 1.0; }
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .aimg-container {
@@ -7281,9 +7305,3 @@ a.exit-button:hover {
 
 .input.is-neon-white::placeholder {
   color: #616877; }
-
-.del-icon {
-  opacity: 0.3; }
-
-.del-icon:hover {
-  opacity: 1.0; }

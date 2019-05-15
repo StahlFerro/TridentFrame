@@ -101,24 +101,37 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="has-text-centered">
-                                        <a id="load_imgs_button" class="button is-neon-cyan">Load Images</a>
-                                        <a id="clear_imgs_button" class="button is-neon-white">Clear Images</a>
+                                    <td class="has-text-centered is-hpaddingless">
+                                        <nav class="level">
+                                            <div class="level-left">
+                                                <div class="level-item has-text-centered"><div>
+                                                    <a id="load_imgs_button" class="button is-neon-cyan">Load Images</a>
+                                                    <a id="clear_imgs_button" class="button is-neon-white">Clear Images</a>
+                                                </div></div>
+                                            </div>
+                                            <div class="level-right">
+                                                <div class="level-item has-text-centered"><div>
+                                                    <p id="sequence_counter"></p>
+                                                </div></div>
+                                            </div>
+                                        </nav>
                                     </td>
-                                    <td><a id="create_aimg_button" class="button is-neon-cyan">Create</a></td>
+                                    <td>
+
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td>
-                                        <div class="field has-addons">
-                                            <div class="control is-expanded">
-                                              <input id="create_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
-                                            </div>
+                                    <td class="is-hpaddingless">
+                                        <div class="field has-addons">        
                                             <div class="control">
                                                 <a class="button is-neon-cyan" id="choose_aimg_outdir_button">Choose</a>
                                             </div>
+                                            <div class="control is-expanded">
+                                              <input id="create_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                            </div>
                                         </div>
                                     </td>
-                                    <td></td>
+                                    <td><a id="create_aimg_button" class="button is-neon-cyan">Create</a></td>
                                 </tr>
                                 <tr>
                                     <td class="has-text-left" style="vertical-align: middle;" id="create_msgbox"></td>
@@ -182,15 +195,16 @@
                                         <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
                                         <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
                                         <a class="button is-neon-white" id="background_button">
-                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span></a>
+                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
+                                        </a>
                                     </td>
                                     <td>
                                         <div class="field has-addons">
+                                                <div class="control">
+                                                    <a class="button is-neon-cyan" id="choose_seq_outdir_button">Choose</a>
+                                                </div>        
                                             <div class="control is-expanded">
                                               <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
-                                            </div>
-                                            <div class="control">
-                                                <a class="button is-neon-cyan" id="choose_seq_outdir_button">Choose</a>
                                             </div>
                                         </div>
                                     </td>

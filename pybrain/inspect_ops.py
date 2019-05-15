@@ -98,15 +98,17 @@ def _inspect_sequence(image_paths):
     filename = os.path.basename(first_img_name.split('_')[0] if '_' in first_img_name else first_img_name)
     # apngs = [apng for apng in (APNG.open(i) for i in imgs) if len(apng.frames) > 1]
     # gifs = [gif for gif in (Image.open(i) for i in imgs) if gif.format == "GIF" and gif.is_animated]
-    statics = [i for i in img_paths if len(APNG.open(i).frames) == 1 and Image.open(i).format != "GIF"]
-    print("statics count", len(statics))
+    static_imgs = [i for i in img_paths if len(APNG.open(i).frames) == 1 and Image.open(i).format != "GIF"]
+    sequence_size = size(sum([os.stat(i).st_size for i in static_imgs]), system=alternative)
+    print("statics count", len(static_imgs))
     # pprint(apngs)
     # pprint(gifs)
     # if any(APNG.open(i) for i in imgs)):
 
     sequence_info = {
         "name": filename,
-        "total": len(statics),
-        "sequences": statics,
+        "total": len(static_imgs),
+        "sequences": static_imgs,
+        "size": sequence_size,
     }
     return sequence_info
