@@ -1,11 +1,3 @@
-// var jsdom = require("jsdom");
-// const { JSDOM } = jsdom;
-// const { window } = new JSDOM();
-// const { document } = (new JSDOM('')).window;
-// global.document = document;
-// var $ = require("jquery")(window);
-
-
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;

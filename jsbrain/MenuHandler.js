@@ -1,5 +1,4 @@
 const remote = require("electron").remote;
-window.$ = window.jQuery = require('jquery');
 
 let create_menu = document.getElementById('create_menu');
 let create_box = document.getElementById('create_box');
@@ -15,38 +14,38 @@ let display_panel = document.getElementById('display_panel');
 // window.addEventListener("load", show_create_panel);
 
 function hideAll() {
-    $(create_panel).hide();
-    $(split_panel).hide();
+    create_panel.style.display = 'none';
+    split_panel.style.display = 'none';
+}
+function unselect_all_menus() {
+    create_box.classList.remove('is-selected');
+    split_box.classList.remove('is-selected');
 }
 function show_create_panel() {
     console.log("create called")
     hideAll();
     unselect_all_menus();
     create_box.classList.add('is-selected');
-    $(create_panel).show();
+    create_panel.style.display = 'block';
 }
 function show_split_panel() {
     console.log("split called");
     hideAll();
     unselect_all_menus();
     split_box.classList.add('is-selected');
-    $(split_panel).show();
+    split_panel.style.display = 'block';
 }
 
-function unselect_all_menus() {
-    create_box.classList.remove('is-selected');
-    split_box.classList.remove('is-selected');
-}
-
-$(create_menu).click(show_create_panel);
-$(split_menu).click(show_split_panel);
 
 minimize_button.addEventListener("click", () => {
     var window = remote.getCurrentWindow();
     window.minimize();
-})
+});
 
 exit_button.addEventListener("click", () => {
     var window = remote.getCurrentWindow();
     window.close();
 });
+
+create_menu.addEventListener('click', show_create_panel);
+split_menu.addEventListener('click', show_split_panel);

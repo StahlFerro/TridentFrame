@@ -4,7 +4,7 @@ const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
-window.$ = window.jQuery = require('jquery');
+
 
 console.log(`session ${session}`);
 console.log(`session ${session.defaultSession}`);
