@@ -75,6 +75,7 @@ clear_imgs_button.addEventListener('click', () => {
     create_name.value = '';
     create_fps.value = '';
     sequence_counter.innerHTML = ''
+    mboxClear(create_msgbox);
     session.clearCache(testcallback);
 });
 

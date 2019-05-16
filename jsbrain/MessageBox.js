@@ -1,5 +1,5 @@
 function mboxClear(msgbox) {
-    msgbox.classList.remove('has-text-danger');
+    msgbox.className = '';
     msgbox.innerHTML = '';
 }
 

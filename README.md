@@ -16,6 +16,7 @@ TridentFrame consists of two main parts. The python backend handling image proce
 *   [zeroRPC](https://www.zerorpc.io/) : Connecting the python backend to the electron frontend
 *   [Bulma](https://bulma.io/) : For the pretty and clean UI
 *   [Sass](https://sass-lang.com/) : Modifying bulma's styles
+*   [Font Awesome](https://fontawesome.com/) : Icons
 
 Devnotes: 
 
