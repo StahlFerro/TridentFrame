@@ -3,7 +3,7 @@
 The cross-platform desktop swiss-army knife for GIFs and APNGs. Create, split, convert or alter GIFs and animated PNGs with easy-to-use-but-powerful-when-needed controls.
 
 ```
-⚠️ WARNING ⚠
+⚠️ WARNING ⚠️
 The app is currently under rigorous daily development and is incomplete. Clone it at your own risk. All feedbacks are appreciated
 ```
 
@@ -13,9 +13,9 @@ TridentFrame consists of two main parts. The python backend handling image proce
 *   [Electron](https://electronjs.org/) : Main framework
 *   [Pillow](https://python-pillow.org/) : GIF parsing
 *   [pyAPNG](https://github.com/eight04/pyAPNG) : APNG parsing
-*   [jQuery](http://jquery.com/) : Menu handling
 *   [zeroRPC](https://www.zerorpc.io/) : Connecting the python backend to the electron frontend
 *   [Bulma](https://bulma.io/) : For the pretty and clean UI
+*   [Sass](https://sass-lang.com/) : Modifying bulma's styles
 
 Devnotes: 
 
