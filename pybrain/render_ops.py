@@ -17,10 +17,14 @@ def gify_images(images: List, transparent: bool=False):
     new_images = []
     for im in images:
         if transparent:
-            alpha = im.getchannel('A') if transparent else None
+            alpha = im.getchannel('A')
+            # alpha.show(title='alpha')
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
+            # im.show('im first convert')
             mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+            # mask.show('mask')
             im.paste(255, mask)
+            # im.show('masked im')
             im.info['transparency'] = 255
         else:
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=256)
