@@ -149,8 +149,8 @@ a.exit-button:hover {
     border: 2px solid rebeccapurple !important;
     border-collapse: collapse;
     padding: 3px !important;
-    width: 120px;
-    height: 120px;
+    width: 98px;
+    height: 98px;
 }
 .seqdiv {
     position: relative;
@@ -168,6 +168,14 @@ a.exit-button:hover {
     opacity: 1.0;
 }
 
+
+.prev-aimg-container {
+    // height: 150px;
+    // width: 150px;
+    overflow: hidden;
+    text-align: center;
+    display: inline-block;
+}
 
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */

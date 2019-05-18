@@ -11,8 +11,8 @@ let creaete_seq_button = document.querySelector('#creaete_seq_button');
 
 let aimg_cell = document.getElementById('aimg_cell');
 let is_bg_active = false;
-let image_stage = document.querySelector('#image_stage');
-let image_path = document.querySelector('#image_path');
+let aimg_stage = document.getElementById('aimg_stage');
+let aimg_path = document.getElementById('aimg_path');
 
 let target_seq_path = document.getElementById('target_seq_path');
 
@@ -56,8 +56,8 @@ open_aimg_button.addEventListener("click", () => {
             aimg_dimens.innerHTML = `${res.width} x ${res.height}`;
             aimg_frame_delay.innerHTML = `${res.avg_delay} seconds`;
             aimg_duration.innerHTML = `${res.loop_duration} seconds`;
-            image_stage.src = res.absolute_url;
-            image_path.value = res.absolute_url;
+            aimg_stage.src = res.absolute_url;
+            aimg_path.value = res.absolute_url;
             mboxClear(split_msgbox);
         }
     })
@@ -73,8 +73,8 @@ clear_aimg_button.addEventListener('click', () => {
     aimg_dimens.innerHTML = '-';
     aimg_frame_delay.innerHTML = '-';
     aimg_duration.innerHTML = '-';
-    image_stage.src = '';
-    image_path.value = '';
+    aimg_stage.src = '';
+    aimg_path.value = '';
     mboxClear(split_msgbox);
 });
 
@@ -96,14 +96,14 @@ choose_seq_outdir_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
 });
 
-function activate_buttons () {
+function activateButtons () {
     open_aimg_button.classList.remove('is-static');
     clear_aimg_button.classList.remove('is-static');
     choose_seq_outdir_button.classList.remove('is-static');
     creaete_seq_button.classList.remove('is-static');
 }
 
-function deactivate_buttons () {
+function deactivateButtons () {
     open_aimg_button.classList.add('is-static');
     clear_aimg_button.classList.add('is-static');
     choose_seq_outdir_button.classList.add('is-static');
@@ -112,12 +112,12 @@ function deactivate_buttons () {
 
 creaete_seq_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
-    deactivate_buttons();
+    deactivateButtons();
     creaete_seq_button.classList.add("is-loading");
-    var img_path = image_path.value;
+    var in_path = aimg_path.value;
     var out_path = target_seq_path.value;
-    console.log(`${image_path} ${out_path}`);
-    client.invoke('split_image', img_path, out_path, (error, res) => {
+    console.log(`${in_path} ${out_path}`);
+    client.invoke('split_image', aimg_path, out_path, (error, res) => {
         if (error || !res){
             console.log(error);
             mboxError(split_msgbox, error);
@@ -127,7 +127,7 @@ creaete_seq_button.addEventListener('click', () => {
             }
         }
         creaete_seq_button.classList.remove('is-loading');
-        activate_buttons();
+        activateButtons();
     })
 });
 

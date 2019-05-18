@@ -31,6 +31,8 @@ let create_fps = document.getElementById('create_fps');
 let is_disposed = document.getElementById('is_disposed')
 let create_format = document.getElementById('create_format');
 let create_outdir = document.getElementById('create_outdir');
+let prev_aimg_stage = document.getElementById('prev_aimg_stage');
+let prev_aimg_path = document.getElementById('prev_aimg_path');
 
 
 let extension_filters = [
@@ -44,7 +46,7 @@ load_imgs_button.addEventListener("click", () => {
     console.log(`chosen path: ${img_paths}`)
     if (img_paths === undefined) { return }
     console.log(img_paths);
-    deactivate_buttons();
+    deactivateButtons();
     load_imgs_button.classList.add("is-loading");
     client.invoke("inspect_sequence", img_paths, (error, res) => {
         if (error) {
@@ -59,10 +61,11 @@ load_imgs_button.addEventListener("click", () => {
             sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
             console.log(res);
             mboxClear(create_msgbox);
+            createTempAIMG();
         }
         load_imgs_button.classList.remove('is-loading');
-        activate_buttons();
-    })
+        activateButtons();
+    });
 });
 
 
@@ -76,8 +79,43 @@ clear_imgs_button.addEventListener('click', () => {
     create_fps.value = '';
     sequence_counter.innerHTML = ''
     mboxClear(create_msgbox);
+    deleteTempAIMG();
     session.clearCache(testcallback);
 });
+
+
+is_disposed.addEventListener('click', () => {
+    deleteTempAIMG();
+    createTempAIMG();
+});
+
+
+function createTempAIMG() {
+    deactivateButtons();
+    client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseInt(create_fps.value), 
+        create_format.value, false, is_disposed.checked, (error, res) => {
+        if (error) {
+            console.error(error);
+        } else {
+            prev_aimg_stage.src = res;
+            prev_aimg_path.value = res;
+        }
+        activateButtons();
+    });
+}
+
+function deleteTempAIMG() {
+    prev_aimg_stage.src = '';
+    abstempath = prev_aimg_path.value;
+    client.invoke('delete_temp_image', abstempath, (error, res) => {
+        if (error) {
+            console.error(error);
+        } else {
+            console.log(res);
+        }
+    });
+    abstempath = '';
+}
 
 choose_aimg_outdir_button.addEventListener('click', () => {
     var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
@@ -92,6 +130,7 @@ create_aimg_button.addEventListener('click', () => {
     create_format.value, false, is_disposed.checked);
     console.log('console log', is_disposed.checked);
     create_aimg_button.classList.add('is-loading');
+    // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), create_format.value, false, is_disposed.checked);
     client.invoke("combine_image", sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), 
         create_format.value, false, is_disposed.checked, (error, res) => {
         if (error) {
@@ -103,16 +142,28 @@ create_aimg_button.addEventListener('click', () => {
     });
 });
 
+// function build_aimg(sequences, out_dir, name, fps, format, reverse, transparent) {
+//     let err = ''
+//     let result = ''
+//     client.invoke('combine_image', sequences, out_dir, name, fps, format, reverse, transparent, (error, res) => {
+//         err = error;
+//         result = res;
+//     });
+//     console.log('response', err, result);
+//     console.log(error, res);
+//     console.log(blep);
+// }
+
 function testcallback(){
     console.log("cache cleared!!1");
 }
 
-function activate_buttons () {
+function activateButtons () {
     load_imgs_button.classList.remove('is-static');
     clear_imgs_button.classList.remove('is-static');
 }
 
-function deactivate_buttons () {
+function deactivateButtons () {
     load_imgs_button.classList.add('is-static');
     clear_imgs_button.classList.add('is-static');
     

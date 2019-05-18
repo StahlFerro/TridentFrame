@@ -7,7 +7,7 @@ from typing import List
 import zerorpc
 
 from pybrain.inspect_ops import _inspect_image, _inspect_sequence
-from pybrain.render_ops import _split_image, _combine_image
+from pybrain.render_ops import _split_image, _combine_image, _delete_temp_image
 
 
 class API(object):
@@ -27,6 +27,10 @@ class API(object):
 
     def split_image(self, image_path, out_path):
         res = _split_image(image_path, out_path)
+        return res
+
+    def delete_temp_image(self, image_name):
+        res = _delete_temp_image(image_name)
         return res
 
 

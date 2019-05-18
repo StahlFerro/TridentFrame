@@ -21,4 +21,3 @@ TridentFrame consists of two main parts. The python backend handling image proce
 Devnotes: 
 
 ZeroMQ fix: `npm rebuild zeromq --runtime=electron --target=1.8.8`
-CSS auto-build: `npm run css-watch`

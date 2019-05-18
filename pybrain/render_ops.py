@@ -1,5 +1,6 @@
 import os
 import string
+import shutil
 from random import choices
 from pprint import pprint
 from urllib.parse import urlparse
@@ -51,6 +52,10 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int
     if not out_dir:
         raise Exception("No output folder selected, please select it first")
 
+    out_dir = os.path.abspath(out_dir)
+    if not os.path.exists(out_dir):
+        raise Exception("The specified absolute out_dir does not exist!")
+
     duration = round(1000 / fps)
     # click.secho(f"{len(imgs)} frames @ {fps}fps", fg="cyan")
     if extension == 'gif':
@@ -68,6 +73,7 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int
         if transparent:
             disposal = 2
         # click.secho("Generating GIF...", fg="cyan")
+        # raise Exception(out_full_path)
         frames[0].save(out_full_path, optimize=False,
                        save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
         # click.secho(f"Created GIF {output_name}.gif", fg="cyan")
@@ -79,7 +85,7 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int
         APNG.from_files(img_paths, delay=duration).save(out_full_path)
 
     deinit()
-    return True
+    return out_full_path
 
 
 def _split_image(image_path: str, out_path: str):
@@ -157,3 +163,12 @@ def _split_image(image_path: str, out_path: str):
 
 # if __name__ == "__main__":
 #     pprint(_inspect_sequence(""))
+
+def _delete_temp_image(image_name: str):
+    temp_dir = os.path.abspath('temp')
+    # raise Exception(image_name, path)
+    # os.remove(path)
+    temp_aimgs = [os.path.join(temp_dir, i) for i in os.listdir(temp_dir)]
+    for ta in temp_aimgs:
+        os.remove(ta)
+    return True
