@@ -43,11 +43,11 @@
                         <ul class="menu-list">
                             <li id="create_box" class="menu-item is-selected"><a id="create_menu">
                                     <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
-                                    <p>Create</p>
+                                    <p class="is-white-d">Create</p>
                                 </a></li>
                             <li id="split_box" class="menu-item"><a id="split_menu">
                                     <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
-                                    <p>Split</p>
+                                    <p class="is-white-d">Split</p>
                                 </a></li>
                         </ul>
                     </aside>
@@ -65,8 +65,8 @@
                                         </table>
                                     </td>
                                     <td id="prev_aimg_cell" class="aimg-cell">
-                                            <div class="prev-aimg-container"><span class="aimg-helper"></span><img id="prev_aimg_stage"src="" /></div>
-                                            <input id="prev_aimg_path" name="prev_aimg_path_field" type="hidden" value="" />
+                                        <div class="prev-aimg-container"><span class="aimg-helper"></span><img id="prev_aimg_stage"src="" /></div>
+                                        <input id="prev_aimg_path" name="prev_aimg_path_field" type="hidden" value="" />
                                     </td>  
                                 </tr>
                                 <tr>
@@ -74,7 +74,9 @@
                                         <nav class="level">
                                             <div class="level-left">
                                                 <div class="level-item has-text-centered"><div>
-                                                    <a id="load_imgs_button" class="button is-neon-cyan">Load Images</a>
+                                                    <a id="load_imgs_button" class="button is-neon-cyan">
+                                                        <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Add</span>
+                                                    </a>
                                                     <a id="clear_imgs_button" class="button is-neon-white">Clear Images</a>
                                                 </div></div>
                                             </div>
@@ -103,41 +105,43 @@
                                     <td class="has-text-left" style="vertical-align: middle;" id="create_msgbox"></td>
                                 </tr>
                                 <tr>
-                                        <td id="control_cell" class="is-paddingless">
-                                                <table class="table">
-                                                    <tr><td>                                                    
-                                                        <div class="field">
-                                                            <label class="label">Output name</label>
-                                                            <div class="control"><input id="create_name" class="input is-neon-white" type="text"/></div>
+                                    <td id="control_cell" class="is-paddingless">
+                                        <table class="table">
+                                            <tr>
+                                                <td>                                                    
+                                                <div class="field">
+                                                    <label class="label">Output name</label>
+                                                    <div class="control"><input id="create_name" class="input is-neon-white" type="text"/></div>
+                                                </div>
+                                                </td>
+                                            </tr>
+                                            <tr><td>
+                                                <div class="field">
+                                                    <label class="label">Frame rate</label>
+                                                    <div class="control"><input id="create_fps" class="input is-neon-white" type="number"/></div>
+                                                </div>
+                                            </td></tr>
+                                            <tr><td>
+                                                <label class="checkbox">
+                                                    <input id="is_disposed" type="checkbox" value="on"/>
+                                                    Disposal
+                                                </label>
+                                            </td></tr>
+                                            <tr><td>
+                                                <div class="field">
+                                                    <label class="label">Format</label>
+                                                    <div class="control">
+                                                        <div class="select is-primary">
+                                                            <select id="create_format">
+                                                                <option value="gif">GIF</option>
+                                                                <option value="apng">APNG</option>
+                                                            </select>
                                                         </div>
-                                                    </td></tr>
-                                                    <tr><td>
-                                                        <div class="field">
-                                                            <label class="label">Frame rate</label>
-                                                            <div class="control"><input id="create_fps" class="input is-neon-white" type="number"/></div>
-                                                        </div>
-                                                    </td></tr>
-                                                    <tr><td>
-                                                        <label class="checkbox">
-                                                            <input id="is_disposed" type="checkbox" value="on"/>
-                                                            Disposal
-                                                        </label>
-                                                    </td></tr>
-                                                    <tr><td>
-                                                        <div class="field">
-                                                            <label class="label">Format</label>
-                                                            <div class="control">
-                                                                <div class="select is-primary">
-                                                                    <select id="create_format">
-                                                                        <option value="gif">GIF</option>
-                                                                        <option value="apng">APNG</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </td></tr>
-                                                </table>
-                                            </td>        
+                                                    </div>
+                                                </div>
+                                            </td></tr>
+                                        </table>
+                                    </td>        
                                 </tr>
                             </table>
                         </div>
@@ -156,7 +160,7 @@
                                             <thead>
                                                 <tr>
                                                     <th colspan="2">
-                                                        <p id="info_header">Information</p>
+                                                        <p id="info_header" class="is-white-d">Information</p>
                                                     </th>
                                                 </tr>
                                             </thead>

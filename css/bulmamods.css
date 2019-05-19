@@ -7155,12 +7155,6 @@ body {
   background-color: #31363b; }
 
 /* Color override for paragraphs, spans and labels */
-p {
-  color: #cccccc !important; }
-
-span {
-  color: #cccccc !important; }
-
 label {
   color: #cccccc !important; }
 
