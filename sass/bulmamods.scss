@@ -168,7 +168,7 @@ a.exit-button:hover {
     opacity: 1.0;
 }
 
-
+/* Animated image (GIF/PNG) preview container in Create Panel */
 .prev-aimg-container {
     // height: 150px;
     // width: 150px;
@@ -176,6 +176,17 @@ a.exit-button:hover {
     text-align: center;
     display: inline-block;
 }
+
+
+
+/* Table for 
+table.aimg-control-table td{
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    border: 1px solid black;
+}
+
 
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
@@ -245,3 +256,12 @@ a.exit-button:hover {
     color: $dark-6;
 }
 
+.select.is-neon-cyan select{
+    color: $white-d;
+    // background-color: $dark-3;
+    border: 2px solid $white-d;
+}
+
+// .select.is-neon-cyan select:hover{
+//     caret-color: $cyan;
+// }

@@ -7239,10 +7239,21 @@ a.exit-button:hover {
 .del-icon:hover {
   opacity: 1.0; }
 
+/* Animated image (GIF/PNG) preview container in Create Panel */
 .prev-aimg-container {
   overflow: hidden;
   text-align: center;
   display: inline-block; }
+
+/* Table for 
+table.aimg-control-table td{
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    border: 1px solid black;
+}
+
+
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .aimg-container {
@@ -7304,3 +7315,7 @@ a.exit-button:hover {
 
 .input.is-neon-white::placeholder {
   color: #616877; }
+
+.select.is-neon-cyan select {
+  color: #cccccc;
+  border: 2px solid #cccccc; }
