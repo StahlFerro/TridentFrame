@@ -81,9 +81,11 @@ clear_aimg_button.addEventListener('click', () => {
 background_button.addEventListener('click', () => {
     if (!is_bg_active) {
         aimg_cell.style.background = "url('./imgs/Transparency500.png')";
+        background_button.classList.add('is-active');
         is_bg_active = true;
     } else {
         aimg_cell.style.background = ''
+        background_button.classList.remove('is-active');
         is_bg_active = false;
     }
 });

@@ -91,12 +91,12 @@ button, a, input {
 
 /* Window minimize and maximize buttons */
 a.minimize-button:hover {
-    background-color: $cyan;
-    color: #363636; 
+    background-color: $dark-6;
+    // color: #363636; 
 }
 a.exit-button:hover {
-    background-color: rgb(197, 29, 29);
-    color: #363636;
+    background-color: $danger;
+    // color: #363636;
 }
 
 
@@ -179,12 +179,14 @@ a.exit-button:hover {
 
 
 
-/* Table for 
+
 table.aimg-control-table td{
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 0px;
+    padding: 5px;
     border: 1px solid black;
+}
+
+table.aimg-control-table label{
+    margin: 0px !important;
 }
 
 
@@ -262,6 +264,6 @@ table.aimg-control-table td{
     border: 2px solid $white-d;
 }
 
-// .select.is-neon-cyan select:hover{
-//     caret-color: $cyan;
-// }
+.select.is-neon-cyan select:hover{
+    caret-color: $cyan;
+}

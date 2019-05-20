@@ -93,7 +93,7 @@ def _inspect_sequence(image_paths):
     print("imgs count", len(img_paths))
     # pprint(imgs)
     if not img_paths:
-        raise Exception("No images selected. Make sure they are static images and the path to them are correct")
+        raise Exception("No images selected. Make sure the path to them are correct")
     first_img_name = os.path.splitext(img_paths[0])[0]
     filename = os.path.basename(first_img_name.split('_')[0] if '_' in first_img_name else first_img_name)
     # apngs = [apng for apng in (APNG.open(i) for i in imgs) if len(apng.frames) > 1]
@@ -101,6 +101,8 @@ def _inspect_sequence(image_paths):
     static_imgs = [i for i in img_paths if len(APNG.open(i).frames) == 1 and Image.open(i).format != "GIF"]
     sequence_size = size(sum([os.stat(i).st_size for i in static_imgs]), system=alternative)
     print("statics count", len(static_imgs))
+    if not static_imgs:
+        raise Exception("The images choosen must be static images, not animted GIFs or PNGs!")
     # pprint(apngs)
     # pprint(gifs)
     # if any(APNG.open(i) for i in imgs)):

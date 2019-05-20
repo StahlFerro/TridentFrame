@@ -7174,12 +7174,10 @@ button, a, input {
 
 /* Window minimize and maximize buttons */
 a.minimize-button:hover {
-  background-color: #34caf8;
-  color: #363636; }
+  background-color: #616877; }
 
 a.exit-button:hover {
-  background-color: #c51d1d;
-  color: #363636; }
+  background-color: #ff3860; }
 
 /* Selected menu box */
 .menu-item {
@@ -7245,15 +7243,12 @@ a.exit-button:hover {
   text-align: center;
   display: inline-block; }
 
-/* Table for 
-table.aimg-control-table td{
-    padding-left: 0px;
-    padding-right: 0px;
-    padding-top: 0px;
-    border: 1px solid black;
-}
+table.aimg-control-table td {
+  padding: 5px;
+  border: 1px solid black; }
 
-
+table.aimg-control-table label {
+  margin: 0px !important; }
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .aimg-container {
@@ -7319,3 +7314,6 @@ table.aimg-control-table td{
 .select.is-neon-cyan select {
   color: #cccccc;
   border: 2px solid #cccccc; }
+
+.select.is-neon-cyan select:hover {
+  caret-color: #34caf8; }

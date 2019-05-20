@@ -33,22 +33,17 @@ def gify_images(images: List, transparent: bool=False):
     return new_images
 
 
-def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int, extension: str, reverse: bool, transparent: bool):
+def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: float, extension: str, reverse: bool, transparent: bool):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     init()
+    if not filename:
+        raise Exception("Set the filename first!")
+    # Test if inputted filename has extension, then remove it from the filename
     fname, ext = os.path.splitext(filename)
     if ext:
         filename = fname
-    # if not os.path.isdir(abspath):
-    #     framesdir = str(os.path.basename(abspath))
-    # workpath = os.path.dirname(abspath)
-    # if os.getcwd() != workpath:
-    #     os.chdir(workpath)
-
-    # If no name supplied, default name will be the framesdir folder name. Output will be in the same parent directory
-    # as the framesdir
     if not out_dir:
         raise Exception("No output folder selected, please select it first")
 
@@ -56,32 +51,25 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: int
     if not os.path.exists(out_dir):
         raise Exception("The specified absolute out_dir does not exist!")
 
-    duration = round(1000 / fps)
-    # click.secho(f"{len(imgs)} frames @ {fps}fps", fg="cyan")
+    duration = 1000 / fps
+    if reverse:
+        img_paths.reverse()
     if extension == 'gif':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         frames = [Image.open(i) for i in img_paths]
-        # frames.sort(key=lambda i: i.filename, reverse=reverse)
         # if scale != 1.0:
-            # click.secho(f"Resizing image by {scale}...", fg="cyan")
             # frames = [f.resize((round(f.width * scale), round(f.height * scale))) for f in frames]
-
         # pprint(frames[0].filename)
         filename = f"{filename}.gif"
         disposal = 0
         frames = gify_images(frames, transparent=transparent)
         if transparent:
             disposal = 2
-        # click.secho("Generating GIF...", fg="cyan")
-        # raise Exception(out_full_path)
         frames[0].save(out_full_path, optimize=False,
                        save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
-        # click.secho(f"Created GIF {output_name}.gif", fg="cyan")
 
     elif extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
-        # click.secho("Generating APNG...", fg="cyan")
-        # click.secho(f"Created APNG {output_name}.png", fg="cyan")
         APNG.from_files(img_paths, delay=duration).save(out_full_path)
 
     deinit()
@@ -103,9 +91,7 @@ def _split_image(image_path: str, out_path: str):
         raise Exception(abspath, upath.path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
     filename = str(os.path.basename(abspath))
     workpath = os.path.dirname(abspath)
-    # if verbose:
-    #     click.secho(f"dir_path: {file_path}\nabspath: {abspath}\nworkpath: {workpath}\nfile: {filename}",
-    #                 fg='bright_cyan')
+
     if os.getcwd() != workpath:
         os.chdir(workpath)
 
@@ -150,13 +136,11 @@ def _split_image(image_path: str, out_path: str):
         img: APNG = APNG.open(filename)
         iframes = img.frames
         pad_count = max(len(str(len(iframes))), 3)
-        # click.secho(f"{filename} ({len(iframes)} frames). Splitting APNG...", fg='cyan')
         # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
         # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         for i, (png, control) in enumerate(iframes):
             png.save(os.path.join(out_path, f"{fname}_{str.zfill(str(i), pad_count)}.png"))
 
-    # click.secho(f"Done!!1", fg='cyan')
     deinit()
     return True
 
@@ -164,7 +148,7 @@ def _split_image(image_path: str, out_path: str):
 # if __name__ == "__main__":
 #     pprint(_inspect_sequence(""))
 
-def _delete_temp_image(image_name: str):
+def _delete_temp_images():
     temp_dir = os.path.abspath('temp')
     # raise Exception(image_name, path)
     # os.remove(path)

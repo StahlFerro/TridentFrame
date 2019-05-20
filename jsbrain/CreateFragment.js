@@ -28,7 +28,8 @@ let sequence_paths = null;
 let sequence_counter = document.getElementById('sequence_counter');
 let create_name = document.getElementById('create_name');
 let create_fps = document.getElementById('create_fps');
-let is_disposed = document.getElementById('is_disposed')
+let is_disposed = document.getElementById('is_disposed');
+let is_reversed = document.getElementById('is_reversed');
 let create_format = document.getElementById('create_format');
 let create_outdir = document.getElementById('create_outdir');
 let prev_aimg_stage = document.getElementById('prev_aimg_stage');
@@ -57,7 +58,9 @@ load_imgs_button.addEventListener("click", () => {
             console.log("obtained sequences", sequence_paths);
             quintcell_generator(sequence_paths);
             create_name.value = res.name;
-            create_fps.value = 50;
+            if (create_fps.value === undefined || create_fps.value == null) {
+                create_fps.value = 50;
+            }
             sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
             console.log(res);
             mboxClear(create_msgbox);
@@ -83,17 +86,20 @@ clear_imgs_button.addEventListener('click', () => {
     session.clearCache(testcallback);
 });
 
+create_fps.addEventListener('input', reloadTempAIMG);
+is_disposed.addEventListener('click', reloadTempAIMG);
+is_reversed.addEventListener('click', reloadTempAIMG);
+create_format.addEventListener('change', reloadTempAIMG);
 
-is_disposed.addEventListener('click', () => {
+function reloadTempAIMG() {
     deleteTempAIMG();
     createTempAIMG();
-});
-
+}
 
 function createTempAIMG() {
     deactivateButtons();
-    client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseInt(create_fps.value), 
-        create_format.value, false, is_disposed.checked, (error, res) => {
+    client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseFloat(create_fps.value), 
+        create_format.value, is_reversed.checked, is_disposed.checked, (error, res) => {
         if (error) {
             console.error(error);
         } else {
@@ -106,15 +112,14 @@ function createTempAIMG() {
 
 function deleteTempAIMG() {
     prev_aimg_stage.src = '';
-    abstempath = prev_aimg_path.value;
-    client.invoke('delete_temp_image', abstempath, (error, res) => {
+    abstempath = '';
+    client.invoke('delete_temp_images', (error, res) => {
         if (error) {
             console.error(error);
         } else {
             console.log(res);
         }
     });
-    abstempath = '';
 }
 
 choose_aimg_outdir_button.addEventListener('click', () => {
@@ -126,33 +131,23 @@ choose_aimg_outdir_button.addEventListener('click', () => {
 });
 
 create_aimg_button.addEventListener('click', () => {
-    console.log(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), 
+    console.log(sequence_paths, create_outdir.value, create_name.value, parseFloat(create_fps.value), 
     create_format.value, false, is_disposed.checked);
     console.log('console log', is_disposed.checked);
     create_aimg_button.classList.add('is-loading');
     // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), create_format.value, false, is_disposed.checked);
-    client.invoke("combine_image", sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), 
+    client.invoke("combine_image", sequence_paths, create_outdir.value, create_name.value, parseFloat(create_fps.value), 
         create_format.value, false, is_disposed.checked, (error, res) => {
         if (error) {
             console.error(error);
+            mboxError(create_msgbox, error);
         } else {
             console.log("SUCCESS!");
+            mboxClear(create_msgbox);
         }
         create_aimg_button.classList.remove('is-loading');
     });
 });
-
-// function build_aimg(sequences, out_dir, name, fps, format, reverse, transparent) {
-//     let err = ''
-//     let result = ''
-//     client.invoke('combine_image', sequences, out_dir, name, fps, format, reverse, transparent, (error, res) => {
-//         err = error;
-//         result = res;
-//     });
-//     console.log('response', err, result);
-//     console.log(error, res);
-//     console.log(blep);
-// }
 
 function testcallback(){
     console.log("cache cleared!!1");

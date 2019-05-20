@@ -7,7 +7,7 @@ from typing import List
 import zerorpc
 
 from pybrain.inspect_ops import _inspect_image, _inspect_sequence
-from pybrain.render_ops import _split_image, _combine_image, _delete_temp_image
+from pybrain.render_ops import _split_image, _combine_image, _delete_temp_images
 
 
 class API(object):
@@ -20,7 +20,7 @@ class API(object):
         info = _inspect_sequence(dir_path)
         return info
 
-    def combine_image(self, image_paths: List[str], out_path: str, filename: str, fps: int = 50, extension: str = "gif", reverse: bool=False, transparent: bool = True):
+    def combine_image(self, image_paths: List[str], out_path: str, filename: str, fps: float = 50.0, extension: str = "gif", reverse: bool=False, transparent: bool = True):
         # raise Exception(image_paths, out_path, filename, fps, extension, fps, reverse, transparent)
         res = _combine_image(image_paths, out_path, filename, fps, extension, reverse, transparent)
         return res
@@ -29,8 +29,8 @@ class API(object):
         res = _split_image(image_path, out_path)
         return res
 
-    def delete_temp_image(self, image_name):
-        res = _delete_temp_image(image_name)
+    def delete_temp_images(self):
+        res = _delete_temp_images()
         return res
 
 
