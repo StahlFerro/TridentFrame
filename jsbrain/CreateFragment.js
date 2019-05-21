@@ -58,7 +58,7 @@ load_imgs_button.addEventListener("click", () => {
             console.log("obtained sequences", sequence_paths);
             quintcell_generator(sequence_paths);
             create_name.value = res.name;
-            if (create_fps.value === undefined || create_fps.value == null) {
+            if (create_fps.value === undefined || create_fps.value == null || create_fps.value == "") {
                 create_fps.value = 50;
             }
             sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
@@ -80,7 +80,7 @@ clear_imgs_button.addEventListener('click', () => {
     sequence_paths = null;
     create_name.value = '';
     create_fps.value = '';
-    sequence_counter.innerHTML = ''
+    sequence_counter.innerHTML = '';
     mboxClear(create_msgbox);
     deleteTempAIMG();
     session.clearCache(testcallback);
@@ -161,7 +161,6 @@ function activateButtons () {
 function deactivateButtons () {
     load_imgs_button.classList.add('is-static');
     clear_imgs_button.classList.add('is-static');
-    
 }
 
 function quintcell_generator(paths) {
@@ -178,7 +177,7 @@ function quintcell_generator(paths) {
             var img = document.createElement('IMG');
             img.src = img_path;
             var i = document.createElement('I');
-            i.className = 'fas fa-minus-circle del-icon'
+            i.className = 'fas fa-minus-circle del-icon';
             i.onclick = del_frame;
 
             var span = document.createElement('SPAN');
@@ -186,8 +185,8 @@ function quintcell_generator(paths) {
             span.appendChild(i);
 
             var a = document.createElement('A');
-            a.className = 'del-anchor'
-            a.append(span)
+            a.className = 'del-anchor';
+            a.append(span);
 
             div.appendChild(img);
             div.appendChild(a);
