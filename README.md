@@ -18,6 +18,14 @@ TridentFrame consists of two main parts. The python backend handling image proce
 *   [Sass](https://sass-lang.com/) : Modifying bulma's styles
 *   [Font Awesome](https://fontawesome.com/) : Icons
 
+
+### TODO List for first beta test
+*   Create GIF/APNG from frames
+*   Split GIF/APNG into frames
+*   Alter a GIF/APNG's fps, transparency or format
+*   GUI finalization
+
+
 Devnotes: 
 
 ZeroMQ fix: `npm rebuild zeromq --runtime=electron --target=1.8.8`
