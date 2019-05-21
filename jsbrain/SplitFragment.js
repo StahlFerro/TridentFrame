@@ -7,7 +7,7 @@ let split_msgbox = document.getElementById('split_msgbox');
 let open_aimg_button = document.querySelector('#open_aimg_button');
 let clear_aimg_button = document.querySelector('#clear_aimg_button');
 let choose_seq_outdir_button = document.querySelector('#choose_seq_outdir_button');
-let creaete_seq_button = document.querySelector('#creaete_seq_button');
+let create_seq_button = document.querySelector('#create_seq_button');
 
 let aimg_cell = document.getElementById('aimg_cell');
 let is_bg_active = false;
@@ -102,24 +102,24 @@ function activateButtons () {
     open_aimg_button.classList.remove('is-static');
     clear_aimg_button.classList.remove('is-static');
     choose_seq_outdir_button.classList.remove('is-static');
-    creaete_seq_button.classList.remove('is-static');
+    create_seq_button.classList.remove('is-static');
 }
 
 function deactivateButtons () {
     open_aimg_button.classList.add('is-static');
     clear_aimg_button.classList.add('is-static');
     choose_seq_outdir_button.classList.add('is-static');
-    creaete_seq_button.classList.add('is-static');
+    create_seq_button.classList.add('is-static');
 }
 
-creaete_seq_button.addEventListener('click', () => {
+create_seq_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
     deactivateButtons();
-    creaete_seq_button.classList.add("is-loading");
+    create_seq_button.classList.add("is-loading");
     var in_path = aimg_path.value;
     var out_path = target_seq_path.value;
-    console.log(`${in_path} ${out_path}`);
-    client.invoke('split_image', aimg_path, out_path, (error, res) => {
+    console.log(`in path: ${in_path} out path: ${out_path}`);
+    client.invoke('split_image', in_path, out_path, (error, res) => {
         if (error || !res){
             console.log(error);
             mboxError(split_msgbox, error);
@@ -128,7 +128,7 @@ creaete_seq_button.addEventListener('click', () => {
                 mboxSuccess(split_msgbox, 'GIF splitted successfully!!1 Check the output directory');
             }
         }
-        creaete_seq_button.classList.remove('is-loading');
+        create_seq_button.classList.remove('is-loading');
         activateButtons();
     })
 });

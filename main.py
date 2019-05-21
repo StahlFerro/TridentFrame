@@ -26,6 +26,7 @@ class API(object):
         return res
 
     def split_image(self, image_path, out_path):
+        # raise Exception('image paths', image_path, out_path)
         res = _split_image(image_path, out_path)
         return res
 
