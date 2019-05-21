@@ -51,7 +51,7 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: flo
     if not os.path.exists(out_dir):
         raise Exception("The specified absolute out_dir does not exist!")
 
-    duration = 1000 / fps
+    duration = round(1000 / fps)
     if reverse:
         img_paths.reverse()
     if extension == 'gif':
