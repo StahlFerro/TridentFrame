@@ -128,7 +128,7 @@ create_seq_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
     deactivateButtons();
     create_seq_button.classList.add("is-loading");
-    console.log(`in path: ${in_path} out path: ${out_path}`);
+    // console.log(`in path: ${in_path} out path: ${out_path}`);
     client.invoke('split_image', aimg_path.value, target_seq_path.value, (error, res) => {
         if (error || !res){
             console.log(error);
