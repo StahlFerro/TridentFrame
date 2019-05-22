@@ -97,6 +97,7 @@ function reloadTempAIMG() {
 }
 
 function createTempAIMG() {
+    if (sequence_paths == null){ console.log('no sequences, exiting...'); return; }
     deactivateButtons();
     client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseFloat(create_fps.value), 
         create_format.value, is_reversed.checked, is_disposed.checked, (error, res) => {
@@ -131,6 +132,7 @@ choose_aimg_outdir_button.addEventListener('click', () => {
 });
 
 create_aimg_button.addEventListener('click', () => {
+    mboxClear(create_msgbox);
     console.log(sequence_paths, create_outdir.value, create_name.value, parseFloat(create_fps.value), 
     create_format.value, false, is_disposed.checked);
     console.log('console log', is_disposed.checked);
@@ -143,7 +145,7 @@ create_aimg_button.addEventListener('click', () => {
             mboxError(create_msgbox, error);
         } else {
             console.log("SUCCESS!");
-            mboxClear(create_msgbox);
+            mboxSuccess(create_msgbox, 'GIF/APNG successfully created!!1, check out the output directory');
         }
         create_aimg_button.classList.remove('is-loading');
     });

@@ -1,4 +1,5 @@
 const remote = require("electron").remote;
+const session = remote.getCurrentWebContents().session;
 
 let create_menu = document.getElementById('create_menu');
 let create_box = document.getElementById('create_box');
@@ -27,6 +28,7 @@ function show_create_panel() {
     unselect_all_menus();
     create_box.classList.add('is-selected');
     create_panel.style.display = 'block';
+    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
 }
 function show_split_panel() {
     console.log("split called");
@@ -34,6 +36,7 @@ function show_split_panel() {
     unselect_all_menus();
     split_box.classList.add('is-selected');
     split_panel.style.display = 'block';
+    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
 }
 
 

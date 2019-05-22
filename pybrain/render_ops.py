@@ -37,13 +37,11 @@ def gify_images(images: List, transparent: bool=False):
     return new_images
 
 
-def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: float, extension: str, reverse: bool, transparent: bool):
+def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: float, extension: str = "gif", reverse: bool = False, transparent: bool = True):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     init()
-    if not filename:
-        raise Exception("Set the filename first!")
     # Test if inputted filename has extension, then remove it from the filename
     fname, ext = os.path.splitext(filename)
     if ext:
@@ -80,14 +78,7 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: flo
     return out_full_path
 
 
-def _split_image(image_path: str, out_path: str):
-    if not image_path and not out_path:
-        raise Exception("Please load a GIF or APNG and choose the output folder!")
-    elif not image_path:
-        raise Exception("Please load a GIF or APNG!")
-    elif not out_path:
-        raise Exception("Please choose an output folder!")
-
+def _split_image(image_path: str, out_dir: str):
     upath = urlparse(image_path)
     abspath = os.path.abspath(upath.path)
     init()
@@ -111,11 +102,11 @@ def _split_image(image_path: str, out_path: str):
         # raise ClickException('Only supported extensions are gif and apng. Sry lad')
 
     # Create directory to contain all the frames if does not exist
-    if not os.path.exists(out_path):
-        os.mkdir(out_path)
-        print(f"Creating directory {out_path}...")
+    if not os.path.exists(out_dir):
+        os.mkdir(out_dir)
+        print(f"Creating directory {out_dir}...")
     else:
-        print(f"Directory {out_path} already exists, replacing the PNGs inside it...")
+        print(f"Directory {out_dir} already exists, replacing the PNGs inside it...")
 
     # Image processing
     if ext == 'gif':
@@ -134,7 +125,7 @@ def _split_image(image_path: str, out_path: str):
         # with click.progressbar(frame_nums, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         for f in frame_nums:
             gif.seek(f)
-            gif.save(os.path.join(out_path, f"{fname}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
+            gif.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
 
     elif ext == 'png':
         img: APNG = APNG.open(filename)
@@ -143,7 +134,7 @@ def _split_image(image_path: str, out_path: str):
         # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
         # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         for i, (png, control) in enumerate(iframes):
-            png.save(os.path.join(out_path, f"{fname}_{str.zfill(str(i), pad_count)}.png"))
+            png.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(i), pad_count)}.png"))
 
     deinit()
     return True

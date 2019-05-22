@@ -91,8 +91,9 @@
                                             </div>
                                         </nav>
                                     </td>
-                                    <td class="has-text-left is-paddingless" style="vertical-align: middle;height: 50px;" id="create_msgbox">
-                                        
+                                    <td class="has-text-left is-paddingless" style="vertical-align: middle;">
+                                        <div id="create_msgbox" class="create-msgbox">
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
@@ -152,6 +153,11 @@
                                                         <div class="control is-expanded">
                                                             <input id="create_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
                                                         </div>
+                                                    </div>
+                                                </td>
+                                                <td></td>
+                                                <td>
+                                                    <div class="field">
                                                         <div class="control">
                                                             <a id="create_aimg_button" class="button is-neon-cyan">Create</a>
                                                         </div>
@@ -225,9 +231,11 @@
                                     </td>
                                     <td>
                                         <div class="field has-addons">
-                                                <div class="control">
-                                                    <a class="button is-neon-cyan" id="choose_seq_outdir_button">Choose</a>
-                                                </div>        
+                                            <div class="control">
+                                                <a class="button is-neon-cyan" id="choose_seq_outdir_button">
+                                                    <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
+                                                </a>
+                                            </div>        
                                             <div class="control is-expanded">
                                               <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
                                             </div>

@@ -20,14 +20,25 @@ class API(object):
         info = _inspect_sequence(dir_path)
         return info
 
-    def combine_image(self, image_paths: List[str], out_path: str, filename: str, fps: float = 50.0, extension: str = "gif", reverse: bool=False, transparent: bool = True):
-        # raise Exception(image_paths, out_path, filename, fps, extension, fps, reverse, transparent)
-        res = _combine_image(image_paths, out_path, filename, fps, extension, reverse, transparent)
+    def combine_image(self, image_paths, out_dir, filename, fps, extension, reverse, transparent):
+        # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
+        if not image_paths and not out_dir:
+            raise Exception("Please load the sequences and choose the output folder!")
+        elif not image_paths:
+            raise Exception("Please load the sequences!")
+        elif not out_dir:
+            raise Exception("Please choose the output folder!")
+        res = _combine_image(image_paths, out_dir, filename, fps, extension, reverse, transparent)
         return res
 
-    def split_image(self, image_path, out_path):
-        # raise Exception('image paths', image_path, out_path)
-        res = _split_image(image_path, out_path)
+    def split_image(self, image_path, out_dir):
+        if not image_path and not out_dir:
+            raise Exception("Please load a GIF or APNG and choose the output folder!")
+        elif not image_path:
+            raise Exception("Please load a GIF or APNG!")
+        elif not out_dir:
+            raise Exception("Please choose an output folder!")
+        res = _split_image(image_path, out_dir)
         return res
 
     def delete_temp_images(self):
