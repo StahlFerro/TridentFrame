@@ -79,11 +79,10 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: flo
 
 
 def _split_image(image_path: str, out_dir: str):
-    upath = urlparse(image_path)
-    abspath = os.path.abspath(upath.path)
+    abspath = os.path.abspath(image_path)
     init()
-    if not os.path.isfile(abspath):
-        raise Exception(abspath, upath.path, "Oi skrubman the path here seems to be a bloody directory, should've been a file")
+    if not os.path.isfile(image_path):
+        raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file")
     filename = str(os.path.basename(abspath))
     workpath = os.path.dirname(abspath)
 
