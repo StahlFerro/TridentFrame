@@ -15,18 +15,14 @@ from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 
 def _inspect_image(animage_path):
     """Returns information of an animted GIF/APNG"""
-    filename = str(os.path.basename(animage_path))
     abspath = os.path.abspath(animage_path)
-    workpath = os.path.dirname(abspath)
+    filename = str(os.path.basename(abspath))
     ext = str.lower(os.path.splitext(filename)[1])
-
-    if os.getcwd() != workpath:
-        os.chdir(workpath)
 
     frame_count = 0
     fps = 0
     avg_delay = 0
-    fsize = size(os.stat(filename).st_size, system=alternative)
+    fsize = size(os.stat(abspath).st_size, system=alternative)
     # fsize = 0
     width = height = 0
     loop_duration = 0
@@ -34,9 +30,9 @@ def _inspect_image(animage_path):
 
     if ext == '.gif':
         try:
-            gif: Image = Image.open(filename)
+            gif: Image = Image.open(abspath)
         except Exception:
-            return
+            raise Exception(f'The chosen file ({filename}) is not a valid GIF image')
         if gif.format != 'GIF' or not gif.is_animated:
             raise Exception(f"The chosen GIF ({filename}) is not an animated GIF!")
         width, height = gif.size
@@ -53,13 +49,13 @@ def _inspect_image(animage_path):
 
     elif ext == '.png':
         try:
-            apng: APNG = APNG.open(filename)
+            apng: APNG = APNG.open(abspath)
         except Exception:
-            pass
+            raise Exception(f'The chosen file ({filename}) is not a valid PNG image')
         frames = apng.frames
         frame_count = len(frames)
         if frame_count <= 1:
-            raise Exception(f"The chosen PNG ({filename}) is not an APNG!")
+            raise Exception(f"The chosen PNG ({filename}) is not an animated PNG!")
         png_one, controller_one = frames[0]
         # pprint(png_one.__dict__)
         # pprint(controller_one.__dict__)

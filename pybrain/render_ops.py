@@ -17,8 +17,12 @@ from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 def gify_images(images: List, transparent: bool=False):
     new_images = []
     for im in images:
-        if transparent:
+        alpha = None
+        try: 
             alpha = im.getchannel('A')
+        except Exception as e:
+            alpha = False
+        if transparent and alpha:
             # alpha.show(title='alpha')
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
             # im.show('im first convert')
@@ -149,7 +153,9 @@ def _split_image(image_path: str, out_path: str):
 #     pprint(_inspect_sequence(""))
 
 def _delete_temp_images():
+    # raise Exception(os.getcwd())
     temp_dir = os.path.abspath('temp')
+    # raise Exception(os.getcwd(), temp_dir)
     # raise Exception(image_name, path)
     # os.remove(path)
     temp_aimgs = [os.path.join(temp_dir, i) for i in os.listdir(temp_dir)]

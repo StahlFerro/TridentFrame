@@ -1,5 +1,7 @@
 console.log('splitfragment.js loaded!');
-const { dialog } = require('electron').remote;
+const remote = require('electron').remote;
+const dialog = remote.dialog;
+const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 let split_msgbox = document.getElementById('split_msgbox');
@@ -47,24 +49,31 @@ open_aimg_button.addEventListener("click", () => {
             console.error(error);
             mboxError(split_msgbox, error);
         } else {
-            console.log(res);
-            aimg_name.innerHTML = res.name;
-            info_header.innerHTML = `${res.extension} Information`;
-            aimg_file_size.innerHTML = `${res.fsize}`;
-            aimg_frame_count.innerHTML = `${res.frame_count} frames`;
-            aimg_fps.innerHTML = `${res.fps} fps`;
-            aimg_dimens.innerHTML = `${res.width} x ${res.height}`;
-            aimg_frame_delay.innerHTML = `${res.avg_delay} seconds`;
-            aimg_duration.innerHTML = `${res.loop_duration} seconds`;
-            aimg_stage.src = res.absolute_url;
-            aimg_path.value = res.absolute_url;
-            mboxClear(split_msgbox);
+            loadAIMG(res);
         }
     })
     console.log('registered!');
 });
 
-clear_aimg_button.addEventListener('click', () => {
+clear_aimg_button.addEventListener('click', clearAIMG);
+
+function loadAIMG(res) {
+    console.log(res);
+    clearAIMG();
+    aimg_name.innerHTML = res.name;
+    info_header.innerHTML = `${res.extension} Information`;
+    aimg_file_size.innerHTML = `${res.fsize}`;
+    aimg_frame_count.innerHTML = `${res.frame_count} frames`;
+    aimg_fps.innerHTML = `${res.fps} fps`;
+    aimg_dimens.innerHTML = `${res.width} x ${res.height}`;
+    aimg_frame_delay.innerHTML = `${res.avg_delay} seconds`;
+    aimg_duration.innerHTML = `${res.loop_duration} seconds`;
+    aimg_stage.src = res.absolute_url;
+    aimg_path.value = res.absolute_url;
+    mboxClear(split_msgbox);
+}
+
+function clearAIMG() {
     aimg_name.innerHTML = '-';
     info_header.innerHTML = 'Information';
     aimg_file_size.innerHTML = '-';
@@ -76,7 +85,10 @@ clear_aimg_button.addEventListener('click', () => {
     aimg_stage.src = '';
     aimg_path.value = '';
     mboxClear(split_msgbox);
-});
+    session.clearCache(() => {});
+    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    console.log('session cleared');
+}
 
 background_button.addEventListener('click', () => {
     if (!is_bg_active) {
