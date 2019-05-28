@@ -37,7 +37,7 @@ def gify_images(images: List, transparent: bool=False):
     return new_images
 
 
-def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: float, extension: str = "gif", reverse: bool = False, transparent: bool = True):
+def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: float, extension: str = "gif", reverse: bool = False, transparent: bool = True, flip_horizontal:bool = False, flip_vertical:bool = False):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
@@ -59,6 +59,13 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: flo
     if extension == 'gif':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         frames = [Image.open(i) for i in img_paths]
+        if flip_horizontal:
+            for index, frame in enumerate(frames):
+                frames[index] = frame.transpose(Image.FLIP_LEFT_RIGHT)
+        if flip_vertical:
+            for index, frame in enumerate(frames):
+                frames[index] = frame.transpose(Image.FLIP_TOP_BOTTOM)
+
         # if scale != 1.0:
             # frames = [f.resize((round(f.width * scale), round(f.height * scale))) for f in frames]
         # pprint(frames[0].filename)

@@ -20,7 +20,7 @@ class API(object):
         info = _inspect_sequence(dir_path)
         return info
 
-    def combine_image(self, image_paths, out_dir, filename, fps, extension, reverse, transparent):
+    def combine_image(self, image_paths, out_dir, filename, fps, extension, reverse, transparent, flip_horizontal, flip_vertical):
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
         if not image_paths and not out_dir:
             raise Exception("Please load the sequences and choose the output folder!")
@@ -28,7 +28,7 @@ class API(object):
             raise Exception("Please load the sequences!")
         elif not out_dir:
             raise Exception("Please choose the output folder!")
-        res = _combine_image(image_paths, out_dir, filename, fps, extension, reverse, transparent)
+        res = _combine_image(image_paths, out_dir, filename, fps, extension, reverse, transparent, flip_horizontal, flip_vertical)
         return res
 
     def split_image(self, image_path, out_dir):

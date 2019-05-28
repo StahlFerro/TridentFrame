@@ -109,8 +109,10 @@ function reloadTempAIMG() {
 function createTempAIMG() {
     if (sequence_paths == null){ console.log('no sequences, exiting...'); return; }
     deactivateButtons();
+    var flip_text = '';
+
     client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseFloat(create_fps.value), 
-        create_format.value, is_reversed.checked, is_disposed.checked, (error, res) => {
+        create_format.value, is_reversed.checked, is_disposed.checked, flip_horizontal.checked, flip_vertical.checked, (error, res) => {
         if (error) {
             console.error(error);
         } else {
@@ -149,7 +151,7 @@ create_aimg_button.addEventListener('click', () => {
     create_aimg_button.classList.add('is-loading');
     // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), create_format.value, false, is_disposed.checked);
     client.invoke("combine_image", sequence_paths, create_outdir.value, create_name.value, parseFloat(create_fps.value), 
-        create_format.value, false, is_disposed.checked, (error, res) => {
+        create_format.value, false, is_disposed.checked, flip_horizontal.checked, flip_vertical.checked, (error, res) => {
         if (error) {
             console.error(error);
             mboxError(create_msgbox, error);
