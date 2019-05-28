@@ -92,6 +92,8 @@ create_fps.addEventListener('input', reloadTempAIMG);
 is_disposed.addEventListener('click', reloadTempAIMG);
 is_reversed.addEventListener('click', reloadTempAIMG);
 create_format.addEventListener('change', reloadTempAIMG);
+flip_horizontal.addEventListener('click', reloadTempAIMG);
+flip_vertical.addEventListener('click', reloadTempAIMG);
 
 function reloadTempAIMG() {
     deleteTempAIMG();
@@ -109,7 +111,6 @@ function reloadTempAIMG() {
 function createTempAIMG() {
     if (sequence_paths == null){ console.log('no sequences, exiting...'); return; }
     deactivateButtons();
-    var flip_text = '';
 
     client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseFloat(create_fps.value), 
         create_format.value, is_reversed.checked, is_disposed.checked, flip_horizontal.checked, flip_vertical.checked, (error, res) => {
