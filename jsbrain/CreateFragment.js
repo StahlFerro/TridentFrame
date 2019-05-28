@@ -30,6 +30,8 @@ let create_name = document.getElementById('create_name');
 let create_fps = document.getElementById('create_fps');
 let is_disposed = document.getElementById('is_disposed');
 let is_reversed = document.getElementById('is_reversed');
+let flip_horizontal = document.getElementById('flip_horizontal');
+let flip_vertical = document.getElementById('flip_vertical');
 let create_format = document.getElementById('create_format');
 let create_outdir = document.getElementById('create_outdir');
 let prev_aimg_stage = document.getElementById('prev_aimg_stage');
@@ -94,6 +96,14 @@ create_format.addEventListener('change', reloadTempAIMG);
 function reloadTempAIMG() {
     deleteTempAIMG();
     createTempAIMG();
+    if (create_format.value == 'gif') {
+        flip_horizontal.disabled = false;
+        flip_vertical.disabled = false;
+    }
+    else {
+        flip_horizontal.disabled = true;
+        flip_vertical.disabled = true;        
+    }
 }
 
 function createTempAIMG() {
