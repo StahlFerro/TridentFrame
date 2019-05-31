@@ -1,4 +1,5 @@
 import os
+import io
 import string
 import shutil
 from random import choices
@@ -7,7 +8,7 @@ from urllib.parse import urlparse
 from typing import List
 
 from PIL import Image
-from apng import APNG
+from apng import APNG, PNG
 from colorama import init, deinit
 from hurry.filesize import size, alternative
 
@@ -35,6 +36,23 @@ def gify_images(images: List, transparent: bool=False):
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=256)
         new_images.append(im)
     return new_images
+
+
+def build_apngs(image_paths, duration: int = 0, horizontal: bool = False, vertical: bool = False):
+    if horizontal or vertical:
+        apng = APNG()
+        for ipath in image_paths:
+            with io.BytesIO() as bytebox:
+                image = Image.open(ipath)
+                if horizontal:
+                    image = image.transpose(Image.FLIP_LEFT_RIGHT)
+                if vertical:
+                    image = image.transpose(Image.FLIP_TOP_BOTTOM)
+                image.save(bytebox, "PNG", optimize=True)
+                apng.append(PNG.from_bytes(bytebox.getvalue()), delay=duration)
+        return apng
+    else:
+        return APNG.from_files(image_paths, delay=duration)
 
 
 def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: float, extension: str = "gif", reverse: bool = False, transparent: bool = True, flip_horizontal:bool = False, flip_vertical:bool = False):
@@ -79,8 +97,9 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: flo
 
     elif extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
-        APNG.from_files(img_paths, delay=duration).save(out_full_path)
-
+        apng = APNG()
+        apng = build_apngs(img_paths, duration, flip_horizontal, flip_vertical)
+        apng.save(out_full_path)
     deinit()
     return out_full_path
 

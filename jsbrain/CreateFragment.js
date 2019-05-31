@@ -98,14 +98,14 @@ flip_vertical.addEventListener('click', reloadTempAIMG);
 function reloadTempAIMG() {
     deleteTempAIMG();
     createTempAIMG();
-    if (create_format.value == 'gif') {
-        flip_horizontal.disabled = false;
-        flip_vertical.disabled = false;
-    }
-    else {
-        flip_horizontal.disabled = true;
-        flip_vertical.disabled = true;        
-    }
+    // if (create_format.value == 'gif') {
+    //     flip_horizontal.disabled = false;
+    //     flip_vertical.disabled = false;
+    // }
+    // else {
+    //     flip_horizontal.disabled = true;
+    //     flip_vertical.disabled = true;        
+    // }
 }
 
 function createTempAIMG() {
