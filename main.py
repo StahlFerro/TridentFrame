@@ -8,6 +8,7 @@ import zerorpc
 
 from pybrain.inspect_ops import _inspect_image, _inspect_sequence
 from pybrain.render_ops import _split_image, _combine_image, _delete_temp_images
+from pybrain.config import CreationCriteria
 
 
 class API(object):
@@ -20,7 +21,7 @@ class API(object):
         info = _inspect_sequence(dir_path)
         return info
 
-    def combine_image(self, image_paths, out_dir, filename, fps, extension, reverse, transparent, flip_horizontal, flip_vertical):
+    def combine_image(self, image_paths, out_dir, filename, fps, extension, scale, reverse, transparent, flip_h, flip_v):
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
         if not image_paths and not out_dir:
             raise Exception("Please load the sequences and choose the output folder!")
@@ -28,7 +29,8 @@ class API(object):
             raise Exception("Please load the sequences!")
         elif not out_dir:
             raise Exception("Please choose the output folder!")
-        res = _combine_image(image_paths, out_dir, filename, fps, extension, reverse, transparent, flip_horizontal, flip_vertical)
+        criteria = CreationCriteria(fps, extension, reverse, transparent).transform(scale, flip_h, flip_v)
+        res = _combine_image(image_paths, out_dir, filename, criteria)
         return res
 
     def split_image(self, image_path, out_dir):

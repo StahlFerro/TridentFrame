@@ -12,18 +12,25 @@ from apng import APNG, PNG
 from colorama import init, deinit
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria
 
 
-def gify_images(images: List, transparent: bool=False):
-    new_images = []
-    for im in images:
+def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
+    frames = []
+    for ipath in image_paths:
+        im = Image.open(ipath)
         alpha = None
+        if criteria.flip_h:
+            im = im.transpose(Image.FLIP_LEFT_RIGHT)
+        if criteria.flip_v:
+            im = im.transpose(Image.FLIP_TOP_BOTTOM)
+        if criteria.scale != 1.0:
+            im = im.resize((round(im.width * criteria.scale), round(im.height * criteria.scale)))
         try: 
             alpha = im.getchannel('A')
         except Exception as e:
             alpha = False
-        if transparent and alpha:
+        if criteria.transparent and alpha:
             # alpha.show(title='alpha')
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
             # im.show('im first convert')
@@ -34,28 +41,36 @@ def gify_images(images: List, transparent: bool=False):
             im.info['transparency'] = 255
         else:
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=256)
-        new_images.append(im)
-    return new_images
+        frames.append(im)
+
+    disposal = 0
+    if criteria.transparent:
+        disposal = 2
+    if criteria.reverse:
+        frames.reverse()
+    frames[0].save(out_full_path, optimize=False,
+        save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
+    
 
 
-def build_apngs(image_paths, duration: int = 0, horizontal: bool = False, vertical: bool = False):
-    if horizontal or vertical:
+def build_apng(image_paths, criteria: CreationCriteria):
+    if criteria.flip_h or criteria.flip_v:
         apng = APNG()
         for ipath in image_paths:
             with io.BytesIO() as bytebox:
                 image = Image.open(ipath)
-                if horizontal:
+                if criteria.flip_h:
                     image = image.transpose(Image.FLIP_LEFT_RIGHT)
-                if vertical:
+                if criteria.flip_v:
                     image = image.transpose(Image.FLIP_TOP_BOTTOM)
                 image.save(bytebox, "PNG", optimize=True)
-                apng.append(PNG.from_bytes(bytebox.getvalue()), delay=duration)
+                apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
         return apng
     else:
-        return APNG.from_files(image_paths, delay=duration)
+        return APNG.from_files(image_paths, delay=criteria.duration)
 
 
-def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: float, extension: str = "gif", reverse: bool = False, transparent: bool = True, flip_horizontal:bool = False, flip_vertical:bool = False):
+def _combine_image(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
@@ -66,39 +81,20 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, fps: flo
         filename = fname
     if not out_dir:
         raise Exception("No output folder selected, please select it first")
-
     out_dir = os.path.abspath(out_dir)
     if not os.path.exists(out_dir):
         raise Exception("The specified absolute out_dir does not exist!")
 
-    duration = round(1000 / fps)
-    if reverse:
-        img_paths.reverse()
-    if extension == 'gif':
+    if criteria.extension == 'gif':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
-        frames = [Image.open(i) for i in img_paths]
-        if flip_horizontal:
-            for index, frame in enumerate(frames):
-                frames[index] = frame.transpose(Image.FLIP_LEFT_RIGHT)
-        if flip_vertical:
-            for index, frame in enumerate(frames):
-                frames[index] = frame.transpose(Image.FLIP_TOP_BOTTOM)
-
-        # if scale != 1.0:
-            # frames = [f.resize((round(f.width * scale), round(f.height * scale))) for f in frames]
-        # pprint(frames[0].filename)
         filename = f"{filename}.gif"
-        disposal = 0
-        frames = gify_images(frames, transparent=transparent)
-        if transparent:
-            disposal = 2
-        frames[0].save(out_full_path, optimize=False,
-                       save_all=True, append_images=frames[1:], duration=duration, loop=0, disposal=disposal)
+        build_gif(image_paths, out_full_path, criteria)
+        
 
-    elif extension == 'apng':
+    elif criteria.extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
         apng = APNG()
-        apng = build_apngs(img_paths, duration, flip_horizontal, flip_vertical)
+        apng = build_apng(img_paths, criteria)
         apng.save(out_full_path)
     deinit()
     return out_full_path
