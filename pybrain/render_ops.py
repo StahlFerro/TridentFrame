@@ -17,6 +17,8 @@ from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriter
 
 def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
     frames = []
+    if criteria.reverse:
+        image_paths.reverse()
     for ipath in image_paths:
         im = Image.open(ipath)
         alpha = None
@@ -46,28 +48,28 @@ def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria)
     disposal = 0
     if criteria.transparent:
         disposal = 2
-    if criteria.reverse:
-        frames.reverse()
     frames[0].save(out_full_path, optimize=False,
         save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
     
 
 
 def build_apng(image_paths, criteria: CreationCriteria):
-    if criteria.flip_h or criteria.flip_v:
-        apng = APNG()
-        for ipath in image_paths:
-            with io.BytesIO() as bytebox:
-                image = Image.open(ipath)
-                if criteria.flip_h:
-                    image = image.transpose(Image.FLIP_LEFT_RIGHT)
-                if criteria.flip_v:
-                    image = image.transpose(Image.FLIP_TOP_BOTTOM)
-                image.save(bytebox, "PNG", optimize=True)
-                apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
-        return apng
-    else:
-        return APNG.from_files(image_paths, delay=criteria.duration)
+    if criteria.reverse:
+        image_paths.reverse()
+    apng = APNG()
+    for ipath in image_paths:
+        with io.BytesIO() as bytebox:
+            im = Image.open(ipath)
+            if criteria.scale != 1.0:
+                im = im.resize((round(im.width * criteria.scale), round(im.height * criteria.scale)))
+            if criteria.flip_h:
+                im = im.transpose(Image.FLIP_LEFT_RIGHT)
+            if criteria.flip_v:
+                im = im.transpose(Image.FLIP_TOP_BOTTOM)
+            im.save(bytebox, "PNG", optimize=True)
+            apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
+    return apng
+    # return APNG.from_files(image_paths, delay=criteria.duration)
 
 
 def _combine_image(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):
