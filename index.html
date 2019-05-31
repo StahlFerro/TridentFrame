@@ -109,7 +109,13 @@
                                                 <td>
                                                     <div class="field">
                                                         <label class="label">Frame rate</label>
-                                                        <div class="control"><input id="create_fps" class="input is-neon-white" type="number"/></div>
+                                                        <div class="control"><input id="create_fps" class="input is-neon-white" type="number" min="1" max="50"/></div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="field">
+                                                        <label class="label">Scale</label>
+                                                        <div class="control"><input id="create_scale" class="input is-neon-white" type="number" min="0.1" max="5"/></div>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -125,8 +131,6 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td>
-                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>
@@ -134,12 +138,12 @@
                                                         <input id="is_disposed" type="checkbox"/>
                                                         Disposal
                                                     </label>
-                                                </td>
-                                                <td>
                                                     <label class="checkbox">
                                                         <input id="is_reversed" type="checkbox"/>
                                                         Reversed
                                                     </label>
+                                                </td>
+                                                <td>
                                                     <label class="checkbox">
                                                         <input id="flip_horizontal" type="checkbox"/>
                                                         Flip Horizontally

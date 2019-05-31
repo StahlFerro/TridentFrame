@@ -28,6 +28,7 @@ let sequence_paths = null;
 let sequence_counter = document.getElementById('sequence_counter');
 let create_name = document.getElementById('create_name');
 let create_fps = document.getElementById('create_fps');
+let create_scale = document.getElementById('create_scale');
 let is_disposed = document.getElementById('is_disposed');
 let is_reversed = document.getElementById('is_reversed');
 let flip_horizontal = document.getElementById('flip_horizontal');
@@ -46,7 +47,7 @@ let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
 load_imgs_button.addEventListener("click", () => {
     var img_paths = dialog.showOpenDialog({ filters: extension_filters, properties: imgs_dialog_props })
-    console.log(`chosen path: ${img_paths}`)
+    console.log(`chosen path: ${img_paths}`);
     if (img_paths === undefined) { return }
     console.log(img_paths);
     deactivateButtons();
@@ -62,6 +63,9 @@ load_imgs_button.addEventListener("click", () => {
             create_name.value = res.name;
             if (create_fps.value === undefined || create_fps.value == null || create_fps.value == "") {
                 create_fps.value = 50;
+            }
+            if (create_scale.value === undefined || create_scale.value == null || create_scale.value == "") {
+                create_scale.value = 1;
             }
             sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
             console.log(res);
