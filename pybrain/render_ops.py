@@ -50,7 +50,7 @@ def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria)
         disposal = 2
     frames[0].save(out_full_path, optimize=False,
         save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
-    
+
 
 def build_apng(image_paths, criteria: CreationCriteria):
     if criteria.reverse:
@@ -69,7 +69,6 @@ def build_apng(image_paths, criteria: CreationCriteria):
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)
                 im.save(bytebox, "PNG", optimize=True)
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
-        raise Exception('slow')
         return apng
     else:
         return APNG.from_files(image_paths, delay=criteria.duration)
