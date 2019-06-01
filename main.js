@@ -2,6 +2,8 @@ const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
+let pyProc = null;
+let pyPort = null;
 
 
 let mainWindow = null
@@ -37,8 +39,6 @@ app.on('activate', () => {
     }
 })
 
-let pyProc = null;
-let pyPort = null;
 const selectPort = () => {
     pyPort = 4242;
     return pyPort;
@@ -54,6 +54,7 @@ const createPyProc = () => {
 }
 
 const exitPyProc = () => {
+    console.log(lmao)
     pyProc.kill();
     pyProc = null;
     pyPort = null;
