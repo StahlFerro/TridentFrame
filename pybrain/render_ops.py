@@ -30,7 +30,7 @@ def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria)
             im = im.resize((round(im.width * criteria.scale), round(im.height * criteria.scale)))
         try: 
             alpha = im.getchannel('A')
-        except Exception as e:
+        except Exception:
             alpha = False
         if criteria.transparent and alpha:
             # alpha.show(title='alpha')
@@ -52,27 +52,30 @@ def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria)
         save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
     
 
-
 def build_apng(image_paths, criteria: CreationCriteria):
     if criteria.reverse:
         image_paths.reverse()
     apng = APNG()
-    for ipath in image_paths:
-        with io.BytesIO() as bytebox:
-            im = Image.open(ipath)
-            if criteria.scale != 1.0:
-                im = im.resize((round(im.width * criteria.scale), round(im.height * criteria.scale)))
-            if criteria.flip_h:
-                im = im.transpose(Image.FLIP_LEFT_RIGHT)
-            if criteria.flip_v:
-                im = im.transpose(Image.FLIP_TOP_BOTTOM)
-            im.save(bytebox, "PNG", optimize=True)
-            apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
-    return apng
-    # return APNG.from_files(image_paths, delay=criteria.duration)
+    if criteria.flip_h or criteria.flip_v or criteria.scale != 1.0:
+        for ipath in image_paths:
+            # bytebox = io.BytesIO()
+            with io.BytesIO() as bytebox:
+                im = Image.open(ipath)
+                if criteria.scale != 1.0:
+                    im = im.resize((round(im.width * criteria.scale), round(im.height * criteria.scale)))
+                if criteria.flip_h:
+                    im = im.transpose(Image.FLIP_LEFT_RIGHT)
+                if criteria.flip_v:
+                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                im.save(bytebox, "PNG", optimize=True)
+                apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
+        raise Exception('slow')
+        return apng
+    else:
+        return APNG.from_files(image_paths, delay=criteria.duration)
 
 
-def _combine_image(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):
+def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
@@ -102,7 +105,7 @@ def _combine_image(image_paths: List[str], out_dir: str, filename: str, criteria
     return out_full_path
 
 
-def _split_image(image_path: str, out_dir: str):
+def split_aimg(image_path: str, out_dir: str):
     abspath = os.path.abspath(image_path)
     init()
     if not os.path.isfile(image_path):
