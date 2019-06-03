@@ -3,6 +3,7 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.js');
+const { escapeHtml } = require('./Utils.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 
 
@@ -60,7 +61,7 @@ load_imgs_button.addEventListener("click", () => {
             sequence_paths = res.sequences;
             console.log("obtained sequences", sequence_paths);
             quintcell_generator(sequence_paths);
-            create_name.value = res.name;
+            create_name.value = escapeHtml(res.name);
             if (create_fps.value === undefined || create_fps.value == null || create_fps.value == "") {
                 create_fps.value = 50;
             }

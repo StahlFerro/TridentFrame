@@ -4,6 +4,7 @@ const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
+const { escapeHtml } = require('./Utils.js')
 let split_msgbox = document.getElementById('split_msgbox');
 
 let open_aimg_button = document.querySelector('#open_aimg_button');
@@ -60,7 +61,7 @@ clear_aimg_button.addEventListener('click', clearAIMG);
 function loadAIMG(res) {
     console.log(res);
     clearAIMG();
-    aimg_name.innerHTML = res.name;
+    aimg_name.innerHTML = escapeHtml(res.name);
     info_header.innerHTML = `${res.extension} Information`;
     aimg_file_size.innerHTML = `${res.fsize}`;
     aimg_frame_count.innerHTML = `${res.frame_count} frames`;

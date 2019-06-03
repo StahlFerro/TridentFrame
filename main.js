@@ -21,7 +21,8 @@ const createWindow = () => {
         protocol: 'file:',
         slashes: true
     }));
-    mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools();
+    mainWindow.focus();
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
