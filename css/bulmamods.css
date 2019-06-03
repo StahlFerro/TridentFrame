@@ -7169,6 +7169,9 @@ label {
 .frame-title-bar {
   -webkit-app-region: drag !important; }
 
+#left_menu_panel {
+  -webkit-app-region: drag !important; }
+
 button, a, input {
   -webkit-app-region: no-drag !important; }
 
@@ -7216,7 +7219,7 @@ a.exit-button:hover {
   display: block; }
 
 .sequence-grid td {
-  border: 2px solid rebeccapurple !important;
+  border: 2px solid #cccccc !important;
   border-collapse: collapse;
   padding: 3px !important;
   width: 98px;

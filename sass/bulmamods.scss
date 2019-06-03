@@ -84,6 +84,9 @@ label { color: $white-d !important; }
 .frame-title-bar {
     -webkit-app-region: drag !important;
 }
+#left_menu_panel {
+    -webkit-app-region: drag !important;
+}
 button, a, input {
     -webkit-app-region: no-drag !important;
 }
@@ -146,7 +149,7 @@ a.exit-button:hover {
     // border-collapse: collapse;
 }
 .sequence-grid td {
-    border: 2px solid rebeccapurple !important;
+    border: 2px solid $white-d !important;
     border-collapse: collapse;
     padding: 3px !important;
     width: 98px;

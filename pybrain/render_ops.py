@@ -17,6 +17,7 @@ from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriter
 
 def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
     frames = []
+    disposal = 0
     if criteria.reverse:
         image_paths.reverse()
     for ipath in image_paths:
@@ -33,6 +34,7 @@ def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria)
         except Exception:
             alpha = False
         if criteria.transparent and alpha:
+            disposal = 2
             # alpha.show(title='alpha')
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
             # im.show('im first convert')
@@ -44,10 +46,6 @@ def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria)
         else:
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=256)
         frames.append(im)
-
-    disposal = 0
-    if criteria.transparent:
-        disposal = 2
     frames[0].save(out_full_path, optimize=False,
         save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
 
