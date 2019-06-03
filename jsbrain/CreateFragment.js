@@ -21,8 +21,10 @@ let create_msgbox = document.getElementById('create_msgbox');
 let load_imgs_button = document.getElementById('load_imgs_button');
 let clear_imgs_button = document.getElementById('clear_imgs_button');
 let choose_aimg_outdir_button = document.getElementById('choose_aimg_outdir_button');
-let background_button = document.getElementById('background_button')
+let create_bgprev_button = document.getElementById('create_bgprev_button');
+let create_aimg_cell = document.getElementById('create_aimg_cell');
 let create_aimg_button = document.getElementById('create_aimg_button');
+let create_checkerbg_active = false;
 
 var sequence_body = document.getElementById('sequence_body');
 let sequence_paths = null;
@@ -221,3 +223,15 @@ function quintcell_generator(paths) {
 function del_frame() {
     console.log("delet");
 }
+
+create_bgprev_button.addEventListener('click', () => {
+    if (!create_checkerbg_active) {
+        create_aimg_cell.style.background = "url('./imgs/Transparency500.png')";
+        create_bgprev_button.classList.add('is-active');
+        create_checkerbg_active = true;
+    } else {
+        create_aimg_cell.style.background = ''
+        create_bgprev_button.classList.remove('is-active');
+        create_checkerbg_active = false;
+    }
+});

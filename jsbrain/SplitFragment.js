@@ -9,11 +9,12 @@ let split_msgbox = document.getElementById('split_msgbox');
 
 let open_aimg_button = document.querySelector('#open_aimg_button');
 let clear_aimg_button = document.querySelector('#clear_aimg_button');
+let split_bgprev_button = document.getElementById('split_bgprev_button');
 let choose_seq_outdir_button = document.querySelector('#choose_seq_outdir_button');
 let create_seq_button = document.querySelector('#create_seq_button');
 
-let aimg_cell = document.getElementById('aimg_cell');
-let is_bg_active = false;
+let split_aimg_cell = document.getElementById('split_aimg_cell');
+let split_checkerbg_active = false;
 let aimg_stage = document.getElementById('aimg_stage');
 let aimg_path = document.getElementById('aimg_path');
 
@@ -91,15 +92,15 @@ function clearAIMG() {
     console.log('session cleared');
 }
 
-background_button.addEventListener('click', () => {
-    if (!is_bg_active) {
-        aimg_cell.style.background = "url('./imgs/Transparency500.png')";
-        background_button.classList.add('is-active');
-        is_bg_active = true;
+split_bgprev_button.addEventListener('click', () => {
+    if (!split_checkerbg_active) {
+        split_aimg_cell.style.background = "url('./imgs/Transparency500.png')";
+        split_bgprev_button.classList.add('is-active');
+        split_checkerbg_active = true;
     } else {
-        aimg_cell.style.background = ''
-        background_button.classList.remove('is-active');
-        is_bg_active = false;
+        split_aimg_cell.style.background = ''
+        split_bgprev_button.classList.remove('is-active');
+        split_checkerbg_active = false;
     }
 });
 

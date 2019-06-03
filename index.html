@@ -64,7 +64,7 @@
                                             </tbody>
                                         </table>
                                     </td>
-                                    <td id="prev_aimg_cell" class="aimg-cell">
+                                    <td id="create_aimg_cell" class="aimg-cell">
                                         <div class="prev-aimg-container"><span class="aimg-helper"></span><img id="prev_aimg_stage"src="" /></div>
                                         <input id="prev_aimg_path" name="prev_aimg_path_field" type="hidden" value="" />
                                     </td>
@@ -81,6 +81,9 @@
                                                         <a id="clear_imgs_button" class="button is-neon-white">
                                                             <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
                                                         </a>
+                                                        <a  id="create_bgprev_button" class="button is-neon-white">
+                                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
+                                                        </a>
                                                     </div>
                                                 </div>
                                                 <div class="level-item has-text-right">
@@ -92,8 +95,7 @@
                                         </nav>
                                     </td>
                                     <td class="has-text-left is-paddingless" style="vertical-align: middle;">
-                                        <div id="create_msgbox" class="create-msgbox">
-                                        </div>
+                                        
                                     </td>
                                 </tr>
                                 <tr>
@@ -176,6 +178,12 @@
                                                     </div>
                                                 </td>
                                             </tr>
+                                            <tr>
+                                                <td colspan="4">
+                                                    <div id="create_msgbox" class="create-msgbox">
+                                                    </div>
+                                                </td>
+                                            </tr>
                                         </table>
                                     </td>        
                                 </tr>
@@ -187,7 +195,7 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="aimg_cell" class="aimg-cell" width="40%">
+                                    <td id="split_aimg_cell" class="aimg-cell" width="40%">
                                         <div class="aimg-container"><span class="aimg-helper"></span><img id="aimg_stage"src="" /></div>
                                         <input id="aimg_path" name="aimg_path_field" type="hidden" value="" />
                                     </td>
@@ -237,7 +245,7 @@
                                     <td class="has-text-centered">
                                         <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
                                         <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
-                                        <a class="button is-neon-white" id="background_button">
+                                        <a class="button is-neon-white" id="split_bgprev_button">
                                             <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
                                         </a>
                                     </td>
