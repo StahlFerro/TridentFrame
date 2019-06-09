@@ -22,9 +22,12 @@ let load_imgs_button = document.getElementById('load_imgs_button');
 let clear_imgs_button = document.getElementById('clear_imgs_button');
 let choose_aimg_outdir_button = document.getElementById('choose_aimg_outdir_button');
 let create_bgprev_button = document.getElementById('create_bgprev_button');
+let create_autoprev_button = document.getElementById('create_autoprev_button');
+let autoprev_icon = document.getElementById('autoprev_icon')
 let create_aimg_cell = document.getElementById('create_aimg_cell');
 let create_aimg_button = document.getElementById('create_aimg_button');
 let create_checkerbg_active = false;
+let autoprev_active = false;
 
 var sequence_body = document.getElementById('sequence_body');
 let sequence_paths = null;
@@ -235,5 +238,17 @@ create_bgprev_button.addEventListener('click', () => {
         create_aimg_cell.style.background = ''
         create_bgprev_button.classList.remove('is-active');
         create_checkerbg_active = false;
+    }
+});
+
+create_autoprev_button.addEventListener('click', () => {
+    if (!autoprev_active) {
+        autoprev_icon.classList.remove('fa-eye-slash');
+        autoprev_icon.classList.add('fa-eye');
+        autoprev_active = true;
+    } else {
+        autoprev_icon.classList.remove('fa-eye');
+        autoprev_icon.classList.add('fa-eye-slash');
+        autoprev_active = false;
     }
 });
