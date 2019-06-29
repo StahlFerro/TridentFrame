@@ -14,6 +14,7 @@ const createWindow = () => {
         maxWidth: 950, maxHeight: 700,
         center: true, 
         frame: false,
+        icon: path.join(__dirname, 'imgs/TridentFrame_Icon_200px.png')
     });
     mainWindow.setMenu(null);
     mainWindow.loadURL(require('url').format({

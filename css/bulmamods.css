@@ -7176,8 +7176,16 @@ button, a, input {
   -webkit-app-region: no-drag !important; }
 
 /* Window minimize and maximize buttons */
+a.minimize-button {
+  padding-left: 5px;
+  padding-right: 5px; }
+
 a.minimize-button:hover {
   background-color: #616877; }
+
+a.exit-button {
+  padding-left: 5px;
+  padding-right: 5px; }
 
 a.exit-button:hover {
   background-color: #ff3860; }

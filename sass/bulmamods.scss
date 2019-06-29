@@ -93,9 +93,17 @@ button, a, input {
 
 
 /* Window minimize and maximize buttons */
+a.minimize-button { 
+    padding-left: 5px;
+    padding-right: 5px;
+}
 a.minimize-button:hover {
     background-color: $dark-6;
     // color: #363636; 
+}
+a.exit-button {
+    padding-left: 5px;
+    padding-right: 5px;
 }
 a.exit-button:hover {
     background-color: $danger;

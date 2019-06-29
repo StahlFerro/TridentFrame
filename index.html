@@ -16,10 +16,10 @@
 
     <table id="main_table" class="table is-borderless is-desktop"
         style="width: 950px;height: 700px;table-layout: fixed; margin: 0;" width="100%">
-        <tbody>
+        <thead>
             <tr class="has-background-dark-2 frame-title-bar" style="height: 3%;">
                 <td width="10%" class="is-paddingless" style="vertical-align: middle;">
-                    <span style="padding-left: 10px;">TridentFrame</span>
+                    <span style="padding-left: 10px;" class="is-white-d">TridentFrame</span>
                 </td>
                 <td width="90%" class="is-paddingless">
                     <nav class="level is-marginless">
@@ -37,8 +37,10 @@
                     </nav>
                 </td>
             </tr>
+        </thead>
+        <tbody>
             <tr>
-                <td id="left_menu_panel" class="has-background-dark-2">
+                <td width="10%" id="left_menu_panel" class="has-background-dark-2">
                     <aside class="menu has-text-centered" style="margin: 0;">
                         <ul class="menu-list">
                             <li id="create_box" class="menu-item is-selected"><a id="create_menu">
@@ -52,7 +54,7 @@
                         </ul>
                     </aside>
                 </td>
-                <td id="panel_container">
+                <td width="90%" id="panel_container">
 
                     <div id="create_panel" class="container" style="padding:10px;">
                         <div class="content">
