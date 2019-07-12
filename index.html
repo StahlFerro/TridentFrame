@@ -44,13 +44,17 @@
                     <aside class="menu has-text-centered" style="margin: 0;">
                         <ul class="menu-list">
                             <li id="create_box" class="menu-item is-selected"><a id="create_menu">
-                                    <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Create</p>
-                                </a></li>
+                                <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
+                                <p class="is-white-d">Create</p>
+                            </a></li>
                             <li id="split_box" class="menu-item"><a id="split_menu">
-                                    <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Split</p>
-                                </a></li>
+                                <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
+                                <p class="is-white-d">Split</p>
+                            </a></li>
+                            <li id="convert_box" class="menu-item"><a id="convert_menu">
+                                <span class="icon is-large"><i class="far fa-exchange-alt fa-2x fa-inverse"></i></span>
+                                <p class="is-white-d">Convert</p>    
+                            </a></li>
                         </ul>
                     </aside>
                 </td>
@@ -113,10 +117,16 @@
                                         <table class="table aimg-control-table">
                                             <tr>
                                                 <td>                                                    
-                                                <div class="field">
-                                                    <label class="label">Name</label>
-                                                    <div class="control"><input id="create_name" class="input is-neon-white" type="text"/></div>
-                                                </div>
+                                                    <div class="field">
+                                                        <label class="label">Name</label>
+                                                        <div class="control"><input id="create_name" class="input is-neon-white" type="text"/></div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="field">
+                                                        <label class="label">Duration</label>
+                                                        <div class="control"><input id="create_duration" class="input is-neon-white" type="number"/></div>
+                                                    </div>
                                                 </td>
                                                 <td>
                                                     <div class="field">

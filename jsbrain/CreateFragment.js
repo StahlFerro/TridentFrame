@@ -35,6 +35,7 @@ let sequence_counter = document.getElementById('sequence_counter');
 let create_name = document.getElementById('create_name');
 let create_fps = document.getElementById('create_fps');
 let create_scale = document.getElementById('create_scale');
+let create_duration = document.getElementById('create_duration');
 let is_disposed = document.getElementById('is_disposed');
 let is_reversed = document.getElementById('is_reversed');
 let flip_horizontal = document.getElementById('flip_horizontal');
@@ -69,6 +70,7 @@ load_imgs_button.addEventListener("click", () => {
             create_name.value = escapeHtml(res.name);
             if (create_fps.value === undefined || create_fps.value == null || create_fps.value == "") {
                 create_fps.value = 50;
+                create_duration = 0.02;
             }
             if (create_scale.value === undefined || create_scale.value == null || create_scale.value == "") {
                 create_scale.value = 1;
@@ -76,7 +78,7 @@ load_imgs_button.addEventListener("click", () => {
             sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
             console.log(res);
             mboxClear(create_msgbox);
-            createTempAIMG();
+            reloadTempAIMG();
         }
         load_imgs_button.classList.remove('is-loading');
         activateButtons();
@@ -107,8 +109,10 @@ flip_horizontal.addEventListener('click', reloadTempAIMG);
 flip_vertical.addEventListener('click', reloadTempAIMG);
 
 function reloadTempAIMG() {
-    deleteTempAIMG();
-    createTempAIMG();
+    if (autoprev_active) {
+        deleteTempAIMG();
+        createTempAIMG();
+    }
     // if (create_format.value == 'gif') {
     //     flip_horizontal.disabled = false;
     //     flip_vertical.disabled = false;
@@ -246,9 +250,12 @@ create_autoprev_button.addEventListener('click', () => {
         autoprev_icon.classList.remove('fa-eye-slash');
         autoprev_icon.classList.add('fa-eye');
         autoprev_active = true;
+        reloadTempAIMG();
     } else {
         autoprev_icon.classList.remove('fa-eye');
         autoprev_icon.classList.add('fa-eye-slash');
         autoprev_active = false;
+        deleteTempAIMG();
     }
 });
+
