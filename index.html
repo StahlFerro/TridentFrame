@@ -52,8 +52,12 @@
                                 <p class="is-white-d">Split</p>
                             </a></li>
                             <li id="convert_box" class="menu-item"><a id="convert_menu">
-                                <span class="icon is-large"><i class="far fa-exchange-alt fa-2x fa-inverse"></i></span>
+                                <span class="icon is-large"><i class="fas fa-exchange-alt fa-2x fa-inverse"></i></span>
                                 <p class="is-white-d">Convert</p>    
+                            </a></li>
+                            <li id="sprsheet_box" class="menu-item"><a id="sprsheet_menu">
+                                <span class="icon is-large"><i class="fas fa-th fa-2x fa-inverse"></i></span>
+                                <p class="is-white-d">Spritesheet</p>    
                             </a></li>
                         </ul>
                     </aside>
@@ -64,13 +68,13 @@
                         <div class="content">
                             <table class="table" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="sequence_cell" class="sequence-cell is-paddingless" width="500px;">
+                                    <td id="sequence_cell" class="silver-bordered is-paddingless" width="500px;">
                                         <table class="sequence-grid is-paddingless" width="100%">
                                             <tbody id="sequence_body">                                                                                                                                                                                                                                                                                                        
                                             </tbody>
                                         </table>
                                     </td>
-                                    <td id="create_aimg_cell" class="aimg-cell">
+                                    <td id="create_aimg_cell" class="silver-bordered aimg-cell">
                                         <div class="prev-aimg-container"><span class="aimg-helper"></span><img id="prev_aimg_stage"src="" /></div>
                                         <input id="prev_aimg_path" name="prev_aimg_path_field" type="hidden" value="" />
                                     </td>
@@ -215,7 +219,7 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="split_aimg_cell" class="aimg-cell" width="40%">
+                                    <td id="split_aimg_cell" class="silver-bordered aimg-cell" width="40%">
                                         <div class="aimg-container"><span class="aimg-helper"></span><img id="aimg_stage"src="" /></div>
                                         <input id="aimg_path" name="aimg_path_field" type="hidden" value="" />
                                     </td>
@@ -294,6 +298,57 @@
                         </div>
                     </div>
 
+                    <div id="convert_panel" class="container" style="display: none; padding:10px;">
+                        <div class="content">
+                            <table class="table is-borderless" style="padding: 5px;" width="100%">
+                            </table>
+                        </div>
+                    </div>
+
+                    <div id="sprsheet_panel" class="container" style="display: none; padding:10px;">
+                        <div class="content">
+                            <table class="table is-borderless" style="padding: 5px;" width="100%">
+                                <tr>
+                                    <td id="spr_stage" class="silver-bordered is-paddingless" width="50%">
+                                        <table class="sequence-grid is-paddingless" width="100%">
+                                            <tbody id="spr_sequence_body">                                                                                                                                                                                                                                                                                                        
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="is-hpaddingless" colspan="2">
+                                        <nav class="level">
+                                            <div class="level-left">
+                                                <div class="level-item has-text-centered">
+                                                    <div class="field">
+                                                        <div class="control">
+                                                            <div class="select is-neon-cyan">
+                                                                <select id="create_format">
+                                                                    <option value="gif">Create</option>
+                                                                    <option value="apng">Slice</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="level-item has-text-centered">
+                                                    <div>
+                                                        <a id="load_left_stage_button" class="button is-neon-cyan">
+                                                            <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Add</span>
+                                                        </a>
+                                                        <a id="clear_left_stage_button" class="button is-neon-white">
+                                                            <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
+                                                        </a>
+                                                    </div>
+                                                </div>     
+                                            </div>
+                                        </nav>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </tbody>
@@ -306,6 +361,7 @@
     require('./jsbrain/MenuHandler.js')
     require('./jsbrain/CreateFragment.js')
     require('./jsbrain/SplitFragment.js')
+    require('./jsbrain/SpritesheetFragment.js')
     require('./jsbrain/MessageBox.js')
 </script>
 

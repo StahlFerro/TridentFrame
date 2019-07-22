@@ -7194,6 +7194,9 @@ a.exit-button:hover {
 .menu-item {
   border: 2px solid #232629; }
 
+.menu-item a {
+  padding: 0.5em 0em; }
+
 .menu-item:hover {
   border: 2px solid #444851; }
 
@@ -7213,10 +7216,10 @@ a.exit-button:hover {
   padding-top: 0px !important;
   padding-bottom: 0px !important; }
 
-/* Image sequences scrollable grid-like table in Create panel */
-.sequence-cell {
+.silver-bordered {
   border: 2px solid #cccccc !important; }
 
+/* Image sequences scrollable grid-like table in Create panel */
 .sequence-grid tbody {
   height: 320px;
   border-collapse: collapse;
@@ -7275,8 +7278,7 @@ table.aimg-control-table label {
   vertical-align: middle; }
 
 .aimg-cell {
-  text-align: center !important;
-  border: 2px solid #cccccc !important; }
+  text-align: center !important; }
 
 /* Neon-cyan buttons. $cyan outlines with $dark-3 BG to match the global $dark-3 BG color */
 .button.is-neon-cyan {

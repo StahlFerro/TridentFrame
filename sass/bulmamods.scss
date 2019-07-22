@@ -115,6 +115,9 @@ a.exit-button:hover {
 .menu-item {
     border: 2px solid $dark-2;
 }
+.menu-item a{
+    padding: 0.5em 0em;
+}
 .menu-item:hover {
     border: 2px solid $dark-4;
 }
@@ -140,10 +143,11 @@ a.exit-button:hover {
 }
 
 
-/* Image sequences scrollable grid-like table in Create panel */
-.sequence-cell {
+.silver-bordered {
     border: 2px solid $white-d !important;
 }
+
+/* Image sequences scrollable grid-like table in Create panel */
 .sequence-grid tbody {
     height:320px;
     // border: 2px solid rebeccapurple !important;
@@ -218,7 +222,6 @@ table.aimg-control-table label{
 }
 .aimg-cell {
     text-align: center !important; 
-    border: 2px solid $white-d !important;
 }
 
 

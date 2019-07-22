@@ -1,5 +1,8 @@
-const zerorpc = require('zerorpc')
-let client = new zerorpc.Client()
-client.connect("tcp://127.0.0.1:4242")
+const zerorpc = require('zerorpc');
+let client = new zerorpc.Client();
+client.connect("tcp://127.0.0.1:4242");
+
+const ImageViewer = require('iv-viewer').default;
 
 module.exports.client = client;
+module.exports.ImageViewer = ImageViewer;
