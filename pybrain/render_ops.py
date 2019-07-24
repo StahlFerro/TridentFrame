@@ -180,6 +180,8 @@ def _delete_temp_images():
 
 def create_spritesheet(image_paths: List, out_dir: str, filename: str):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
+    print(image_paths)
+    pprint(abs_image_paths)
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     init()
@@ -209,7 +211,18 @@ def create_spritesheet(image_paths: List, out_dir: str, filename: str):
 
     spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
     spritesheet.save("Ok.png", "PNG")
-    
 
-if __name__ == "__main__":
-    create_spritesheet("imgs/Transparency500.png", "temp/", "ok")
+    for index, fr in enumerate(frames):
+        top = tile_height * math.floor(index / max_frames_row)
+        left = tile_width * (index % max_frames_row)
+        bottom = top + tile_height
+        right = left + tile_width
+
+        box = (left, top, right, bottom)
+        box = [int(b) for b in box]
+
+        cut_frame = fr.crop((0, 0, tile_width, tile_height))
+        spritesheet.paste(cut_frame, box)
+
+    spritesheet.save("Spritesheet.png", "PNG")
+    spritesheet.show()
