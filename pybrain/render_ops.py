@@ -2,6 +2,7 @@ import os
 import io
 import string
 import shutil
+import math
 from random import choices
 from pprint import pprint
 from urllib.parse import urlparse
@@ -15,7 +16,7 @@ from hurry.filesize import size, alternative
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria
 
 
-def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
+def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
     frames = []
     disposal = 0
     if criteria.reverse:
@@ -50,7 +51,7 @@ def build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria)
         save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
 
 
-def build_apng(image_paths, criteria: CreationCriteria):
+def _build_apng(image_paths, criteria: CreationCriteria):
     if criteria.reverse:
         image_paths.reverse()
     apng = APNG()
@@ -90,13 +91,13 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     if criteria.extension == 'gif':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         filename = f"{filename}.gif"
-        build_gif(image_paths, out_full_path, criteria)
+        _build_gif(image_paths, out_full_path, criteria)
         
 
     elif criteria.extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
         apng = APNG()
-        apng = build_apng(img_paths, criteria)
+        apng = _build_apng(img_paths, criteria)
         apng.save(out_full_path)
     deinit()
     return out_full_path
@@ -176,3 +177,39 @@ def _delete_temp_images():
     for ta in temp_aimgs:
         os.remove(ta)
     return True
+
+def create_spritesheet(image_paths: List, out_dir: str, filename: str):
+    abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
+    img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
+    # workpath = os.path.dirname(img_paths[0])
+    init()
+    # Test if inputted filename has extension, then remove it from the filename
+    fname, ext = os.path.splitext(filename)
+    if ext:
+        filename = fname
+    if not out_dir:
+        raise Exception("No output folder selected, please select it first")
+    out_dir = os.path.abspath(out_dir)
+    if not os.path.exists(out_dir):
+        raise Exception("The specified absolute out_dir does not exist!")
+
+    frames = [Image.open(i).getdata() for i in img_paths]
+    tile_width = frames[0].size[0]
+    tile_height = frames[0].size[1]
+
+    max_frames_row = 5
+    if len(frames) > max_frames_row:
+        spritesheet_width = tile_width * max_frames_row
+        required_rows = math.ceil(len(frames)/max_frames_row)
+        print('required rows', required_rows)
+        spritesheet_height = tile_height * required_rows
+    else:
+        spritesheet_width = tile_width * len(frames)
+        spritesheet_height = tile_height
+
+    spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
+    spritesheet.save("Ok.png", "PNG")
+    
+
+if __name__ == "__main__":
+    create_spritesheet("imgs/Transparency500.png", "temp/", "ok")
