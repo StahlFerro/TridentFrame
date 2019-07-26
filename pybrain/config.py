@@ -4,9 +4,7 @@ ANIMATED_IMG_EXTS = ['gif', 'png']
 
 
 class CreationCriteria():
-    """
-        Contains all of the GIF/APNG specified criterias like fps, scale, etc.
-    """
+    """ Contains all of the GIF/APNG specified criterias like fps, scale, etc. """
     def __init__(self, fps, extension, reverse, transparent):
         try:
             fps = float(fps)
@@ -17,16 +15,24 @@ class CreationCriteria():
         self.extension: str = extension
         self.reverse: bool = reverse
         self.transparent: bool = transparent
-        self.scale: float = 1.0
         self.flip_h: bool = False
         self.flip_v: bool = False
     
-    def transform(self, scale, flip_h, flip_v):
+    def transform(self, resize_width, resize_height, flip_h, flip_v):
         try:
-            scale = float(scale)
+            resize_width = float(resize_width)
+            resize_height = float(resize_height)
         except Exception as e:
             raise Exception(e)        
-        self.scale = scale
+        self.resize_width = resize_width
+        self.resize_height = resize_height
         self.flip_h = flip_h
         self.flip_v = flip_v
         return self
+
+
+class SplitCriteria():
+    """ Contains all of the GIF/APNG specified criterias like fps, scale, etc. """
+
+    def __init__(self, pad_count):
+        self.pad_count: int = pad_count

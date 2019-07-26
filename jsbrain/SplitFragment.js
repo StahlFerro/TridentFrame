@@ -17,6 +17,7 @@ let split_aimg_cell = document.getElementById('split_aimg_cell');
 let split_checkerbg_active = false;
 let aimg_stage = document.getElementById('aimg_stage');
 let aimg_path = document.getElementById('aimg_path');
+let split_pad_count = document.getElementById('split_pad_count');
 
 let target_seq_path = document.getElementById('target_seq_path');
 
@@ -52,6 +53,7 @@ open_aimg_button.addEventListener("click", () => {
             mboxError(split_msgbox, error);
         } else {
             loadAIMG(res);
+            split_pad_count.value = 3;
         }
     })
     console.log('registered!');
@@ -68,7 +70,11 @@ function loadAIMG(res) {
     aimg_frame_count.innerHTML = `${res.frame_count} frames`;
     aimg_fps.innerHTML = `${res.fps} fps`;
     aimg_dimens.innerHTML = `${res.width} x ${res.height}`;
-    aimg_frame_delay.innerHTML = `${res.avg_delay} seconds`;
+    let delay_info = `${res.avg_delay} seconds`
+    if (res.uneven_delay) {
+        delay_info += ` (uneven)`
+    }
+    aimg_frame_delay.innerHTML = delay_info;
     aimg_duration.innerHTML = `${res.loop_duration} seconds`;
     aimg_stage.src = res.absolute_url;
     aimg_path.value = res.absolute_url;
@@ -131,7 +137,7 @@ create_seq_button.addEventListener('click', () => {
     deactivateButtons();
     create_seq_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
-    client.invoke('split_image', aimg_path.value, target_seq_path.value, (error, res) => {
+    client.invoke('split_image', aimg_path.value, target_seq_path.value, split_pad_count, (error, res) => {
         if (error || !res){
             console.log(error);
             mboxError(split_msgbox, error);

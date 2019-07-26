@@ -13,7 +13,7 @@ from apng import APNG, PNG
 from colorama import init, deinit
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria
 
 
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
@@ -23,13 +23,15 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
         image_paths.reverse()
     for ipath in image_paths:
         im = Image.open(ipath)
+        orig_width, orig_height = im.size
+        must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
         alpha = None
         if criteria.flip_h:
             im = im.transpose(Image.FLIP_LEFT_RIGHT)
         if criteria.flip_v:
             im = im.transpose(Image.FLIP_TOP_BOTTOM)
-        if criteria.scale != 1.0:
-            im = im.resize((round(im.width * criteria.scale), round(im.height * criteria.scale)))
+        if must_resize:
+            im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
         try: 
             alpha = im.getchannel('A')
         except Exception:
@@ -51,7 +53,7 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
         save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
 
 
-def _build_apng(image_paths, criteria: CreationCriteria):
+def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
     if criteria.reverse:
         image_paths.reverse()
     apng = APNG()
@@ -60,8 +62,10 @@ def _build_apng(image_paths, criteria: CreationCriteria):
             # bytebox = io.BytesIO()
             with io.BytesIO() as bytebox:
                 im = Image.open(ipath)
-                if criteria.scale != 1.0:
-                    im = im.resize((round(im.width * criteria.scale), round(im.height * criteria.scale)))
+                orig_width, orig_height = im.size
+                must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
+                if must_resize:
+                    im = im.resize((round(criteria.resize_width), round(criteria.resize_height)))
                 if criteria.flip_h:
                     im = im.transpose(Image.FLIP_LEFT_RIGHT)
                 if criteria.flip_v:
@@ -93,17 +97,16 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
         filename = f"{filename}.gif"
         _build_gif(image_paths, out_full_path, criteria)
         
-
     elif criteria.extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
-        apng = APNG()
         apng = _build_apng(img_paths, criteria)
         apng.save(out_full_path)
+
     deinit()
     return out_full_path
 
 
-def split_aimg(image_path: str, out_dir: str):
+def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
     abspath = os.path.abspath(image_path)
     init()
     if not os.path.isfile(image_path):
@@ -147,6 +150,7 @@ def split_aimg(image_path: str, out_dir: str):
         frame_nums = list(range(0, gif.n_frames))
 
         # with click.progressbar(frame_nums, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
+        pad_count: int = 3 if (not criteria.pad_count or criteria.pad_count <= 0) else criteria.pad_count
         for f in frame_nums:
             gif.seek(f)
             gif.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
@@ -157,8 +161,8 @@ def split_aimg(image_path: str, out_dir: str):
         pad_count = max(len(str(len(iframes))), 3)
         # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
         # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
-        for i, (png, control) in enumerate(iframes):
-            png.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(i), pad_count)}.png"))
+        for index, (png, control) in enumerate(iframes):
+            png.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(index), pad_count)}.png"))
 
     deinit()
     return True
@@ -180,8 +184,6 @@ def _delete_temp_images():
 
 def create_spritesheet(image_paths: List, out_dir: str, filename: str):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
-    print(image_paths)
-    pprint(abs_image_paths)
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     init()

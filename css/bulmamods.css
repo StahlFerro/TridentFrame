@@ -7253,7 +7253,9 @@ a.exit-button:hover {
 
 /* Animated image (GIF/PNG) preview container in Create Panel */
 .prev-aimg-container {
-  overflow: hidden;
+  width: 300px;
+  height: 300px;
+  overflow: auto;
   text-align: center;
   display: inline-block; }
 
@@ -7268,7 +7270,7 @@ table.aimg-control-table label {
 .aimg-container {
   height: 300px;
   width: 300px;
-  overflow: hidden;
+  overflow: auto;
   text-align: center;
   display: inline-block; }
 

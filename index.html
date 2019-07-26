@@ -86,7 +86,7 @@
                                                 <div class="level-item has-text-centered">
                                                     <div>
                                                         <a id="load_imgs_button" class="button is-neon-cyan">
-                                                            <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Add</span>
+                                                            <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load Images</span>
                                                         </a>
                                                         <a id="clear_imgs_button" class="button is-neon-white">
                                                             <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
@@ -118,7 +118,7 @@
                                 </tr>
                                 <tr>
                                     <td id="control_cell" class="is-paddingless" colspan="2">
-                                        <table class="table aimg-control-table">
+                                        <table class="table aimg-control-table" width="100%">
                                             <tr>
                                                 <td>                                                    
                                                     <div class="field">
@@ -138,10 +138,29 @@
                                                         <div class="control"><input id="create_fps" class="input is-neon-white" type="number" min="1" max="50"/></div>
                                                     </div>
                                                 </td>
+                                                <td style="vertical-align: bottom;">
+                                                    <label class="checkbox">
+                                                        <input id="is_disposed" type="checkbox"/>
+                                                        Disposal
+                                                    </label>
+                                                    <br/>
+                                                    <label class="checkbox">
+                                                        <input id="is_reversed" type="checkbox"/>
+                                                        Reversed
+                                                    </label>
+                                                </td>    
+                                            </tr>
+                                            <tr>
                                                 <td>
                                                     <div class="field">
-                                                        <label class="label">Scale</label>
-                                                        <div class="control"><input id="create_scale" class="input is-neon-white" type="number" min="0.1" max="5"/></div>
+                                                        <label class="label">Width</label>
+                                                        <div class="control"><input id="create_width" class="input is-neon-white" type="number"/></div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="field">
+                                                            <label class="label">Height</label>
+                                                            <div class="control"><input id="create_height" class="input is-neon-white" type="number"/></div>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -157,28 +176,16 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <label class="checkbox">
-                                                        <input id="is_disposed" type="checkbox"/>
-                                                        Disposal
-                                                    </label>
-                                                    <label class="checkbox">
-                                                        <input id="is_reversed" type="checkbox"/>
-                                                        Reversed
-                                                    </label>
-                                                </td>
-                                                <td>
+                                                <td style="vertical-align: bottom;">
                                                     <label class="checkbox">
                                                         <input id="flip_horizontal" type="checkbox"/>
                                                         Flip Horizontally
                                                     </label>
+                                                    <br/>
                                                     <label class="checkbox">
                                                         <input id="flip_vertical" type="checkbox"/>
                                                         Flip Vertically
                                                     </label>
-
                                                 </td>
                                             </tr>
                                             <tr>
@@ -287,11 +294,22 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                </tr>
-                                <tr>
                                     <td class="has-text-centered">
                                         <a class="button is-neon-cyan" id="create_seq_button">Split to folder</a>
                                     </td>
+                                    <td class="has-text-centered">
+                                        <div class="field is-horizontal">
+                                            <div class="field-label is-normal">
+                                                <label class="label">Pad count</label>
+                                            </div>
+                                            <div class="field-body">
+                                                <div class="control"><input id="split_pad_count" class="input is-neon-white" type="number" min="1" max="6"/></div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
                                     <td class="has-text-left" style="vertical-align: middle;" id="split_msgbox"></td>
                                 </tr>
                             </table>
