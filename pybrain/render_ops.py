@@ -212,7 +212,7 @@ def create_spritesheet(image_paths: List, out_dir: str, filename: str):
         spritesheet_height = tile_height
 
     spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
-    spritesheet.save("Ok.png", "PNG")
+    spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
 
     for index, fr in enumerate(frames):
         top = tile_height * math.floor(index / max_frames_row)
@@ -226,5 +226,5 @@ def create_spritesheet(image_paths: List, out_dir: str, filename: str):
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
 
-    spritesheet.save("Spritesheet.png", "PNG")
+    spritesheet.save(os.path.join(out_dir, "Spritesheet.png"), "PNG")
     spritesheet.show()

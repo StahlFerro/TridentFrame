@@ -66,15 +66,15 @@
 
                     <div id="create_panel" class="container" style="padding:10px;">
                         <div class="content">
-                            <table class="table" style="padding: 5px;" width="100%">
+                            <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="sequence_cell" class="silver-bordered is-paddingless" width="500px;">
+                                    <td id="CRT_sequence_cell" class="silver-bordered is-paddingless" width="500px;">
                                         <table class="sequence-grid is-paddingless" width="100%">
-                                            <tbody id="sequence_body">                                                                                                                                                                                                                                                                                                        
+                                            <tbody id="CRT_sequence_body">
                                             </tbody>
                                         </table>
                                     </td>
-                                    <td id="create_aimg_cell" class="silver-bordered aimg-cell">
+                                    <td id="create_aimg_cell" class="silver-bordered force-center">
                                         <div class="prev-aimg-container"><span class="aimg-helper"></span><img id="prev_aimg_stage"src="" /></div>
                                         <input id="prev_aimg_path" name="prev_aimg_path_field" type="hidden" value="" />
                                     </td>
@@ -85,10 +85,10 @@
                                             <div class="level-left">
                                                 <div class="level-item has-text-centered">
                                                     <div>
-                                                        <a id="load_imgs_button" class="button is-neon-cyan">
+                                                        <a id="CRT_load_imgs_button" class="button is-neon-cyan">
                                                             <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load Images</span>
                                                         </a>
-                                                        <a id="clear_imgs_button" class="button is-neon-white">
+                                                        <a id="CRT_clear_imgs_button" class="button is-neon-white">
                                                             <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
                                                         </a>
                                                     </div>
@@ -226,7 +226,7 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="split_aimg_cell" class="silver-bordered aimg-cell" width="40%">
+                                    <td id="split_aimg_cell" class="silver-bordered force-center" width="40%">
                                         <div class="aimg-container"><span class="aimg-helper"></span><img id="aimg_stage"src="" /></div>
                                         <input id="aimg_path" name="aimg_path_field" type="hidden" value="" />
                                     </td>
@@ -288,7 +288,7 @@
                                                 </a>
                                             </div>        
                                             <div class="control is-expanded">
-                                              <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                                <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
                                             </div>
                                         </div>
                                     </td>
@@ -327,24 +327,28 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="spr_stage" class="silver-bordered is-paddingless" width="50%">
+                                    <td id="SPR_sequence_cell" class="silver-bordered is-paddingless" width="500px;">
                                         <table class="sequence-grid is-paddingless" width="100%">
-                                            <tbody id="spr_sequence_body">                                                                                                                                                                                                                                                                                                        
+                                            <tbody id="SPR_sequence_body">                                                                                                                                                                                                                                                                                                        
                                             </tbody>
                                         </table>
                                     </td>
+                                    <td id="create_spritesheet_cell" class="silver-bordered force-center">
+                                        <div class="prev-spritesheet-container"><span class="spritesheet-helper"></span><img id="prev_spritesheet_stage"src="" /></div>
+                                        <input id="prev_spritesheet_path" name="prev_spritesheet_path_field" type="hidden" value="" />
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td class="is-hpaddingless" colspan="2">
+                                    <td class="is-hpaddingless">
                                         <nav class="level">
                                             <div class="level-left">
                                                 <div class="level-item has-text-centered">
                                                     <div class="field">
                                                         <div class="control">
                                                             <div class="select is-neon-cyan">
-                                                                <select id="create_format">
-                                                                    <option value="gif">Create</option>
-                                                                    <option value="apng">Slice</option>
+                                                                <select id="SPR_mode">
+                                                                    <option value="create">Create</option>
+                                                                    <option value="slice">Slice</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -352,16 +356,33 @@
                                                 </div>
                                                 <div class="level-item has-text-centered">
                                                     <div>
-                                                        <a id="load_left_stage_button" class="button is-neon-cyan">
+                                                        <a id="SPR_load_imgs_button" class="button is-neon-cyan">
                                                             <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Add</span>
                                                         </a>
-                                                        <a id="clear_left_stage_button" class="button is-neon-white">
+                                                        <a id="SPR_clear_imgs_button" class="button is-neon-white">
                                                             <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
                                                         </a>
                                                     </div>
                                                 </div>     
                                             </div>
                                         </nav>
+                                    </td>
+                                    <td>
+                                        <div class="field has-addons">
+                                            <div class="control">
+                                                <a class="button is-neon-cyan" id="SPR_outdir_button">
+                                                    <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
+                                                </a>
+                                            </div>        
+                                            <div class="control is-expanded">
+                                                <input id="SPR_outdir_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                            </div>
+                                        </div>
+                                        <div class="field has-text-centered">
+                                            <div class="control">
+                                                <a id="SPR_create_button" class="button is-neon-cyan">Create</a>
+                                            </div>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>

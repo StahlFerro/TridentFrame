@@ -7,7 +7,7 @@ from typing import List
 import zerorpc
 
 from pybrain.inspect_ops import _inspect_image, _inspect_sequence
-from pybrain.render_ops import split_aimg, create_aimg, _delete_temp_images
+from pybrain.render_ops import split_aimg, create_aimg, _delete_temp_images, create_spritesheet
 from pybrain.config import CreationCriteria, SplitCriteria
 
 
@@ -47,6 +47,15 @@ class API(object):
     def delete_temp_images(self):
         res = _delete_temp_images()
         return res
+
+    def create_sprsheet(self, image_paths, out_dir, filename):
+        if not image_paths and not out_dir:
+            raise Exception("Please load the sequences and choose the output folder!")
+        elif not image_paths:
+            raise Exception("Please load the sequences!")
+        elif not out_dir:
+            raise Exception("Please choose the output folder!")
+        create_spritesheet(image_paths, out_dir, filename)
 
 
 def parse_port():

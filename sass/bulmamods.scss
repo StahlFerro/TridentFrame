@@ -170,6 +170,10 @@ a.exit-button:hover {
 .seqdiv {
     position: relative;
 }
+.seqdiv img {
+    max-width: 90px;
+    max-height: 90px;
+}
 .del-anchor {
     position: absolute;
     top: 0;
@@ -186,7 +190,14 @@ a.exit-button:hover {
 
 /* Animated image (GIF/PNG) preview container in Create Panel */
 .prev-aimg-container {
-    width: 300px;
+    // width: 400px;
+    height: 300px;
+    overflow: auto;
+    text-align: center;
+    display: inline-block;
+}
+.prev-spritesheet-container {
+    // width: 300px;
     height: 300px;
     overflow: auto;
     text-align: center;
@@ -220,10 +231,16 @@ table.aimg-control-table label{
     height: 100%;
     vertical-align: middle;
 }
-.aimg-cell {
+.force-center {
     text-align: center !important; 
 }
 
+
+.spritesheet-helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
 
 /* Neon-cyan buttons. $cyan outlines with $dark-3 BG to match the global $dark-3 BG color */
 .button.is-neon-cyan{

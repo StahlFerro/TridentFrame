@@ -3,7 +3,7 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.js');
-const { escapeHtml } = require('./Utils.js');
+const { quintcell_generator, escapeHtml } = require('./Utils.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 
 
@@ -18,8 +18,8 @@ setInterval(() => {
 
 let create_msgbox = document.getElementById('create_msgbox');
 // let sequence_carousel = document.getElementById('sequence_carousel')
-let load_imgs_button = document.getElementById('load_imgs_button');
-let clear_imgs_button = document.getElementById('clear_imgs_button');
+let CRT_load_imgs_button = document.getElementById('CRT_load_imgs_button');
+let CRT_clear_imgs_button = document.getElementById('CRT_clear_imgs_button');
 let choose_aimg_outdir_button = document.getElementById('choose_aimg_outdir_button');
 let create_bgprev_button = document.getElementById('create_bgprev_button');
 let create_autoprev_button = document.getElementById('create_autoprev_button');
@@ -29,7 +29,7 @@ let create_aimg_button = document.getElementById('create_aimg_button');
 let create_checkerbg_active = false;
 let autoprev_active = false;
 
-var sequence_body = document.getElementById('sequence_body');
+var CRT_sequence_body = document.getElementById('CRT_sequence_body');
 let sequence_paths = null;
 let sequence_counter = document.getElementById('sequence_counter');
 let create_name = document.getElementById('create_name');
@@ -53,13 +53,13 @@ let extension_filters = [
 let imgs_dialog_props = ['openfile', 'multiSelections', 'createDirectory'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
-load_imgs_button.addEventListener("click", () => {
+CRT_load_imgs_button.addEventListener("click", () => {
     var img_paths = dialog.showOpenDialog({ filters: extension_filters, properties: imgs_dialog_props })
     console.log(`chosen path: ${img_paths}`);
     if (img_paths === undefined) { return }
     console.log(img_paths);
     deactivateButtons();
-    load_imgs_button.classList.add("is-loading");
+    CRT_load_imgs_button.classList.add("is-loading");
     client.invoke("inspect_sequence", img_paths, (error, res) => {
         if (error) {
             console.error(error);
@@ -67,7 +67,7 @@ load_imgs_button.addEventListener("click", () => {
         } else {
             sequence_paths = res.sequence;
             console.log("obtained sequences", sequence_paths);
-            quintcell_generator(sequence_paths);
+            quintcell_generator(sequence_paths, CRT_sequence_body);
             create_name.value = escapeHtml(res.name);
             if (create_fps.value === undefined || create_fps.value == null || create_fps.value == "") {
                 create_fps.value = 50;
@@ -80,16 +80,16 @@ load_imgs_button.addEventListener("click", () => {
             mboxClear(create_msgbox);
             reloadTempAIMG();
         }
-        load_imgs_button.classList.remove('is-loading');
+        CRT_load_imgs_button.classList.remove('is-loading');
         activateButtons();
     });
 });
 
 
-clear_imgs_button.addEventListener('click', () => {
+CRT_clear_imgs_button.addEventListener('click', () => {
     // sequence_body.innerHTML = '';
-    while (sequence_body.hasChildNodes()){
-        sequence_body.removeChild(sequence_body.firstChild);
+    while (CRT_sequence_body.hasChildNodes()){
+        CRT_sequence_body.removeChild(CRT_sequence_body.firstChild);
     }
     sequence_paths = null;
     create_name.value = '';
@@ -188,51 +188,12 @@ function testcallback(){
 }
 
 function activateButtons () {
-    load_imgs_button.classList.remove('is-static');
-    clear_imgs_button.classList.remove('is-static');
+    CRT_load_imgs_button.classList.remove('is-static');
+    CRT_clear_imgs_button.classList.remove('is-static');
 }
-
 function deactivateButtons () {
-    load_imgs_button.classList.add('is-static');
-    clear_imgs_button.classList.add('is-static');
-}
-
-function quintcell_generator(paths) {
-    sequence_body.innerHTML = '';
-    for (var row = 0; row < Math.ceil(paths.length / 5); row++) {
-        var tr = document.createElement('TR');
-        for (var c = 0; c < 5; c++) {
-            const index = (row * 5) + c;
-            const img_path = paths[index];
-            if (img_path === undefined) {continue;}
-            var td = document.createElement('TD');
-            var div = document.createElement('DIV');
-            div.classList.add('seqdiv');
-            var img = document.createElement('IMG');
-            img.src = img_path;
-            var i = document.createElement('I');
-            i.className = 'fas fa-minus-circle del-icon';
-            i.onclick = del_frame;
-
-            var span = document.createElement('SPAN');
-            span.classList.add('icon');
-            span.appendChild(i);
-
-            var a = document.createElement('A');
-            a.className = 'del-anchor';
-            a.append(span);
-
-            div.appendChild(img);
-            div.appendChild(a);
-            td.appendChild(div);
-            tr.appendChild(td);
-        }
-        sequence_body.appendChild(tr);
-    }
-}
-
-function del_frame() {
-    console.log("delet");
+    CRT_load_imgs_button.classList.add('is-static');
+    CRT_clear_imgs_button.classList.add('is-static');
 }
 
 create_bgprev_button.addEventListener('click', () => {
