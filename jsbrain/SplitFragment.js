@@ -141,7 +141,7 @@ create_seq_button.addEventListener('click', () => {
     deactivateButtons();
     create_seq_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
-    client.invoke('split_image', aimg_path.value, target_seq_path.value, split_pad_count, is_duration_sensitive, (error, res) => {
+    client.invoke('split_image', aimg_path.value, target_seq_path.value, split_pad_count, is_duration_sensitive.checked, (error, res) => {
         if (error || !res){
             console.log(error);
             mboxError(split_msgbox, error);

@@ -151,9 +151,22 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
 
         # with click.progressbar(frame_nums, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         pad_count: int = 3 if (not criteria.pad_count or criteria.pad_count <= 0) else criteria.pad_count
+        durations = []
         for f in frame_nums:
             gif.seek(f)
-            gif.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(f), pad_count)}.png"), 'PNG')
+            durations.append(gif.info['duration'])
+        min_duration = min(durations)
+        if criteria.is_duration_sensitive:
+            multipliers = [dur//min_duration for dur in durations]
+        else:
+            multipliers = [1 for dur in durations]
+        frame_multipliers = list(zip(frame_nums, multipliers))
+        seq_no = 0
+        for index, multiplier in frame_multipliers:
+            gif.seek(index)
+            for n in range(0, multiplier):
+                gif.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(seq_no), pad_count)}.png"), 'PNG')
+                seq_no += 1
 
     elif ext == 'png':
         img: APNG = APNG.open(filename)
