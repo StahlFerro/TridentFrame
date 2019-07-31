@@ -4,7 +4,7 @@ ANIMATED_IMG_EXTS = ['gif', 'png']
 
 
 class CreationCriteria():
-    """ Contains all of the GIF/APNG specified criterias like fps, scale, etc. """
+    """ Contains all of the criterias for Creating an animated image """
     def __init__(self, fps, extension, reverse, transparent):
         try:
             fps = float(fps)
@@ -32,7 +32,8 @@ class CreationCriteria():
 
 
 class SplitCriteria():
-    """ Contains all of the GIF/APNG specified criterias like fps, scale, etc. """
+    """ Contains all of the criterias for Splitting an animated image """
 
-    def __init__(self, pad_count):
+    def __init__(self, pad_count, is_duration_sensitive):
         self.pad_count: int = pad_count
+        self.is_duration_sensitive = is_duration_sensitive

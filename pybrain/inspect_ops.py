@@ -19,15 +19,16 @@ def _inspect_image(animage_path):
     filename = str(os.path.basename(abspath))
     ext = str.lower(os.path.splitext(filename)[1])
 
-    frame_count = 0
+    frame_count = 0  # Actual number of frames
+    frame_count_ds = 0  # Duration-sensitive frame-count
     fps = 0
-    avg_delay = 0
+    avg_duration = 0
     fsize = size(os.stat(abspath).st_size, system=alternative)
     # fsize = 0
     width = height = 0
     loop_duration = 0
     extension = ''
-    uneven_delay = False
+    duration_is_uneven = False
 
     if ext == '.gif':
         try:
@@ -39,15 +40,16 @@ def _inspect_image(animage_path):
         width, height = gif.size
         frame_count = gif.n_frames
         # pprint(gif.info)
-        delays = []
+        durations = []
         for f in range(0, gif.n_frames):
             gif.seek(f)
-            delays.append(gif.info['duration'])
-        
+            durations.append(gif.info['duration'])
+        min_duration = min(durations)
+        frame_count_ds = sum([dur//min_duration for dur in durations])
         # raise Exception(delays)
-        uneven_delay = len(set(delays)) > 1
-        avg_delay = sum(delays) / len(delays)
-        fps = round(1000.0 / avg_delay, 3)
+        duration_is_uneven = len(set(durations)) > 1
+        avg_duration = sum(durations) / len(durations)
+        fps = round(1000.0 / avg_duration, 3)
         loop_duration = round(frame_count / fps, 3)
         extension = 'GIF'
 
@@ -66,20 +68,24 @@ def _inspect_image(animage_path):
         extension = 'APNG'
         width = png_one.width
         height = png_one.height
-        delays = [f[1].delay for f in frames]
-        avg_delay = sum(delays) / frame_count
-        uneven_delay = len(set(delays)) > 1
-        fps = round(1000.0 / avg_delay, 3)
+        durations = [f[1].delay for f in frames]
+        min_duration = min(durations)
+        frame_count_ds = sum([dur//min_duration for dur in durations])
+
+        duration_is_uneven = len(set(durations)) > 1
+        avg_duration = sum(durations) / frame_count
+        fps = round(1000.0 / avg_duration, 3)
         loop_duration = round(frame_count / fps, 3)
 
     image_info = {
         "name": filename,
         "fps": fps,
-        "avg_delay": round(avg_delay / 1000, 3),
-        "uneven_delay": uneven_delay,
+        "avg_duration": round(avg_duration / 1000, 3),
+        "duration_is_uneven": duration_is_uneven,
         "fsize": fsize,
         "extension": extension,
         "frame_count": frame_count,
+        "frame_count_ds": frame_count_ds,
         "absolute_url": abspath,
         "width": width,
         "height": height,

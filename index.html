@@ -226,11 +226,11 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="split_aimg_cell" class="silver-bordered force-center" width="40%">
+                                    <td id="split_aimg_cell" class="silver-bordered force-center" width="45%">
                                         <div class="aimg-container"><span class="aimg-helper"></span><img id="aimg_stage"src="" /></div>
                                         <input id="aimg_path" name="aimg_path_field" type="hidden" value="" />
                                     </td>
-                                    <td width="60%" class="is-paddingless">
+                                    <td width="55%" class="is-paddingless">
                                         <table class="table" width="100%">
                                             <thead>
                                                 <tr>
@@ -255,6 +255,10 @@
                                                 <tr>
                                                     <td class="is-cyan">Total frames</td>
                                                     <td id="aimg_frame_count">-</td>
+                                                </tr>    
+                                                <tr>
+                                                    <td class="is-cyan">Total frames (DS)</td>
+                                                    <td id="aimg_frame_count_ds">-</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan">Frame rate</td>
@@ -299,13 +303,26 @@
                                     </td>
                                     <td class="has-text-centered">
                                         <div class="field is-horizontal">
-                                            <div class="field-label is-normal">
+                                            <div class="field-label is-normal is-marginless">
                                                 <label class="label">Pad count</label>
                                             </div>
                                             <div class="field-body">
-                                                <div class="control"><input id="split_pad_count" class="input is-neon-white" type="number" min="1" max="6"/></div>
+                                                <div class="field">
+                                                    <div class="control">
+                                                        <input id="split_pad_count" class="input is-neon-white" type="number" min="1" max="6"/>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <label class="checkbox">
+                                            <input id="is_duration_sensitive" type="checkbox"/>
+                                            Duration-sensitive
+                                        </label>
                                     </td>
                                 </tr>
                                 <tr>

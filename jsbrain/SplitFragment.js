@@ -18,6 +18,7 @@ let split_checkerbg_active = false;
 let aimg_stage = document.getElementById('aimg_stage');
 let aimg_path = document.getElementById('aimg_path');
 let split_pad_count = document.getElementById('split_pad_count');
+let is_duration_sensitive = document.getElementById('is_duration_sensitive');
 
 let target_seq_path = document.getElementById('target_seq_path');
 
@@ -26,6 +27,7 @@ let aimg_name = document.querySelector('#aimg_name');
 let aimg_dimens = document.querySelector('#aimg_dimens');
 let aimg_file_size = document.querySelector('#aimg_file_size');
 let aimg_frame_count = document.querySelector('#aimg_frame_count');
+let aimg_frame_count_ds = document.querySelector('#aimg_frame_count_ds');
 let aimg_fps = document.querySelector('#aimg_fps');
 let aimg_frame_delay = document.querySelector('#aimg_frame_delay');
 let aimg_duration = document.querySelector('#aimg_duration');
@@ -68,10 +70,11 @@ function loadAIMG(res) {
     info_header.innerHTML = `${res.extension} Information`;
     aimg_file_size.innerHTML = `${res.fsize}`;
     aimg_frame_count.innerHTML = `${res.frame_count} frames`;
+    aimg_frame_count_ds.innerHTML = `${res.frame_count_ds} frames`;
     aimg_fps.innerHTML = `${res.fps} fps`;
     aimg_dimens.innerHTML = `${res.width} x ${res.height}`;
-    let delay_info = `${res.avg_delay} seconds`
-    if (res.uneven_delay) {
+    let delay_info = `${res.avg_duration} seconds`
+    if (res.duration_is_uneven) {
         delay_info += ` (uneven)`
     }
     aimg_frame_delay.innerHTML = delay_info;
@@ -86,6 +89,7 @@ function clearAIMG() {
     info_header.innerHTML = 'Information';
     aimg_file_size.innerHTML = '-';
     aimg_frame_count.innerHTML = '-';
+    aimg_frame_count_ds.innerHTML = '-';
     aimg_fps.innerHTML = '-';
     aimg_dimens.innerHTML = '-';
     aimg_frame_delay.innerHTML = '-';
@@ -137,7 +141,7 @@ create_seq_button.addEventListener('click', () => {
     deactivateButtons();
     create_seq_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
-    client.invoke('split_image', aimg_path.value, target_seq_path.value, split_pad_count, (error, res) => {
+    client.invoke('split_image', aimg_path.value, target_seq_path.value, split_pad_count, is_duration_sensitive, (error, res) => {
         if (error || !res){
             console.log(error);
             mboxError(split_msgbox, error);

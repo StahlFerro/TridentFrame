@@ -7277,8 +7277,8 @@ table.aimg-control-table label {
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .aimg-container {
-  height: 300px;
-  width: 300px;
+  width: 350px;
+  height: 390px;
   overflow: auto;
   text-align: center;
   display: inline-block; }
