@@ -80,6 +80,8 @@ label { color: $white-d !important; }
 }
 
 
+
+
 /* Draggable element definition */
 .frame-title-bar {
     -webkit-app-region: drag !important;
@@ -292,14 +294,18 @@ table.aimg-control-table label{
 
 .select.is-neon-cyan select{
     color: $white-d;
-    // background-color: $dark-3;
-    border: 2px solid $white-d;
+    background-color: $dark-3;
+    border: 2px solid $white-d !important;
 }
 
 .select.is-neon-cyan select:hover{
     caret-color: $cyan;
 }
 
+// For selection arrow recolor
+.select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
+    border-color: $cyan;
+}
 
 // .create-msgbox {
 //     // height: 50px; 

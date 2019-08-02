@@ -7277,8 +7277,8 @@ table.aimg-control-table label {
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .aimg-container {
-  width: 350px;
-  height: 390px;
+  height: 300px;
+  width: 300px;
   overflow: auto;
   text-align: center;
   display: inline-block; }
@@ -7342,7 +7342,11 @@ table.aimg-control-table label {
 
 .select.is-neon-cyan select {
   color: #cccccc;
-  border: 2px solid #cccccc; }
+  background-color: #31363b;
+  border: 2px solid #cccccc !important; }
 
 .select.is-neon-cyan select:hover {
   caret-color: #34caf8; }
+
+.select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
+  border-color: #34caf8; }
