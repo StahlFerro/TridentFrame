@@ -110,7 +110,7 @@ def _inspect_sequence(image_paths):
     sequence = [i for i in static_img_paths if len(APNG.open(i).frames) == 1 and Image.open(i).format != "GIF"]
     sequence_count = len(sequence)
     sequence_filesize = size(sum([os.stat(i).st_size for i in sequence]), system=alternative)
-    print("statics count", sequence_count)
+    # print("statics count", sequence_count)
     if not sequence:
         raise Exception("The images choosen must be static images, not animted GIFs or PNGs!")
     width, height = Image.open(sequence[0]).size

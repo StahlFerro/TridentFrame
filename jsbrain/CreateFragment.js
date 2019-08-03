@@ -94,6 +94,8 @@ CRT_clear_imgs_button.addEventListener('click', () => {
     sequence_paths = null;
     create_name.value = '';
     create_fps.value = '';
+    create_width.value = '';
+    create_height.value = '';
     sequence_counter.innerHTML = '';
     mboxClear(create_msgbox);
     deleteTempAIMG();

@@ -7203,6 +7203,15 @@ a.exit-button:hover {
 .menu-item.is-selected {
   border: 2px solid #34caf8; }
 
+/* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
+div.left-menu {
+  height: 640px;
+  overflow: auto; }
+
+div.left-menu::-webkit-scrollbar {
+  /*makes scrollbar invisible */
+  width: 0px; }
+
 /* Borderless table helper css */
 .table.is-borderless td, th {
   border: 0; }
@@ -7269,11 +7278,18 @@ a.exit-button:hover {
   text-align: center;
   display: inline-block; }
 
-table.aimg-control-table td {
+table.crt-control-table td {
   padding: 5px;
   border: 1px solid black; }
 
-table.aimg-control-table label {
+table.crt-control-table label {
+  margin: 0px !important; }
+
+table.spr-control-table td {
+  padding: 5px;
+  border: 1px solid black; }
+
+table.spr-control-table label {
   margin: 0px !important; }
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
@@ -7352,3 +7368,9 @@ table.aimg-control-table label {
 
 .select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
   border-color: #34caf8; }
+
+div.about-content h1 {
+  color: #cccccc; }
+
+div.about-content p {
+  color: #cccccc; }

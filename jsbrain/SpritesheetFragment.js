@@ -7,7 +7,6 @@ const { quintcell_generator, escapeHtml } = require('./Utils.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 
 let SPR_sequence_paths = null;
-let SPR_create_name = document.getElementById('create_name');
 let SPR_sequence_body = document.getElementById('SPR_sequence_body');
 let SPR_load_imgs_button = document.getElementById('SPR_load_imgs_button');
 let SPR_clear_imgs_button = document.getElementById('SPR_clear_imgs_button'); 
@@ -16,6 +15,11 @@ let SPR_outdir_path = document.getElementById('SPR_outdir_path');
 let SPR_create_button = document.getElementById('SPR_create_button');
 let prev_spritesheet_stage = document.getElementById('prev_spritesheet_stage');
 let prev_spritesheet_path = document.getElementById('prev_spritesheet_path');
+
+let spr_create_name = document.getElementById('spr_create_name');
+let spr_tile_width = document.getElementById("spr_tile_width");
+let spr_tile_height = document.getElementById("spr_tile_height");
+let spr_tile_row = document.getElementById("spr_tile_row");
 
 let autobuild_active = false;
 
@@ -81,10 +85,13 @@ SPR_load_imgs_button.addEventListener("click", () => {
             SPR_sequence_paths = res.sequence;
             console.log("obtained sequences", SPR_sequence_paths);
             quintcell_generator(SPR_sequence_paths, SPR_sequence_body);
-            SPR_create_name.value = escapeHtml(res.name);
             console.log(res);
             mboxClear(create_msgbox);
             reloadTempSpritesheet();
+            spr_create_name.value = escapeHtml(res.name);
+            spr_tile_width.value = res.width;
+            spr_tile_height.value = res.height;
+            spr_tile_row.value = 5;
         }
         SPR_load_imgs_button.classList.remove('is-loading');
         activateButtons();
@@ -97,6 +104,10 @@ SPR_clear_imgs_button.addEventListener('click', () => {
         SPR_sequence_body.removeChild(SPR_sequence_body.firstChild);
     }
     SPR_sequence_paths = null;
+    spr_create_name.value = '';
+    spr_tile_width.value = '';
+    spr_tile_height.value = '';
+    spr_tile_row.value = '';
     mboxClear(create_msgbox);
     deleteTempSpritesheet();
     session.clearCache(testcallback);
