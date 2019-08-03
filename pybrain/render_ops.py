@@ -57,7 +57,9 @@ def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
     if criteria.reverse:
         image_paths.reverse()
     apng = APNG()
-    if criteria.flip_h or criteria.flip_v or criteria.scale != 1.0:
+    first_width, first_height = Image.open(image_paths[0]).size
+    first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
+    if criteria.flip_h or criteria.flip_v or first_must_resize:
         for ipath in image_paths:
             # bytebox = io.BytesIO()
             with io.BytesIO() as bytebox:

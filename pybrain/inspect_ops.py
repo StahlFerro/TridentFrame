@@ -97,17 +97,17 @@ def _inspect_image(animage_path):
 def _inspect_sequence(image_paths):
     """Returns information of a selected sequence of images"""
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
-    img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
+    static_img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # raise Exception("imgs", imgs)
-    print("imgs count", len(img_paths))
+    print("imgs count", len(static_img_paths))
     # pprint(imgs)
-    if not img_paths:
+    if not static_img_paths:
         raise Exception("No images selected. Make sure the path to them are correct and they are static images")
-    first_img_name = os.path.splitext(img_paths[0])[0]
-    filename = os.path.basename(first_img_name.split('_')[0] if '_' in first_img_name else first_img_name)
+    first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
+    filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     # apngs = [apng for apng in (APNG.open(i) for i in imgs) if len(apng.frames) > 1]
     # gifs = [gif for gif in (Image.open(i) for i in imgs) if gif.format == "GIF" and gif.is_animated]
-    sequence = [i for i in img_paths if len(APNG.open(i).frames) == 1 and Image.open(i).format != "GIF"]
+    sequence = [i for i in static_img_paths if len(APNG.open(i).frames) == 1 and Image.open(i).format != "GIF"]
     sequence_count = len(sequence)
     sequence_filesize = size(sum([os.stat(i).st_size for i in sequence]), system=alternative)
     print("statics count", sequence_count)
@@ -117,7 +117,6 @@ def _inspect_sequence(image_paths):
     # pprint(apngs)
     # pprint(gifs)
     # if any(APNG.open(i) for i in imgs)):
-
     sequence_info = {
         "name": filename,
         "total": sequence_count,

@@ -192,8 +192,8 @@ a.exit-button:hover {
 
 /* Animated image (GIF/PNG) preview container in Create Panel */
 .prev-aimg-container {
-    // width: 400px;
-    height: 300px;
+    max-width: 310px;
+    max-height: 310px;
     overflow: auto;
     text-align: center;
     display: inline-block;
@@ -222,8 +222,8 @@ table.aimg-control-table label{
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .aimg-container {
-    height: 300px;
-    width: 300px;
+    height: 370px;
+    width: 370px;
     overflow: auto;
     text-align: center;
     display: inline-block;
@@ -235,6 +235,7 @@ table.aimg-control-table label{
 }
 .force-center {
     text-align: center !important; 
+    vertical-align: middle !important;
 }
 
 
