@@ -13,7 +13,7 @@ from apng import APNG, PNG
 from colorama import init, deinit
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
@@ -197,7 +197,7 @@ def _delete_temp_images():
         os.remove(ta)
     return True
 
-def create_spritesheet(image_paths: List, out_dir: str, filename: str):
+def create_spritesheet(image_paths: List, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
@@ -216,7 +216,7 @@ def create_spritesheet(image_paths: List, out_dir: str, filename: str):
     tile_width = frames[0].size[0]
     tile_height = frames[0].size[1]
 
-    max_frames_row = 5
+    max_frames_row = criteria.tiles_per_row
     if len(frames) > max_frames_row:
         spritesheet_width = tile_width * max_frames_row
         required_rows = math.ceil(len(frames)/max_frames_row)
@@ -241,5 +241,5 @@ def create_spritesheet(image_paths: List, out_dir: str, filename: str):
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
 
-    spritesheet.save(os.path.join(out_dir, "Spritesheet.png"), "PNG")
+    spritesheet.save(os.path.join(out_dir, filename), "PNG")
     spritesheet.show()

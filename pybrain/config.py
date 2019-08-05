@@ -2,6 +2,7 @@ IMG_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff']
 STATIC_IMG_EXTS = ['png', 'jpg', 'jpeg', 'bmp']
 ANIMATED_IMG_EXTS = ['gif', 'png']
 
+from typing import Tuple
 
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """
@@ -37,3 +38,29 @@ class SplitCriteria():
     def __init__(self, pad_count, is_duration_sensitive=False):
         self.pad_count: int = pad_count
         self.is_duration_sensitive: bool = is_duration_sensitive
+
+
+class SpritesheetBuildCriteria():
+    """ Contains all of the criterias to build a spritesheet """
+
+    def __init__(self, resize_width, resize_height, tiles_per_row, offset_x, offset_y, padding_x, padding_y, preserve_alpha):
+        self.resize_width: int = int(resize_height)
+        self.resize_height: int = int(resize_height)
+        self.tiles_per_row: int = int(tiles_per_row)
+        self.offset_x: int = int(offset_x)
+        self.offset_y: int = int(offset_y)
+        self.padding_x: int = int(padding_x)
+        self.padding_y: int = int(padding_y)
+        self.preserve_alpha: bool = preserve_alpha
+
+
+class SpritesheetSliceCriteria():
+    """ Contains all of the criterias to slice a spritesheet """
+
+    def __init__(self, tile_x, tile_y, offset_x, offset_y, padding_x, padding_y):
+        self.tile_x: int = int(tile_x)
+        self.tile_y: int = int(tile_y)
+        self.offset_x: int = int(offset_x)
+        self.offset_y: int = int(offset_y)
+        self.padding_x: int = int(padding_x)
+        self.padding_y: int = int(padding_y)

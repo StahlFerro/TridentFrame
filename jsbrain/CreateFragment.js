@@ -21,8 +21,8 @@ let create_msgbox = document.getElementById('create_msgbox');
 let CRT_load_imgs_button = document.getElementById('CRT_load_imgs_button');
 let CRT_clear_imgs_button = document.getElementById('CRT_clear_imgs_button');
 let choose_aimg_outdir_button = document.getElementById('choose_aimg_outdir_button');
-let create_bgprev_button = document.getElementById('create_bgprev_button');
-let create_autoprev_button = document.getElementById('create_autoprev_button');
+let CRT_bgprev_button = document.getElementById('CRT_bgprev_button');
+let CRT_autoprev_button = document.getElementById('CRT_autoprev_button');
 let autoprev_icon = document.getElementById('autoprev_icon')
 let create_aimg_cell = document.getElementById('create_aimg_cell');
 let create_aimg_button = document.getElementById('create_aimg_button');
@@ -31,7 +31,7 @@ let autoprev_active = false;
 
 var CRT_sequence_body = document.getElementById('CRT_sequence_body');
 let sequence_paths = null;
-let sequence_counter = document.getElementById('sequence_counter');
+let CRT_sequence_counter = document.getElementById('CRT_sequence_counter');
 let create_name = document.getElementById('create_name');
 let create_fps = document.getElementById('create_fps');
 let create_width = document.getElementById('create_width');
@@ -43,8 +43,8 @@ let flip_horizontal = document.getElementById('flip_horizontal');
 let flip_vertical = document.getElementById('flip_vertical');
 let create_format = document.getElementById('create_format');
 let create_outdir = document.getElementById('create_outdir');
-let prev_aimg_stage = document.getElementById('prev_aimg_stage');
-let prev_aimg_path = document.getElementById('prev_aimg_path');
+let CRT_aimg_stage = document.getElementById('CRT_aimg_stage');
+let CRT_aimg_path = document.getElementById('CRT_aimg_path');
 
 
 let extension_filters = [
@@ -73,7 +73,7 @@ CRT_load_imgs_button.addEventListener("click", () => {
                 create_fps.value = 50;
                 create_duration = 0.02;
             }
-            sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
+            CRT_sequence_counter.innerHTML = `${res.total} image${res.total > 1? "s": ""} (${res.size} total)`;
             create_width.value = res.width;
             create_height.value = res.height;
             console.log(res);
@@ -96,7 +96,7 @@ CRT_clear_imgs_button.addEventListener('click', () => {
     create_fps.value = '';
     create_width.value = '';
     create_height.value = '';
-    sequence_counter.innerHTML = '';
+    CRT_sequence_counter.innerHTML = '';
     mboxClear(create_msgbox);
     deleteTempAIMG();
     session.clearCache(testcallback);
@@ -137,15 +137,15 @@ function createTempAIMG() {
         if (error) {
             console.error(error);
         } else {
-            prev_aimg_stage.src = res;
-            prev_aimg_path.value = res;
+            CRT_aimg_stage.src = res;
+            CRT_aimg_path.value = res;
         }
         activateButtons();
     });
 }
 
 function deleteTempAIMG() {
-    prev_aimg_stage.src = '';
+    CRT_aimg_stage.src = '';
     abstempath = '';
     client.invoke('delete_temp_images', (error, res) => {
         if (error) {
@@ -198,19 +198,19 @@ function deactivateButtons () {
     CRT_clear_imgs_button.classList.add('is-static');
 }
 
-create_bgprev_button.addEventListener('click', () => {
+CRT_bgprev_button.addEventListener('click', () => {
     if (!create_checkerbg_active) {
         create_aimg_cell.style.background = "url('./imgs/Transparency500.png')";
-        create_bgprev_button.classList.add('is-active');
+        CRT_bgprev_button.classList.add('is-active');
         create_checkerbg_active = true;
     } else {
         create_aimg_cell.style.background = ''
-        create_bgprev_button.classList.remove('is-active');
+        CRT_bgprev_button.classList.remove('is-active');
         create_checkerbg_active = false;
     }
 });
 
-create_autoprev_button.addEventListener('click', () => {
+CRT_autoprev_button.addEventListener('click', () => {
     if (!autoprev_active) {
         autoprev_icon.classList.remove('fa-eye-slash');
         autoprev_icon.classList.add('fa-eye');
