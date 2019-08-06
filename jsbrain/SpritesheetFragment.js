@@ -128,6 +128,11 @@ SPR_clear_imgs_button.addEventListener('click', () => {
     session.clearCache(testcallback);
 });
 
+
+function testcallback(){
+    console.log("cache cleared!!1");
+}
+
 SPR_create_button.addEventListener('click', () => {
     mboxClear(spr_msgbox);
     SPR_create_button.classList.add('is-loading');
@@ -148,9 +153,9 @@ SPR_create_button.addEventListener('click', () => {
 
 function display_final_sheet_dimensions(image_count) {
     var x_count = Math.min(image_count, spr_tile_row.value);
+    var y_count = Math.ceil(image_count / spr_tile_row.value);
     console.log('xcount', x_count);
     console.log('ycount', y_count);
-    var y_count = Math.ceil(image_count / spr_tile_row.value);
     var sheet_width = spr_tile_width.value * x_count;
     var sheet_height = spr_tile_height.value * y_count;
     SPR_final_dimens.innerHTML = `${sheet_width}x${sheet_height}`;

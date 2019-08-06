@@ -241,5 +241,5 @@ def create_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
 
-    spritesheet.save(os.path.join(out_dir, filename), "PNG")
+    spritesheet.save(os.path.join(out_dir, f"{filename}.png"), "PNG")
     spritesheet.show()
