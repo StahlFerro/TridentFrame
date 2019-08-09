@@ -144,7 +144,7 @@ SPR_input_button.addEventListener("click", () => {
         });
     }
     else if (SPR_in_format.value == 'aimg') {
-        client.invoke("inspect_image", img_paths, (error, res) => {
+        client.invoke("inspect_aimg", img_paths, (error, res) => {
             
         });
     }

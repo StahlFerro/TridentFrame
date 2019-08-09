@@ -13,7 +13,7 @@ from hurry.filesize import size, alternative
 from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 
 
-def _inspect_image(animage_path):
+def _inspect_aimg(animage_path):
     """Returns information of an animted GIF/APNG"""
     abspath = os.path.abspath(animage_path)
     filename = str(os.path.basename(abspath))

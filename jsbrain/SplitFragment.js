@@ -49,7 +49,7 @@ open_aimg_button.addEventListener("click", () => {
     var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: file_dialog_props });
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined) {return}
-    client.invoke("inspect_image", chosen_path[0], (error, res) => {
+    client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
         if (error) {
             console.error(error);
             mboxError(split_msgbox, error);

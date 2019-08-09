@@ -6,15 +6,15 @@ from typing import List
 
 import zerorpc
 
-from pybrain.inspect_ops import _inspect_image, _inspect_sequence
+from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
 from pybrain.aimg_ops import split_aimg, create_aimg, _delete_temp_images
 from pybrain.sprite_ops import create_spritesheet
 from pybrain.config import CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 class API(object):
 
-    def inspect_image(self, image_path):
-        info = _inspect_image(image_path)
+    def inspect_aimg(self, image_path):
+        info = _inspect_aimg(image_path)
         return info
 
     def inspect_sequence(self, dir_path):
