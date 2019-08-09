@@ -177,7 +177,7 @@
                                                         <label class="label">Format</label>
                                                         <div class="control">
                                                             <div class="select is-neon-cyan">
-                                                                <select id="create_format">
+                                                                <select id="CRT_out_format">
                                                                     <option value="gif">GIF</option>
                                                                     <option value="apng">APNG</option>
                                                                 </select>
@@ -352,15 +352,21 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="SPR_sequence_cell" class="silver-bordered is-paddingless" width="500px;">
-                                        <table class="sequence-grid is-paddingless" width="100%">
-                                            <tbody id="SPR_sequence_body">                                                                                                                                                                                                                                                                                                        
-                                            </tbody>
-                                        </table>
+                                    <td id="SPR_sequence_cell" class="silver-bordered is-paddingless" style="width: 500px; height: 320px;">
+                                        <div id="spr_from_sequence_stage">
+                                            <table class="sequence-grid is-paddingless" width="100%">
+                                                <tbody id="SPR_sequence_body">                                                                                                                                                                                                                                                                                                        
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div id="spr_from_aimg_stage" style="display: none;">
+                                            <div class="crt-aimg-container"><span class="aimg-helper"></span><img id="SPR_aimg_stage"src="" /></div>
+                                            <input id="SPR_aimg_path" name="SPR_aimg_path_field" type="hidden" value="" />    
+                                        </div>
                                     </td>
-                                    <td id="create_spritesheet_cell" class="silver-bordered force-center is-paddingless">
+                                    <td id="create_spritesheet_cell" class="silver-bordered force-center is-paddingless" style="width: 320px; height: 320px;">
                                         <div class="prev-spritesheet-container"><span class="spritesheet-helper"></span><img id="prev_spritesheet_stage"src="" /></div>
-                                        <input id="prev_spritesheet_path" name="prev_spritesheet_path_field" type="hidden" value="" />
+                                        <input id="prev_spritesheet_path" name="prev_spritesheet_path_field" type="hidden" value="" />  
                                     </td>
                                 </tr>
                                 <tr>
@@ -380,28 +386,42 @@
                                                     </div>
                                                 </div>
                                                 <div class="level-item has-text-centered">
-                                                    <div>
-                                                        <a id="SPR_load_imgs_button" class="button is-neon-cyan">
-                                                            <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load Images</span>
-                                                        </a>
-                                                        <a id="SPR_clear_imgs_button" class="button is-neon-white">
-                                                            <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
-                                                        </a>
-                                                    </div>
-                                                </div>     
-                                                <div class="level-item has-text-centered">
-                                                    <div>
-                                                        <input id="SPR_sequence_counter" name="SPR_sequence_counter_field" class="input is-neon-white" readonly/>
+                                                    <div class="field is-horizontal">
+                                                        <div class="field-body">
+                                                            <div class="field">
+                                                                <div class="control">
+                                                                    <div class="select is-neon-cyan">
+                                                                        <select id="SPR_in_format">
+                                                                            <option value="sequence">From Sequence</option>
+                                                                            <option value="aimg">From GIF/APNG</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="field">
+                                                                <a id="SPR_input_button" class="button is-neon-cyan">
+                                                                    <span class="icon is-small"><i class="fas fa-plus"></i></span><span id="SPR_input_button_text">Add</span>
+                                                                </a>
+                                                                <a id="SPR_clear_imgs_button" class="button is-neon-white">
+                                                                    <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </nav>
                                     </td>
                                     <td class="is-hpaddingless">
-                                        <nav class="level">
+                                        <nav class="level">                                 
+                                            <div class="level-item has-text-centered">
+                                                <div>
+                                                    <p id="SPR_sequence_counter"></p>
+                                                </div>
+                                            </div>
                                             <div class="level-item has-text-right">
                                                 <div>
-                                                    <p>Final dimensions: <span id="SPR_final_dimens"></span></p>
+                                                    <span id="SPR_final_dimens"></span>
                                                 </div>
                                             </div>
                                         </nav>

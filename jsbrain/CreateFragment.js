@@ -41,7 +41,7 @@ let is_disposed = document.getElementById('is_disposed');
 let is_reversed = document.getElementById('is_reversed');
 let flip_horizontal = document.getElementById('flip_horizontal');
 let flip_vertical = document.getElementById('flip_vertical');
-let create_format = document.getElementById('create_format');
+let CRT_out_format = document.getElementById('CRT_out_format');
 let create_outdir = document.getElementById('create_outdir');
 let CRT_aimg_stage = document.getElementById('CRT_aimg_stage');
 let CRT_aimg_path = document.getElementById('CRT_aimg_path');
@@ -105,7 +105,7 @@ CRT_clear_imgs_button.addEventListener('click', () => {
 create_fps.addEventListener('input', reloadTempAIMG);
 is_disposed.addEventListener('click', reloadTempAIMG);
 is_reversed.addEventListener('click', reloadTempAIMG);
-create_format.addEventListener('change', reloadTempAIMG);
+CRT_out_format.addEventListener('change', reloadTempAIMG);
 create_width.addEventListener('change', reloadTempAIMG);
 create_height.addEventListener('change', reloadTempAIMG);
 flip_horizontal.addEventListener('click', reloadTempAIMG);
@@ -117,7 +117,7 @@ function reloadTempAIMG() {
         deleteTempAIMG();
         createTempAIMG();
     }
-    // if (create_format.value == 'gif') {
+    // if (CRT_out_format.value == 'gif') {
     //     flip_horizontal.disabled = false;
     //     flip_vertical.disabled = false;
     // }
@@ -131,7 +131,7 @@ function createTempAIMG() {
     if (sequence_paths == null){ console.log('no sequences, exiting...'); return; }
     deactivateButtons();
     client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseFloat(create_fps.value), 
-        create_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, 
+        CRT_out_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, 
         flip_horizontal.checked, flip_vertical.checked, (error, res) => {
         console.log('createfragment fps', create_fps.value);
         if (error) {
@@ -167,12 +167,12 @@ choose_aimg_outdir_button.addEventListener('click', () => {
 create_aimg_button.addEventListener('click', () => {
     mboxClear(create_msgbox);
     console.log(sequence_paths, create_outdir.value, create_name.value, parseFloat(create_fps.value), 
-    create_format.value, false, is_disposed.checked);
+    CRT_out_format.value, false, is_disposed.checked);
     console.log('console log', is_disposed.checked);
     create_aimg_button.classList.add('is-loading');
-    // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), create_format.value, false, is_disposed.checked);
+    // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), CRT_out_format.value, false, is_disposed.checked);
     client.invoke("combine_image", sequence_paths, create_outdir.value, create_name.value, parseFloat(create_fps.value), 
-        create_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, flip_horizontal.checked, flip_vertical.checked, (error, res) => {
+        CRT_out_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, flip_horizontal.checked, flip_vertical.checked, (error, res) => {
         console.log('createfragment fps', create_fps.value);
         if (error) {
             console.error(error);

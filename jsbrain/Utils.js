@@ -19,7 +19,7 @@ function escapeHtml(unsafe) {
             var div = document.createElement('DIV');
             div.classList.add('seqdiv');
             var img = document.createElement('IMG');
-            img.src = img_path;
+            img.src = escapeHtml(img_path);
             var i = document.createElement('I');
             i.className = 'fas fa-minus-circle del-icon';
             i.onclick = del_frame;
