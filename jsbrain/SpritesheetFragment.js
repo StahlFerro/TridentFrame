@@ -10,8 +10,8 @@ let spr_msgbox = document.getElementById('spr_msgbox');
 let SPR_sequence_paths = null;
 let SPR_sequence_body = document.getElementById('SPR_sequence_body');
 let SPR_sequence_counter = document.getElementById('SPR_sequence_counter');
+let SPR_sequence_counter_label = document.getElementById('SPR_sequence_counter_label')
 let SPR_input_button = document.getElementById('SPR_input_button');
-let SPR_input_button_text = document.getElementById('SPR_input_button_text');
 let SPR_clear_imgs_button = document.getElementById('SPR_clear_imgs_button'); 
 let SPR_outdir_button = document.getElementById('SPR_outdir_button');
 let SPR_outdir_path = document.getElementById('SPR_outdir_path');
@@ -27,8 +27,10 @@ let spr_tile_row = document.getElementById("spr_tile_row");
 
 let SPR_final_dimens = document.getElementById('SPR_final_dimens');
 
-let spr_from_sequence_stage = document.getElementById('spr_from_sequence_stage');
-let spr_from_aimg_stage = document.getElementById('spr_from_aimg_stage');
+let spr_from_sequence_subpanel = document.getElementById('spr_from_sequence_subpanel');
+let spr_from_aimg_subpanel = document.getElementById('spr_from_aimg_subpanel');
+let SPR_aimg_stage = document.getElementById('SPR_aimg_stage');
+let SPR_aimg_path = document.getElementById('SPR_aimg_path');
 
 let autobuild_active = false;
 
@@ -36,7 +38,8 @@ let autobuild_active = false;
 let extension_filters = [
     { name: 'Images', extensions: ['png', 'gif'] },
 ];
-let imgs_dialog_props = ['openfile', 'multiSelections', 'createDirectory'];
+let aimg_dialog_props = ['openfile'];
+let sequence_dialog_props = ['openfile', 'multiSelections', 'createDirectory'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
 function activateButtons () {
@@ -48,10 +51,18 @@ function deactivateButtons () {
     SPR_clear_imgs_button.classList.add('is-static');
 }
 
-spr_tile_width.addEventListener("change", () => display_final_sheet_dimensions(SPR_sequence_counter.value));
-spr_tile_height.addEventListener("change", () => display_final_sheet_dimensions(SPR_sequence_counter.value));
-spr_tile_row.addEventListener("change", () => display_final_sheet_dimensions(SPR_sequence_counter.value));
-SPR_in_format.addEventListener("change", () => change_spritesheet_input(SPR_in_format.value));
+spr_tile_width.addEventListener("change", display_final_sheet_dimensions);
+spr_tile_height.addEventListener("change", display_final_sheet_dimensions);
+spr_tile_row.addEventListener("change", display_final_sheet_dimensions);
+SPR_in_format.addEventListener("change", display_final_sheet_dimensions);
+
+function update_SPR_create_count(count) {
+    console.log("fucking called");
+    SPR_sequence_counter.value = count;
+    SPR_sequence_counter_label.innerHTML = `${count} images`;
+}
+
+
 
 function change_spritesheet_input(format){
     if (format == 'sequence') {
@@ -63,18 +74,18 @@ function change_spritesheet_input(format){
 }
 
 function hideAll() {
-    spr_from_sequence_stage.style.display = 'none';
-    spr_from_aimg_stage.style.display = 'none';
+    spr_from_sequence_subpanel.style.display = 'none';
+    spr_from_aimg_subpanel.style.display = 'none';
 }
 
 function showSequenceStage() {
     hideAll();
-    spr_from_sequence_stage.style.display = 'block';
+    spr_from_sequence_subpanel.style.display = 'block';
 }
 
 function showAIMGStage() {
     hideAll();
-    spr_from_aimg_stage.style.display = 'block';
+    spr_from_aimg_subpanel.style.display = 'block';
 }
 
 
@@ -84,8 +95,8 @@ function reloadTempSpritesheet() {
         deleteTempSpritesheet();
         createTempSpritesheet();
     }
-    if (SPR_sequence_counter.innerHTML) {
-        display_final_sheet_dimensions(SPR_sequence_counter.value);
+    if (SPR_sequence_counter.value) {
+        display_final_sheet_dimensions();
     }
 }
 
@@ -113,7 +124,10 @@ function createTempSpritesheet() {
 }
 
 SPR_input_button.addEventListener("click", () => {
-    var img_paths = dialog.showOpenDialog({ filters: extension_filters, properties: imgs_dialog_props })
+    var dialog_mode = []
+    if (SPR_in_format.value == 'sequence') { dialog_mode = sequence_dialog_props; }
+    else if (SPR_in_format.value == 'aimg') { dialog_mode = aimg_dialog_props; }    
+    var img_paths = dialog.showOpenDialog({ filters: extension_filters, properties: dialog_mode })
     console.log(`chosen path: ${img_paths}`);
     if (img_paths === undefined) { return }
     console.log(img_paths);
@@ -136,16 +150,29 @@ SPR_input_button.addEventListener("click", () => {
                 spr_tile_width.value = res.width;
                 spr_tile_height.value = res.height;
                 spr_tile_row.value = 5;
-                SPR_sequence_counter.innerHTML = `${res.total} images`;
+                update_SPR_create_count(res.total);
             }
-            display_final_sheet_dimensions(res.total);
+            display_final_sheet_dimensions();
             SPR_input_button.classList.remove('is-loading');
             activateButtons();
         });
     }
     else if (SPR_in_format.value == 'aimg') {
-        client.invoke("inspect_aimg", img_paths, (error, res) => {
-            
+        client.invoke("inspect_aimg", img_paths[0], (error, res) => {
+            if (error) {
+                console.log(error);
+                mboxError(spr_msgbox, error);
+            } else {
+                spr_create_name.value = escapeHtml(res.name);
+                spr_tile_width.value = res.width;
+                spr_tile_height.value = res.height;
+                spr_tile_row.value = 5;
+                SPR_aimg_stage.src = res.absolute_url;
+                SPR_aimg_path.value = res.absolute_url;
+                update_SPR_create_count(res.total);
+            }
+            SPR_input_button.classList.remove('is-loading');
+            activateButtons();
         });
     }
 });
@@ -190,7 +217,8 @@ SPR_create_button.addEventListener('click', () => {
 });
 
 
-function display_final_sheet_dimensions(image_count) {
+function display_final_sheet_dimensions() {
+    var image_count = SPR_sequence_counter.value;
     var x_count = Math.min(image_count, spr_tile_row.value);
     var y_count = Math.ceil(image_count / spr_tile_row.value);
     console.log('xcount', x_count);
