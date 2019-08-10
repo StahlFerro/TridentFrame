@@ -46,23 +46,23 @@
                             <ul class="menu-list left-menu">
                                 <li id="create_box" class="menu-item is-selected"><a id="create_menu">
                                     <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Create</p>
+                                    <p class="is-white-d">Create AIMG</p>
                                 </a></li>
                                 <li id="split_box" class="menu-item"><a id="split_menu">
                                     <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Split</p>
+                                    <p class="is-white-d">Split AIMG</p>
                                 </a></li>
                                 <li id="convert_box" class="menu-item"><a id="convert_menu">
                                     <span class="icon is-large"><i class="fas fa-exchange-alt fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Convert</p>    
+                                    <p class="is-white-d">Convert AIMG</p>    
                                 </a></li>
                                 <li id="buildsprite_box" class="menu-item"><a id="buildsprite_menu">
-                                    <span class="icon is-large"><i class="fas fa-border fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Build<br/>Spritesheet</p>    
+                                    <span class="icon is-large"><i class="fas fa-border-all fa-2x fa-inverse"></i></span>
+                                    <p class="is-white-d">Build Spritesheet</p>    
                                 </a></li>
                                 <li id="slicesprite_box" class="menu-item"><a id="slicesprite_menu">
                                     <span class="icon is-large"><i class="fas fa-th fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Slice<br/>Spritesheet</p>    
+                                    <p class="is-white-d">Slice Spritesheet</p>    
                                 </a></li>
                                 <li id="settings_box" class="menu-item"><a id="settings_menu">
                                     <span class="icon is-large"><i class="fas fa-cog fa-2x fa-inverse"></i></span>
@@ -356,16 +356,16 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="SPR_sequence_cell" class="silver-bordered is-paddingless" style="width: 500px; height: 320px;">
+                                    <td id="BSPR_sequence_cell" class="silver-bordered is-paddingless" style="width: 500px; height: 320px;">
                                         <div id="spr_from_sequence_subpanel">
                                             <table class="sequence-grid is-paddingless" width="100%">
-                                                <tbody id="SPR_sequence_body">                                                                                                                                                                                                                                                                                                        
+                                                <tbody id="BSPR_sequence_body">                                                                                                                                                                                                                                                                                                        
                                                 </tbody>
                                             </table>
                                         </div>
                                         <div id="spr_from_aimg_subpanel" class="force-center" style="display: none; vertical-align: middle;">
-                                            <div class="crt-aimg-container"><span class="aimg-helper"></span><img id="SPR_aimg_stage"src="" /></div>
-                                            <input id="SPR_aimg_path" name="SPR_aimg_path_field" type="hidden" value="" />    
+                                            <div class="crt-aimg-container"><span class="aimg-helper"></span><img id="BSPR_aimg_stage"src="" /></div>
+                                            <input id="BSPR_aimg_path" name="BSPR_aimg_path_field" type="hidden" value="" />    
                                         </div>
                                     </td>
                                     <td id="create_spritesheet_cell" class="silver-bordered force-center is-paddingless" style="width: 320px; height: 320px;">
@@ -383,7 +383,7 @@
                                                             <div class="field">
                                                                 <div class="control">
                                                                     <div class="select is-neon-cyan">
-                                                                        <select id="SPR_in_format">
+                                                                        <select id="BSPR_in_format">
                                                                             <option value="sequence">From Sequence</option>
                                                                             <option value="aimg">From GIF/APNG</option>
                                                                         </select>
@@ -391,10 +391,10 @@
                                                                 </div>
                                                             </div>
                                                             <div class="field">
-                                                                <a id="SPR_input_button" class="button is-neon-cyan">
-                                                                    <span class="icon is-small"><i class="fas fa-plus"></i></span><span id="SPR_input_button_text">Add</span>
+                                                                <a id="BSPR_input_button" class="button is-neon-cyan">
+                                                                    <span class="icon is-small"><i class="fas fa-plus"></i></span><span id="BSPR_input_button_text">Add</span>
                                                                 </a>
-                                                                <a id="SPR_clear_imgs_button" class="button is-neon-white">
+                                                                <a id="BSPR_clear_imgs_button" class="button is-neon-white">
                                                                     <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span>
                                                                 </a>
                                                             </div>
@@ -408,20 +408,20 @@
                                         <nav class="level">                                 
                                             <div class="level-item has-text-centered">
                                                 <div>
-                                                    <p id="SPR_sequence_counter_label"></p>
+                                                    <p id="BSPR_sequence_counter_label"></p>
                                                 </div>
-                                                <input id="SPR_sequence_counter" name="SPR_sequence_counter_field" type="hidden" value=""/>
+                                                <input id="BSPR_sequence_counter" name="BSPR_sequence_counter_field" type="hidden" value=""/>
                                             </div>
                                             <div class="level-item has-text-right">
                                                 <div>
-                                                    <span id="SPR_final_dimens"></span>
+                                                    <span id="BSPR_final_dimens"></span>
                                                 </div>
                                             </div>
                                         </nav>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td id="SPR_create_control_table" class="is-paddingless" colspan="2">
+                                    <td id="BSPR_create_control_table" class="is-paddingless" colspan="2">
                                         <table class="table spr-control-table" width="100%">
                                             <tr>
                                                 <td>
@@ -475,19 +475,19 @@
                                                 <td colspan="2" style="padding-top: 25px;">
                                                     <div class="field has-addons">        
                                                         <div class="control">
-                                                            <a id="SPR_outdir_button" class="button is-neon-cyan">
+                                                            <a id="BSPR_outdir_button" class="button is-neon-cyan">
                                                                 <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
                                                             </a>
                                                         </div>
                                                         <div class="control is-expanded">
-                                                            <input id="SPR_outdir_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                                            <input id="BSPR_outdir_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
                                                         </div>
                                                     </div>
                                                 </td>
                                                 <td colspan="2" style="padding-top: 25px;">
                                                     <div class="field has-text-centered">
                                                         <div class="control">
-                                                            <a id="SPR_create_button" class="button is-neon-cyan">Create</a>
+                                                            <a id="BSPR_create_button" class="button is-neon-cyan">Create</a>
                                                         </div>
                                                     </div>
                                                 </td>
