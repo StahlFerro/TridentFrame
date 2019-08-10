@@ -7,7 +7,7 @@ const { quintcell_generator, escapeHtml } = require('./Utils.js');
 const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 let spr_msgbox = document.getElementById('spr_msgbox');
 
-let SPR_sequence_paths = null;
+let spr_sequence_paths = null;
 let SPR_sequence_body = document.getElementById('SPR_sequence_body');
 let SPR_sequence_counter = document.getElementById('SPR_sequence_counter');
 let SPR_sequence_counter_label = document.getElementById('SPR_sequence_counter_label')
@@ -51,10 +51,10 @@ function deactivateButtons () {
     SPR_clear_imgs_button.classList.add('is-static');
 }
 
-spr_tile_width.addEventListener("change", display_final_sheet_dimensions);
-spr_tile_height.addEventListener("change", display_final_sheet_dimensions);
-spr_tile_row.addEventListener("change", display_final_sheet_dimensions);
-SPR_in_format.addEventListener("change", display_final_sheet_dimensions);
+spr_tile_width.addEventListener("change", displayFinalSheetDimensions);
+spr_tile_height.addEventListener("change", displayFinalSheetDimensions);
+spr_tile_row.addEventListener("change", displayFinalSheetDimensions);
+SPR_in_format.addEventListener("change", smartLoadInput);
 
 function update_SPR_create_count(count) {
     console.log("fucking called");
@@ -96,7 +96,7 @@ function reloadTempSpritesheet() {
         createTempSpritesheet();
     }
     if (SPR_sequence_counter.value) {
-        display_final_sheet_dimensions();
+        displayFinalSheetDimensions();
     }
 }
 
@@ -109,9 +109,9 @@ SPR_outdir_button.addEventListener('click', () => {
 });
 
 function createTempSpritesheet() {
-    if (SPR_sequence_paths == null){ console.log('no sequences, exiting...'); return; }
+    if (spr_sequence_paths == null){ console.log('no sequences, exiting...'); return; }
     deactivateButtons();
-    client.invoke('build_spritesheet', SPR_sequence_paths, 'temp/', Date.now().toString(), (error, res) => {
+    client.invoke('build_spritesheet', spr_sequence_paths, 'temp/', Date.now().toString(), (error, res) => {
         console.log('createfragment fps', create_fps.value);
         if (error) {
             console.error(error);
@@ -129,8 +129,15 @@ SPR_input_button.addEventListener("click", () => {
     else if (SPR_in_format.value == 'aimg') { dialog_mode = aimg_dialog_props; }    
     var img_paths = dialog.showOpenDialog({ filters: extension_filters, properties: dialog_mode })
     console.log(`chosen path: ${img_paths}`);
-    if (img_paths === undefined) { return }
+    if (img_paths === undefined) { return; }
     console.log(img_paths);
+    spr_sequence_paths = img_paths;
+    smartLoadInput();
+});
+
+function smartLoadInput()  {
+    img_paths = spr_sequence_paths;
+    if (img_paths == undefined) { return; }
     deactivateButtons();
     SPR_input_button.classList.add("is-loading");
     console.log('invoking...');
@@ -140,9 +147,9 @@ SPR_input_button.addEventListener("click", () => {
                 console.error(error);
                 mboxError(spr_msgbox, error);
             } else {
-                SPR_sequence_paths = res.sequence;
-                console.log("obtained sequences", SPR_sequence_paths);
-                quintcell_generator(SPR_sequence_paths, SPR_sequence_body);
+                spr_sequence_paths = res.sequence;
+                console.log("obtained sequences", spr_sequence_paths);
+                quintcell_generator(spr_sequence_paths, SPR_sequence_body);
                 console.log(res);
                 mboxClear(spr_msgbox);
                 reloadTempSpritesheet();
@@ -152,7 +159,7 @@ SPR_input_button.addEventListener("click", () => {
                 spr_tile_row.value = 5;
                 update_SPR_create_count(res.total);
             }
-            display_final_sheet_dimensions();
+            displayFinalSheetDimensions();
             SPR_input_button.classList.remove('is-loading');
             activateButtons();
         });
@@ -175,14 +182,14 @@ SPR_input_button.addEventListener("click", () => {
             activateButtons();
         });
     }
-});
+}
 
 SPR_clear_imgs_button.addEventListener('click', () => {
     // sequence_body.innerHTML = '';
     while (SPR_sequence_body.hasChildNodes()){
         SPR_sequence_body.removeChild(SPR_sequence_body.firstChild);
     }
-    SPR_sequence_paths = null;
+    spr_sequence_paths = null;
     spr_create_name.value = '';
     spr_tile_width.value = '';
     spr_tile_height.value = '';
@@ -203,7 +210,7 @@ SPR_create_button.addEventListener('click', () => {
     mboxClear(spr_msgbox);
     SPR_create_button.classList.add('is-loading');
     // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), CRT_out_format.value, false, is_disposed.checked);
-    client.invoke("build_spritesheet", SPR_sequence_paths, SPR_outdir_path.value, spr_create_name.value, 
+    client.invoke("build_spritesheet", spr_sequence_paths, SPR_outdir_path.value, spr_create_name.value, 
     spr_tile_width.value, spr_tile_height.value, spr_tile_row.value, 0, 0, 0, 0, true, (error, res) => {
         if (error) {
             console.error(error);
@@ -217,7 +224,7 @@ SPR_create_button.addEventListener('click', () => {
 });
 
 
-function display_final_sheet_dimensions() {
+function displayFinalSheetDimensions() {
     var image_count = SPR_sequence_counter.value;
     var x_count = Math.min(image_count, spr_tile_row.value);
     var y_count = Math.ceil(image_count / spr_tile_row.value);

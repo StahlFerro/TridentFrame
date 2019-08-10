@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>TridentFrame</title>
     <link rel="stylesheet" type="text/css" href="./css/bulmamods.css" />
-    <link rel="stylesheet" type="text/css" href="./css/fontawesome.css" />
+    <link rel="stylesheet" type="text/css" href="./css/fontawesome-all.css" />
     
 </head>
 
@@ -56,9 +56,13 @@
                                     <span class="icon is-large"><i class="fas fa-exchange-alt fa-2x fa-inverse"></i></span>
                                     <p class="is-white-d">Convert</p>    
                                 </a></li>
-                                <li id="sprsheet_box" class="menu-item"><a id="sprsheet_menu">
+                                <li id="buildsprite_box" class="menu-item"><a id="buildsprite_menu">
+                                    <span class="icon is-large"><i class="fas fa-border fa-2x fa-inverse"></i></span>
+                                    <p class="is-white-d">Build<br/>Spritesheet</p>    
+                                </a></li>
+                                <li id="slicesprite_box" class="menu-item"><a id="slicesprite_menu">
                                     <span class="icon is-large"><i class="fas fa-th fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Spritesheet</p>    
+                                    <p class="is-white-d">Slice<br/>Spritesheet</p>    
                                 </a></li>
                                 <li id="settings_box" class="menu-item"><a id="settings_menu">
                                     <span class="icon is-large"><i class="fas fa-cog fa-2x fa-inverse"></i></span>
@@ -348,7 +352,7 @@
                         </div>
                     </div>
 
-                    <div id="sprsheet_panel" class="container" style="display: none; padding:10px;">
+                    <div id="buildsprite_panel" class="container" style="display: none; padding:10px;">
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
@@ -373,18 +377,6 @@
                                     <td class="is-hpaddingless">
                                         <nav class="level">
                                             <div class="level-left">
-                                                <div class="level-item has-text-centered">
-                                                    <div class="field">
-                                                        <div class="control">
-                                                            <div class="select is-neon-cyan">
-                                                                <select id="SPR_mode">
-                                                                    <option value="create">Create</option>
-                                                                    <option value="slice">Slice</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <div class="level-item has-text-centered">
                                                     <div class="field is-horizontal">
                                                         <div class="field-body">
@@ -510,6 +502,12 @@
                         </div>
                     </div>
 
+                    <div id="slicesprite_panel" class="container" style="display: none; padding: 10px;">
+                        <div class="content">
+
+                        </div>
+                    </div>
+
                     <div id="settings_panel" class="container" style="display: none; padding:10px;">
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
@@ -567,9 +565,10 @@
     require('./jsbrain/Utils.js')
     require('./jsbrain/Client.js')
     require('./jsbrain/MenuHandler.js')
-    require('./jsbrain/CreateFragment.js')
-    require('./jsbrain/SplitFragment.js')
-    require('./jsbrain/SpritesheetFragment.js')
+    require('./jsbrain/CreateAIMGFragment.js')
+    require('./jsbrain/SplitAIMGFragment.js')
+    require('./jsbrain/BuildSpritesheetFragment.js')
+    require('./jsbrain/SliceSpritesheetFragment.js')
     require('./jsbrain/SettingsFragment.js')
     require('./jsbrain/AboutFragment.js')
     require('./jsbrain/MessageBox.js')
