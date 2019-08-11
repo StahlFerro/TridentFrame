@@ -21,7 +21,7 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     disposal = 0
     if criteria.reverse:
         image_paths.reverse()
-    for ipath in image_paths:
+    for index, ipath in enumerate(image_paths):
         im = Image.open(ipath)
         orig_width, orig_height = im.size
         must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
@@ -48,9 +48,12 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
             im.info['transparency'] = 255
         else:
             im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=256)
+        yield f'Appending frames... ({index + 1}/{len(image_paths)})'
         frames.append(im)
+    yield 'Saving GIF...'
     frames[0].save(out_full_path, optimize=False,
         save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
+    yield 'Finished!'
 
 
 def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
@@ -97,7 +100,7 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     if criteria.extension == 'gif':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         filename = f"{filename}.gif"
-        _build_gif(image_paths, out_full_path, criteria)
+        return _build_gif(image_paths, out_full_path, criteria)
         
     elif criteria.extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")

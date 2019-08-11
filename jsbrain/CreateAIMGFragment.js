@@ -178,8 +178,10 @@ create_aimg_button.addEventListener('click', () => {
             console.error(error);
             mboxError(create_msgbox, error);
         } else {
-            console.log("SUCCESS!");
-            mboxSuccess(create_msgbox, 'GIF/APNG successfully created!!1, check out the output directory');
+            if (res) {
+                console.log('res', res);
+                mboxSuccess(create_msgbox, res);
+            }
         }
         create_aimg_button.classList.remove('is-loading');
     });

@@ -21,6 +21,7 @@ class API(object):
         info = _inspect_sequence(dir_path)
         return info
 
+    @zerorpc.stream
     def combine_image(self, image_paths, out_dir, filename, fps, extension, width, height, reverse, transparent, flip_h, flip_v):
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
         if not image_paths and not out_dir:
@@ -30,8 +31,7 @@ class API(object):
         elif not out_dir:
             raise Exception("Please choose the output folder!")
         criteria = CreationCriteria(fps, extension, reverse, transparent).transform(width, height, flip_h, flip_v)
-        res = create_aimg(image_paths, out_dir, filename, criteria)
-        return res
+        return create_aimg(image_paths, out_dir, filename, criteria)
 
     @zerorpc.stream
     def split_image(self, image_path, out_dir, pad_count, is_duration_sensitive):
