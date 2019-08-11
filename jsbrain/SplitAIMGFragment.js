@@ -142,12 +142,13 @@ create_seq_button.addEventListener('click', () => {
     create_seq_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
     client.invoke('split_image', aimg_path.value, target_seq_path.value, split_pad_count, is_duration_sensitive.checked, (error, res) => {
-        if (error || !res){
+        if (error){
             console.log(error);
             mboxError(split_msgbox, error);
         } else {
             if (res){
-                mboxSuccess(split_msgbox, 'GIF splitted successfully!!1 Check the output directory');
+                console.log('res', res);
+                mboxSuccess(split_msgbox, res);
             }
         }
         create_seq_button.classList.remove('is-loading');

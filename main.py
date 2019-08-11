@@ -33,6 +33,7 @@ class API(object):
         res = create_aimg(image_paths, out_dir, filename, criteria)
         return res
 
+    @zerorpc.stream
     def split_image(self, image_path, out_dir, pad_count, is_duration_sensitive):
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
@@ -41,13 +42,13 @@ class API(object):
         elif not out_dir:
             raise Exception("Please choose an output folder!")
         criteria = SplitCriteria(pad_count, is_duration_sensitive)
-        res = split_aimg(image_path, out_dir, criteria)
-        return res
+        return split_aimg(image_path, out_dir, criteria)
 
     def delete_temp_images(self):
         res = _delete_temp_images()
         return res
 
+    @zerorpc.stream
     def build_spritesheet(self, image_paths, input_mode, out_dir, filename, width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha):
         if not image_paths and not out_dir:
             raise Exception("Please load the images and choose the output folder!")
@@ -57,7 +58,8 @@ class API(object):
             raise Exception("Please choose the output folder!")
         criteria = SpritesheetBuildCriteria(width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha)
         # raise Exception(criteria.__dict__)
-        _build_spritesheet(image_paths, input_mode, out_dir, filename, criteria)
+        return _build_spritesheet(image_paths, input_mode, out_dir, filename, criteria)
+        
 
 
 def parse_port():

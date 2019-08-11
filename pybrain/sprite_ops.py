@@ -44,6 +44,7 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
                 bytebox = io.BytesIO()
                 gif.save(bytebox, "PNG", optimize=True)
                 frames.append(Image.open(bytebox))
+                yield f'Splitting GIF... ({cr + 1}/{gif.n_frames})'
         elif ext.lower() == 'png':
             raise Exception('APNG!')
         else:
@@ -78,6 +79,10 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
 
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
+        yield f'Placing frames to sheet... ({index + 1}/{len(frames)})'
 
-    spritesheet.save(os.path.join(out_dir, f"{filename}.png"), "PNG")
-    spritesheet.show()
+    outfilename = f"{filename}.png"
+    final_path = os.path.join(out_dir, outfilename)
+    yield f'Saving the file...'
+    spritesheet.save(final_path, "PNG")
+    yield 'Finished!'

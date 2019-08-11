@@ -233,8 +233,13 @@ BSPR_create_button.addEventListener('click', () => {
             console.error(error);
             mboxError(bspr_msgbox, error);
         } else {
-            console.log("SUCCESS!");
-            mboxSuccess(bspr_msgbox, 'Spritesheet successfully built!!1, check out the output directory');
+            if (res) {
+                console.log(res);
+                mboxSuccess(bspr_msgbox, res);
+            }
+            // console.log('res', res);
+            // console.log("SUCCESS!");
+            // mboxSuccess(bspr_msgbox, 'Spritesheet successfully built!!1, check out the output directory');
         }
         BSPR_create_button.classList.remove('is-loading');
     });

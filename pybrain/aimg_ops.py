@@ -127,15 +127,14 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
     ext = str.lower(ext[1:])
     # raise Exception(fname, ext)
     if ext not in ANIMATED_IMG_EXTS:
-        return
-        # raise ClickException('Only supported extensions are gif and apng. Sry lad')
+        raise Exception('Only supported extensions are gif and apng. Sry lad')
 
     # Create directory to contain all the frames if does not exist
     if not os.path.exists(out_dir):
         os.mkdir(out_dir)
-        print(f"Creating directory {out_dir}...")
-    else:
-        print(f"Directory {out_dir} already exists, replacing the PNGs inside it...")
+        # yield f"Creating directory {out_dir}..."
+    # else:
+        # yield f"Directory {out_dir} already exists, replacing the PNGs inside it..."
 
     # Image processing
     if ext == 'gif':
@@ -167,6 +166,7 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
         for index, multiplier in frame_multipliers:
             gif.seek(index)
             for n in range(0, multiplier):
+                yield f'Splitting GIF... ({seq_no + 1}/{sum(multipliers)})'
                 gif.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(seq_no), pad_count)}.png"), 'PNG')
                 seq_no += 1
 
@@ -177,10 +177,11 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
         # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
         # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
         for index, (png, control) in enumerate(iframes):
+            yield f'Splitting APNG... ({index + 1}/{len(iframes)})'
             png.save(os.path.join(out_dir, f"{fname}_{str.zfill(str(index), pad_count)}.png"))
 
     deinit()
-    return True
+    yield 'Finished!'
 
 
 # if __name__ == "__main__":
