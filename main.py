@@ -8,7 +8,7 @@ import zerorpc
 
 from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
 from pybrain.aimg_ops import split_aimg, create_aimg, _delete_temp_images
-from pybrain.sprite_ops import create_spritesheet
+from pybrain.sprite_ops import _build_spritesheet
 from pybrain.config import CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 class API(object):
@@ -57,7 +57,7 @@ class API(object):
             raise Exception("Please choose the output folder!")
         criteria = SpritesheetBuildCriteria(width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha)
         # raise Exception(criteria.__dict__)
-        create_spritesheet(image_paths, input_mode, out_dir, filename, criteria)
+        _build_spritesheet(image_paths, input_mode, out_dir, filename, criteria)
 
 
 def parse_port():

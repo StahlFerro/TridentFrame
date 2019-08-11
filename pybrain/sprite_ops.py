@@ -16,9 +16,9 @@ from hurry.filesize import size, alternative
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 
-def create_spritesheet(image_paths: List, input_mode: str, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
+def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
-    img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
+    img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in set(STATIC_IMG_EXTS + ANIMATED_IMG_EXTS)]
     # workpath = os.path.dirname(img_paths[0])
     init()
     # Test if inputted filename has extension, then remove it from the filename
@@ -32,11 +32,23 @@ def create_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
         raise Exception("The specified absolute out_dir does not exist!")
 
     frames = []
-    if input_mode == 'from_sequence':
+    if input_mode == 'sequence':
         frames = [Image.open(i).getdata() for i in img_paths]
-    # elif input_mode == 'from_aimg':
+    elif input_mode == 'aimg':
+        aimg = img_paths[0]
+        ext = os.path.splitext(aimg)[1][1:]
+        if ext.lower() == 'gif':
+            gif: Image = Image.open(aimg)
+            for cr in range(0, gif.n_frames):
+                gif.seek(cr)
+                frames.append(gif)
+        elif ext.lower() == 'png':
+            raise Exception('APNG!')
+        else:
+            raise Exception('Unknown image format!')
     else:
-        raise Exception('')
+        raise Exception('Unknown input image mode!')
+    raise Exception([fr for fr in frames[0]])
 
     tile_width = frames[0].size[0]
     tile_height = frames[0].size[1]
