@@ -33,7 +33,7 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
 
     frames = []
     if input_mode == 'sequence':
-        frames = [Image.open(i).getdata() for i in img_paths]
+        frames = [Image.open(i) for i in img_paths]
     elif input_mode == 'aimg':
         aimg = img_paths[0]
         ext = os.path.splitext(aimg)[1][1:]
@@ -41,14 +41,15 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
             gif: Image = Image.open(aimg)
             for cr in range(0, gif.n_frames):
                 gif.seek(cr)
-                frames.append(gif)
+                bytebox = io.BytesIO()
+                gif.save(bytebox, "PNG", optimize=True)
+                frames.append(Image.open(bytebox))
         elif ext.lower() == 'png':
             raise Exception('APNG!')
         else:
             raise Exception('Unknown image format!')
     else:
         raise Exception('Unknown input image mode!')
-    raise Exception([fr for fr in frames[0]])
 
     tile_width = frames[0].size[0]
     tile_height = frames[0].size[1]
