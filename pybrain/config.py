@@ -3,6 +3,11 @@ STATIC_IMG_EXTS = ['png', 'jpg', 'jpeg', 'bmp']
 ANIMATED_IMG_EXTS = ['gif', 'png']
 
 from typing import Tuple
+import os
+
+
+CACHE_PATH = './cache/'
+ABS_CACHE_PATH = os.path.abspath(CACHE_PATH)
 
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """

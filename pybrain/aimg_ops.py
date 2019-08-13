@@ -3,19 +3,62 @@ import io
 import string
 import shutil
 import math
+import time
+import subprocess
+import tempfile
 from random import choices
 from pprint import pprint
 from urllib.parse import urlparse
-from typing import List
-import subprocess
+from typing import List, Dict, Tuple
+from datetime import datetime
 
 from PIL import Image
 from apng import APNG, PNG
 from colorama import init, deinit
 from hurry.filesize import size, alternative
-from wand.image import Image as WImage
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, ABS_CACHE_PATH
+
+
+def _create_temp_gifs(image_paths: List, criteria: CreationCriteria) -> Tuple[str, List[str]]:
+    frames = []
+    disposal = 0
+    if criteria.reverse:
+        image_paths.reverse()
+    timestamp_dirname = time.strftime("%Y%m%d_%H%M%S")
+    gif_cache_dir = os.path.join(ABS_CACHE_PATH, timestamp_dirname)
+    os.mkdir(gif_cache_dir)
+    temp_gifs = []
+    for index, ipath in enumerate(image_paths):
+        im = Image.open(ipath)
+        # orig_width, orig_height = im.size
+        # must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
+        # alpha = None
+        # if criteria.flip_h:
+        #     im = im.transpose(Image.FLIP_LEFT_RIGHT)
+        # if criteria.flip_v:
+        #     im = im.transpose(Image.FLIP_TOP_BOTTOM)
+        # if must_resize:
+        #     im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
+        save_path = f'{os.path.join(gif_cache_dir, os.path.splitext(os.path.basename(ipath))[0])}.gif'
+        if im.mode == 'RGBA' and criteria.transparent:
+            alpha = im.getchannel('A')
+            # alpha.show(title='alpha')
+            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
+            # im.show('im first convert')
+            mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+            # mask.show('mask')
+            im.paste(255, mask)
+            # im.show('masked im')
+            im.info['transparency'] = 255
+            im.save(save_path)
+        elif im.mode == 'RGB':
+            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE)
+            im.save(save_path)
+        elif im.mode == 'P':
+            im.save(save_path, transparency=im.info['transparency'])
+        temp_gifs.append(save_path)
+    return gif_cache_dir, temp_gifs
 
 
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
@@ -309,37 +352,13 @@ def gs_build():
     gifsicle_exec = os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
     orig_path = os.path.abspath('./test/orig/')
     gifcache_path = os.path.abspath('./test/gifcache')
-    print('orig_path', orig_path)
     print('gifcache_path', gifcache_path)
     raydns = [os.path.abspath(os.path.join(orig_path, f)) for f in os.listdir(orig_path)]
     # pprint(raydns)
-    for ray in raydns:
-        im = Image.open(ray)
-        save_path = f'{os.path.join(gifcache_path, os.path.splitext(os.path.basename(ray))[0])}.gif'
-        print(save_path, im.mode)
-        # return
-        if im.mode == 'RGBA':
-            alpha = im.getchannel('A')
-            # alpha.show(title='alpha')
-            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
-            # im.show('im first convert')
-            mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-            # mask.show('mask')
-            im.paste(255, mask)
-            # im.show('masked im')
-            im.info['transparency'] = 255
-            im.save(save_path)
-        elif im.mode == 'RGB':
-            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE)
-            im.save(save_path)
-        elif im.mode == 'P':
-            im.save(save_path, transparency=im.info['transparency'])
-
-    # return
-    out_dir = os.path.abspath('./test/')
-    gifraydns = [os.path.abspath(os.path.join(gifcache_path, f)) for f in os.listdir(gifcache_path)]
-    print(out_dir)
+    gif_cache_dir, gifraydns = _create_temp_gifs(raydns, CreationCriteria(fps=50, extension='gif', reverse=True, transparent=True))
     pprint(gifraydns)
+    out_dir = os.path.abspath('./test/')
+    print('orig_path', orig_path)
     colors = 256
     delay = 2
     optimization = "--unoptimize"
@@ -352,9 +371,8 @@ def gs_build():
     cmd = ' '.join(args)
     print(cmd)
     subprocess.run(cmd)
-    # for fname in os.listdir(gifcache_path):
-    #     fname = os.path.abspath(os.path.join(gifcache_path, fname))
-    #     os.remove(fname)
+    shutil.rmtree(gif_cache_dir)
+    
 
         
 def gs_split(gif_path: str, out_dir: str):
@@ -371,6 +389,12 @@ def gs_split(gif_path: str, out_dir: str):
         print(cmd)
         subprocess.run(cmd)
 
+def test():
+    temp_dir = tempfile.TemporaryDirectory()
+    print(temp_dir)
+    
+
 if __name__ == "__main__":
-    # gs_build()
-    gs_split("./test/xdr.gif", "./test/sequence")
+    gs_build()
+    # gs_split("./test/xdr.gif", "./test/sequence")
+    # test()
