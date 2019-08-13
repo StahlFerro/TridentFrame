@@ -9,10 +9,11 @@ The app is currently under rigorous daily development and is incomplete. Clone i
 
 TridentFrame consists of two main parts. The python backend handling image processing, and the web frontend (HTML-CSS-JS) for the UI, image previews and input controls.
 
-### Built with
-*   [Electron](https://electronjs.org/) : Main framework
-*   [Pillow](https://python-pillow.org/) : GIF parsing
-*   [pyAPNG](https://github.com/eight04/pyAPNG) : APNG parsing
+### Powered by:
+*   [Electron](https://electronjs.org/) : Cross-platform GUI
+*   [Pillow](https://python-pillow.org/) : GIF creation, Spritesheet building & slicing
+*   [Gifsicle](https://www.lcdf.org/gifsicle/) : GIF splitting
+*   [pyAPNG](https://github.com/eight04/pyAPNG) : APNG creation & splitting
 *   [zeroRPC](https://www.zerorpc.io/) : Connecting the python backend to the electron frontend
 *   [Bulma](https://bulma.io/) : For the pretty and clean UI
 *   [Sass](https://sass-lang.com/) : Modifying bulma's styles
