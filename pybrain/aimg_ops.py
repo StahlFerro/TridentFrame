@@ -40,108 +40,73 @@ def _mk_temp_dir(prefix_name: str = ''):
     return temp_dir
 
 
-def _create_gifragments(image_paths: List, criteria: CreationCriteria) -> Tuple[str, List[str]]:
+def _create_gifragments(image_paths: List, criteria: CreationCriteria, absolute_paths=True) -> Tuple[str, List[str]]:
     """ Generate a sequence of GIFs created from the input sequence with the specified criteria, before compiling them into a single animated GIF"""
+    print("Generating GIF fragments...")
     frames = []
     disposal = 0
     if criteria.reverse:
         image_paths.reverse()
-    gif_cache_dir = _mk_temp_dir()
+    temp_dir = _mk_temp_dir(prefix_name="temp_gifragments")
     temp_gifs = []
     for index, ipath in enumerate(image_paths):
-        im = Image.open(ipath)
-        orig_width, orig_height = im.size
-        must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
-        alpha = None
-        if criteria.flip_h:
-            im = im.transpose(Image.FLIP_LEFT_RIGHT)
-        if criteria.flip_v:
-            im = im.transpose(Image.FLIP_TOP_BOTTOM)
-        if must_resize:
-            im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
-        fragment_name = os.path.splitext(os.path.basename(ipath))[0]
-        save_path = f'{os.path.join(gif_cache_dir, fragment_name)}.gif'
-        if im.mode == 'RGBA' and criteria.transparent:
-            alpha = im.getchannel('A')
-            # alpha.show(title='alpha')
-            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
-            # im.show('im first convert')
-            mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-            # mask.show('mask')
-            im.paste(255, mask)
-            # im.show('masked im')
-            im.info['transparency'] = 255
-            im.save(save_path)
-        elif im.mode == 'RGB' or not criteria.transparent:
-            im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE)
-            im.save(save_path)
-        elif im.mode == 'P':
-            im.save(save_path, transparency=im.info['transparency'])
-        temp_gifs.append(save_path)
-    return gif_cache_dir, temp_gifs
+        print(f"Processing GIF ({index}/{len(image_paths)})")
+        with Image.open(ipath) as im:
+            # orig_width, orig_height = im.size
+            # must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
+            # alpha = None
+            # if criteria.flip_h:
+            #     im = im.transpose(Image.FLIP_LEFT_RIGHT)
+            # if criteria.flip_v:
+            #     im = im.transpose(Image.FLIP_TOP_BOTTOM)
+            # if must_resize:
+            #     im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
+            fragment_name = os.path.splitext(os.path.basename(ipath))[0]
+            save_path = f'{os.path.join(temp_dir, fragment_name)}.gif'
+            print('save path', save_path)
+            if im.mode == 'RGBA' and criteria.transparent:
+                alpha = im.getchannel('A')
+                # alpha.show(title='alpha')
+                im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
+                # im.show('im first convert')
+                mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+                # mask.show('mask')
+                im.paste(255, mask)
+                # im.show('masked im')
+                im.info['transparency'] = 255
+                im.save(save_path)
+            elif im.mode == 'RGB' or not criteria.transparent:
+                im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE)
+                im.save(save_path)
+            elif im.mode == 'P':
+                im.save(save_path, transparency=im.info['transparency'])
+            if absolute_paths:
+                temp_gifs.append(save_path)
+            else:
+                temp_gifs.append(os.path.relpath(save_path, os.getcwd()))
+    return temp_dir, temp_gifs
 
 
-def _unoptimize_gif(gif_path) -> str:
-    """ Perform GIF unoptimization using Gifsicle, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF """
-    executable = gifsicle_exec()
-    temp_dir = _mk_temp_dir(prefix_name="unoptimized_gif")
-    pure_gif_path = os.path.join(temp_dir, os.path.basename(gif_path))
-    args = [executable, "-b", "--unoptimize", gif_path, "--output", pure_gif_path]
-    cmd = ' '.join(args)
-    print(cmd)
-    subprocess.run(cmd, shell=True)
-    return pure_gif_path
+# def _build_sharded_gifs(cluster_gifs: List, out_full_path: str, criteria: CreationCriteria):
+    
 
 
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
-    gif_cache_dir, temp_gifs = _create_gifragments(image_paths, criteria)
+    temp_dir, temp_gifs = _create_gifragments(image_paths, criteria, absolute_paths=False)
+    print(temp_dir)
+    executable = gifsicle_exec()
     colors = 256
     delay = 2
     optimization = "--unoptimize"
     disposal = "background"
     loopcount = "--loopcount"
-    args = [gifsicle_exec, f"--colors={colors}", optimization, f"--delay={delay}", f"--disposal={disposal}", loopcount, " ".join(temp_gifs), "--output", out_full_path]
+    globstar_path = os.path.join(temp_dir, "*.gif")
+    args = [executable, f"--colors={colors}", optimization, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", out_full_path]
+    # pprint(args)
     cmd = ' '.join(args)
-    print(cmd) 
+    # print(cmd) 
     subprocess.run(cmd, shell=True)
-    shutil.rmtree(gif_cache_dir)
-    # frames = []
-    # disposal = 0
-    # if criteria.reverse:
-    #     image_paths.reverse()
-    # for index, ipath in enumerate(image_paths):
-    #     im = Image.open(ipath)
-    #     orig_width, orig_height = im.size
-    #     must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
-    #     alpha = None
-    #     if criteria.flip_h:
-    #         im = im.transpose(Image.FLIP_LEFT_RIGHT)
-    #     if criteria.flip_v:
-    #         im = im.transpose(Image.FLIP_TOP_BOTTOM)
-    #     if must_resize:
-    #         im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
-    #     try: 
-    #         alpha = im.getchannel('A')
-    #     except Exception:
-    #         alpha = False
-    #     if criteria.transparent and alpha:
-    #         disposal = 2
-    #         # alpha.show(title='alpha')
-    #         im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
-    #         # im.show('im first convert')
-    #         mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-    #         # mask.show('mask')
-    #         im.paste(255, mask)
-    #         # im.show('masked im')
-    #         im.info['transparency'] = 255
-    #     else:
-    #         im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=256)
-    #     yield f'Appending frames... ({index + 1}/{len(image_paths)})'
-    #     frames.append(im)
-    # yield 'Saving GIF...'
-    # frames[0].save(out_full_path,
-    #     save_all=True, append_images=frames[1:], duration=criteria.duration, loop=0, disposal=disposal)
-    yield 'Finished!'
+    shutil.rmtree(temp_dir)
 
 
 def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
@@ -187,14 +152,50 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     if criteria.extension == 'gif':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         filename = f"{filename}.gif"
-        return _build_gif(image_paths, out_full_path, criteria)
-        
+        _build_gif(image_paths, out_full_path, criteria)
+    
     elif criteria.extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
         apng = _build_apng(img_paths, criteria)
         apng.save(out_full_path)
 
-    return out_full_path
+    # return out_full_path
+
+
+def _reduce_color(gif_path, color: int = 256) -> str:
+    print("Performing color reduction...")
+    executable = gifsicle_exec()
+    args = [executable, f"--colors={color}", gif_path]
+
+
+def _unoptimize_gif(gif_path) -> str:
+    """ Perform GIF unoptimization using Gifsicle, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF """
+    print("Performing unoptimization...")
+    executable = gifsicle_exec()
+    temp_dir = _mk_temp_dir(prefix_name="unoptimized_gif")
+    pure_gif_path = os.path.join(temp_dir, os.path.basename(gif_path))
+    args = [executable, "-b", "--unoptimize", gif_path, "--output", pure_gif_path]
+    cmd = ' '.join(args)
+    print(cmd)
+    subprocess.run(cmd, shell=True)
+    return pure_gif_path
+
+
+def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
+    """ Returns a list of dual-valued tuples, first value being the frame numbers of the GIF, second being the ratiko of the frame's delay to the lowest delay"""
+    with Image.open(gif_path) as gif:
+        indices = list(range(0, gif.n_frames))
+        durations = []
+        for i in indices:
+            gif.seek(i)
+            durations.append(gif.info['duration'])
+        min_duration = min(durations)
+        if duration_sensitive:
+            ratios = [dur//min_duration for dur in durations]
+        else:
+            ratios = [1 for dur in durations]
+        indexed_ratios = list(zip(indices, ratios))
+    return indexed_ratios
 
 
 def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria) -> List[str]:
@@ -202,26 +203,17 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria) -> List[str
     unop_gif_path = _unoptimize_gif(gif_path)
     print('unop gif path', unop_gif_path)
     executable = gifsicle_exec()
-    fname = os.path.splitext(os.path.basename(unop_gif_path))[0]
-    print('fname', fname)
-    frame_count = Image.open(gif_path).n_frames
-    for index in range(0, frame_count):
-        hash_index = f'"#{index}"'
-        inspect_cmd = ' '.join([executable, "-I", hash_index, "<", unop_gif_path])
-        print('inspect_cmd\n', inspect_cmd)
-        frame_info = subprocess.run(inspect_cmd, shell=True, capture_output=True)
-        print('frame info')
-        pprint(frame_info.stdout)
-        return
-        padnum = str.zfill(str(index), 3)
-        padded_fname = f'{fname}_{padnum}.png'
-        save_path = os.path.join(out_dir, padded_fname)
-        print(save_path)
-        # return
-        args = [executable, unop_gif_path, hash_index, "--output", save_path]
-        cmd = ' '.join(args)
-        print(cmd)
-        subprocess.run(cmd, shell=True)
+    orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
+    indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
+    sequence = 0
+    for index, ratio in indexed_ratios:
+        selector = f'"#{index}"'
+        for n in range(0, ratio):
+            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.png')
+            args = [executable, unop_gif_path, selector, "--output", save_path]
+            cmd = ' '.join(args)
+            subprocess.run(cmd, shell=True)
+            sequence += 1
 
 
 def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
@@ -346,121 +338,27 @@ def _delete_temp_images():
     return True
 
 
-def analyse_gif(im):
-    '''
-    Pre-process pass over the image to determine the mode (full or additive).
-    Necessary as assessing single frames isn't reliable. Need to know the mode
-    before processing all frames.
-    '''
-    results = {
-        'size': im.size,
-        'mode': 'full',
-    }
-    try:
-        while True:
-            if im.tile:
-                tile = im.tile[0]
-                update_region = tile[1]
-                update_region_dimensions = update_region[2:]
-                if update_region_dimensions != im.size:
-                    results['mode'] = 'partial'
-                    break
-            im.seek(im.tell() + 1)
-    except EOFError:
-        pass
-    im.seek(0)
-    return results
-
-
-def extract_gif_frames(gif: Image):
-    '''
-    Iterate the GIF, extracting each frame.
-    '''
-    gif_analysis = analyse_gif(gif)
-    mode = gif_analysis['mode']
-    p = gif.getpalette()
-    last_frame = gif.convert('RGBA')
-
-    try:
-        while True:
-            '''
-            If the GIF uses local colour tables, each frame will have its own palette.
-            If not, we need to apply the global palette to the new frame.
-            '''
-            if not gif.getpalette():
-                gif.putpalette(p)
-
-            new_frame = Image.new('RGBA', gif.size)
-
-            '''
-            Is this file a "partial"-mode GIF where frames update a region of a different size to the entire image?
-            If so, we need to construct the new frame by pasting it on top of the preceding frames.
-            '''
-            if mode == 'partial':
-                new_frame.paste(last_frame)
-
-            new_frame.paste(gif, (0,0), gif.convert('RGBA'))
-            yield new_frame
-
-            last_frame = new_frame
-            gif.seek(gif.tell() + 1)
-    except EOFError:
-        pass
-
-    
-
 def gs_build():
     gifsicle_exec = os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
-    orig_path = os.path.abspath('./test/orig/')
-    gifcache_path = os.path.abspath('./test/gifcache')
-    print('gifcache_path', gifcache_path)
-    raydns = [os.path.abspath(os.path.join(orig_path, f)) for f in os.listdir(orig_path)]
-    # pprint(raydns)
-    gif_cache_dir, gifraydns = _create_gifragments(raydns, CreationCriteria(fps=50, extension='gif', reverse=True, transparent=True))
-    pprint(gifraydns)
+    orig_path = os.path.abspath('./test/orig2/')
+    images = [os.path.abspath(os.path.join(orig_path, f)) for f in os.listdir(orig_path)]
     out_dir = os.path.abspath('./test/')
-    print('orig_path', orig_path)
-    colors = 256
-    delay = 2
-    optimization = "--unoptimize"
-    disposal = "background"
-    loopcount = ""
-    out_dir = os.path.join(out_dir, "xdr.gif")
-    print(out_dir)
-    args = [gifsicle_exec, f"--colors={colors}", optimization, f"--delay={delay}", f"--disposal={disposal}", "--loopcount", " ".join(gifraydns), "--output", out_dir]
-    
-    cmd = ' '.join(args)
-    print(cmd)
-    subprocess.run(args=args)
-    shutil.rmtree(gif_cache_dir)
+    criteria = CreationCriteria(fps=50, extension='gif', transparent=True, reverse=False)
+    create_aimg(images, out_dir, "sicle_test", criteria)
     
 
-        
 def gs_split(gif_path: str, out_dir: str):
     criteria = SplitCriteria(pad_count=3, is_duration_sensitive=False)
     # pprint(criteria.__dict__)
     split_aimg(gif_path, out_dir, criteria)
-    # executable = gifsicle_exec()
-    # temp_dir = _mk_temp_dir(prefix_name="temp_giframes")
-    # gif_path = os.path.abspath(gif_path)
-    # out_dir = os.path.abspath(out_dir)
-    # frame_count = Image.open(gif_path).n_frames
-    # for index in range(0, frame_count):
-    #     padnum = str.zfill(str(index), 3)
-    #     filename = f'argento_{padnum}.png'
-    #     out_file_path = os.path.join(out_dir, filename)
-    #     args = [executable, gif_path, f'"#{index}"', "--output", out_file_path, "-Okeep-empty"]
-    #     cmd = ' '.join(args)
-    #     print(cmd)
-    #     subprocess.run(cmd, shell=True)
 
 def test():
     temp_dir = tempfile.TemporaryDirectory()
     print(temp_dir)
-    
+
 
 if __name__ == "__main__":
-    # gs_build()
-    gs_split("./test/blobkiro.gif", "./test/")
+    gs_build()
+    # gs_split("./test/blobsekiro.gif", "./test/sequence/")
     # test()
     # _unoptimize_gif("./test/blobkiro.gif")
