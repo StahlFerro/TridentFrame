@@ -1,5 +1,10 @@
 import os
 import shutil
+import time
+
+from .config import gifsicle_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria
+from .create_ops import create_aimg
+from .split_ops import split_aimg
 
 
 def _purge_cache():
@@ -54,10 +59,6 @@ def gs_split(gif_path: str, out_dir: str):
     criteria = SplitCriteria(pad_count=3, is_duration_sensitive=False)
     # pprint(criteria.__dict__)
     split_aimg(gif_path, out_dir, criteria)
-
-def test():
-    temp_dir = tempfile.TemporaryDirectory()
-    print(temp_dir)
 
 
 if __name__ == "__main__":

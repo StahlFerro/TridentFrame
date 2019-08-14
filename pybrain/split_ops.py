@@ -17,6 +17,7 @@ from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, ABS_CACHE_PATH, gifsicle_exec
+from .utility import _mk_temp_dir, _unoptimize_gif, _get_gif_delay_ratios
 
 
 def _unoptimize_gif(gif_path) -> str:
