@@ -10,7 +10,6 @@ from typing import List
 
 from PIL import Image
 from apng import APNG, PNG
-from colorama import init, deinit
 from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
@@ -20,7 +19,6 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in set(STATIC_IMG_EXTS + ANIMATED_IMG_EXTS)]
     # workpath = os.path.dirname(img_paths[0])
-    init()
     # Test if inputted filename has extension, then remove it from the filename
     fname, ext = os.path.splitext(filename)
     if ext:

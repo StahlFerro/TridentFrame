@@ -4,10 +4,21 @@ ANIMATED_IMG_EXTS = ['gif', 'png']
 
 from typing import Tuple
 import os
+import platform
 
 
 CACHE_PATH = './cache/'
 ABS_CACHE_PATH = os.path.abspath(CACHE_PATH)
+
+
+def gifsicle_exec():
+    if platform.system() == 'Windows':
+        return os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
+    elif platform.system() == 'Linux':
+        return os.path.abspath("./bin/gifsicle-1.92-2+b1_amd64/gifsicle")
+    else:
+        return False
+
 
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """

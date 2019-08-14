@@ -1,0 +1,71 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: gifsicle
+Upstream-Contact: Eddie Kohler <ekohler@gmail.com>
+Source: http://www.lcdf.org/gifsicle/
+
+Files: *
+Copyright: 1997-2019, Eddie Kohler <ekohler@gmail.com>
+License: GPL-2 or special
+
+Files: test/testie
+Copyright: 2002-2003, International Computer Science Institute
+           2004-2007, Regents of the University of California
+           2008-2010, Meraki, Inc.
+           ?,         Eddie Kohler <ekohler@gmail.com>
+License: GPL-2 or special
+
+Files: include/lcdf/clp.h
+       src/clp.c
+Copyright: 1997-2017 Eddie Kohler <ekohler@gmail.com>
+License: GPL-2 or CLICK or special
+
+Files: debian/*
+Copyright: 2000-2001,      Eduardo Marcel Macan <macan@colband.com.br>
+           2005-2012,      Gürkan Sengün <gurkan@phys.ethz.ch>
+           2006,           Amaya Rodrigo
+           2013-2014,      Francois Marier <francois@debian.org>
+           2015-2019,      Herbert Parentes Fortes Neto <hpfn@debian.org>
+License: GPL-2
+
+License: GPL-2
+ This package is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, version 2 of the License.
+ .
+ This package is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License
+ along with this program. If not, see <http://www.gnu.org/licenses/>
+ .
+ On Debian systems, the complete text of the GNU General
+ Public License version 2 can be found in "/usr/share/common-licenses/GPL-2".
+
+License: CLICK
+ CLP is free software. It is distributed under the GNU General Public
+ License, Version 2, or, alternatively and at your discretion, under the
+ more permissive (BSD-like) Click LICENSE file as described below.
+ .
+ Permission is hereby granted, free of charge, to any person obtaining a
+ copy of this software and associated documentation files (the
+ "Software"), to deal in the Software without restriction, subject to the
+ conditions listed in the Click LICENSE file, which is available in full at
+ http://github.com/kohler/click/blob/master/LICENSE. The conditions
+ include: you must preserve this copyright notice, and you cannot mention
+ the copyright holders in advertising related to the Software without
+ their permission. The Software is provided WITHOUT ANY WARRANTY, EXPRESS
+ OR IMPLIED. This notice is a summary of the Click LICENSE file; the
+ license in that file is binding.
+
+License: special
+ The following alternative license may be used at your discretion.
+ .
+ Permission is granted to copy, distribute, or alter Gifsicle, whole or
+ in part, as long as source code copyright notices are kept intact,
+ with the following restriction: Developers or distributors who plan to
+ use Gifsicle code, whole or in part, in a product whose source code
+ will not be made available to the end user -- more precisely, in a
+ context which would violate the GPL -- MUST contact the author and
+ obtain permission before doing so.

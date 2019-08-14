@@ -257,3 +257,11 @@ typings/
 
 test/
 temp/
+
+
+
+##### Ignore everything inside cache/ but keep .placeholder so that this folder will be commited to the VCS
+
+
+cache/*
+!cache/.placeholder

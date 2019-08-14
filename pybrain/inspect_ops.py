@@ -7,7 +7,6 @@ from urllib.parse import urlparse
 
 from PIL import Image
 from apng import APNG
-from colorama import init, deinit
 from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
