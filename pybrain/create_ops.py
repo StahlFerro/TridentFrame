@@ -25,7 +25,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
     disposal = 0
     if criteria.reverse:
         image_paths.reverse()
-    temp_gifs = []
+    # temp_gifs = []
     for index, ipath in enumerate(image_paths):
         yield f"Processing frames ({index}/{len(image_paths)})..."
         with Image.open(ipath) as im:
@@ -56,10 +56,10 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 im.save(save_path)
             elif im.mode == 'P':
                 im.save(save_path, transparency=im.info['transparency'])
-            if absolute_paths:
-                temp_gifs.append(save_path)
-            else:
-                temp_gifs.append(os.path.relpath(save_path, os.getcwd()))
+            # if absolute_paths:
+                # temp_gifs.append(save_path)
+            # else:
+                # temp_gifs.append(os.path.relpath(save_path, os.getcwd()))
 
 
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
@@ -82,14 +82,14 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     yield "Finished!"
 
 
-def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
+def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
     if criteria.reverse:
         image_paths.reverse()
     apng = APNG()
     first_width, first_height = Image.open(image_paths[0]).size
     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
     if criteria.flip_h or criteria.flip_v or first_must_resize:
-        for ipath in image_paths:
+        for index, ipath in enumerate(image_paths):
             # bytebox = io.BytesIO()
             with io.BytesIO() as bytebox:
                 im = Image.open(ipath)
@@ -102,10 +102,14 @@ def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
                 if criteria.flip_v:
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)
                 im.save(bytebox, "PNG", optimize=True)
+                yield f"Processing frames... ({index + 1}/{len(image_paths)})"
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
-        return apng
+        yield "Saving APNG...."
+        apng.save(out_full_path)
     else:
-        return APNG.from_files(image_paths, delay=criteria.duration)
+        yield "Saving APNG..."
+        APNG.from_files(image_paths, delay=criteria.duration).save(out_full_path)
+    yield "Finished!"
 
 
 def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):
@@ -130,7 +134,5 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     
     elif criteria.extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
-        apng = _build_apng(img_paths, criteria)
-        return apng.save(out_full_path)
+        return _build_apng(img_paths, out_full_path, criteria)
 
-    return out_dir
