@@ -133,7 +133,7 @@
                                     <td id="CRT_control_cell" class="is-paddingless" colspan="2">
                                         <table class="table crt-control-table" width="100%">
                                             <tr>
-                                                <td>                                                    
+                                                <td>
                                                     <div class="field">
                                                         <label class="label">Name</label>
                                                         <div class="control"><input id="create_name" class="input is-neon-white" type="text"/></div>
@@ -315,18 +315,22 @@
                                         <a class="button is-neon-cyan" id="create_seq_button">Split to folder</a>
                                     </td>
                                     <td class="has-text-centered">
-                                        <div class="field is-horizontal">
-                                            <div class="field-label is-normal is-marginless">
-                                                <label class="label">Pad count</label>
-                                            </div>
-                                            <div class="field-body">
-                                                <div class="field">
-                                                    <div class="control">
-                                                        <input id="split_pad_count" class="input is-neon-white" type="number" min="1" max="6"/>
+                                        <nav class="level">
+                                            <div class="level-left">
+                                                <div class="level-item">
+                                                    <div class="field">
+                                                        <label class="label">Pad count</label>
+                                                        <div class="control"><input id="SPL_pad_count" class="input is-neon-white" type="number" min="1" max="6"/></div>
+                                                    </div>
+                                                </div>
+                                                <div class="level-item">
+                                                    <div class="field">
+                                                        <label class="label">Color space</label>
+                                                        <div class="control"><input id="SPL_color_space" class="input is-neon-white" type="number" min="2" max="256"/></div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </nav>
                                     </td>
                                 </tr>
                                 <tr>

@@ -17,7 +17,8 @@ let split_aimg_cell = document.getElementById('split_aimg_cell');
 let split_checkerbg_active = false;
 let aimg_stage = document.getElementById('aimg_stage');
 let aimg_path = document.getElementById('aimg_path');
-let split_pad_count = document.getElementById('split_pad_count');
+let SPL_pad_count = document.getElementById('SPL_pad_count');
+let SPL_color_space = document.getElementById('SPL_color_space');
 let is_duration_sensitive = document.getElementById('is_duration_sensitive');
 
 let target_seq_path = document.getElementById('target_seq_path');
@@ -55,7 +56,8 @@ open_aimg_button.addEventListener("click", () => {
             mboxError(split_msgbox, error);
         } else {
             loadAIMG(res);
-            split_pad_count.value = 3;
+            SPL_pad_count.value = 3;
+            SPL_color_space.value = 256;
         }
     })
     console.log('registered!');
@@ -141,7 +143,7 @@ create_seq_button.addEventListener('click', () => {
     deactivateButtons();
     create_seq_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
-    client.invoke('split_image', aimg_path.value, target_seq_path.value, split_pad_count, is_duration_sensitive.checked, (error, res) => {
+    client.invoke('split_image', aimg_path.value, target_seq_path.value, SPL_pad_count.value, SPL_color_space.value, is_duration_sensitive.checked, (error, res) => {
         if (error){
             console.log(error);
             mboxError(split_msgbox, error);

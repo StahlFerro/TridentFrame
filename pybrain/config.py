@@ -51,8 +51,13 @@ class CreationCriteria():
 class SplitCriteria():
     """ Contains all of the criterias for Splitting an animated image """
 
-    def __init__(self, pad_count, is_duration_sensitive=False):
+    def __init__(self, pad_count, color_space, is_duration_sensitive=False):
         self.pad_count: int = pad_count
+        try:
+            color_space = int(color_space)
+        except Exception as e:
+            raise Exception(e)
+        self.color_space: int = color_space
         self.is_duration_sensitive: bool = is_duration_sensitive
 
 

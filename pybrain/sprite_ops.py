@@ -12,7 +12,7 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 
 def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):

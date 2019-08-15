@@ -16,7 +16,7 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, ABS_CACHE_PATH, gifsicle_exec
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, SplitCriteria, ABS_CACHE_PATH, gifsicle_exec
 from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log
 
 
@@ -41,17 +41,21 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
     """ Splits GIF. Reduces color to 256, unoptimizes the GIF, then returns a list of absolute path of each split'd frames. """
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
     yield f"Setting global color palette to 256..."
-    redux_gif_path = _reduce_color(gif_path, unop_dir, color=256)
+    color_space = criteria.color_space
+    if 2 > color_space > 256:
+        raise Exception("Color space must be between 2 and 256!")
+    redux_gif_path = _reduce_color(gif_path, unop_dir, color=color_space)
     yield f"Coalescing frames for splitting..."
     unop_gif_path = _unoptimize_gif(redux_gif_path, unop_dir)
     executable = gifsicle_exec()
     orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
     indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
+    total_ratio = sum([ir[1] for ir in indexed_ratios])
     sequence = 0
     for index, ratio in indexed_ratios:
         selector = f'"#{index}"'
         for n in range(0, ratio):
-            yield f"Splitting GIF... ({sequence + 1}/{len(indexed_ratios)})"
+            yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.png')
             args = [executable, unop_gif_path, selector, "--output", save_path]
             cmd = ' '.join(args)

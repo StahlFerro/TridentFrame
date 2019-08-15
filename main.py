@@ -37,14 +37,14 @@ class API(object):
         return create_aimg(image_paths, out_dir, filename, criteria)
 
     @zerorpc.stream
-    def split_image(self, image_path, out_dir, pad_count, is_duration_sensitive):
+    def split_image(self, image_path, out_dir, pad_count, color_space, is_duration_sensitive):
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
         elif not image_path:
             raise Exception("Please load a GIF or APNG!")
         elif not out_dir:
             raise Exception("Please choose an output folder!")
-        criteria = SplitCriteria(pad_count, is_duration_sensitive)
+        criteria = SplitCriteria(pad_count, color_space, is_duration_sensitive)
         return split_aimg(image_path, out_dir, criteria)
 
     def delete_temp_images(self):
