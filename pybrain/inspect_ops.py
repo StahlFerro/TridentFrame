@@ -97,7 +97,6 @@ def _inspect_sequence(image_paths):
     """Returns information of a selected sequence of images"""
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     static_img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
-    # raise Exception("imgs", imgs)
     print("imgs count", len(static_img_paths))
     # pprint(imgs)
     if not static_img_paths:

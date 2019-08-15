@@ -1,11 +1,11 @@
+import os
+import platform
+from typing import Tuple
+
+
 IMG_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff']
 STATIC_IMG_EXTS = ['png', 'jpg', 'jpeg', 'bmp']
 ANIMATED_IMG_EXTS = ['gif', 'png']
-
-from typing import Tuple
-import os
-import platform
-
 
 CACHE_PATH = './cache/'
 ABS_CACHE_PATH = os.path.abspath(CACHE_PATH)
@@ -27,7 +27,7 @@ class CreationCriteria():
             fps = float(fps)
         except Exception as e:
             raise Exception(e)
-        self.fps: int = fps
+        self.fps: float = fps
         self.duration: float = round(1000 / fps)
         self.extension: str = extension
         self.reverse: bool = reverse
@@ -41,8 +41,8 @@ class CreationCriteria():
             resize_height = float(resize_height)
         except Exception as e:
             raise Exception(e)        
-        self.resize_width = resize_width
-        self.resize_height = resize_height
+        self.resize_width: int = resize_width
+        self.resize_height: int = resize_height
         self.flip_h = flip_h
         self.flip_v = flip_v
         return self

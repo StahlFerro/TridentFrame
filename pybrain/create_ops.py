@@ -20,30 +20,26 @@ from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriter
 from .utility import _mk_temp_dir
 
 
-def _create_gifragments(image_paths: List, criteria: CreationCriteria, absolute_paths=True) -> Tuple[str, List[str]]:
+def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria, absolute_paths=True) -> Tuple[str, List[str]]:
     """ Generate a sequence of GIFs created from the input sequence with the specified criteria, before compiling them into a single animated GIF"""
-    print("Generating GIF fragments...")
-    frames = []
     disposal = 0
     if criteria.reverse:
         image_paths.reverse()
-    temp_dir = _mk_temp_dir(prefix_name="temp_gifragments")
     temp_gifs = []
     for index, ipath in enumerate(image_paths):
-        print(f"Processing GIF ({index}/{len(image_paths)})")
+        yield f"Processing frames ({index}/{len(image_paths)})..."
         with Image.open(ipath) as im:
-            # orig_width, orig_height = im.size
-            # must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
-            # alpha = None
-            # if criteria.flip_h:
-            #     im = im.transpose(Image.FLIP_LEFT_RIGHT)
-            # if criteria.flip_v:
-            #     im = im.transpose(Image.FLIP_TOP_BOTTOM)
-            # if must_resize:
-            #     im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
+            orig_width, orig_height = im.size
+            must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
+            alpha = None
+            if criteria.flip_h:
+                im = im.transpose(Image.FLIP_LEFT_RIGHT)
+            if criteria.flip_v:
+                im = im.transpose(Image.FLIP_TOP_BOTTOM)
+            if must_resize:
+                im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
             fragment_name = os.path.splitext(os.path.basename(ipath))[0]
-            save_path = f'{os.path.join(temp_dir, fragment_name)}.gif'
-            print('save path', save_path)
+            save_path = f'{os.path.join(out_path, fragment_name)}.gif'
             if im.mode == 'RGBA' and criteria.transparent:
                 alpha = im.getchannel('A')
                 # alpha.show(title='alpha')
@@ -64,29 +60,26 @@ def _create_gifragments(image_paths: List, criteria: CreationCriteria, absolute_
                 temp_gifs.append(save_path)
             else:
                 temp_gifs.append(os.path.relpath(save_path, os.getcwd()))
-    return temp_dir, temp_gifs
-
-
-# def _build_sharded_gifs(cluster_gifs: List, out_full_path: str, criteria: CreationCriteria):
-    
 
 
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
-    temp_dir, temp_gifs = _create_gifragments(image_paths, criteria, absolute_paths=False)
-    print(temp_dir)
+    gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
+    yield from _create_gifragments(image_paths, gifragment_dir, criteria, absolute_paths=False)
     executable = gifsicle_exec()
     colors = 256
     delay = 2
     optimization = "--unoptimize"
     disposal = "background"
     loopcount = "--loopcount"
-    globstar_path = os.path.join(temp_dir, "*.gif")
+    globstar_path = os.path.join(gifragment_dir, "*.gif")
     args = [executable, f"--colors={colors}", optimization, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", out_full_path]
     # pprint(args)
     cmd = ' '.join(args)
     # print(cmd) 
+    yield "Combining frames..."
     subprocess.run(cmd, shell=True)
-    shutil.rmtree(temp_dir)
+    shutil.rmtree(gifragment_dir)
+    yield "Finished!"
 
 
 def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
@@ -116,6 +109,7 @@ def _build_apng(image_paths, criteria: CreationCriteria) -> APNG:
 
 
 def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):
+    """ Umbrella function for creating animated images from a sequence of images """
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
@@ -132,11 +126,11 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     if criteria.extension == 'gif':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         filename = f"{filename}.gif"
-        _build_gif(image_paths, out_full_path, criteria)
+        return _build_gif(image_paths, out_full_path, criteria)
     
     elif criteria.extension == 'apng':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
         apng = _build_apng(img_paths, criteria)
-        apng.save(out_full_path)
+        return apng.save(out_full_path)
 
-    # return out_full_path
+    return out_dir

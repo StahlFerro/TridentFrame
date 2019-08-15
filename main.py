@@ -6,10 +6,13 @@ from typing import List
 
 import zerorpc
 
-from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
-from pybrain.aimg_ops import split_aimg, create_aimg, _delete_temp_images
-from pybrain.sprite_ops import _build_spritesheet
 from pybrain.config import CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from pybrain.utility import _delete_temp_images
+from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
+from pybrain.create_ops import create_aimg
+from pybrain.split_ops import split_aimg
+from pybrain.sprite_ops import _build_spritesheet
+
 
 class API(object):
 
@@ -59,7 +62,6 @@ class API(object):
         criteria = SpritesheetBuildCriteria(width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha)
         # raise Exception(criteria.__dict__)
         return _build_spritesheet(image_paths, input_mode, out_dir, filename, criteria)
-        
 
 
 def parse_port():
