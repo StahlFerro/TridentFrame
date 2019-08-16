@@ -177,17 +177,6 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="field">
-                                                        <label class="label">Format</label>
-                                                        <div class="control">
-                                                            <div class="select is-neon-cyan">
-                                                                <select id="CRT_out_format">
-                                                                    <option value="gif">GIF</option>
-                                                                    <option value="apng">APNG</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
                                                 </td>
                                                 <td style="vertical-align: bottom;">
                                                     <label class="checkbox">
@@ -214,7 +203,20 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td colspan="2" style="padding-top: 25px;">
+                                                <td colspan="1" style="padding-top: 25px;">
+                                                    <div class="field">
+                                                        <!-- <label class="label">Format</label> -->
+                                                        <div class="control">
+                                                            <div class="select is-neon-cyan">
+                                                                <select id="CRT_out_format">
+                                                                    <option value="gif">GIF</option>
+                                                                    <option value="apng">APNG</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td colspan="1" style="padding-top: 25px;">
                                                     <div class="field has-text-centered">
                                                         <div class="control">
                                                             <a id="create_aimg_button" class="button is-neon-cyan">Create</a>
@@ -290,56 +292,61 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="has-text-centered">
-                                        <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
-                                        <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
-                                        <a class="button is-neon-white" id="split_bgprev_button">
-                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
-                                        </a>
+                                    <td id="SPL_control_cell_left" class="is-paddingless">
+                                        <table class="table control-table" width="100%">
+                                            <tr>
+                                                <td class="has-text-centered">
+                                                    <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
+                                                    <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
+                                                    <a class="button is-neon-white" id="split_bgprev_button">
+                                                        <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="has-text-centered">
+                                                    <a class="button is-neon-cyan" id="create_seq_button">Split to folder</a>
+                                                </td>                     
+                                            </tr>
+                                        </table>
                                     </td>
-                                    <td>
-                                        <div class="field has-addons">
-                                            <div class="control">
-                                                <a class="button is-neon-cyan" id="choose_seq_outdir_button">
-                                                    <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
-                                                </a>
-                                            </div>        
-                                            <div class="control is-expanded">
-                                                <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
-                                            </div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="has-text-centered">
-                                        <a class="button is-neon-cyan" id="create_seq_button">Split to folder</a>
-                                    </td>
-                                    <td class="has-text-centered">
-                                        <nav class="level">
-                                            <div class="level-left">
-                                                <div class="level-item">
+                                    <td id="SPL_control_cell_right" class="is-paddingless">
+                                        <table class="table control-table" width="100%">
+                                            <tr>
+                                                <td>
                                                     <div class="field">
                                                         <label class="label">Pad count</label>
                                                         <div class="control"><input id="SPL_pad_count" class="input is-neon-white" type="number" min="1" max="6"/></div>
                                                     </div>
-                                                </div>
-                                                <div class="level-item">
+                                                </td>
+                                                <td>
                                                     <div class="field">
                                                         <label class="label">Color space</label>
                                                         <div class="control"><input id="SPL_color_space" class="input is-neon-white" type="number" min="2" max="256"/></div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </nav>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td></td>
-                                    <td>
-                                        <label class="checkbox">
-                                            <input id="is_duration_sensitive" type="checkbox"/>
-                                            Duration-sensitive
-                                        </label>
+                                                </td>
+                                                <td>
+                                                    <label class="checkbox">
+                                                        <input id="is_duration_sensitive" type="checkbox"/>
+                                                        Duration-sensitive
+                                                    </label>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="3">
+                                                    <div class="field has-addons">
+                                                        <div class="control">
+                                                            <a class="button is-neon-cyan" id="choose_seq_outdir_button">
+                                                                <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
+                                                            </a>
+                                                        </div>        
+                                                        <div class="control is-expanded">
+                                                            <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                                 <tr>

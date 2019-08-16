@@ -7285,6 +7285,13 @@ table.crt-control-table td {
 table.crt-control-table label {
   margin: 0px !important; }
 
+table.control-table td {
+  padding: 5px;
+  border: 1px solid black; }
+
+table.control-table label {
+  margin: 0px !important; }
+
 table.spr-control-table td {
   padding: 5px;
   border: 1px solid black; }
