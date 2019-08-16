@@ -58,7 +58,7 @@ CRT_load_imgs_button.addEventListener("click", () => {
     console.log(`chosen path: ${img_paths}`);
     if (img_paths === undefined) { return }
     console.log(img_paths);
-    deactivateButtons();
+    freezeButtons();
     CRT_load_imgs_button.classList.add("is-loading");
     client.invoke("inspect_sequence", img_paths, (error, res) => {
         if (error) {
@@ -81,7 +81,7 @@ CRT_load_imgs_button.addEventListener("click", () => {
             reloadTempAIMG();
         }
         CRT_load_imgs_button.classList.remove('is-loading');
-        activateButtons();
+        unfreezeButtons();
     });
 });
 
@@ -129,7 +129,7 @@ function reloadTempAIMG() {
 
 function createTempAIMG() {
     if (sequence_paths == null){ console.log('no sequences, exiting...'); return; }
-    deactivateButtons();
+    freezeButtons();
     client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseFloat(create_fps.value), 
         CRT_out_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, 
         flip_horizontal.checked, flip_vertical.checked, (error, res) => {
@@ -140,7 +140,7 @@ function createTempAIMG() {
             CRT_aimg_stage.src = res;
             CRT_aimg_path.value = res;
         }
-        activateButtons();
+        unfreezeButtons();
     });
 }
 
@@ -170,6 +170,7 @@ create_aimg_button.addEventListener('click', () => {
     CRT_out_format.value, false, is_disposed.checked);
     console.log('console log', is_disposed.checked);
     create_aimg_button.classList.add('is-loading');
+    freezeButtons();
     // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), CRT_out_format.value, false, is_disposed.checked);
     client.invoke("combine_image", sequence_paths, create_outdir.value, create_name.value, parseFloat(create_fps.value), 
         CRT_out_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, flip_horizontal.checked, flip_vertical.checked, (error, res) => {
@@ -181,9 +182,12 @@ create_aimg_button.addEventListener('click', () => {
             if (res) {
                 console.log('res', res);
                 mboxSuccess(create_msgbox, res);
+                if (res == "Finished!") {
+                    create_aimg_button.classList.remove('is-loading');
+                    unfreezeButtons();
+                }
             }
         }
-        create_aimg_button.classList.remove('is-loading');
     });
 });
 
@@ -191,11 +195,11 @@ function testcallback(){
     console.log("cache cleared!!1");
 }
 
-function activateButtons () {
+function unfreezeButtons () {
     CRT_load_imgs_button.classList.remove('is-static');
     CRT_clear_imgs_button.classList.remove('is-static');
 }
-function deactivateButtons () {
+function freezeButtons () {
     CRT_load_imgs_button.classList.add('is-static');
     CRT_clear_imgs_button.classList.add('is-static');
 }

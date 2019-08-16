@@ -40,9 +40,9 @@ def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> Li
 def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
     """ Splits GIF. Reduces color to 256, unoptimizes the GIF, then returns a list of absolute path of each split'd frames. """
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
-    yield f"Setting global color palette to 256..."
     color_space = criteria.color_space
-    if 2 > color_space > 256:
+    yield f"Setting global color palette to {color_space}..."
+    if color_space < 2 or color_space > 256:
         raise Exception("Color space must be between 2 and 256!")
     redux_gif_path = _reduce_color(gif_path, unop_dir, color=color_space)
     yield f"Coalescing frames for splitting..."

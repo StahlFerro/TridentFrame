@@ -3,9 +3,24 @@ import shutil
 import time
 import subprocess
 
+from PIL import Image
+from PIL.GifImagePlugin import GifImageFile
+
 from .config import gifsicle_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria
 # from .create_ops import create_aimg
 # from .split_ops import split_aimg
+
+
+def _filter_images(image_paths, option="static"):
+    for i in image_paths:
+        name, ext = os.path.splitext(os.path.basename(i))
+        im = Image.open(i)
+        if type(im) is GifImageFile and im.n_frames > 1:
+            continue
+        apng = APNG.open(i)
+        if len(apng.frames) > 1:
+            continue
+        yield i
 
 
 def _purge_cache():

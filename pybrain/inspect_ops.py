@@ -10,7 +10,7 @@ from apng import APNG
 from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
-
+from .utility import _filter_images
 
 def _inspect_aimg(animage_path):
     """Returns information of an animted GIF/APNG"""
@@ -96,7 +96,8 @@ def _inspect_aimg(animage_path):
 def _inspect_sequence(image_paths):
     """Returns information of a selected sequence of images"""
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
-    static_img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
+    # static_img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
+    static_img_paths = list(_filter_images(abs_image_paths, "static"))
     print("imgs count", len(static_img_paths))
     # pprint(imgs)
     if not static_img_paths:
@@ -105,24 +106,24 @@ def _inspect_sequence(image_paths):
     filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     # apngs = [apng for apng in (APNG.open(i) for i in imgs) if len(apng.frames) > 1]
     # gifs = [gif for gif in (Image.open(i) for i in imgs) if gif.format == "GIF" and gif.is_animated]
-    sequence = [i for i in static_img_paths if len(APNG.open(i).frames) <= 1 and Image.open(i).n_frames <= 1]
+    # sequence = [i for i in static_img_paths if len(APNG.open(i).frames) <= 1 and Image.open(i).n_frames <= 1]
     # except_list = []
     # for im in static_img_paths:
         # except_list.append(f"{len(APNG.open(im).frames)} {Image.open(im).n_frames}")
     # raise Exception(except_list)
-    sequence_count = len(sequence)
-    sequence_filesize = size(sum([os.stat(i).st_size for i in sequence]), system=alternative)
+    sequence_count = len(static_img_paths)
+    sequence_filesize = size(sum([os.stat(i).st_size for i in static_img_paths]), system=alternative)
     # print("statics count", sequence_count)
-    if not sequence:
+    if not static_img_paths:
         raise Exception("The images choosen must be static images, not animted GIFs or PNGs!")
-    width, height = Image.open(sequence[0]).size
+    width, height = Image.open(static_img_paths[0]).size
     # pprint(apngs)
     # pprint(gifs)
     # if any(APNG.open(i) for i in imgs)):
     sequence_info = {
         "name": filename,
         "total": sequence_count,
-        "sequence": sequence,
+        "sequence": static_img_paths,
         "size": sequence_filesize,
         "width": width,
         "height": height,

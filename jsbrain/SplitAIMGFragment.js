@@ -124,14 +124,14 @@ choose_seq_outdir_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
 });
 
-function activateButtons () {
+function unfreezeButtons () {
     open_aimg_button.classList.remove('is-static');
     clear_aimg_button.classList.remove('is-static');
     choose_seq_outdir_button.classList.remove('is-static');
     create_seq_button.classList.remove('is-static');
 }
 
-function deactivateButtons () {
+function freezeButtons () {
     open_aimg_button.classList.add('is-static');
     clear_aimg_button.classList.add('is-static');
     choose_seq_outdir_button.classList.add('is-static');
@@ -140,21 +140,23 @@ function deactivateButtons () {
 
 create_seq_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
-    deactivateButtons();
+    freezeButtons();
     create_seq_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
     client.invoke('split_image', aimg_path.value, target_seq_path.value, SPL_pad_count.value, SPL_color_space.value, is_duration_sensitive.checked, (error, res) => {
         if (error){
             console.log(error);
             mboxError(split_msgbox, error);
+            unfreeze_buttons();
         } else {
             if (res){
                 console.log('res', res);
                 mboxSuccess(split_msgbox, res);
+                if (res == "Finished!") {
+                    create_seq_button.classList.remove('is-loading');
+                    unfreezeButtons();
+                }
             }
         }
-        create_seq_button.classList.remove('is-loading');
-        activateButtons();
     })
 });
-
