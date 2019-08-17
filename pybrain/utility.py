@@ -5,6 +5,7 @@ import subprocess
 
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
+from apng import APNG
 
 from .config import gifsicle_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria
 # from .create_ops import create_aimg

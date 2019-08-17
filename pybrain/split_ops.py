@@ -74,8 +74,6 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
         yield f'Splitting APNG... ({index + 1}/{len(iframes)})'
         png.save(os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png"))
 
-    
-
 
 def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
     """ Umbrella function for splitting animated images into individual frames """

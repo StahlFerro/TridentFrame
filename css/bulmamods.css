@@ -7316,6 +7316,10 @@ table.spr-control-table label {
   text-align: center !important;
   vertical-align: middle !important; }
 
+.spl-aimg-info-table td {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important; }
+
 .spritesheet-helper {
   display: inline-block;
   height: 100%;
