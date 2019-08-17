@@ -24,6 +24,7 @@
     "fstream": "^1.0.12",
     "iv-viewer": "^2.0.1",
     "jsdom": "^15.0.0",
+    "npm": "^6.10.3",
     "tar": "^4.4.9",
     "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
   },

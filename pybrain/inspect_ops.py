@@ -28,6 +28,7 @@ def _inspect_aimg(animage_path):
     loop_duration = 0
     extension = ''
     duration_is_uneven = False
+    comment = ''
 
     if ext == '.gif':
         try:
@@ -51,6 +52,7 @@ def _inspect_aimg(animage_path):
         fps = round(1000.0 / avg_duration, 3)
         loop_duration = round(frame_count / fps, 3)
         extension = 'GIF'
+        comment = gif.comment
 
     elif ext == '.png':
         try:
@@ -89,6 +91,7 @@ def _inspect_aimg(animage_path):
         "width": width,
         "height": height,
         "loop_duration": loop_duration,
+        "comment": comment,
     }
     return image_info
 
