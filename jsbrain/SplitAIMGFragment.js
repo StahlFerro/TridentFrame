@@ -11,13 +11,14 @@ let open_aimg_button = document.querySelector('#open_aimg_button');
 let clear_aimg_button = document.querySelector('#clear_aimg_button');
 let split_bgprev_button = document.getElementById('split_bgprev_button');
 let choose_seq_outdir_button = document.querySelector('#choose_seq_outdir_button');
-let create_seq_button = document.querySelector('#create_seq_button');
+let SPL_split_aimg_button = document.querySelector('#SPL_split_aimg_button');
 
 let split_aimg_cell = document.getElementById('split_aimg_cell');
 let split_checkerbg_active = false;
 let aimg_stage = document.getElementById('aimg_stage');
 let aimg_path = document.getElementById('aimg_path');
 let SPL_pad_count = document.getElementById('SPL_pad_count');
+let SPL_is_reduced_color = document.getElementById('SPL_is_reduced_color');
 let SPL_color_space = document.getElementById('SPL_color_space');
 let is_duration_sensitive = document.getElementById('is_duration_sensitive');
 
@@ -57,7 +58,7 @@ open_aimg_button.addEventListener("click", () => {
         } else {
             loadAIMG(res);
             SPL_pad_count.value = 3;
-            SPL_color_space.value = 256;
+            // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
         }
     })
     console.log('registered!');
@@ -128,32 +129,47 @@ function unfreezeButtons () {
     open_aimg_button.classList.remove('is-static');
     clear_aimg_button.classList.remove('is-static');
     choose_seq_outdir_button.classList.remove('is-static');
-    create_seq_button.classList.remove('is-static');
+    SPL_split_aimg_button.classList.remove('is-static');
 }
 
 function freezeButtons () {
     open_aimg_button.classList.add('is-static');
     clear_aimg_button.classList.add('is-static');
     choose_seq_outdir_button.classList.add('is-static');
-    create_seq_button.classList.add('is-static');
+    SPL_split_aimg_button.classList.add('is-static');
 }
 
-create_seq_button.addEventListener('click', () => {
+
+SPL_is_reduced_color.addEventListener("click", () => {
+    if (SPL_is_reduced_color.checked) {
+        SPL_color_space.disabled = false;
+    }
+    else {
+        SPL_color_space.disabled = true;
+    }
+});
+
+SPL_split_aimg_button.addEventListener('click', () => {
     mboxClear(split_msgbox);
     freezeButtons();
-    create_seq_button.classList.add("is-loading");
+    SPL_split_aimg_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
-    client.invoke('split_image', aimg_path.value, target_seq_path.value, SPL_pad_count.value, SPL_color_space.value, is_duration_sensitive.checked, (error, res) => {
+    var color_space = SPL_color_space.value;
+    if (!SPL_is_reduced_color.checked || color_space.value.length == 0) {
+        color_space = 0;
+    }
+    client.invoke('split_image', aimg_path.value, target_seq_path.value, SPL_pad_count.value, color_space, is_duration_sensitive.checked, (error, res) => {
         if (error){
             console.log(error);
             mboxError(split_msgbox, error);
-            unfreeze_buttons();
+            unfreezeButtons();
+            SPL_split_aimg_button.classList.remove("is-loading");
         } else {
             if (res){
                 console.log('res', res);
                 mboxSuccess(split_msgbox, res);
                 if (res == "Finished!") {
-                    create_seq_button.classList.remove('is-loading');
+                    SPL_split_aimg_button.classList.remove('is-loading');
                     unfreezeButtons();
                 }
             }

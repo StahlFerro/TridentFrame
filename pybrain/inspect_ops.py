@@ -52,7 +52,7 @@ def _inspect_aimg(animage_path):
         fps = round(1000.0 / avg_duration, 3)
         loop_duration = round(frame_count / fps, 3)
         extension = 'GIF'
-        comment = gif.comment
+        # comment = gif.comment
 
     elif ext == '.png':
         try:
