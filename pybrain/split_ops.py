@@ -37,30 +37,31 @@ def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> Li
     return indexed_ratios
 
 
-def _split_gif_imagemagick(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
-    orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
-    indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
-    total_ratio = sum([ir[1] for ir in indexed_ratios])
-    sequence = 0
-    gifragment_paths = []
-    for index, ratio in indexed_ratios[0:80]:
-        selector = f"'{unop_gif_path}[{index}]'"
-        for n in range(0, ratio):
-            yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
-            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.png')
-            executable = imagemagick_exec()
-            args = [executable, selector, save_path]
-            cmd = ' '.join(args)
-            # raise Exception(cmd)
-            yield cmd
-            subprocess.run(args)
-            # subprocess.run(cmd, shell=True)
-            gifragment_paths.append(save_path)
-            sequence += 1
-            # time.sleep(0.3)
+# def _split_gif_imagemagick(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
+#     orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
+#     indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
+#     total_ratio = sum([ir[1] for ir in indexed_ratios])
+#     sequence = 0
+#     gifragment_paths = []
+#     for index, ratio in indexed_ratios[0:80]:
+#         selector = f"'{unop_gif_path}[{index}]'"
+#         for n in range(0, ratio):
+#             yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
+#             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.png')
+#             executable = imagemagick_exec()
+#             args = [executable, selector, save_path]
+#             cmd = ' '.join(args)
+#             # raise Exception(cmd)
+#             yield cmd
+#             subprocess.run(args)
+#             # subprocess.run(cmd, shell=True)
+#             gifragment_paths.append(save_path)
+#             sequence += 1
+#             # time.sleep(0.3)
 
 
-def _split_gif_gifsicle(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
+def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
+    """ Split GIF into separate images using Gifsicle based on the specified criteria"""
     orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
     indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
     total_ratio = sum([ir[1] for ir in indexed_ratios])
@@ -69,7 +70,7 @@ def _split_gif_gifsicle(unop_gif_path: str, out_dir: str, criteria: SplitCriteri
     for index, ratio in indexed_ratios:
         selector = f'"#{index}"'
         for n in range(0, ratio):
-            # yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
+            yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.gif')
             args = [gifsicle_exec(), unop_gif_path, selector, "--output", save_path]
             cmd = ' '.join(args)
@@ -79,7 +80,7 @@ def _split_gif_gifsicle(unop_gif_path: str, out_dir: str, criteria: SplitCriteri
 
 
 def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
-    """ Splits GIF. Returns a list of absolute path of each split'd frames. """
+    """ Unoptimizes GIF, and then splits the frames into separate images """
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
     unop_gif_path = ''
@@ -93,11 +94,12 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
         redux_gif_path = _reduce_color(gif_path, unop_dir, color=color_space)
         yield f"Coalescing frames for splitting..."
         unop_gif_path = _unoptimize_gif(redux_gif_path, unop_dir, "gifsicle")
-    yield from _split_gif_gifsicle(unop_gif_path, out_dir, criteria)
+    yield from _fragment_gif_frames(unop_gif_path, out_dir, criteria)
     yield "Finished!"
 
 
 def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria):
+    """ Extracts all of the frames of an animated PNG """
     img: APNG = APNG.open(apng_path)
     iframes = img.frames
     pad_count = max(len(str(len(iframes))), 3)

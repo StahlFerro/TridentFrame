@@ -47,9 +47,9 @@ class API(object):
         criteria = SplitCriteria(pad_count, color_space, is_duration_sensitive)
         return split_aimg(image_path, out_dir, criteria)
 
-    def delete_temp_images(self):
-        res = _delete_temp_images()
-        return res
+    # def delete_temp_images(self):
+    #     res = _delete_temp_images()
+    #     return res
 
     @zerorpc.stream
     def build_spritesheet(self, image_paths, input_mode, out_dir, filename, width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha):
