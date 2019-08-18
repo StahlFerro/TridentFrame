@@ -71,7 +71,7 @@ def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriter
         selector = f'"#{index}"'
         for n in range(0, ratio):
             yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
-            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.gif')
+            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.png')
             args = [gifsicle_exec(), unop_gif_path, selector, "--output", save_path]
             cmd = ' '.join(args)
             subprocess.run(cmd, shell=True)

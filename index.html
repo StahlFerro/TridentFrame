@@ -154,7 +154,7 @@
                                                 <td style="vertical-align: bottom;">
                                                     <label class="checkbox">
                                                         <input id="is_disposed" type="checkbox"/>
-                                                        Disposal
+                                                        Preserve Transparency
                                                     </label>
                                                     <br/>
                                                     <label class="checkbox">
@@ -293,56 +293,47 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td id="SPL_control_cell_left" class="is-paddingless">
-                                        <table class="table control-table" width="100%">
-                                            <tr>
-                                                <td class="has-text-centered">
-                                                    <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
-                                                    <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
-                                                    <a class="button is-neon-white" id="split_bgprev_button">
-                                                        <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="has-text-centered">
-                                                    <a class="button is-neon-cyan" id="SPL_split_aimg_button">Split to folder</a>
-                                                </td>                     
-                                            </tr>
-                                        </table>
+                                    <td class="is-hpaddingless">
+                                        <a class="button is-neon-cyan" id="open_aimg_button">Load GIF/APNG</a>
+                                        <a class="button is-neon-white" id="clear_aimg_button">Clear</a>
+                                        <a class="button is-neon-white" id="split_bgprev_button">
+                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
+                                        </a>
                                     </td>
-                                    <td id="SPL_control_cell_right" class="is-paddingless">
+                                    <td>
+                                        
+                                    </td>
+                                </tr>
+                                    <td id="SPL_control_cell" class="is-paddingless" colspan="2">
                                         <table class="table control-table" width="100%">
                                             <tr>
-                                                <td>
+                                                <td width="20%">
                                                     <div class="field">
                                                         <label class="label">Pad count</label>
                                                         <div class="control"><input id="SPL_pad_count" class="input is-neon-white" type="number" min="1" max="6"/></div>
                                                     </div>
                                                 </td>
-                                                <td>
+                                                <td width="25%">
                                                     <div class="field">
                                                         <label class="label">Color space</label>
                                                         <div class="control"><input id="SPL_color_space" class="input is-neon-white" type="number" min="2" max="256" disabled/></div>
                                                     </div>
                                                 </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
+                                                <td width="25%" style="vertical-align: middle;">
                                                     <label class="checkbox">
                                                         <input id="is_duration_sensitive" type="checkbox"/>
                                                         Duration-sensitive
                                                     </label>
-                                                </td>
-                                                <td>
                                                     <label class="checkbox">
                                                         <input id="SPL_is_reduced_color" type="checkbox"/>
                                                         Reduce Colors
                                                     </label>
                                                 </td>
+                                                <td width="30%" style="vertical-align: middle;">
+                                                </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2">
+                                                <td colspan="3">
                                                     <div class="field has-addons">
                                                         <div class="control">
                                                             <a class="button is-neon-cyan" id="choose_seq_outdir_button">
@@ -354,6 +345,9 @@
                                                             <input id="target_seq_path" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
                                                         </div>
                                                     </div>
+                                                </td>
+                                                <td class="has-text-centered">
+                                                    <a class="button is-neon-cyan" id="SPL_split_aimg_button">Split to folder</a>
                                                 </td>
                                             </tr>
                                         </table>
