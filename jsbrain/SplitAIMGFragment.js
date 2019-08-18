@@ -155,7 +155,7 @@ SPL_split_aimg_button.addEventListener('click', () => {
     SPL_split_aimg_button.classList.add("is-loading");
     // console.log(`in path: ${in_path} out path: ${out_path}`);
     var color_space = SPL_color_space.value;
-    if (!SPL_is_reduced_color.checked || color_space.value.length == 0) {
+    if (!SPL_is_reduced_color.checked || color_space === undefined) {
         color_space = 0;
     }
     client.invoke('split_image', aimg_path.value, target_seq_path.value, SPL_pad_count.value, color_space, is_duration_sensitive.checked, (error, res) => {

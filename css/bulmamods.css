@@ -7332,7 +7332,7 @@ table.spr-control-table label {
   border: 2px solid #34caf8; }
 
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered {
-  border-color: #98e7ff; }
+  border-color: #65d7fa; }
 
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
   background-color: #34caf8;
@@ -7361,10 +7361,14 @@ table.spr-control-table label {
   border: 2px solid #cccccc; }
 
 .input.is-neon-white:hover {
-  border: 2px solid #cccccc; }
+  border-color: #e6e6e6; }
 
 .input.is-neon-white:focus {
   border: 2px solid white; }
+
+.input.is-neon-white:disabled {
+  border-color: #666666;
+  color: #666666; }
 
 .input.is-neon-white::placeholder {
   color: #616877; }
@@ -7374,8 +7378,8 @@ table.spr-control-table label {
   background-color: #31363b;
   border: 2px solid #cccccc !important; }
 
-.select.is-neon-cyan select:hover {
-  caret-color: #34caf8; }
+.select-is-neon-cyan select:hover {
+  border-color: #e6e6e6; }
 
 .select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
   border-color: #34caf8; }

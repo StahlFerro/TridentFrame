@@ -2,12 +2,13 @@ import os
 import shutil
 import time
 import subprocess
+from typing import List
 
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
 from apng import APNG
 
-from .config import gifsicle_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria
+from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria
 # from .create_ops import create_aimg
 # from .split_ops import split_aimg
 
@@ -33,7 +34,7 @@ def _purge_cache():
             elif os.path.isdir(stuff_path):
                 shutil.rmtree(stuff_path)
         except Exception as e:
-            print("e")
+            raise Exception(e)
 
 
 def _mk_temp_dir(prefix_name: str = ''):
@@ -45,16 +46,17 @@ def _mk_temp_dir(prefix_name: str = ''):
     return temp_dir
 
 
-def _unoptimize_gif(gif_path, out_dir) -> str:
-    """ Perform GIF unoptimization using Gifsicle, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF """
-    print("Performing unoptimization...")
-    executable = gifsicle_exec()
-    pure_gif_path = os.path.join(out_dir, os.path.basename(gif_path))
-    args = [executable, "-b", "--unoptimize", gif_path, "--output", pure_gif_path]
+def _unoptimize_gif(gif_path, out_dir, decoder: str) -> str:
+    """ Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF """
+    unop_gif_save_path = os.path.join(out_dir, os.path.basename(gif_path))
+    if decoder == 'imagemagick':
+        args = [imagemagick_exec(), "-coalesce", gif_path, unop_gif_save_path]
+    elif decoder == 'gifsicle':
+        args = [gifsicle_exec(), "-b", "--unoptimize", gif_path, "--output", unop_gif_save_path]
     cmd = ' '.join(args)
     print(cmd)
     subprocess.run(cmd, shell=True)
-    return pure_gif_path
+    return unop_gif_save_path
 
 
 def _reduce_color(gif_path, out_dir, color: int = 256) -> str:
@@ -79,6 +81,24 @@ def _delete_temp_images():
         os.remove(ta)
     return True
 
+
+def _restore_disposed_frames(frame_paths: List[str]):
+    """ Pastes the target_frame over the first_frame (applied when restoring GIF frames). Overrides every single frames on disk """
+    im = Image.open(frame_paths[0])
+    # im.transparency = 0
+    im = im.convert("RGBA")
+    fm = []
+    for index, f in enumerate(frame_paths):
+        frame = Image.open(f)
+        # frame.transparency = 0
+        frame = frame.convert("RGBA")
+        # frame.show()
+        fm.append((frame.mode, im.info))
+        # im.paste(frame)
+        frame.save(f, "PNG")
+        yield f"Coalescing frames... ({index + 1}/{len(frame_paths)})"
+    # yield '\n'.join(fm)
+    
 
 def _log(message):
     return {"log": message}

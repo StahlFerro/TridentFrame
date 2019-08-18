@@ -19,6 +19,10 @@ def gifsicle_exec():
     else:
         return False
 
+def imagemagick_exec():
+    if platform.system() == 'Windows':
+        return os.path.abspath("./bin/ImageMagick/convert.exe")
+
 
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """

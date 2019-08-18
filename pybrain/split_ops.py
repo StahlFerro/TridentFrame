@@ -16,8 +16,8 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, SplitCriteria, ABS_CACHE_PATH, gifsicle_exec
-from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, SplitCriteria, ABS_CACHE_PATH, gifsicle_exec, imagemagick_exec
+from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames
 
 
 def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
@@ -37,30 +37,63 @@ def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> Li
     return indexed_ratios
 
 
-def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
-    """ Splits GIF. Reduces color to 256, unoptimizes the GIF, then returns a list of absolute path of each split'd frames. """
-    unop_dir = _mk_temp_dir(prefix_name="unop_gif")
-    color_space = criteria.color_space
-    yield f"Setting global color palette to {color_space}..."
-    if color_space < 2 or color_space > 256:
-        raise Exception("Color space must be between 2 and 256!")
-    redux_gif_path = _reduce_color(gif_path, unop_dir, color=color_space)
-    yield f"Coalescing frames for splitting..."
-    unop_gif_path = _unoptimize_gif(redux_gif_path, unop_dir)
-    executable = gifsicle_exec()
+def _split_gif_imagemagick(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
     orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
     indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
     total_ratio = sum([ir[1] for ir in indexed_ratios])
     sequence = 0
-    for index, ratio in indexed_ratios:
-        selector = f'"#{index}"'
+    gifragment_paths = []
+    for index, ratio in indexed_ratios[0:80]:
+        selector = f"'{unop_gif_path}[{index}]'"
         for n in range(0, ratio):
             yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.png')
-            args = [executable, unop_gif_path, selector, "--output", save_path]
+            executable = imagemagick_exec()
+            args = [executable, selector, save_path]
+            cmd = ' '.join(args)
+            # raise Exception(cmd)
+            yield cmd
+            subprocess.run(args)
+            # subprocess.run(cmd, shell=True)
+            gifragment_paths.append(save_path)
+            sequence += 1
+            # time.sleep(0.3)
+
+
+def _split_gif_gifsicle(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
+    orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
+    indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
+    total_ratio = sum([ir[1] for ir in indexed_ratios])
+    sequence = 0
+    gifragment_paths = []
+    for index, ratio in indexed_ratios:
+        selector = f'"#{index}"'
+        for n in range(0, ratio):
+            # yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
+            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.gif')
+            args = [gifsicle_exec(), unop_gif_path, selector, "--output", save_path]
             cmd = ' '.join(args)
             subprocess.run(cmd, shell=True)
+            gifragment_paths.append(save_path)
             sequence += 1
+
+
+def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
+    """ Splits GIF. Returns a list of absolute path of each split'd frames. """
+    unop_dir = _mk_temp_dir(prefix_name="unop_gif")
+    color_space = criteria.color_space
+    unop_gif_path = ''
+    if color_space == 0:
+        yield f"Unoptimizing frames for splitting (GIFs above 10MB will take minutes to process)..."
+        unop_gif_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
+    else:
+        yield f"Setting global color palette to {color_space}..."
+        if color_space < 2 or color_space > 256:
+            raise Exception("Color space must be between 2 and 256!")
+        redux_gif_path = _reduce_color(gif_path, unop_dir, color=color_space)
+        yield f"Coalescing frames for splitting..."
+        unop_gif_path = _unoptimize_gif(redux_gif_path, unop_dir, "gifsicle")
+    yield from _split_gif_gifsicle(unop_gif_path, out_dir, criteria)
     yield "Finished!"
 
 

@@ -7,7 +7,7 @@ from typing import List
 import zerorpc
 
 from pybrain.config import CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
-from pybrain.utility import _delete_temp_images
+from pybrain.utility import _purge_cache
 from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
 from pybrain.create_ops import create_aimg
 from pybrain.split_ops import split_aimg
@@ -62,6 +62,10 @@ class API(object):
         criteria = SpritesheetBuildCriteria(width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha)
         # raise Exception(criteria.__dict__)
         return _build_spritesheet(image_paths, input_mode, out_dir, filename, criteria)
+
+    def purge_cache(self):
+        _purge_cache()
+        return "Cache evaporated"
 
 
 def parse_port():
