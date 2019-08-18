@@ -99,6 +99,8 @@ function clearAIMG() {
     aimg_duration.innerHTML = '-';
     aimg_stage.src = '';
     aimg_path.value = '';
+    SPL_pad_count.value = '';
+    SPL_color_space.value = '';
     mboxClear(split_msgbox);
     session.clearCache(() => {});
     session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
