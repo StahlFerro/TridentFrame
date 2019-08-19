@@ -11,7 +11,8 @@ TridentFrame consists of two main parts. The python backend handling image proce
 
 ### Powered by:
 *   [Electron](https://electronjs.org/) : Cross-platform GUI
-*   [Pillow](https://python-pillow.org/) : Image preprocessing
+*   [Pillow](https://python-pillow.org/) : Image preprocessing and spritesheet handling
+*   [ImageMagick](https://imagemagick.org/index.php) : GIF manipulation
 *   [Gifsicle](https://www.lcdf.org/gifsicle/) : GIF creation and splitting
 *   [pyAPNG](https://github.com/eight04/pyAPNG) : APNG creation & splitting
 *   [zeroRPC](https://www.zerorpc.io/) : Connecting the python backend to the electron frontend
