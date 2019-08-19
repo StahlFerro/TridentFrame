@@ -67,12 +67,12 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     yield from _create_gifragments(image_paths, gifragment_dir, criteria, absolute_paths=False)
     executable = gifsicle_exec()
     colors = 256
-    delay = 2
-    optimization = "--unoptimize"
+    delay = int(100 // criteria.fps)
+    opti_mode = "--unoptimize"
     disposal = "background"
     loopcount = "--loopcount"
     globstar_path = os.path.join(gifragment_dir, "*.gif")
-    args = [executable, f"--colors={colors}", optimization, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", out_full_path]
+    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", out_full_path]
     # pprint(args)
     cmd = ' '.join(args)
     # print(cmd) 

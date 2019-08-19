@@ -178,6 +178,8 @@ create_aimg_button.addEventListener('click', () => {
         if (error) {
             console.error(error);
             mboxError(create_msgbox, error);
+            create_aimg_button.classList.remove('is-loading');
+            unfreezeButtons();
         } else {
             if (res) {
                 console.log('res', res);
