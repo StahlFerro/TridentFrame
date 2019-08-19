@@ -215,7 +215,7 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
 }
 
 
-.con-aimg-container {
+.con-in-aimg-container {
     width: 310px;
     height: 310px;
     overflow: auto;
@@ -223,6 +223,10 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
     display: inline-block;
 }
 
+.con-in-aimg-info-table td {
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
 
 
 table.crt-control-table td{
