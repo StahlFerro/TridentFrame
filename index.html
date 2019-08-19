@@ -118,7 +118,7 @@
                                         <nav class="level">
                                             <div class="level-item has-text-centered">
                                                 <div>   
-                                                    <a  id="CRT_bgprev_button" class="button is-neon-white">
+                                                    <a id="CRT_bgprev_button" class="button is-neon-white">
                                                         <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
                                                     </a>
                                                     <a id="CRT_autoprev_button" class="button is-neon-white">
@@ -365,6 +365,32 @@
                     <div id="convert_panel" class="container" style="display: none; padding:10px;">
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
+                                <tr>
+                                    <td id="CON_in_cell" class="silver-bordered is-paddingless" width="48%">
+                                        <div class="con-aimg-container"><span class="aimg-helper"></span><img id="CON_in_stage"src="" /></div>
+                                        <input id="CON_in_path" name="CON_in_path_field" type="hidden" value="" />    
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td id="CON_out_cell" class="silver-bordered is-paddingless" width="48%">
+                                        <div class="con-aimg-container"><span class="aimg-helper"></span><img id="CON_out_stage"src="" /></div>
+                                        <input id="CON_out_path" name="CON_out_path_field" type="hidden" value="" />    
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="has-text-centered">
+                                        <a class="button is-neon-cyan" id="CON_load_aimg_button">
+                                            <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load GIF/APNG</span></a>
+                                        <a class="button is-neon-white" id="CON_clear_aimg_button">
+                                            <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span></a>
+                                        <a class="button is-neon-white" id="CON_bgprev_button">
+                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
+                                    </td>
+                                    <td></td>
+                                    <td class="has-text-centered">
+                                        <a class="button is-neon-cyan" id="CON_prev_res_button">
+                                        <span class="icon is-small"><i class="fas fa-eye"></i></span><span>Preview</span></a>         
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </div>

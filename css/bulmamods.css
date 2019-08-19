@@ -7278,6 +7278,13 @@ div.left-menu::-webkit-scrollbar {
   text-align: center;
   display: inline-block; }
 
+.con-aimg-container {
+  width: 310px;
+  height: 310px;
+  overflow: auto;
+  text-align: center;
+  display: inline-block; }
+
 table.crt-control-table td {
   padding: 5px;
   border: 1px solid black; }
