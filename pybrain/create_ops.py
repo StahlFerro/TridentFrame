@@ -23,11 +23,11 @@ from .utility import _mk_temp_dir
 def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria, absolute_paths=True) -> Tuple[str, List[str]]:
     """ Generate a sequence of GIFs created from the input sequence with the specified criteria, before compiling them into a single animated GIF"""
     disposal = 0
-    if criteria.reverse:
-        image_paths.reverse()
+    # if criteria.reverse:
+    #     image_paths.reverse()
     # temp_gifs = []
     for index, ipath in enumerate(image_paths):
-        yield f"Processing frames ({index}/{len(image_paths)})..."
+        yield {"msg": f"Processing frames ({index}/{len(image_paths)})..."}
         with Image.open(ipath) as im:
             orig_width, orig_height = im.size
             must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
@@ -39,6 +39,9 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
             if must_resize:
                 im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
             fragment_name = os.path.splitext(os.path.basename(ipath))[0]
+            if criteria.reverse:
+                reverse_index = len(image_paths) - (index + 1)
+                fragment_name = f"rev_{str.zfill(str(reverse_index), 3)}_{fragment_name}"
             save_path = f'{os.path.join(out_path, fragment_name)}.gif'
             if im.mode == 'RGBA' and criteria.transparent:
                 alpha = im.getchannel('A')
@@ -56,6 +59,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 im.save(save_path)
             elif im.mode == 'P':
                 im.save(save_path, transparency=im.info['transparency'])
+            yield {"msg": f"Save path: {save_path}"}
             # if absolute_paths:
                 # temp_gifs.append(save_path)
             # else:
@@ -76,10 +80,14 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     # pprint(args)
     cmd = ' '.join(args)
     # print(cmd) 
-    yield "Combining frames..."
+    yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)
-    shutil.rmtree(gifragment_dir)
-    yield "Finished!"
+    # shutil.rmtree(gifragment_dir)
+    if criteria.reverse:
+        yield {"msg": "Reversing GIF..."}
+        args = [gifsicle_exec, opti_mode, ]
+    yield {"out_full_path": out_full_path}
+    yield {"msg": "Finished!"}
 
 
 def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
@@ -102,14 +110,14 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
                 if criteria.flip_v:
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)
                 im.save(bytebox, "PNG", optimize=True)
-                yield f"Processing frames... ({index + 1}/{len(image_paths)})"
+                yield {"msg": f"Processing frames... ({index + 1}/{len(image_paths)})"}
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
-        yield "Saving APNG...."
+        yield {"msg": "Saving APNG...."}
         apng.save(out_full_path)
     else:
-        yield "Saving APNG..."
+        yield {"msg": "Saving APNG..."}
         APNG.from_files(image_paths, delay=criteria.duration).save(out_full_path)
-    yield "Finished!"
+    yield {"msg": "Finished!"}
 
 
 def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):

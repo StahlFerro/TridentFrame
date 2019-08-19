@@ -130,15 +130,17 @@ function reloadTempAIMG() {
 function createTempAIMG() {
     if (sequence_paths == null){ console.log('no sequences, exiting...'); return; }
     freezeButtons();
-    client.invoke('combine_image', sequence_paths, 'temp/', Date.now().toString(), parseFloat(create_fps.value), 
-        CRT_out_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, 
-        flip_horizontal.checked, flip_vertical.checked, (error, res) => {
+    client.invoke("combine_image", sequence_paths, "./temp", create_name.value, parseFloat(create_fps.value), 
+    CRT_out_format.value, create_width.value, create_height.value, is_reversed.checked, is_disposed.checked, flip_horizontal.checked, flip_vertical.checked, (error, res) => {
         console.log('createfragment fps', create_fps.value);
         if (error) {
             console.error(error);
-        } else {
-            CRT_aimg_stage.src = res;
-            CRT_aimg_path.value = res;
+        } else if (res) {
+            if ("msg" in res) { console.log(res["msg"]); }
+            else if ("out_full_path" in res) {
+                CRT_aimg_stage.src = res["out_full_path"];
+                CRT_aimg_path.value = res["out_full_path"];
+            }
         }
         unfreezeButtons();
     });
@@ -182,9 +184,11 @@ create_aimg_button.addEventListener('click', () => {
             unfreezeButtons();
         } else {
             if (res) {
-                console.log('res', res);
-                mboxSuccess(create_msgbox, res);
-                if (res == "Finished!") {
+                if ("msg" in res) {
+                    console.log(res["msg"])
+                    mboxSuccess(create_msgbox, res["msg"]);
+                }
+                if (res["msg"] == "Finished!") {
                     create_aimg_button.classList.remove('is-loading');
                     unfreezeButtons();
                 }

@@ -64,8 +64,8 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
         spritesheet_height = tile_height
 
     spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
-    spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
-
+    # spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
+    boxes = []
     for index, fr in enumerate(frames):
         top = tile_height * math.floor(index / max_frames_row)
         left = tile_width * (index % max_frames_row)
@@ -78,9 +78,11 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
         yield f'Placing frames to sheet... ({index + 1}/{len(frames)})'
-
+        boxes.append(box)
     outfilename = f"{filename}.png"
     final_path = os.path.join(out_dir, outfilename)
     yield f'Saving the file...'
     spritesheet.save(final_path, "PNG")
     yield 'Finished!'
+    # raise Exception(boxes)
+    
