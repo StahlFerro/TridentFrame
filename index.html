@@ -294,11 +294,11 @@
                                 </tr>
                                 <tr>
                                     <td class="is-hpaddingless">
-                                        <a class="button is-neon-cyan" id="open_aimg_button">
+                                        <a class="button is-neon-cyan" id="SPL_load_aimg_button">
                                             <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load GIF/APNG</span></a>
-                                        <a class="button is-neon-white" id="clear_aimg_button">
+                                        <a class="button is-neon-white" id="SPL_clear_aimg_button">
                                             <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span></a>
-                                        <a class="button is-neon-white" id="split_bgprev_button">
+                                        <a class="button is-neon-white" id="SPL_bgprev_button">
                                             <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
                                         </a>
                                     </td>
@@ -372,7 +372,7 @@
                                     </td>
                                     <td width="4%"></td>
                                     <td id="CON_out_cell" class="silver-bordered is-paddingless" width="48%">
-                                        <div class="con-aimg-container"><span class="aimg-helper"></span><img id="CON_out_stage"src="" /></div>
+                                        <div class="con-out-aimg-container"><span class="aimg-helper"></span><img id="CON_out_stage"src="" /></div>
                                         <input id="CON_out_path" name="CON_out_path_field" type="hidden" value="" />    
                                     </td>
                                 </tr>
@@ -644,6 +644,7 @@
     require('./jsbrain/MenuHandler.js')
     require('./jsbrain/CreateAIMGFragment.js')
     require('./jsbrain/SplitAIMGFragment.js')
+    require('./jsbrain/ConvertAIMGFragment.js')
     require('./jsbrain/BuildSpritesheetFragment.js')
     require('./jsbrain/SliceSpritesheetFragment.js')
     require('./jsbrain/SettingsFragment.js')

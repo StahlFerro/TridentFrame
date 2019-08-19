@@ -7,11 +7,11 @@ const { mboxClear, mboxError, mboxSuccess } = require('./MessageBox.js');
 const { escapeHtml } = require('./Utils.js')
 let split_msgbox = document.getElementById('split_msgbox');
 
-let open_aimg_button = document.querySelector('#open_aimg_button');
-let clear_aimg_button = document.querySelector('#clear_aimg_button');
-let split_bgprev_button = document.getElementById('split_bgprev_button');
-let choose_seq_outdir_button = document.querySelector('#choose_seq_outdir_button');
-let SPL_split_aimg_button = document.querySelector('#SPL_split_aimg_button');
+let SPL_load_aimg_button = document.getElementById('SPL_load_aimg_button');
+let SPL_clear_aimg_button = document.getElementById('SPL_clear_aimg_button');
+let SPL_bgprev_button = document.getElementById('SPL_bgprev_button');
+let choose_seq_outdir_button = document.getElementById('choose_seq_outdir_button');
+let SPL_split_aimg_button = document.getElementById('SPL_split_aimg_button');
 
 let split_aimg_cell = document.getElementById('split_aimg_cell');
 let split_checkerbg_active = false;
@@ -43,11 +43,11 @@ let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
 
 // function registerListeners() {
-//     open_aimg_button.addEventListener("click", openImage);
+//     SPL_load_aimg_button.addEventListener("click", openImage);
 //     console.log("registerListener called");
 // }
 
-open_aimg_button.addEventListener("click", () => {
+SPL_load_aimg_button.addEventListener("click", () => {
     var chosen_path = dialog.showOpenDialog({ filters: extension_filters, properties: file_dialog_props });
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined) {return}
@@ -64,7 +64,7 @@ open_aimg_button.addEventListener("click", () => {
     console.log('registered!');
 });
 
-clear_aimg_button.addEventListener('click', clearAIMG);
+SPL_clear_aimg_button.addEventListener('click', clearAIMG);
 
 function loadAIMG(res) {
     console.log(res);
@@ -107,14 +107,14 @@ function clearAIMG() {
     console.log('session cleared');
 }
 
-split_bgprev_button.addEventListener('click', () => {
+SPL_bgprev_button.addEventListener('click', () => {
     if (!split_checkerbg_active) {
         split_aimg_cell.style.background = "url('./imgs/Transparency500.png')";
-        split_bgprev_button.classList.add('is-active');
+        SPL_bgprev_button.classList.add('is-active');
         split_checkerbg_active = true;
     } else {
         split_aimg_cell.style.background = ''
-        split_bgprev_button.classList.remove('is-active');
+        SPL_bgprev_button.classList.remove('is-active');
         split_checkerbg_active = false;
     }
 });
@@ -128,15 +128,15 @@ choose_seq_outdir_button.addEventListener('click', () => {
 });
 
 function unfreezeButtons () {
-    open_aimg_button.classList.remove('is-static');
-    clear_aimg_button.classList.remove('is-static');
+    SPL_load_aimg_button.classList.remove('is-static');
+    SPL_clear_aimg_button.classList.remove('is-static');
     choose_seq_outdir_button.classList.remove('is-static');
     SPL_split_aimg_button.classList.remove('is-static');
 }
 
 function freezeButtons () {
-    open_aimg_button.classList.add('is-static');
-    clear_aimg_button.classList.add('is-static');
+    SPL_load_aimg_button.classList.add('is-static');
+    SPL_clear_aimg_button.classList.add('is-static');
     choose_seq_outdir_button.classList.add('is-static');
     SPL_split_aimg_button.classList.add('is-static');
 }
