@@ -284,7 +284,7 @@ table.spr-control-table label{
     border: 2px solid $cyan;
 }
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered{
-    border-color: lighten($cyan, 10%);
+    border-color: lighten($cyan, 20%);
 }
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
     background-color: $cyan;
@@ -299,7 +299,7 @@ table.spr-control-table label{
     border: 2px solid $white-d;
 }
 .button.is-neon-white:hover, .button.is-neon-white.is-hovered{
-    border-color: lighten($white, 10%);
+    border-color: lighten($white-d, 20%);
 }
 .button.is-neon-white:active, .button.is-neon-white.is-active {
     background-color: $white-d;

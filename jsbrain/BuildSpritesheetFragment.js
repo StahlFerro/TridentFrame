@@ -262,13 +262,13 @@ function displayFinalSheetDimensions() {
 function deleteTempSpritesheet() {
     BSPR_prev_spritesheet_stage.src = '';
     abstempath = '';
-    client.invoke('delete_temp_images', (error, res) => {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log(res);
-        }
-    });
+    // client.invoke('delete_temp_images', (error, res) => {
+    //     if (error) {
+    //         console.error(error);
+    //     } else {
+    //         console.log(res);
+    //     }
+    // });
 }
 
 // autobuild_toggle_button.addEventListener('click', () => {

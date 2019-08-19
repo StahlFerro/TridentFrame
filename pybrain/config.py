@@ -21,7 +21,9 @@ def gifsicle_exec():
 
 def imagemagick_exec():
     if platform.system() == 'Windows':
-        return os.path.abspath("./bin/ImageMagick/convert.exe")
+        return os.path.abspath("./bin/ImageMagick-7.0.8-61-win/convert.exe")
+    elif platform.system() == 'Linux':
+        return os.path.abspath("./bin/ImageMagick-7.0.8-61-unix/convert")
 
 
 class CreationCriteria():

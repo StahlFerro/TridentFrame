@@ -147,13 +147,13 @@ function createTempAIMG() {
 function deleteTempAIMG() {
     CRT_aimg_stage.src = '';
     abstempath = '';
-    client.invoke('delete_temp_images', (error, res) => {
-        if (error) {
-            console.error(error);
-        } else {
-            console.log(res);
-        }
-    });
+    // client.invoke('delete_temp_images', (error, res) => {
+    //     if (error) {
+    //         console.error(error);
+    //     } else {
+    //         console.log(res);
+    //     }
+    // });
 }
 
 choose_aimg_outdir_button.addEventListener('click', () => {

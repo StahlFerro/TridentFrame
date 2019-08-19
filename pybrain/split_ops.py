@@ -132,7 +132,6 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
     print(out_dir)
     # Image processing
     if ext == 'gif':
-        print(abspath, out_dir, criteria)
         return _split_gif(abspath, out_dir, criteria)
 
     elif ext == 'png':
