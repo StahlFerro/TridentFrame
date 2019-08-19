@@ -7278,12 +7278,16 @@ div.left-menu::-webkit-scrollbar {
   text-align: center;
   display: inline-block; }
 
-.con-aimg-container {
+.con-in-aimg-container {
   width: 310px;
   height: 310px;
   overflow: auto;
   text-align: center;
   display: inline-block; }
+
+.con-in-aimg-info-table td {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important; }
 
 table.crt-control-table td {
   padding: 5px;
