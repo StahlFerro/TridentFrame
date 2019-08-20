@@ -3160,7 +3160,7 @@ a.box:active {
   .control.has-icons-left .input:focus ~ .icon,
   .control.has-icons-left .select:focus ~ .icon, .control.has-icons-right .input:focus ~ .icon,
   .control.has-icons-right .select:focus ~ .icon {
-    color: #cccccc; }
+    color: #7a7a7a; }
   .control.has-icons-left .input.is-small ~ .icon,
   .control.has-icons-left .select.is-small ~ .icon, .control.has-icons-right .input.is-small ~ .icon,
   .control.has-icons-right .select.is-small ~ .icon {
@@ -3174,7 +3174,7 @@ a.box:active {
   .control.has-icons-right .select.is-large ~ .icon {
     font-size: 1.5rem; }
   .control.has-icons-left .icon, .control.has-icons-right .icon {
-    color: #cccccc;
+    color: #dbdbdb;
     height: 2.25em;
     pointer-events: none;
     position: absolute;
@@ -7278,14 +7278,14 @@ div.left-menu::-webkit-scrollbar {
   text-align: center;
   display: inline-block; }
 
-.con-aimg-container {
+.mod-aimg-container {
   max-width: 393px;
   max-height: 310px;
   overflow: auto;
   text-align: center;
   display: inline-block; }
 
-.con-in-aimg-info-table td {
+.mod-in-aimg-info-table td {
   padding-top: 2px !important;
   padding-bottom: 2px !important; }
 

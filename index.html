@@ -54,7 +54,7 @@
                                 </a></li>
                                 <li id="convert_box" class="menu-item"><a id="convert_menu">
                                     <span class="icon is-large"><i class="fas fa-exchange-alt fa-2x fa-inverse"></i></span>
-                                    <p class="is-white-d">Convert AIMG</p>    
+                                    <p class="is-white-d">Modify AIMG</p>    
                                 </a></li>
                                 <li id="buildsprite_box" class="menu-item"><a id="buildsprite_menu">
                                     <span class="icon is-large"><i class="fas fa-border-all fa-2x fa-inverse"></i></span>
@@ -172,8 +172,8 @@
                                                 </td>
                                                 <td>
                                                     <div class="field">
-                                                            <label class="label">Height</label>
-                                                            <div class="control"><input id="create_height" class="input is-neon-white" type="number"/></div>
+                                                        <label class="label">Height</label>
+                                                        <div class="control"><input id="create_height" class="input is-neon-white" type="number"/></div>
                                                     </div>
                                                 </td>
                                                 <td>
@@ -366,34 +366,34 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td id="CON_in_cell" class="silver-bordered force-center is-paddingless" style="width: 400px; height: 320px;">
-                                        <div class="con-aimg-container"><span class="aimg-helper"></span><img id="CON_in_stage"src="" /></div>
-                                        <input id="CON_in_path" name="CON_in_path_field" type="hidden" value="" />    
+                                    <td id="MOD_in_cell" class="silver-bordered force-center is-paddingless" style="width: 400px; height: 320px;">
+                                        <div class="mod-aimg-container"><span class="aimg-helper"></span><img id="MOD_in_stage"src="" /></div>
+                                        <input id="MOD_in_path" name="MOD_in_path_field" type="hidden" value="" />    
                                     </td>
                                     <td width="4%"></td>
-                                    <td id="CON_out_cell" class="silver-bordered force-center is-paddingless" style="width: 400px; height: 320px;">
-                                        <div class="con-aimg-container"><span class="aimg-helper"></span><img id="CON_out_stage"src="" /></div>
-                                        <input id="CON_out_path" name="CON_out_path_field" type="hidden" value="" />    
+                                    <td id="MOD_out_cell" class="silver-bordered force-center is-paddingless" style="width: 400px; height: 320px;">
+                                        <div class="mod-aimg-container"><span class="aimg-helper"></span><img id="MOD_out_stage"src="" /></div>
+                                        <input id="MOD_out_path" name="MOD_out_path_field" type="hidden" value="" />    
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="has-text-centered">
-                                        <a class="button is-neon-cyan" id="CON_load_aimg_button">
+                                        <a class="button is-neon-cyan" id="MOD_load_aimg_button">
                                             <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load GIF/APNG</span></a>
-                                        <a class="button is-neon-white" id="CON_clear_aimg_button">
+                                        <a class="button is-neon-white" id="MOD_clear_aimg_button">
                                             <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span></a>
-                                        <a class="button is-neon-white" id="CON_bgprev_button">
+                                        <a class="button is-neon-white" id="MOD_bgprev_button">
                                             <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
                                     </td>
                                     <td></td>
                                     <td class="has-text-centered">
-                                        <a class="button is-neon-cyan" id="CON_prev_res_button">
+                                        <a class="button is-neon-cyan" id="MOD_prev_res_button">
                                         <span class="icon is-small"><i class="fas fa-eye"></i></span><span>Preview</span></a>         
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="is-paddingless">
-                                        <table class="table con-in-aimg-info-table silver-bordered" width="100%">
+                                        <table class="table mod-in-aimg-info-table silver-bordered" width="100%">
                                             <thead>
                                                 <tr>
                                                     <th colspan="2">
@@ -404,31 +404,67 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="is-cyan" width="35%">Name</td>
-                                                    <td width="65%" id="CON_in_name">-</td>
+                                                    <td width="65%" id="MOD_in_name">-</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan" width="35%">Format</td>
-                                                    <td width="65%" id="CON_in_format">-</td>
+                                                    <td width="65%" id="MOD_in_format">-</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan" width="35%">Dimensions</td>
-                                                    <td width="65%" id="CON_in_dimensions">-</td>
+                                                    <td width="65%" id="MOD_in_dimensions">-</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan" width="35%">Duration</td>
-                                                    <td width="65%" id="CON_in_duration">-</td>
+                                                    <td width="65%" id="MOD_in_duration">-</td>
                                                 </tr>
                                                 <tr>
                                                     <td class="is-cyan" width="35%">Frame rate</td>
-                                                    <td width="65%" id="CON_in_fps">-</td>
+                                                    <td width="65%" id="MOD_in_fps">-</td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </td>
                                     <td></td>
                                     <td class="is-paddingless">
-                                        <table class="table con-out-aimg-control-table silver-bordered" width="100%">
-                                            
+                                        <table class="table mod-out-aimg-control-table silver-bordered" width="100%">
+                                            <tbody>
+                                                <tr>
+                                                    <td colspan="4">
+                                                        <div class="field">
+                                                            <label class="label">Name</label>
+                                                            <div class="control"><input id="MOD_out_name" class="input is-neon-white" type="text"/></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <div class="field">
+                                                            <label class="label">Name</label>
+                                                            <div class="control"><input id="MOD_out_name" class="input is-neon-white" type="text"/></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="field">
+                                                            <label class="label">Width</label>
+                                                            <div class="control"><input id="MOD_out_name" class="input is-neon-white" type="text"/></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="field">
+                                                            <label class="label">Height</label>
+                                                            <div class="control"><input id="MOD_out_name" class="input is-neon-white" type="text"/></div>
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="field">
+                                                            <label class="label">Name</label>
+                                                            <div class="control"><input id="MOD_out_name" class="input is-neon-white" type="text"/></div>
+                                                        </div>
+                                                    </td>
+    
+                                                </tr>
+                                            </tbody>
                                         </table>
                                     </td>
                                 </tr>
@@ -658,7 +694,7 @@
     require('./jsbrain/MenuHandler.js')
     require('./jsbrain/CreateAIMGFragment.js')
     require('./jsbrain/SplitAIMGFragment.js')
-    require('./jsbrain/ConvertAIMGFragment.js')
+    require('./jsbrain/ModifyAIMGFragment.js')
     require('./jsbrain/BuildSpritesheetFragment.js')
     require('./jsbrain/SliceSpritesheetFragment.js')
     require('./jsbrain/SettingsFragment.js')

@@ -24,8 +24,8 @@ $menu-item-hover-background-color: $dark-4;
 $menu-item-radius: 0px;
 
 $input-radius: 0px;
-$input-icon-active-color: $white-d;
-$input-icon-color: $white-d;
+$input-imod-active-color: $white-d;
+$input-imod-color: $white-d;
 
 @import "../node_modules/bulma/bulma.sass";
 
@@ -215,7 +215,7 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
 }
 
 
-.con-aimg-container {
+.mod-aimg-container {
     max-width: 393px;
     max-height: 310px;
     overflow: auto;
@@ -223,7 +223,7 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
     display: inline-block;
 }
 
-.con-in-aimg-info-table td {
+.mod-in-aimg-info-table td {
     padding-top: 2px !important;
     padding-bottom: 2px !important;
 }
