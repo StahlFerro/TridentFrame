@@ -15,8 +15,8 @@ let SPL_split_aimg_button = document.getElementById('SPL_split_aimg_button');
 
 let split_aimg_cell = document.getElementById('split_aimg_cell');
 let split_checkerbg_active = false;
-let aimg_stage = document.getElementById('aimg_stage');
-let aimg_path = document.getElementById('aimg_path');
+let SPL_aimg_stage = document.getElementById('SPL_aimg_stage');
+let SPL_aimg_path = document.getElementById('SPL_aimg_path');
 let SPL_pad_count = document.getElementById('SPL_pad_count');
 let SPL_is_reduced_color = document.getElementById('SPL_is_reduced_color');
 let SPL_color_space = document.getElementById('SPL_color_space');
@@ -82,8 +82,8 @@ function loadAIMG(res) {
     }
     aimg_frame_delay.innerHTML = delay_info;
     aimg_duration.innerHTML = `${res.loop_duration} seconds`;
-    aimg_stage.src = res.absolute_url;
-    aimg_path.value = res.absolute_url;
+    SPL_aimg_stage.src = res.absolute_url;
+    SPL_aimg_path.value = res.absolute_url;
     mboxClear(split_msgbox);
 }
 
@@ -97,8 +97,8 @@ function clearAIMG() {
     aimg_dimens.innerHTML = '-';
     aimg_frame_delay.innerHTML = '-';
     aimg_duration.innerHTML = '-';
-    aimg_stage.src = '';
-    aimg_path.value = '';
+    SPL_aimg_stage.src = '';
+    SPL_aimg_path.value = '';
     SPL_pad_count.value = '';
     SPL_color_space.value = '';
     mboxClear(split_msgbox);
@@ -160,7 +160,7 @@ SPL_split_aimg_button.addEventListener('click', () => {
     if (!SPL_is_reduced_color.checked || color_space === undefined) {
         color_space = 0;
     }
-    client.invoke('split_image', aimg_path.value, target_seq_path.value, SPL_pad_count.value, color_space, is_duration_sensitive.checked, (error, res) => {
+    client.invoke('split_image', SPL_aimg_path.value, target_seq_path.value, SPL_pad_count.value, color_space, is_duration_sensitive.checked, (error, res) => {
         if (error){
             console.log(error);
             mboxError(split_msgbox, error);
