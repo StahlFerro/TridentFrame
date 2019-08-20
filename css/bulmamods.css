@@ -7279,8 +7279,7 @@ div.left-menu::-webkit-scrollbar {
   display: inline-block; }
 
 .mod-aimg-container {
-  max-width: 393px;
-  max-height: 310px;
+  max-height: 290px;
   overflow: auto;
   text-align: center;
   display: inline-block; }
