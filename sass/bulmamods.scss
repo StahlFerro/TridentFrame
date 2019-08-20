@@ -215,9 +215,9 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
 }
 
 
-.con-in-aimg-container {
-    width: 396px;
-    height: 320px;
+.con-aimg-container {
+    max-width: 390px;
+    max-height: 310px;
     overflow: auto;
     text-align: center;
     display: inline-block;
