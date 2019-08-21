@@ -28,6 +28,8 @@ let minimize_button = document.getElementById('minimize_button');
 let exit_button = document.getElementById('exit_button');
 let display_panel = document.getElementById('display_panel');
 
+let storage_data_criteria = ['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']
+
 // window.addEventListener("load", show_create_panel);
 
 function hideAll() {
@@ -54,7 +56,7 @@ function show_create_panel() {
     unselect_all_menus();
     create_box.classList.add('is-selected');
     create_panel.style.display = 'block';
-    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    session.clearStorageData(storage_data_criteria);
 }
 function show_split_panel() {
     console.log("split called");
@@ -62,7 +64,7 @@ function show_split_panel() {
     unselect_all_menus();
     split_box.classList.add('is-selected');
     split_panel.style.display = 'block';
-    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    session.clearStorageData(storage_data_criteria);
 }
 function show_modify_panel() {
     console.log("convert called");
@@ -70,7 +72,7 @@ function show_modify_panel() {
     unselect_all_menus();
     modify_box.classList.add('is-selected');
     modify_panel.style.display = 'block';
-    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    session.clearStorageData(storage_data_criteria);
 }
 function show_buildsprite_panel() {
     console.log("buildsprite called");
@@ -78,7 +80,7 @@ function show_buildsprite_panel() {
     unselect_all_menus();
     buildsprite_box.classList.add('is-selected');
     buildsprite_panel.style.display = 'block';
-    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    session.clearStorageData(storage_data_criteria);
 }
 function show_slicesprite_panel() {
     console.log("slicesprite called");
@@ -86,7 +88,7 @@ function show_slicesprite_panel() {
     unselect_all_menus();
     slicesprite_box.classList.add('is-selected');
     slicesprite_panel.style.display = 'block';
-    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    session.clearStorageData(storage_data_criteria);
 }
 function show_settings_panel() {
     console.log("settings called");
@@ -94,7 +96,7 @@ function show_settings_panel() {
     unselect_all_menus();
     settings_box.classList.add('is-selected');
     settings_panel.style.display = 'block';
-    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    session.clearStorageData(storage_data_criteria);
 }
 function show_about_panel() {
     console.log("about called");
@@ -102,7 +104,7 @@ function show_about_panel() {
     unselect_all_menus();
     about_box.classList.add('is-selected');
     about_panel.style.display = 'block';
-    session.clearStorageData(['appcache', 'cookies', 'filesystem', 'indexdb', 'localstorage', 'shadercache', 'websql', 'serviceworkers', 'cachestorage']);
+    session.clearStorageData(storage_data_criteria);
 }
 
 minimize_button.addEventListener("click", () => {

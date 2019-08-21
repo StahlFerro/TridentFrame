@@ -16,5 +16,5 @@ github_button.addEventListener("click", () => {
 });
 
 donate_button.addEventListener("click", () => {
-    shell.openExternal("https://ko-fi.com/stahlferro");
+    shell.openExternal("https://en.liberapay.com/StahlFerro");
 });

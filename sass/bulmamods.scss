@@ -156,6 +156,10 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
 .silver-bordered {
     border: 2px solid $white-d !important;
 }
+.silver-bordered-no-right {
+    border: 2px solid $white-d !important;
+    border-width: 2px 0px 2px 2px;
+}
 
 /* Image sequences scrollable grid-like table in Create panel */
 .sequence-grid tbody {
@@ -223,7 +227,7 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
     display: inline-block;
 }
 
-.mod-in-aimg-info-table td {
+.mod-orig-info-table td {
     padding-top: 2px !important;
     padding-bottom: 2px !important;
 }
