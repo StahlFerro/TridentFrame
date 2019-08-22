@@ -90,7 +90,9 @@ function fillOrigData(res) {
 
 function fillNewData(res) {
     MOD_new_name.value = res.name;
-    MOD_new_format.value = res.extension;
+    console.log(res.extension);
+    if (res.extension == "GIF") { MOD_new_format.selectedIndex = "0"; }
+    else if (res.extension == "APNG") { MOD_new_format.selectedIndex = "1"; }
     MOD_new_width.value = res.width;
     MOD_new_height.value = res.height;
     MOD_new_delay.value = res.height;
@@ -119,6 +121,8 @@ function clearOrigFields() {
     MOD_orig_delay.innerHTML = '-';
     MOD_orig_loopduration.innerHTML = '-';
     MOD_orig_format.innerHTML = '-';
+    MOD_orig_stage.src = '';
+    MOD_orig_path.value = '';
 }
 
 function clearNewFields() {
