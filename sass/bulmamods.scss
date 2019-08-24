@@ -152,6 +152,12 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
     padding-bottom: 0px !important;
 }
 
+.is-right-paddingless {
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    padding-left: 0px !important;
+}
+
 
 .silver-bordered {
     border: 2px solid $white-d !important;
@@ -219,17 +225,67 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
 }
 
 
+
+.spl-aimg-info-table td {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+}
+.spl-aimg-info-table tbody {
+    border-collapse: collapse;
+    overflow: auto;
+    display: block;
+}
+.spl-aimg-info-table tr { display: block; }
+.spl-aimg-info-table td {
+    padding: 3px !important;
+    padding-left: 10px !important;
+}
+.spl-aimg-info-table td.spl-info-label { width: 140px; }
+.spl-aimg-info-table td.spl-info-data { max-width: 300px; }
+
+
+
 .mod-aimg-container {
     // max-width: 393px;
-    max-height: 290px;
+    max-height: 240px;
     overflow: auto;
     text-align: center;
     display: inline-block;
 }
 
+
+.mod-orig-info-table tbody {
+    border-collapse: collapse;
+    overflow: auto;
+    display: block;
+}
+.mod-orig-info-table tbody::-webkit-scrollbar {
+    height: 7px;
+}
 .mod-orig-info-table td {
     padding-top: 2px !important;
     padding-bottom: 2px !important;
+}
+.mod-orig-info-table tr { display: block; }
+.mod-orig-info-table td {
+    padding: 3px !important;
+    padding-left: 10px !important;
+}
+.mod-orig-info-table td.mod-info-label { width: 120px; }
+.mod-orig-info-table td.mod-info-data { max-width: 200px; }
+
+
+
+
+
+.mod-new-control-table td {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 8px !important;
+    padding-right: 0px !important;
+}
+.mod-new-control-table label.label {
+    margin-bottom: 2px;
 }
 
 table.crt-control-table td{
@@ -274,16 +330,14 @@ table.spr-control-table label{
     height: 100%;
     vertical-align: middle;
 }
+
+
 .force-center {
     text-align: center !important; 
     vertical-align: middle !important;
 }
-
-
-.spl-aimg-info-table td {
-    padding-top: 4px !important;
-    padding-bottom: 4px !important;
-}
+.force-hcenter { text-align: center !important; }
+.force-vcenter { vertical-align: middle !important; }
 
 
 .spritesheet-helper {
@@ -352,8 +406,12 @@ table.spr-control-table label{
     border: 2px solid $white-d !important;
 }
 
-.select-is-neon-cyan select:hover {
-    border-color: lighten($white-d, 10%);
+.select-is-neon-cyan:hover select {
+    border: 2px solid lighten($cyan, 10%) !important;
+}
+
+.select.is-neon-cyan option:hover {
+    box-shadow: 0 0 10px 100px $cyan-bright inset !important;
 }
 
 // For selection arrow recolor

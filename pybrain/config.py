@@ -67,6 +67,20 @@ class SplitCriteria():
         self.is_duration_sensitive: bool = is_duration_sensitive
 
 
+class ModificationCriteria():
+    """ Contains all of the criterias for Modifying the specifications of an animated image """
+
+    def __init__(self, width, height, duration, fps, reduce_color, color_space, new_format, reverse):
+        self.width = width
+        self.height = height
+        self.duration = duration
+        self.fps = fps
+        self.reduce_color = reduce_color
+        self.color_space = color_space
+        self.format = new_format
+        self.reverse
+
+
 class SpritesheetBuildCriteria():
     """ Contains all of the criterias to build a spritesheet """
 

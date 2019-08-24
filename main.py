@@ -6,7 +6,7 @@ from typing import List
 
 import zerorpc
 
-from pybrain.config import CreationCriteria, SplitCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from pybrain.config import CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 from pybrain.utility import _purge_cache
 from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
 from pybrain.create_ops import create_aimg
@@ -47,9 +47,16 @@ class API(object):
         criteria = SplitCriteria(pad_count, color_space, is_duration_sensitive)
         return split_aimg(image_path, out_dir, criteria)
 
-    # def delete_temp_images(self):
-    #     res = _delete_temp_images()
-    #     return res
+    @zerorpc.stream
+    def modify_aimg(self, image_path, out_dir, width, height, duration, fps, reduce_color, color_space, new_format, reverse):
+        if not image_path and not out_dir:
+            raise Exception("Please load a GIF or APNG and choose the output folder!")
+        elif not image_path:
+            raise Exception("Please load a GIF or APNG!")
+        elif not out_dir:
+            raise Exception("Please choose an output folder!")
+        criteria = ModificationCriteria(width, height, duration, fps, reduce_color, color_space, new_format, reverse)
+        
 
     @zerorpc.stream
     def build_spritesheet(self, image_paths, input_mode, out_dir, filename, width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha):

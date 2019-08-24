@@ -83,9 +83,6 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)
     # shutil.rmtree(gifragment_dir)
-    if criteria.reverse:
-        yield {"msg": "Reversing GIF..."}
-        args = [gifsicle_exec, opti_mode, ]
     yield {"out_full_path": out_full_path}
     yield {"msg": "Finished!"}
 

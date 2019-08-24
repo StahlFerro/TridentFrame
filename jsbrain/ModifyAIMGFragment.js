@@ -8,16 +8,12 @@ const { escapeHtml } = require('./Utils.js')
 
 let MOD_load_aimg_button = document.getElementById('MOD_load_aimg_button');
 let MOD_clear_aimg_button = document.getElementById('MOD_clear_aimg_button');
+
 let MOD_orig_bgprev_button = document.getElementById('MOD_orig_bgprev_button');
 let MOD_orig_cell = document.getElementById('MOD_orig_cell');
 let MOD_orig_stage = document.getElementById('MOD_orig_stage');
 let MOD_orig_path = document.getElementById('MOD_orig_path');
 
-// let MOD_in_name = document.getElementById('MOD_in_name');
-// let MOD_in_format = document.getElementById('MOD_in_format');
-// let MOD_in_dimensions = document.getElementById('MOD_in_dimensions');
-// let MOD_in_duration = document.getElementById('MOD_in_duration');
-// let MOD_in_fps = document.getElementById('MOD_in_fps');
 let MOD_orig_name = document.getElementById('MOD_orig_name');
 let MOD_orig_dimensions = document.getElementById('MOD_orig_dimensions');
 let MOD_orig_framecount = document.getElementById('MOD_orig_framecount');
@@ -26,17 +22,25 @@ let MOD_orig_delay = document.getElementById('MOD_orig_delay');
 let MOD_orig_loopduration = document.getElementById('MOD_orig_loopduration');
 let MOD_orig_format = document.getElementById('MOD_orig_format');
 
+let MOD_new_bgprev_button = document.getElementById('MOD_new_bgprev_button');
+let MOD_new_cell = document.getElementById('MOD_new_cell');
 let MOD_new_name = document.getElementById('MOD_new_name');
 let MOD_new_width = document.getElementById('MOD_new_width');
 let MOD_new_fps = document.getElementById('MOD_new_fps');
 let MOD_new_height = document.getElementById('MOD_new_height');
 let MOD_new_delay = document.getElementById('MOD_new_delay');
 let MOD_new_format = document.getElementById('MOD_new_format');
+let MOD_is_reversed = document.getElementById('MOD_is_reversed');
+
+let MOD_modify_aimg_button = document.getElementById('MOD_modify_aimg_button');
+
+let modify_msgbox = document.getElementById("modify_msgbox");
 
 
 let mod_orig_checkerbg_active = false;
+let mod_new_checkerbg_active = false;
 
-MOD_orig_bgprev_button.addEventListener('click', () => {
+MOD_orig_bgprev_button.addEventListener("click", () => {
     if (!mod_orig_checkerbg_active) {
         MOD_orig_cell.style.background = "url('./imgs/Transparency500.png')";
         MOD_orig_bgprev_button.classList.add('is-active');
@@ -45,6 +49,18 @@ MOD_orig_bgprev_button.addEventListener('click', () => {
         MOD_orig_cell.style.background = ''
         MOD_orig_bgprev_button.classList.remove('is-active');
         mod_orig_checkerbg_active = false;
+    }
+});
+
+MOD_new_bgprev_button.addEventListener("click", () => {
+    if (!mod_new_checkerbg_active) {
+        MOD_new_cell.style.background = "url('./imgs/Transparency500.png')";
+        MOD_new_bgprev_button.classList.add('is-active');
+        mod_new_checkerbg_active = true;
+    } else {
+        MOD_new_cell.style.background = ''
+        MOD_new_bgprev_button.classList.remove('is-active');
+        mod_new_checkerbg_active = false;
     }
 });
 
@@ -61,7 +77,7 @@ MOD_load_aimg_button.addEventListener("click", () => {
     client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
         if (error) {
             console.error(error);
-            mboxError(split_msgbox, error);
+            mboxError(modify_msgbox, error);
         } else {
             clearOrigFields();
             clearNewFields();
@@ -82,7 +98,7 @@ function fillOrigData(res) {
     if (res.duration_is_uneven) {
         delay_info += ` (uneven)`
     }
-    MOD_orig_delay.innerHTML = res.delay_info
+    MOD_orig_delay.innerHTML = delay_info
     MOD_orig_loopduration.innerHTML = `${res.loop_duration} seconds`;
     MOD_orig_stage.src = res.absolute_url;
     MOD_orig_path.value = res.absolute_url;
@@ -99,9 +115,11 @@ function fillNewData(res) {
     MOD_new_fps.value = res.fps;
 }
 
+
 MOD_clear_aimg_button.addEventListener('click', modClearAIMG);
 
 function modClearAIMG() {
+    mboxClear(modify_msgbox);
     clearOrigFields();
     clearNewFields();
     session.clearCache(() => {});
@@ -127,7 +145,7 @@ function clearOrigFields() {
 
 function clearNewFields() {
     MOD_new_name.value = '';
-    MOD_new_format.value = '';
+    MOD_new_format.selectedIndex = -1;
     MOD_new_width.value = '';
     MOD_new_height.value = '';
     MOD_new_delay.value = '';
@@ -135,3 +153,11 @@ function clearNewFields() {
     MOD_new_stage.src = '';
     MOD_new_path.value = '';
 }
+
+
+MOD_modify_aimg_button.addEventListener("click", () => {
+    client.invoke("", "", (error, res) => {
+        
+    });
+
+})

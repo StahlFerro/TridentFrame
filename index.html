@@ -257,36 +257,36 @@
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <td class="is-cyan" width="35%">Name</td>
-                                                    <td width="65%" id="aimg_name">-</td>
+                                                    <td class="spl-info-label is-cyan">Name</td>
+                                                    <td class="spl-info-data" id="aimg_name">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">Dimensions</td>
-                                                    <td id="aimg_dimens">-</td>
+                                                    <td class="spl-info-label is-cyan">Dimensions</td>
+                                                    <td class="spl-info-data" id="aimg_dimens">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">File Size</td>
-                                                    <td id="aimg_file_size">-</td>
+                                                    <td class="spl-info-label is-cyan">File Size</td>
+                                                    <td class="spl-info-data" id="aimg_file_size">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">Total frames</td>
-                                                    <td id="aimg_frame_count">-</td>
+                                                    <td class="spl-info-label is-cyan">Total frames</td>
+                                                    <td class="spl-info-data" id="aimg_frame_count">-</td>
                                                 </tr>    
                                                 <tr>
-                                                    <td class="is-cyan">Total frames (DS)</td>
-                                                    <td id="aimg_frame_count_ds">-</td>
+                                                    <td class="spl-info-label is-cyan">Total frames (DS)</td>
+                                                    <td class="spl-info-data" id="aimg_frame_count_ds">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">Frame rate</td>
-                                                    <td id="aimg_fps">-</td>
+                                                    <td class="spl-info-label is-cyan">Frame rate</td>
+                                                    <td class="spl-info-data" id="aimg_fps">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">Frame delay</td>
-                                                    <td id="aimg_frame_delay">-</td>
+                                                    <td class="spl-info-label is-cyan">Frame delay</td>
+                                                    <td class="spl-info-data" id="aimg_frame_delay">-</td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="is-cyan">Loop duration</td>
-                                                    <td id="aimg_duration">-</td>
+                                                    <td class="spl-info-label is-cyan">Loop duration</td>
+                                                    <td class="spl-info-data" id="aimg_duration">-</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -366,133 +366,137 @@
                         <div class="content">
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
-                                    <td class="is-paddingless" width="100%">
-                                        <table class="table is-borderless" style="padding: 5px;" width="100%">
-                                            <tr>
-                                                <!-- <td width="3%"></td> -->
-                                                <td width="41%" colspan="3" id="MOD_orig_cell" class="silver-bordered force-center is-paddingless" style="height: 300px;">
-                                                    <div class="mod-aimg-container"><span class="aimg-helper"></span><img id="MOD_orig_stage"src="" /></div>
-                                                    <input id="MOD_orig_path" name="MOD_orig_path_field" type="hidden" value="" />
-                                                </td>
-                                                <!-- <td width="3%"></td> -->
+                                    <!-- <td width="3%"></td> -->
+                                    <td width="35%" colspan="3" id="MOD_orig_cell" class="silver-bordered force-center is-paddingless" style="height: 250px;">
+                                        <div class="mod-aimg-container"><span class="aimg-helper"></span><img id="MOD_orig_stage"src="" /></div>
+                                        <input id="MOD_orig_path" name="MOD_orig_path_field" type="hidden" value="" />
+                                    </td>
+                                    <!-- <td width="3%"></td> -->
 
-                                                <td width="6%"></td>
-                                                <td width="3%"></td>
-                                                <td width="41%" id="MOD_new_cell" class="silver-bordered force-center is-paddingless" style="height: 300px;">
-                                                    <div class="mod-aimg-container"><span class="aimg-helper"></span><img id="MOD_new_stage"src="" /></div>
-                                                    <input id="MOD_new_path" name="MOD_new_path_field" type="hidden" value="" />    
+                                    <td width="6%"></td>
+                                    <td width="9%"></td>
+                                    <td width="35%" id="MOD_new_cell" class="silver-bordered force-center is-paddingless" style="height: 250px;">
+                                        <div class="mod-aimg-container"><span class="aimg-helper"></span><img id="MOD_new_stage"src="" /></div>
+                                        <input id="MOD_new_path" name="MOD_new_path_field" type="hidden" value="" />    
+                                    </td>
+                                    <td width="9%"></td>
+                                    <td width="6%"></td>
+                                </tr>
+                                <tr>
+                                    <td width="41%" colspan="3" class="has-text-centered is-hpaddingless">
+                                        <a class="button is-neon-cyan" id="MOD_load_aimg_button">
+                                            <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load GIF/APNG</span></a>
+                                        <a class="button is-neon-white" id="MOD_clear_aimg_button">
+                                            <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span></a>
+                                        <a class="button is-neon-white" id="MOD_orig_bgprev_button">
+                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
+                                    </td>
+                                    <td width="59%" colspan="5" class="has-text-centered is-hpaddingless">
+                                        <a class="button is-neon-cyan" id="MOD_prev_res_button">
+                                            <span class="icon is-small"><i class="fas fa-eye"></i></span><span>Preview</span></a>         
+                                        <a class="button is-neon-white" id="MOD_new_bgprev_button">
+                                            <span class="icon is-medium"><i class="fas fa-chess-board"></i></span></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="35%" colspan="3" class="is-paddingless silver-bordered">
+                                        <table class="table mod-orig-info-table is-hpaddingless" width="100%">
+                                            <tbody>
+                                                <tr><td class="mod-info-label is-cyan">Name</td>
+                                                    <td class="mod-info-data" id="MOD_orig_name">-</td></tr>
+                                                <tr><td class="mod-info-label is-cyan">Dimensions</td>
+                                                    <td class="mod-info-data" id="MOD_orig_dimensions">-</td></tr>
+                                                <tr><td class="mod-info-label is-cyan">Total frames</td>
+                                                    <td class="mod-info-data" id="MOD_orig_framecount">-</td></tr>
+                                                <tr><td class="mod-info-label is-cyan">Frame rate</td>
+                                                    <td class="mod-info-data" id="MOD_orig_fps">-</td>
+                                                <tr><td class="mod-info-label is-cyan">Frame delay</td>
+                                                    <td class="mod-info-data" id="MOD_orig_delay">-</td></tr>
+                                                <tr><td class="mod-info-label is-cyan">Loop duration</td>
+                                                    <td class="mod-info-data" id="MOD_orig_loopduration">-</td></tr>
+                                                <tr><td class="mod-info-label is-cyan">Format</td>
+                                                    <td class="mod-info-data" id="MOD_orig_format">-</td></tr> 
+                                            </tbody>
+                                        </table> 
+                                    </td>
+                                    <td width="65%" colspan="5" class="has-text-centered is-right-paddingless silver-bordered">
+                                        <table class="table mod-new-control-table is-hpaddingless" width="100%">
+                                            <tr>
+                                                <td width="50%" colspan="2">
+                                                    <div class="field">
+                                                        <label class="label">Name</label>
+                                                        <div class="control"><input id="MOD_new_name" class="input is-neon-white" type="text"/></div>
+                                                    </div>
                                                 </td>
-                                                <td width="3%"></td>
-                                                <td width="6%"></td>
+                                                <td width="25%">
+                                                    <div class="field">
+                                                        <label class="label">Width</label>
+                                                        <div class="control"><input id="MOD_new_width" class="input is-neon-white" type="text"/></div>
+                                                    </div>
+                                                </td>
+                                                <td width="25%">
+                                                    <div class="field">
+                                                        <label class="label">Height</label>
+                                                        <div class="control"><input id="MOD_new_height" class="input is-neon-white" type="text"/></div>
+                                                    </div>
+                                                </td>
                                             </tr>
                                             <tr>
-                                                <td width="41%" colspan="3" class="has-text-centered">
-                                                    <a class="button is-neon-cyan" id="MOD_load_aimg_button">
-                                                        <span class="icon is-small"><i class="fas fa-plus"></i></span><span>Load GIF/APNG</span></a>
-                                                    <a class="button is-neon-white" id="MOD_clear_aimg_button">
-                                                        <span class="icon is-small"><i class="fas fa-trash-alt"></i></span><span>Clear</span></a>
-                                                    <a class="button is-neon-white" id="MOD_orig_bgprev_button">
-                                                        <span class="icon is-medium"><i class="fas fa-chess-board"></i></span>
+                                                <td width="25%">
+                                                    <div class="field">
+                                                        <label class="label">FPS</label>
+                                                        <div class="control"><input id="MOD_new_fps" class="input is-neon-white" type="number"/></div>
+                                                    </div>
                                                 </td>
-                                                <td width="59%" colspan="5" class="has-text-centered">
-                                                    <a class="button is-neon-cyan" id="MOD_prev_res_button">
-                                                    <span class="icon is-small"><i class="fas fa-eye"></i></span><span>Preview</span></a>         
+                                                <td width="25%">
+                                                    <div class="field">
+                                                        <label class="label">Duration</label>
+                                                        <div class="control"><input id="MOD_new_delay" class="input is-neon-white" type="number"/></div>
+                                                    </div>
+                                                </td>
+                                                <td width="25%">
+                                                    <div class="field">
+                                                        <label class="label">Format</label>
+                                                        <div class="control">
+                                                            <div class="select is-neon-cyan">
+                                                                <select id="MOD_new_format">
+                                                                    <option value="gif">GIF</option>
+                                                                    <option value="apng">APNG</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td width="25%" class="has-text-centered force-vcenter">
+                                                    <label class="checkbox">
+                                                        <input id="MOD_is_reversed" type="checkbox"/>
+                                                        Reversed
+                                                    </label>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td width="41%" colspan="3" class="has-text-centered is-hpaddingless silver-bordered">
-                                                    <table class="table mod-orig-info-table is-hpaddingless">
-                                                        <tr><td class="is-cyan" width="40%">Name</td>
-                                                            <td width="60%" id="MOD_orig_name">-</td></tr>
-                                                        <tr><td class="is-cyan">Dimensions</td>
-                                                            <td id="MOD_orig_dimensions">-</td></tr>
-                                                        <tr><td class="is-cyan">Total frames</td>
-                                                            <td id="MOD_orig_framecount">-</td></tr>
-                                                        <tr><td class="is-cyan">Frame rate</td>
-                                                            <td id="MOD_orig_fps">-</td>
-                                                        <tr><td class="is-cyan">Frame delay</td>
-                                                            <td id="MOD_orig_delay">-</td></tr>
-                                                        <tr><td class="is-cyan">Loop duration</td>
-                                                            <td id="MOD_orig_loopduration">-</td></tr>
-                                                        <tr><td class="is-cyan">Format</td>
-                                                            <td id="MOD_orig_format">-</td></tr> 
-                                                    </table> 
+                                                <td colspan="3">
+                                                    <div class="field has-addons">
+                                                        <div class="control">
+                                                            <a class="button is-neon-cyan" id="MOD_outdir_button">
+                                                                <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
+                                                                <span>Save to</span>
+                                                            </a>
+                                                        </div>
+                                                        <div class="control is-expanded">
+                                                            <input id="MOD_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                                        </div>
+                                                    </div>
                                                 </td>
-                                                <td width="59%" colspan="5" class="has-text-centered is-hpaddingless silver-bordered">
-                                                    <table class="table is-hpaddingless" width="100%">
-                                                        <tr>
-                                                            <td width="50%" colspan="2">
-                                                                <div class="field">
-                                                                    <label class="label">Name</label>
-                                                                    <div class="control"><input id="MOD_new_name" class="input is-neon-white" type="text"/></div>
-                                                                </div>
-                                                            </td>
-                                                            <td width="25%">
-                                                                <div class="field">
-                                                                    <label class="label">Width</label>
-                                                                    <div class="control"><input id="MOD_new_width" class="input is-neon-white" type="text"/></div>
-                                                                </div>
-                                                            </td>
-                                                            <td width="25%">
-                                                                <div class="field">
-                                                                    <label class="label">Height</label>
-                                                                    <div class="control"><input id="MOD_new_height" class="input is-neon-white" type="text"/></div>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td width="25%">
-                                                                <div class="field">
-                                                                    <label class="label">FPS</label>
-                                                                    <div class="control"><input id="MOD_new_fps" class="input is-neon-white" type="number"/></div>
-                                                                </div>
-                                                            </td>
-                                                            <td width="25%">
-                                                                <div class="field">
-                                                                    <label class="label">Duration</label>
-                                                                    <div class="control"><input id="MOD_new_delay" class="input is-neon-white" type="number"/></div>
-                                                                </div>
-                                                            </td>
-                                                            <td width="25%">
-                                                                <div class="field">
-                                                                    <label class="label">Format</label>
-                                                                    <div class="control">
-                                                                        <div class="select is-neon-cyan">
-                                                                            <select id="MOD_new_format">
-                                                                                <option value="gif">GIF</option>
-                                                                                <option value="apng">APNG</option>
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td width="25%"></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td colspan="3">
-                                                                <div class="field has-addons">
-                                                                    <div class="control">
-                                                                        <a class="button is-neon-cyan" id="MOD_outdir_button">
-                                                                            <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
-                                                                            <span>Save to</span>
-                                                                        </a>
-                                                                    </div>
-                                                                    <div class="control is-expanded">
-                                                                        <input id="MOD_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <a class="button is-neon-cyan" id="MOD_modify_aimg_button">MODIFY</a>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
+                                                <td>
+                                                    <a class="button is-neon-cyan" id="MOD_modify_aimg_button">MODIFY</a>
                                                 </td>
                                             </tr>
                                         </table>
                                     </td>
                                 </tr>
                                 <tr>
+                                    <td colspan="8" class="has-text-left" style="vertical-align: middle;" id="modify_msgbox"></td>
                                 </tr>
                             </table>
                         </div>
