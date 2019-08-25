@@ -235,6 +235,9 @@ div.left-menu::-webkit-scrollbar { /*makes scrollbar invisible */
     overflow: auto;
     display: block;
 }
+.spl-aimg-info-table tbody::-webkit-scrollbar {
+    height: 7px;
+}
 .spl-aimg-info-table tr { display: block; }
 .spl-aimg-info-table td {
     padding: 3px !important;
@@ -325,6 +328,7 @@ table.spr-control-table label{
     text-align: center;
     display: inline-block;
 }
+
 .aimg-helper {
     display: inline-block;
     height: 100%;
@@ -354,6 +358,7 @@ table.spr-control-table label{
 }
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered{
     border-color: lighten($cyan, 20%);
+    color: lighten($cyan, 20%);
 }
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
     background-color: $cyan;

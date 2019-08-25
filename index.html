@@ -422,39 +422,25 @@
                                     <td width="65%" colspan="5" class="has-text-centered is-right-paddingless silver-bordered">
                                         <table class="table mod-new-control-table is-hpaddingless" width="100%">
                                             <tr>
-                                                <td width="50%" colspan="2">
+                                                <td width="40%" colspan="2">
                                                     <div class="field">
                                                         <label class="label">Name</label>
                                                         <div class="control"><input id="MOD_new_name" class="input is-neon-white" type="text"/></div>
                                                     </div>
                                                 </td>
-                                                <td width="25%">
+                                                <td width="20%">
                                                     <div class="field">
                                                         <label class="label">Width</label>
                                                         <div class="control"><input id="MOD_new_width" class="input is-neon-white" type="text"/></div>
                                                     </div>
                                                 </td>
-                                                <td width="25%">
+                                                <td width="20%">
                                                     <div class="field">
                                                         <label class="label">Height</label>
                                                         <div class="control"><input id="MOD_new_height" class="input is-neon-white" type="text"/></div>
                                                     </div>
                                                 </td>
-                                            </tr>
-                                            <tr>
-                                                <td width="25%">
-                                                    <div class="field">
-                                                        <label class="label">FPS</label>
-                                                        <div class="control"><input id="MOD_new_fps" class="input is-neon-white" type="number"/></div>
-                                                    </div>
-                                                </td>
-                                                <td width="25%">
-                                                    <div class="field">
-                                                        <label class="label">Duration</label>
-                                                        <div class="control"><input id="MOD_new_delay" class="input is-neon-white" type="number"/></div>
-                                                    </div>
-                                                </td>
-                                                <td width="25%">
+                                                <td width="20%">
                                                     <div class="field">
                                                         <label class="label">Format</label>
                                                         <div class="control">
@@ -467,15 +453,42 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td width="25%" class="has-text-centered force-vcenter">
+                                            </tr>
+                                            <tr>
+                                                <td width="20%">
+                                                    <div class="field">
+                                                        <label class="label">FPS</label>
+                                                        <div class="control"><input id="MOD_new_fps" class="input is-neon-white" type="number"/></div>
+                                                    </div>
+                                                </td>
+                                                <td width="20%">
+                                                    <div class="field">
+                                                        <label class="label">Duration</label>
+                                                        <div class="control"><input id="MOD_new_delay" class="input is-neon-white" type="number"/></div>
+                                                    </div>
+                                                </td>
+                                                <td width="20%" class="force-vcenter">
                                                     <label class="checkbox">
-                                                        <input id="MOD_is_reversed" type="checkbox"/>
+                                                        <input id="MOD_new_reversed" type="checkbox"/>
                                                         Reversed
+                                                    </label>
+                                                </td>
+                                                <td width="40%" class="force-vcenter" colspan="2">
+                                                    <label class="checkbox">
+                                                        <input id="MOD_new_preserve_alpha" type="checkbox"/>
+                                                        Preserve Transparency
+                                                    </label>
+                                                    <label class="checkbox">
+                                                        <input id="MOD_new_reduced_color" type="checkbox"/>
+                                                        Reduce Colors
                                                     </label>
                                                 </td>
                                             </tr>
                                             <tr>
-                                                <td colspan="3">
+                                                
+                                            </tr>
+                                            <tr>
+                                                <td colspan="4">
                                                     <div class="field has-addons">
                                                         <div class="control">
                                                             <a class="button is-neon-cyan" id="MOD_outdir_button">

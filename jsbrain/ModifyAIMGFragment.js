@@ -30,7 +30,10 @@ let MOD_new_fps = document.getElementById('MOD_new_fps');
 let MOD_new_height = document.getElementById('MOD_new_height');
 let MOD_new_delay = document.getElementById('MOD_new_delay');
 let MOD_new_format = document.getElementById('MOD_new_format');
-let MOD_is_reversed = document.getElementById('MOD_is_reversed');
+let MOD_new_reversed = document.getElementById('MOD_new_reversed');
+let MOD_new_preserve_alpha = document.getElementById('MOD_new_preserve_alpha');
+let MOD_new_reduced_color = document.getElementById('MOD_new_reduced_color');
+
 
 let MOD_modify_aimg_button = document.getElementById('MOD_modify_aimg_button');
 
@@ -105,7 +108,7 @@ function fillOrigData(res) {
 }
 
 function fillNewData(res) {
-    MOD_new_name.value = res.name;
+    MOD_new_name.value = escapeHtml(res.base_fname);
     console.log(res.extension);
     if (res.extension == "GIF") { MOD_new_format.selectedIndex = "0"; }
     else if (res.extension == "APNG") { MOD_new_format.selectedIndex = "1"; }
@@ -145,13 +148,15 @@ function clearOrigFields() {
 
 function clearNewFields() {
     MOD_new_name.value = '';
-    MOD_new_format.selectedIndex = -1;
     MOD_new_width.value = '';
     MOD_new_height.value = '';
     MOD_new_delay.value = '';
     MOD_new_fps.value = '';
     MOD_new_stage.src = '';
     MOD_new_path.value = '';
+    MOD_new_reversed.checked = false;
+    MOD_new_preserve_alpha.checked = false;
+    MOD_new_reduced_color.checked = false;
 }
 
 

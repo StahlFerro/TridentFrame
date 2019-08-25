@@ -16,8 +16,8 @@ def _inspect_aimg(animage_path):
     """Returns information of an animted GIF/APNG"""
     abspath = os.path.abspath(animage_path)
     filename = str(os.path.basename(abspath))
-    ext = str.lower(os.path.splitext(filename)[1])
-
+    base_fname, ext = os.path.splitext(filename)
+    ext = ext.lower()
     frame_count = 0  # Actual number of frames
     frame_count_ds = 0  # Duration-sensitive frame-count
     fps = 0
@@ -80,6 +80,7 @@ def _inspect_aimg(animage_path):
 
     image_info = {
         "name": filename,
+        "base_fname": base_fname,
         "fps": fps,
         "avg_duration": round(avg_duration / 1000, 3),
         "duration_is_uneven": duration_is_uneven,

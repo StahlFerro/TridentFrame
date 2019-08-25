@@ -7296,6 +7296,9 @@ div.left-menu::-webkit-scrollbar {
   overflow: auto;
   display: block; }
 
+.spl-aimg-info-table tbody::-webkit-scrollbar {
+  height: 7px; }
+
 .spl-aimg-info-table tr {
   display: block; }
 
@@ -7405,7 +7408,8 @@ table.spr-control-table label {
   border: 2px solid #34caf8; }
 
 .button.is-neon-cyan:hover, .button.is-neon-cyan.is-hovered {
-  border-color: #97e4fb; }
+  border-color: #97e4fb;
+  color: #97e4fb; }
 
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
   background-color: #34caf8;
