@@ -7203,6 +7203,9 @@ a.exit-button:hover {
 .menu-item.is-selected {
   border: 2px solid #34caf8; }
 
+.menu-item.is-selected p, .menu-item.is-selected i {
+  color: #34caf8 !important; }
+
 .mod-menu-cell {
   border-right: 2px solid #616877 !important; }
 
@@ -7216,8 +7219,8 @@ a.exit-button:hover {
 .mod-menu-item:hover {
   border: 2px solid #444851; }
 
-.mod-menu-item.is-selected {
-  color: #34caf8; }
+.mod-menu-item.is-selected p, .mod-menu-item.is-selected i {
+  color: #34caf8 !important; }
 
 /* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
 div.left-menu {

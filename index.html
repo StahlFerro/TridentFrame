@@ -488,19 +488,15 @@
                                                                     </div>
                                                                 </td>
                                                                 <td width="20%" class="force-vcenter">
+                                                                </td>
+                                                                <td width="40%" class="force-vcenter" colspan="2">
                                                                     <label class="checkbox">
                                                                         <input id="MOD_new_reversed" type="checkbox"/>
                                                                         Reversed
                                                                     </label>
-                                                                </td>
-                                                                <td width="40%" class="force-vcenter" colspan="2">
                                                                     <label class="checkbox">
                                                                         <input id="MOD_new_preserve_alpha" type="checkbox"/>
                                                                         Preserve Transparency
-                                                                    </label>
-                                                                    <label class="checkbox">
-                                                                        <input id="MOD_new_reduced_color" type="checkbox"/>
-                                                                        Reduce Colors
                                                                     </label>
                                                                 </td>
                                                             </tr>
@@ -528,6 +524,22 @@
                                                         </table>
                                                     </div>
                                                     <div id="MOD_gif_control_panel" style="display: none;">
+                                                        <table class="table mod-new-control-table is-hpaddingless" width="100%">
+                                                            <tr>
+                                                                <td class="force-vcenter">
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_reduced_color" type="checkbox"/>
+                                                                        Reduce Colors
+                                                                    </label>
+                                                                </td>
+                                                                <td>
+                                                                    <div class="field">
+                                                                        <label class="label">Color space</label>
+                                                                        <div class="control"><input id="MOD_color_space" class="input is-neon-white" type="number" min="2" max="256" disabled/></div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
                                                     </div>
                                                 </td>
                                             </tr>

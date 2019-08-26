@@ -119,6 +119,7 @@ a.exit-button:hover {
 .menu-item a { padding: 0.3em 0em; }
 .menu-item:hover { border: 2px solid $dark-4; }
 .menu-item.is-selected { border: 2px solid $cyan; }
+.menu-item.is-selected p, .menu-item.is-selected i { color: $cyan !important; }
 
 .mod-menu-cell {
     border-right: 2px solid $dark-6 !important;
@@ -128,7 +129,7 @@ a.exit-button:hover {
 .mod-menu-item { border: 2px solid $dark-3; }
 .mod-menu-item a { padding: 0.3em 0em; }
 .mod-menu-item:hover { border: 2px solid $dark-4; }
-.mod-menu-item.is-selected { color: $cyan; }
+.mod-menu-item.is-selected p, .mod-menu-item.is-selected i { color: $cyan !important; }
 
 /* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
 div.left-menu {

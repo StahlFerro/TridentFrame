@@ -33,6 +33,7 @@ let MOD_new_format = document.getElementById('MOD_new_format');
 let MOD_new_reversed = document.getElementById('MOD_new_reversed');
 let MOD_new_preserve_alpha = document.getElementById('MOD_new_preserve_alpha');
 let MOD_new_reduced_color = document.getElementById('MOD_new_reduced_color');
+let MOD_color_space = document.getElementById('MOD_color_space');
 
 let MOD_general_control_panel = document.getElementById('MOD_general_control_panel');
 let MOD_gif_control_panel = document.getElementById('MOD_gif_control_panel');
@@ -192,6 +193,14 @@ function clearNewFields() {
     MOD_new_reduced_color.checked = false;
 }
 
+MOD_new_reduced_color.addEventListener("click", () => {
+    if (MOD_new_reduced_color.checked) {
+        MOD_color_space.disabled = false;
+    }
+    else {
+        MOD_color_space.disabled = true;
+    }
+});
 
 MOD_modify_aimg_button.addEventListener("click", () => {
     client.invoke("", "", (error, res) => {
