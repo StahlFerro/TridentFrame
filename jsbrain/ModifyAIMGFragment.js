@@ -34,6 +34,39 @@ let MOD_new_reversed = document.getElementById('MOD_new_reversed');
 let MOD_new_preserve_alpha = document.getElementById('MOD_new_preserve_alpha');
 let MOD_new_reduced_color = document.getElementById('MOD_new_reduced_color');
 
+let MOD_general_control_panel = document.getElementById('MOD_general_control_panel');
+let MOD_gif_control_panel = document.getElementById('MOD_gif_control_panel');
+let MOD_menu_general = document.getElementById('MOD_menu_general');
+let MOD_box_general = document.getElementById('MOD_box_general');
+let MOD_menu_gif = document.getElementById('MOD_menu_gif');
+let MOD_box_gif = document.getElementById('MOD_box_gif');
+
+function hideMODPanels() {
+    MOD_general_control_panel.style.display = 'none';
+    MOD_gif_control_panel.style.display = 'none';
+}
+
+function deselectMODMenus() {
+    MOD_box_general.classList.remove('is-selected');
+    MOD_box_gif.classList.remove('is-selected');
+}
+
+function showMODGeneralPanel() {
+    hideMODPanels();
+    deselectMODMenus();
+    MOD_box_general.classList.add('is-selected');
+    MOD_general_control_panel.style.display = 'block';
+}
+function showMODGIFPanel() {
+    hideMODPanels();
+    deselectMODMenus();
+    MOD_box_gif.classList.add('is-selected');
+    MOD_gif_control_panel.style.display = 'block';
+}
+
+MOD_menu_general.addEventListener('click', showMODGeneralPanel);
+MOD_menu_gif.addEventListener('click', showMODGIFPanel);
+
 
 let MOD_modify_aimg_button = document.getElementById('MOD_modify_aimg_button');
 

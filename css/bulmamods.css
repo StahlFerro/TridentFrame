@@ -7203,13 +7203,35 @@ a.exit-button:hover {
 .menu-item.is-selected {
   border: 2px solid #34caf8; }
 
+.mod-menu-cell {
+  border-right: 2px solid #616877 !important; }
+
+/* Menu-item on Modify UI */
+.mod-menu-item {
+  border: 2px solid #31363b; }
+
+.mod-menu-item a {
+  padding: 0.3em 0em; }
+
+.mod-menu-item:hover {
+  border: 2px solid #444851; }
+
+.mod-menu-item.is-selected {
+  color: #34caf8; }
+
 /* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
 div.left-menu {
   height: 640px;
   overflow: auto; }
 
 div.left-menu::-webkit-scrollbar {
-  /*makes scrollbar invisible */
+  width: 0px; }
+
+div.mod-left-menu {
+  height: 250px;
+  overflow: auto; }
+
+div.mod-left-menu::-webkit-scrollbar {
   width: 0px; }
 
 /* Borderless table helper css */
@@ -7236,6 +7258,10 @@ div.left-menu::-webkit-scrollbar {
 .silver-bordered-no-right {
   border: 2px solid #cccccc !important;
   border-width: 2px 0px 2px 2px; }
+
+.silver-bordered-left-thicc {
+  border: 2px solid #cccccc !important;
+  border-left: 5px solid #cccccc !important; }
 
 /* Image sequences scrollable grid-like table in Create panel */
 .sequence-grid tbody {
@@ -7423,7 +7449,8 @@ table.spr-control-table label {
   border: 2px solid #cccccc; }
 
 .button.is-neon-white:hover, .button.is-neon-white.is-hovered {
-  border-color: white; }
+  border-color: white;
+  color: white; }
 
 .button.is-neon-white:active, .button.is-neon-white.is-active {
   background-color: #cccccc;

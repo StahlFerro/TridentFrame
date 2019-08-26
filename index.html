@@ -363,7 +363,7 @@
                     </div>
 
                     <div id="modify_panel" class="container" style="display: none; padding:10px;">
-                        <div class="content">
+                        <!-- <div class="content"> -->
                             <table class="table is-borderless" style="padding: 5px;" width="100%">
                                 <tr>
                                     <!-- <td width="3%"></td> -->
@@ -419,90 +419,116 @@
                                             </tbody>
                                         </table> 
                                     </td>
-                                    <td width="65%" colspan="5" class="has-text-centered is-right-paddingless silver-bordered">
-                                        <table class="table mod-new-control-table is-hpaddingless" width="100%">
+                                    <td width="65%" colspan="5" class="has-text-centered is-right-paddingless silver-bordered-left-thicc">
+                                        <table class="table mod-switchpanel-table is-paddingless is-marginless" width="100%">
                                             <tr>
-                                                <td width="40%" colspan="2">
-                                                    <div class="field">
-                                                        <label class="label">Name</label>
-                                                        <div class="control"><input id="MOD_new_name" class="input is-neon-white" type="text"/></div>
+                                                <td width="10%" class="mod-menu-cell is-paddingless">
+                                                    <div class="mod-left-menu">
+                                                        <aside class="menu has-text-centered" style="margin: 0;">
+                                                            <ul class="menu-list mod-left-menu">
+                                                                <li id="MOD_box_general" class="mod-menu-item is-selected"><a id="MOD_menu_general">
+                                                                    <span class="icon is-large"><i class="fas fa-image fa-2x fa-inverse"></i></span>
+                                                                    <p class="is-white-d">General</p>
+                                                                </a></li>
+                                                                <li id="MOD_box_gif" class="mod-menu-item"><a id="MOD_menu_gif">
+                                                                    <span class="icon is-large"><i class="far fa-images fa-2x fa-inverse"></i></span>
+                                                                    <p class="is-white-d is-large">GIF</p>
+                                                                </a></li>
+                                                            </ul>
+                                                        </aside>
                                                     </div>
                                                 </td>
-                                                <td width="20%">
-                                                    <div class="field">
-                                                        <label class="label">Width</label>
-                                                        <div class="control"><input id="MOD_new_width" class="input is-neon-white" type="text"/></div>
+                                                <td width="90%" class="is-paddingless">
+                                                    <div id="MOD_general_control_panel">
+                                                        <table class="table mod-new-control-table is-hpaddingless" width="100%">
+                                                            <tr>
+                                                                <td width="40%" colspan="2">
+                                                                    <div class="field">
+                                                                        <label class="label">Name</label>
+                                                                        <div class="control"><input id="MOD_new_name" class="input is-neon-white" type="text"/></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td width="20%">
+                                                                    <div class="field">
+                                                                        <label class="label">Width</label>
+                                                                        <div class="control"><input id="MOD_new_width" class="input is-neon-white" type="text"/></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td width="20%">
+                                                                    <div class="field">
+                                                                        <label class="label">Height</label>
+                                                                        <div class="control"><input id="MOD_new_height" class="input is-neon-white" type="text"/></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td width="20%">
+                                                                    <div class="field">
+                                                                        <label class="label">Format</label>
+                                                                        <div class="control">
+                                                                            <div class="select is-neon-cyan">
+                                                                                <select id="MOD_new_format">
+                                                                                    <option value="gif">GIF</option>
+                                                                                    <option value="apng">APNG</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td width="20%">
+                                                                    <div class="field">
+                                                                        <label class="label">FPS</label>
+                                                                        <div class="control"><input id="MOD_new_fps" class="input is-neon-white" type="number"/></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td width="20%">
+                                                                    <div class="field">
+                                                                        <label class="label">Duration</label>
+                                                                        <div class="control"><input id="MOD_new_delay" class="input is-neon-white" type="number"/></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td width="20%" class="force-vcenter">
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_reversed" type="checkbox"/>
+                                                                        Reversed
+                                                                    </label>
+                                                                </td>
+                                                                <td width="40%" class="force-vcenter" colspan="2">
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_preserve_alpha" type="checkbox"/>
+                                                                        Preserve Transparency
+                                                                    </label>
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_reduced_color" type="checkbox"/>
+                                                                        Reduce Colors
+                                                                    </label>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                
+                                                            </tr>
+                                                            <tr>
+                                                                <td colspan="4">
+                                                                    <div class="field has-addons">
+                                                                        <div class="control">
+                                                                            <a class="button is-neon-cyan" id="MOD_outdir_button">
+                                                                                <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
+                                                                                <span>Save to</span>
+                                                                            </a>
+                                                                        </div>
+                                                                        <div class="control is-expanded">
+                                                                            <input id="MOD_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="button is-neon-cyan" id="MOD_modify_aimg_button">MODIFY</a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
                                                     </div>
-                                                </td>
-                                                <td width="20%">
-                                                    <div class="field">
-                                                        <label class="label">Height</label>
-                                                        <div class="control"><input id="MOD_new_height" class="input is-neon-white" type="text"/></div>
+                                                    <div id="MOD_gif_control_panel" style="display: none;">
                                                     </div>
-                                                </td>
-                                                <td width="20%">
-                                                    <div class="field">
-                                                        <label class="label">Format</label>
-                                                        <div class="control">
-                                                            <div class="select is-neon-cyan">
-                                                                <select id="MOD_new_format">
-                                                                    <option value="gif">GIF</option>
-                                                                    <option value="apng">APNG</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td width="20%">
-                                                    <div class="field">
-                                                        <label class="label">FPS</label>
-                                                        <div class="control"><input id="MOD_new_fps" class="input is-neon-white" type="number"/></div>
-                                                    </div>
-                                                </td>
-                                                <td width="20%">
-                                                    <div class="field">
-                                                        <label class="label">Duration</label>
-                                                        <div class="control"><input id="MOD_new_delay" class="input is-neon-white" type="number"/></div>
-                                                    </div>
-                                                </td>
-                                                <td width="20%" class="force-vcenter">
-                                                    <label class="checkbox">
-                                                        <input id="MOD_new_reversed" type="checkbox"/>
-                                                        Reversed
-                                                    </label>
-                                                </td>
-                                                <td width="40%" class="force-vcenter" colspan="2">
-                                                    <label class="checkbox">
-                                                        <input id="MOD_new_preserve_alpha" type="checkbox"/>
-                                                        Preserve Transparency
-                                                    </label>
-                                                    <label class="checkbox">
-                                                        <input id="MOD_new_reduced_color" type="checkbox"/>
-                                                        Reduce Colors
-                                                    </label>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                
-                                            </tr>
-                                            <tr>
-                                                <td colspan="4">
-                                                    <div class="field has-addons">
-                                                        <div class="control">
-                                                            <a class="button is-neon-cyan" id="MOD_outdir_button">
-                                                                <span class="icon is-small"><i class="fas fa-folder-open"></i></span>
-                                                                <span>Save to</span>
-                                                            </a>
-                                                        </div>
-                                                        <div class="control is-expanded">
-                                                            <input id="MOD_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly/>
-                                                        </div>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <a class="button is-neon-cyan" id="MOD_modify_aimg_button">MODIFY</a>
                                                 </td>
                                             </tr>
                                         </table>
@@ -512,7 +538,7 @@
                                     <td colspan="8" class="has-text-left" style="vertical-align: middle;" id="modify_msgbox"></td>
                                 </tr>
                             </table>
-                        </div>
+                        <!-- </div> -->
                     </div>
 
                     <div id="buildsprite_panel" class="container" style="display: none; padding:10px;">
