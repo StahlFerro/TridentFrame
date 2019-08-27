@@ -88,9 +88,9 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
         yield f"Unoptimizing frames for splitting (GIFs above 10MB will take minutes to process)..."
         unop_gif_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
     else:
-        yield f"Setting global color palette to {color_space}..."
         if color_space < 2 or color_space > 256:
             raise Exception("Color space must be between 2 and 256!")
+        yield f"Globalizing and reducing color space to {color_space}"
         redux_gif_path = _reduce_color(gif_path, unop_dir, color=color_space)
         yield f"Coalescing frames for splitting..."
         unop_gif_path = _unoptimize_gif(redux_gif_path, unop_dir, "gifsicle")

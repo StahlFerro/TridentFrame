@@ -32,6 +32,10 @@ let MOD_new_delay = document.getElementById('MOD_new_delay');
 let MOD_new_format = document.getElementById('MOD_new_format');
 let MOD_new_reversed = document.getElementById('MOD_new_reversed');
 let MOD_new_preserve_alpha = document.getElementById('MOD_new_preserve_alpha');
+let MOD_new_is_optimized = document.getElementById('MOD_new_is_optimized');
+let MOD_new_optimization_level = document.getElementById('MOD_new_optimization_level');
+let MOD_new_is_lossy = document.getElementById('MOD_new_is_lossy');
+let MOD_new_lossy_value = document.getElementById('MOD_new_lossy_value');
 let MOD_new_reduced_color = document.getElementById('MOD_new_reduced_color');
 let MOD_color_space = document.getElementById('MOD_color_space');
 
@@ -201,6 +205,27 @@ MOD_new_reduced_color.addEventListener("click", () => {
         MOD_color_space.disabled = true;
     }
 });
+
+MOD_new_is_lossy.addEventListener("click", () => {
+    if (MOD_new_is_lossy.checked) {
+        MOD_new_lossy_value.disabled = false;
+    }
+    else {
+        MOD_new_lossy_value.disabled = true;
+    }
+})
+
+
+MOD_new_is_optimized.addEventListener("click", () => {
+    if (MOD_new_is_optimized.checked) {
+        MOD_new_optimization_level.disabled = false;
+    }
+    else {
+        MOD_new_optimization_level.disabled = true;
+    }
+})
+
+
 
 MOD_modify_aimg_button.addEventListener("click", () => {
     client.invoke("", "", (error, res) => {

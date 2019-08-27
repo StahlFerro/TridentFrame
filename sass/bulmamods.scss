@@ -140,7 +140,7 @@ div.left-menu::-webkit-scrollbar { width: 0px; }
 
 
 div.mod-left-menu {
-    height: 250px;
+    height: 270px;
     overflow: auto;
 }
 div.mod-left-menu::-webkit-scrollbar { width: 0px; }
@@ -425,6 +425,11 @@ table.spr-control-table label{
     color: $white-d;
     background-color: $dark-3;
     border: 2px solid $white-d !important;
+}
+
+.select.is-neon-cyan select:disabled{
+    border: 2px solid darken($white-d, 40%) !important;
+    color: darken($white-d, 40%) !important;
 }
 
 .select-is-neon-cyan:hover select {

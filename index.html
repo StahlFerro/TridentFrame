@@ -420,7 +420,7 @@
                                         </table> 
                                     </td>
                                     <td width="65%" colspan="5" class="has-text-centered is-right-paddingless silver-bordered-left-thicc">
-                                        <table class="table mod-switchpanel-table is-paddingless is-marginless" width="100%">
+                                        <table class="table is-paddingless is-marginless" width="100%">
                                             <tr>
                                                 <td width="10%" class="mod-menu-cell is-paddingless">
                                                     <div class="mod-left-menu">
@@ -462,15 +462,8 @@
                                                                 </td>
                                                                 <td width="20%">
                                                                     <div class="field">
-                                                                        <label class="label">Format</label>
-                                                                        <div class="control">
-                                                                            <div class="select is-neon-cyan">
-                                                                                <select id="MOD_new_format">
-                                                                                    <option value="gif">GIF</option>
-                                                                                    <option value="apng">APNG</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
+                                                                        <label class="label">Rotation</label>
+                                                                        <div class="control"><input id="MOD_new_rotation" class="input is-neon-white" type="number"/></div>
                                                                     </div>
                                                                 </td>
                                                             </tr>
@@ -487,7 +480,38 @@
                                                                         <div class="control"><input id="MOD_new_delay" class="input is-neon-white" type="number"/></div>
                                                                     </div>
                                                                 </td>
+                                                                <td width="20%">
+                                                                    <div class="field">
+                                                                        <label class="label">Skip Frames</label>
+                                                                        <div class="control"><input id="MOD_new_frame_skip" class="input is-neon-white" type="number" min="0"/></div>
+                                                                    </div>
+                                                                </td>
+                                                                <td width="20%">
+                                                                </td>
+                                                                <td width="20%">
+                                                                    <div class="field">
+                                                                        <label class="label">Format</label>
+                                                                        <div class="control">
+                                                                            <div class="select is-neon-cyan">
+                                                                                <select id="MOD_new_format">
+                                                                                    <option value="gif">GIF</option>
+                                                                                    <option value="apng">APNG</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
                                                                 <td width="20%" class="force-vcenter">
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_flip_x" type="checkbox"/>
+                                                                        Flip X
+                                                                    </label>
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_flip_y" type="checkbox"/>
+                                                                        Flip Y
+                                                                    </label>
                                                                 </td>
                                                                 <td width="40%" class="force-vcenter" colspan="2">
                                                                     <label class="checkbox">
@@ -499,9 +523,6 @@
                                                                         Preserve Transparency
                                                                     </label>
                                                                 </td>
-                                                            </tr>
-                                                            <tr>
-                                                                
                                                             </tr>
                                                             <tr>
                                                                 <td colspan="4">
@@ -526,16 +547,52 @@
                                                     <div id="MOD_gif_control_panel" style="display: none;">
                                                         <table class="table mod-new-control-table is-hpaddingless" width="100%">
                                                             <tr>
-                                                                <td class="force-vcenter">
+                                                                <td class="force-vcenter" width="20%">
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_is_optimized" type="checkbox"/>
+                                                                        Optimize
+                                                                    </label>
+                                                                </td>
+                                                                <td class="force-vcenter" width="20%">
+                                                                    <div class="field">
+                                                                        <!-- <label class="label">Optimization Level</label> -->
+                                                                        <div class="control">
+                                                                            <div class="select is-neon-cyan">
+                                                                                <select id="MOD_new_optimization_level" disabled>
+                                                                                    <option value="opt_1">Level 1</option>
+                                                                                    <option value="opt_2">Level 2</option>
+                                                                                    <option value="opt_3">Level 3</option>
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="force-vcenter" width="20%">
+                                                                    <label class="checkbox">
+                                                                        <input id="MOD_new_is_lossy" type="checkbox"/>
+                                                                        Lossy-compress
+                                                                    </label>
+                                                                </td>
+                                                                <td class="force-vcenter" width="20%">
+                                                                    <div class="field">
+                                                                        <!-- <label class="label">Color space</label> -->
+                                                                        <div class="control"><input id="MOD_new_lossy_value" class="input is-neon-white" type="number" min="30" max="200" value="30" disabled/></div>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="force-vcenter" width="20%">
                                                                     <label class="checkbox">
                                                                         <input id="MOD_new_reduced_color" type="checkbox"/>
                                                                         Reduce Colors
                                                                     </label>
                                                                 </td>
-                                                                <td>
+                                                                <td class="force-vcenter" width="20%">
                                                                     <div class="field">
-                                                                        <label class="label">Color space</label>
-                                                                        <div class="control"><input id="MOD_color_space" class="input is-neon-white" type="number" min="2" max="256" disabled/></div>
+                                                                        <!-- <label class="label">Color space</label> -->
+                                                                        <div class="control"><input id="MOD_color_space" class="input is-neon-white" type="number" min="2" max="256" value="256" disabled/></div>
                                                                     </div>
                                                                 </td>
                                                             </tr>
