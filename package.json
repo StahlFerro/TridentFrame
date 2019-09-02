@@ -7,7 +7,11 @@
     "start": "electron .",
     "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "npm run css-build -- --watch",
-    "debug": "npm run css-build && npm run start"
+    "debug": "npm run css-build && npm run start",
+    "clean": "rimraf dist",
+    "build": "npm run clean && webpack --mode production",
+    "serve": "webpack-dev-server --mode development",
+    "watch": "npm run clean && webpack --watch"
   },
   "repository": {
     "type": "git",
@@ -36,6 +40,7 @@
     "css-loader": "^3.2.0",
     "electron": "^1.8.8",
     "electron-packager": "^9.0.1",
+    "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.11.0",

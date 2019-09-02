@@ -3,7 +3,7 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: './src/main.js',
+  entry: './app.js',
   module: {
     rules: [
       { test: /\.js$/, use: 'babel-loader' },
@@ -11,10 +11,20 @@ module.exports = {
       { test: /\.css$/, use: [{
         loader: MiniCssExtractPlugin.loader,
         options: {
-          publicPath: '../',
+          name: 'style.css',
+          outputPath: 'css/',
+          // publicPath: '../',
           hmr: process.env.NODE_ENV == 'development'
         },
       }, 'css-loader',]},
+      { test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/, use: [{
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]',
+          outputPath: 'webfonts/',
+          // publicPath: '../',
+        }
+      }]}
     ]
   },
   devServer: {
@@ -22,7 +32,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      template: './index.html',
     }),
     new MiniCssExtractPlugin({
       filename: 'style.css',
