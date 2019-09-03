@@ -185,7 +185,7 @@
                 <td colspan="1" style="padding-top: 25px;">
                   <div class="field has-text-centered">
                     <div class="control">
-                      <a id="create_aimg_button" class="button is-neon-cyan">Create</a>
+                      <a v-on:click="testlog" class="button is-neon-cyan">Create</a>
                     </div>
                   </div>
                 </td>
@@ -202,3 +202,21 @@
     </div>
   </div>
 </template>
+
+<script>
+const remote = require("electron").remote;
+const dialog = remote.dialog;
+const session = remote.getCurrentWebContents().session;
+const { client } = require("./Client.vue");
+export default {
+  methods: {
+    testlog: function() {
+      client.invoke("test", (error, res) => {
+        console.log("error", error);
+        console.log("res", res);
+      });
+      console.log("pressed!");
+    }
+  }
+};
+</script>

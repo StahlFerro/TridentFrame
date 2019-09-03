@@ -17,11 +17,13 @@ const createWindow = () => {
         icon: path.join(__dirname, 'imgs/TridentFrame_Icon_200px.png')
     });
     mainWindow.setMenu(null);
-    mainWindow.loadURL(require('url').format({
-        pathname: path.join(__dirname, './dist/index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
+    mainWindow.loadURL("http://localhost:8080/") // Development environment
+    // Production environment
+    // mainWindow.loadURL(require('url').format({
+        // pathname: path.join(__dirname, './dist/index.html'),
+        // protocol: 'file:',
+        // slashes: true
+    // }));
     mainWindow.webContents.openDevTools();
     mainWindow.focus();
     mainWindow.on('closed', () => {

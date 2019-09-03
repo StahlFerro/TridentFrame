@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: './app.js',
+  target: 'electron-renderer',
   module: {
     rules: [
       { test: /\.js$/, use: 'babel-loader' },
@@ -24,7 +25,8 @@ module.exports = {
           outputPath: 'webfonts/',
           // publicPath: '../',
         }
-      }]}
+      }]},
+      { test: /\.node$/, use: 'node-loader' },
     ]
   },
   devServer: {
