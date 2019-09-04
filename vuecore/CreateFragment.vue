@@ -9,7 +9,18 @@
             style="width: 500px; height: 320px;"
           >
             <table class="sequence-grid is-paddingless" width="100%">
-              <tbody id="CRT_sequence_body"></tbody>
+              <tbody>
+                <tr v-for="(paths, row) in quintcell_lister" v-bind:key="row">
+                  <td v-for="path in paths" v-bind:key="path">
+                    <div class="seqdiv">
+                      <img v-bind:src="path"/>
+                      <a class="del-anchor">
+                        <span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
+                      </a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </td>
           <td
@@ -19,7 +30,7 @@
           >
             <div class="crt-aimg-container">
               <span class="aimg-helper"></span>
-              <img id="CRT_aimg_stage" src />
+              <img id="CRT_aimg_stage" style="background: url('./imgs/Transparency500.png')"/>
             </div>
             <input id="CRT_aimg_path" name="CRT_aimg_path_field" type="hidden" value />
           </td>
@@ -30,13 +41,13 @@
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
-                    <a v-on:click="CRTLoadAIMG" class="button is-neon-cyan">
+                    <a v-on:click="CRTLoadAIMG" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}">
                       <span class="icon is-small">
                         <i class="fas fa-plus"></i>
                       </span>
                       <span>Load Images</span>
                     </a>
-                    <a id="CRT_clear_imgs_button" class="button is-neon-white">
+                    <a v-on:click="CRTClearAIMG" class="button is-neon-white">
                       <span class="icon is-small">
                         <i class="fas fa-trash-alt"></i>
                       </span>
@@ -56,7 +67,7 @@
             <nav class="level">
               <div class="level-item has-text-centered">
                 <div>
-                  <a id="CRT_bgprev_button" class="button is-neon-white">
+                  <a v-on:click="CRTToggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': CRT_checkerbg_active}">
                     <span class="icon is-medium">
                       <i class="fas fa-chess-board"></i>
                     </span>
@@ -95,7 +106,13 @@
                   <div class="field">
                     <label class="label">Frame rate</label>
                     <div class="control">
-                      <input v-model="create_fps" class="input is-neon-white" type="number" min="1" max="50" />
+                      <input
+                        v-model="create_fps"
+                        class="input is-neon-white"
+                        type="number"
+                        min="1"
+                        max="50"
+                      />
                     </div>
                   </div>
                 </td>
@@ -145,7 +162,7 @@
                 <td colspan="2" style="padding-top: 25px;">
                   <div class="field has-addons">
                     <div class="control">
-                      <a class="button is-neon-cyan" id="choose_aimg_outdir_button">
+                      <a class="button is-neon-cyan" v-on:click="CRTChooseOutdir">
                         <span class="icon is-small">
                           <i class="fas fa-folder-open"></i>
                         </span>
@@ -153,7 +170,13 @@
                       </a>
                     </div>
                     <div class="control is-expanded">
-                      <input v-model="create_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly />
+                      <input
+                        v-model="create_outdir"
+                        class="input is-neon-white"
+                        type="text"
+                        placeholder="Output folder"
+                        readonly
+                      />
                     </div>
                   </div>
                 </td>
@@ -162,7 +185,7 @@
                     <!-- <label class="label">Format</label> -->
                     <div class="control">
                       <div class="select is-neon-cyan">
-                        <select id="CRT_out_format">
+                        <select v-model="CRT_out_format">
                           <option value="gif">GIF</option>
                           <option value="apng">APNG</option>
                         </select>
@@ -173,14 +196,17 @@
                 <td colspan="1" style="padding-top: 25px;">
                   <div class="field has-text-centered">
                     <div class="control">
-                      <a v-on:click="CRTCreateAIMG" class="button is-neon-cyan">Create</a>
+                      <a v-on:click="CRTCreateAIMG" class="button is-neon-cyan" 
+                        v-bind:class="{'is-loading': CRT_IS_CREATING == true, 'is-static': isButtonFrozen}">Create</a>
                     </div>
                   </div>
                 </td>
               </tr>
               <tr>
                 <td colspan="4">
-                  <div id="create_msgbox" class="create-msgbox"></div>
+                  <div class="create-msgbox">
+                    <span>{{ create_msgbox }}</span>
+                  </div>
                 </td>
               </tr>
             </table>
@@ -198,8 +224,8 @@ const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 
 var data = {
-  sequence_paths: null,
-  CRT_sequence_counter: '',
+  sequence_paths: [],
+  CRT_sequence_counter: "",
   create_name: "",
   create_fps: "",
   create_width: "",
@@ -212,37 +238,57 @@ var data = {
   CRT_out_format: "gif",
   create_outdir: "",
   CRT_aimg_stage: "",
-  CRT_aimg_path: ""
-};
+  CRT_aimg_path: "",
+  create_msgbox: "",
+  CRT_checkerbg_active: false,
+  CRT_IS_LOADING: false,
+  CRT_IS_CREATING: false,
+}
 
-let extension_filters = [{ name: 'Images', extensions: ['png', 'gif'] }];
-let imgs_dialog_props = ['openfile', 'multiSelections', 'createDirectory'];
-let dir_dialog_props = ['openDirectory', 'createDirectory'];
+function quintcell_lister() {
+  var quintrow = {};
+  for (var row = 0; row < Math.ceil(data.sequence_paths.length / 5); row++) {
+    var quintcells = []
+    for (var c = 0; c < 5; c++) {
+      const index = row * 5 + c;
+      const img_path = data.sequence_paths[index];
+      if (img_path === undefined) {continue;}
+      quintcells.push(img_path);
+    }
+    quintrow[row] = quintcells;
+  }
+  console.log("quintrow")
+  console.log(quintrow);
+  return quintrow;
+}
+
+let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
+let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
+let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 function CRTLoadAIMG() {
   var img_paths = dialog.showOpenDialog({
     filters: extension_filters,
     properties: imgs_dialog_props
   });
-  console.log(`chosen path: ${img_paths}`);
+  // console.log(`chosen path: ${img_paths}`);
   if (img_paths === undefined) {
     return;
   }
-  console.log(img_paths);
+  // console.log(img_paths);
   // freezeButtons();
+  data.CRT_IS_LOADING = true;
   // CRT_load_imgs_button.classList.add("is-loading");
   client.invoke("inspect_sequence", img_paths, (error, res) => {
     if (error) {
       console.error(error);
-      // mboxError(create_msgbox, error);
+      data.create_msgbox = error;
     } else {
       data.sequence_paths = res.sequence;
-      console.log("obtained sequences", data.sequence_paths);
+      // console.log("obtained sequences", data.sequence_paths);
       // quintcell_generator(sequence_paths, CRT_sequence_body);
       data.create_name = res.name;
-      if (
-        data.create_fps == ''
-      ) {
+      if (data.create_fps == "") {
         data.create_fps = 50;
         data.create_duration = 0.02;
       }
@@ -251,25 +297,98 @@ function CRTLoadAIMG() {
       } (${res.size} total)`;
       data.create_width = res.width;
       data.create_height = res.height;
-      console.log(res);
+      // console.log(res);
       // mboxClear(create_msgbox);
+      data.create_msgbox = '';
       // reloadTempAIMG();
     }
     // CRT_load_imgs_button.classList.remove("is-loading");
     // unfreezeButtons();
+    data.CRT_IS_LOADING = false;
   });
 }
 
-function CRTCreateAIMG() {
+function CRTChooseOutdir() {
+  var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
+  console.log(`Chosen dir: ${choosen_dir}`);
+  if (choosen_dir === undefined) {return}
+  data.create_outdir = choosen_dir;
+  data.create_msgbox = "";
+  // mboxClear(create_msgbox);
+}
 
+function CRTClearAIMG() {
+  data.sequence_paths = [];
+  data.create_name = "";
+  data.create_duration = "";
+  data.create_fps = "";
+  data.create_width = "";
+  data.create_height = "";
+  data.CRT_sequence_counter = "";
+  data.create_msgbox = "";
+  // mboxClear(create_msgbox);
+  // deleteTempAIMG();
+  // session.clearCache(testcallback);
+}
+
+function CRTCreateAIMG() {
+  data.create_msgbox = "";
+  console.log(data.sequence_paths, data.create_outdir, data.create_name, parseFloat(data.create_fps), 
+  data.CRT_out_format, false, data.is_disposed);
+  console.log('console log', data.is_disposed);
+  // create_aimg_button.classList.add('is-loading');
+  // freezeButtons();
+  data.CRT_IS_CREATING = true;
+  // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), CRT_out_format.value, false, is_disposed.checked);
+  client.invoke("combine_image", data.sequence_paths, data.create_outdir[0], data.create_name, parseFloat(data.create_fps), 
+    data.CRT_out_format, data.create_width, data.create_height, data.is_reversed, data.is_disposed, data.flip_horizontal, data.flip_vertical, (error, res) => {
+    console.log('createfragment fps', data.create_fps);
+    if (error) {
+      console.error(error);
+      data.create_msgbox = error;
+      // create_aimg_button.classList.remove('is-loading');
+      data.CRT_IS_CREATING = false;
+      // unfreezeButtons();
+    } else {
+      if (res) {
+        if ("msg" in res) {
+          console.log(res["msg"])
+          data.create_msgbox = res["msg"]
+            // mboxSuccess(create_msgbox, res["msg"]);
+        }
+        if (res["msg"] == "Finished!") {
+            // create_aimg_button.classList.remove('is-loading');
+            // unfreezeButtons();
+          data.CRT_IS_CREATING = false;
+        }
+      }
+    }
+  });
+}
+
+function CRTToggleCheckerBG() {
+  data.CRT_checkerbg_active = !data.CRT_checkerbg_active;
+}
+
+function isButtonFrozen() {
+  if (data.CRT_IS_LOADING || data.CRT_IS_CREATING) return true;
+  else return false;
 }
 
 export default {
   data: function() {
     return data;
   },
+  computed: {
+    quintcell_lister: quintcell_lister,
+    isButtonFrozen: isButtonFrozen,
+  },
   methods: {
-    CRTLoadAIMG: CRTLoadAIMG
+    CRTLoadAIMG: CRTLoadAIMG,
+    CRTClearAIMG: CRTClearAIMG,
+    CRTChooseOutdir: CRTChooseOutdir,
+    CRTCreateAIMG: CRTCreateAIMG,
+    CRTToggleCheckerBG: CRTToggleCheckerBG,
   }
 };
 </script>

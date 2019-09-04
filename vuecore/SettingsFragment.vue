@@ -33,7 +33,7 @@ const { client } = require("./Client.vue");
 
 function refreshWindow() {
   remote.getCurrentWindow().reload();
-  session.clearCache(testcallback);
+  session.clearCache(() => {});
 }
 
 function purgeCache() {

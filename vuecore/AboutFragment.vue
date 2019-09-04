@@ -18,7 +18,7 @@
             <p>Developed by StahlFerro</p>
             <div class="field is-grouped is-grouped-centered">
               <p class="control">
-                <a id="github_button" class="button is-neon-cyan is-medium">
+                <a v-on:click="warpGithub" class="button is-neon-cyan is-medium">
                   <span class="icon">
                     <i class="fab fa-github"></i>
                   </span>
@@ -26,7 +26,7 @@
                 </a>
               </p>
               <p class="control">
-                <a id="donate_button" class="button is-neon-cyan is-medium">
+                <a v-on:click="warpDonate" class="button is-neon-cyan is-medium">
                   <span class="icon">
                     <i class="fas fa-heart"></i>
                   </span>
@@ -40,3 +40,25 @@
     </div>
   </div>
 </template>
+
+<script>
+console.log("AboutFragment.vue loaded!");
+const { remote, shell } = require('electron');
+const dialog = remote.dialog;
+const session = remote.getCurrentWebContents().session;
+
+function warpGithub() {
+  shell.openExternal("https://github.com/StahlFerro/TridentFrame");
+}
+
+function warpDonate() {
+  shell.openExternal("https://en.liberapay.com/StahlFerro");
+}
+
+export default {
+  methods: {
+    warpGithub: warpGithub,
+    warpDonate: warpDonate,
+  }
+}
+</script>

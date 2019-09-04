@@ -5,6 +5,10 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
   entry: './app.js',
   target: 'electron-renderer',
+  node: {
+    __dirname: false,
+    __filename: false
+  },
   module: {
     rules: [
       { test: /\.js$/, use: 'babel-loader' },
