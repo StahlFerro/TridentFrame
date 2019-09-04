@@ -15,12 +15,12 @@
             <div class="level-left"></div>
             <div class="level-right has-text-centered">
               <div class="level-item">
-                <a id="minimize_button" class="minimize-button">
+                <a v-on:click="minimizeWindow" class="minimize-button">
                   <span class="icon is-medium">
                     <i class="far fa-window-minimize fa-inverse"></i>
                   </span>
                 </a>
-                <a id="exit_button" class="exit-button">
+                <a v-on:click="exitApp" class="exit-button">
                   <span class="icon is-medium">
                     <i class="fas fa-times fa-inverse"></i>
                   </span>
@@ -140,6 +140,9 @@
 </template>
 
 <script>
+const remote = require("electron").remote;
+const session = remote.getCurrentWebContents().session;
+
 import { client, ImageViewer } from "./vuecore/Client.vue";
 import CreateFragment from "./vuecore/CreateFragment.vue";
 import SplitFragment from "./vuecore/SplitFragment.vue";
@@ -169,17 +172,13 @@ export default {
     AboutFragment
   },
   methods: {
-    switchem: function() {
-      console.log("YO!");
-      if (data.menuselection == 0) {
-        data.menuselection = 1;
-      } else {
-        data.menuselection = 0;
-      }
-      console.log("menuselection", data.menuselection);
+    minimizeWindow: function () {
+      var window = remote.getCurrentWindow();
+      window.minimize();
     },
-    testlog: function() {
-      console.log("pressed!");
+    exitApp: function() {
+      var window = remote.getCurrentWindow();
+      window.close();
     }
   }
 };

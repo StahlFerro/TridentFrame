@@ -30,7 +30,7 @@
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
-                    <a id="CRT_load_imgs_button" class="button is-neon-cyan">
+                    <a v-on:click="CRTLoadAIMG" class="button is-neon-cyan">
                       <span class="icon is-small">
                         <i class="fas fa-plus"></i>
                       </span>
@@ -79,7 +79,7 @@
                   <div class="field">
                     <label class="label">Name</label>
                     <div class="control">
-                      <input id="create_name" class="input is-neon-white" type="text" />
+                      <input v-model="create_name" class="input is-neon-white" type="text" />
                     </div>
                   </div>
                 </td>
@@ -87,7 +87,7 @@
                   <div class="field">
                     <label class="label">Duration</label>
                     <div class="control">
-                      <input id="create_duration" class="input is-neon-white" type="number" />
+                      <input v-model="create_duration" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
@@ -95,24 +95,18 @@
                   <div class="field">
                     <label class="label">Frame rate</label>
                     <div class="control">
-                      <input
-                        id="create_fps"
-                        class="input is-neon-white"
-                        type="number"
-                        min="1"
-                        max="50"
-                      />
+                      <input v-model="create_fps" class="input is-neon-white" type="number" min="1" max="50" />
                     </div>
                   </div>
                 </td>
                 <td style="vertical-align: bottom;">
                   <label class="checkbox">
-                    <input id="is_disposed" type="checkbox" />
+                    <input v-model="is_disposed" type="checkbox" />
                     Preserve Transparency
                   </label>
                   <br />
                   <label class="checkbox">
-                    <input id="is_reversed" type="checkbox" />
+                    <input v-model="is_reversed" type="checkbox" />
                     Reversed
                   </label>
                 </td>
@@ -122,7 +116,7 @@
                   <div class="field">
                     <label class="label">Width</label>
                     <div class="control">
-                      <input id="create_width" class="input is-neon-white" type="number" />
+                      <input v-model="create_width" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
@@ -130,19 +124,19 @@
                   <div class="field">
                     <label class="label">Height</label>
                     <div class="control">
-                      <input id="create_height" class="input is-neon-white" type="number" />
+                      <input v-model="create_height" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
                 <td></td>
                 <td style="vertical-align: bottom;">
                   <label class="checkbox">
-                    <input id="flip_horizontal" type="checkbox" />
+                    <input v-model="flip_horizontal" type="checkbox" />
                     Flip Horizontally
                   </label>
                   <br />
                   <label class="checkbox">
-                    <input id="flip_vertical" type="checkbox" />
+                    <input v-model="flip_vertical" type="checkbox" />
                     Flip Vertically
                   </label>
                 </td>
@@ -159,13 +153,7 @@
                       </a>
                     </div>
                     <div class="control is-expanded">
-                      <input
-                        id="create_outdir"
-                        class="input is-neon-white"
-                        type="text"
-                        placeholder="Output folder"
-                        readonly
-                      />
+                      <input v-model="create_outdir" class="input is-neon-white" type="text" placeholder="Output folder" readonly />
                     </div>
                   </div>
                 </td>
@@ -185,7 +173,7 @@
                 <td colspan="1" style="padding-top: 25px;">
                   <div class="field has-text-centered">
                     <div class="control">
-                      <a v-on:click="testlog" class="button is-neon-cyan">Create</a>
+                      <a v-on:click="CRTCreateAIMG" class="button is-neon-cyan">Create</a>
                     </div>
                   </div>
                 </td>
@@ -208,15 +196,80 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-export default {
-  methods: {
-    testlog: function() {
-      client.invoke("test", (error, res) => {
-        console.log("error", error);
-        console.log("res", res);
-      });
-      console.log("pressed!");
+
+var data = {
+  sequence_paths: null,
+  CRT_sequence_counter: '',
+  create_name: "",
+  create_fps: "",
+  create_width: "",
+  create_height: "",
+  create_duration: "",
+  is_disposed: false,
+  is_reversed: false,
+  flip_horizontal: false,
+  flip_vertical: false,
+  CRT_out_format: "gif",
+  create_outdir: "",
+  CRT_aimg_stage: "",
+  CRT_aimg_path: ""
+};
+
+let extension_filters = [{ name: 'Images', extensions: ['png', 'gif'] }];
+let imgs_dialog_props = ['openfile', 'multiSelections', 'createDirectory'];
+let dir_dialog_props = ['openDirectory', 'createDirectory'];
+
+function CRTLoadAIMG() {
+  var img_paths = dialog.showOpenDialog({
+    filters: extension_filters,
+    properties: imgs_dialog_props
+  });
+  console.log(`chosen path: ${img_paths}`);
+  if (img_paths === undefined) {
+    return;
+  }
+  console.log(img_paths);
+  // freezeButtons();
+  // CRT_load_imgs_button.classList.add("is-loading");
+  client.invoke("inspect_sequence", img_paths, (error, res) => {
+    if (error) {
+      console.error(error);
+      // mboxError(create_msgbox, error);
+    } else {
+      data.sequence_paths = res.sequence;
+      console.log("obtained sequences", data.sequence_paths);
+      // quintcell_generator(sequence_paths, CRT_sequence_body);
+      data.create_name = res.name;
+      if (
+        data.create_fps == ''
+      ) {
+        data.create_fps = 50;
+        data.create_duration = 0.02;
+      }
+      data.CRT_sequence_counter = `${res.total} image${
+        res.total > 1 ? "s" : ""
+      } (${res.size} total)`;
+      data.create_width = res.width;
+      data.create_height = res.height;
+      console.log(res);
+      // mboxClear(create_msgbox);
+      // reloadTempAIMG();
     }
+    // CRT_load_imgs_button.classList.remove("is-loading");
+    // unfreezeButtons();
+  });
+}
+
+function CRTCreateAIMG() {
+
+}
+
+export default {
+  data: function() {
+    return data;
+  },
+  methods: {
+    CRTLoadAIMG: CRTLoadAIMG
   }
 };
 </script>
