@@ -241,7 +241,6 @@ var data = {
   CRT_aimg_path: "",
   create_msgbox: "",
   CRT_checkerbg_active: false,
-  CRT_checkerbg_url: "",
   CRT_IS_LOADING: false,
   CRT_IS_CREATING: false,
 }
@@ -370,14 +369,6 @@ function CRTCreateAIMG() {
 function CRTToggleCheckerBG() {
   data.CRT_checkerbg_active = !data.CRT_checkerbg_active;
   console.log('now checkerbg is', data.CRT_checkerbg_active);
-  if (data.CRT_checkerbg_active) {
-    data.CRT_checkerbg_url = "./imgs/Transparency500.png";
-    console.log('loading checkerbg url');
-  }
-  else {
-    data.CRT_checkerbg_url = "";
-    console.log('removing checkerbg url')
-  }
 }
 
 function isButtonFrozen() {
