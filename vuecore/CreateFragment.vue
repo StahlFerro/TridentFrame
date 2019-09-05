@@ -57,7 +57,7 @@
                 </div>
                 <div class="level-item has-text-right">
                   <div>
-                    <p id="CRT_sequence_counter"></p>
+                    <p>{{ sequence_counter }}</p>
                   </div>
                 </div>
               </div>
@@ -225,7 +225,6 @@ const { client } = require("./Client.vue");
 
 var data = {
   sequence_paths: [],
-  CRT_sequence_counter: "",
   create_name: "",
   create_fps: "",
   create_width: "",
@@ -240,6 +239,7 @@ var data = {
   CRT_aimg_stage: "",
   CRT_aimg_path: "",
   create_msgbox: "",
+  sequence_counter: "",
   CRT_checkerbg_active: false,
   CRT_IS_LOADING: false,
   CRT_IS_CREATING: false,
@@ -293,9 +293,7 @@ function loadImage() {
         data.create_fps = 50;
         data.create_duration = 0.02;
       }
-      data.CRT_sequence_counter = `${res.total} image${
-        res.total > 1 ? "s" : ""
-      } (${res.size} total)`;
+      data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
       data.create_width = res.width;
       data.create_height = res.height;
       // console.log(res);
@@ -327,6 +325,7 @@ function CRTClearAIMG() {
   data.create_height = "";
   data.CRT_sequence_counter = "";
   data.create_msgbox = "";
+  data.sequence_counter = "";
   // mboxClear(create_msgbox);
   // deleteTempAIMG();
   // session.clearCache(testcallback);

@@ -6,6 +6,7 @@
           <td
             id="split_aimg_cell"
             class="silver-bordered force-center is-paddingless"
+            v-bind:class="{'has-checkerboard-bg': checkerbg_active }"
             width="45%"
             style="height: 380px;"
           >
@@ -74,7 +75,7 @@
               </span>
               <span>Clear</span>
             </a>
-            <a class="button is-neon-white" id="SPL_bgprev_button">
+            <a v-on:click="toggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
               <span class="icon is-medium">
                 <i class="fas fa-chess-board"></i>
               </span>
@@ -91,7 +92,7 @@
                     <label class="label">Pad count</label>
                     <div class="control">
                       <input
-                        id="SPL_pad_count"
+                        v-model="pad_count"
                         class="input is-neon-white"
                         type="number"
                         min="1"
@@ -105,7 +106,7 @@
                     <label class="label">Color space</label>
                     <div class="control">
                       <input
-                        id="SPL_color_space"
+                        v-model="color_space"
                         class="input is-neon-white"
                         type="number"
                         min="2"
@@ -117,11 +118,11 @@
                 </td>
                 <td width="25%" style="vertical-align: middle;">
                   <label class="checkbox">
-                    <input id="is_duration_sensitive" type="checkbox" />
+                    <input v-model="is_duration_sensitive" type="checkbox" />
                     Duration-sensitive
                   </label>
                   <label class="checkbox">
-                    <input id="SPL_is_reduced_color" type="checkbox" />
+                    <input v-model="is_reduced_color" type="checkbox" />
                     Reduce Colors
                   </label>
                 </td>
@@ -131,7 +132,7 @@
                 <td colspan="3">
                   <div class="field has-addons">
                     <div class="control">
-                      <a class="button is-neon-cyan" id="choose_seq_outdir_button">
+                      <a v-on:click="chooseOutDir" class="button is-neon-cyan">
                         <span class="icon is-small">
                           <i class="fas fa-folder-open"></i>
                         </span>
@@ -140,7 +141,7 @@
                     </div>
                     <div class="control is-expanded">
                       <input
-                        id="target_seq_path"
+                        v-model="split_outdir"
                         class="input is-neon-white"
                         type="text"
                         placeholder="Output folder"
@@ -157,7 +158,9 @@
           </td>
         </tr>
         <tr>
-          <td colspan="2" class="has-text-left" style="vertical-align: middle;" id="split_msgbox"></td>
+          <td colspan="2" class="has-text-left" style="vertical-align: middle;">
+            <span>{{ split_msgbox }}</span>
+          </td>
         </tr>
       </table>
     </div>
@@ -189,9 +192,29 @@ var defaults = {
   delay: "-",
   loop_duration: "-",
   aimg_path: "",
+  split_msgbox: "",
+}
+
+var data = {
+  info_header: "Information",
+  name: "-",
+  dimensions: "-",
+  file_size: "-",
+  frame_count: "-",
+  frame_count_ds: "-",
+  fps: "-",
+  delay: "-",
+  loop_duration: "-",
+  aimg_path: "",
+  checkerbg_active: false,
+  pad_count: "",
+  is_duration_sensitive: false,
+  is_reduced_color: false,
+  color_space: "",
+  split_outdir: "",
+  split_msgbox: "",
 };
 
-var data = JSON.parse(JSON.stringify(defaults));
 
 function loadImage() {
   console.log('spl load iamge')
@@ -220,6 +243,8 @@ function loadImage() {
       data.delay = delay_info;
       data.loop_duration = `${res.loop_duration} seconds`;
       data.aimg_path = res.absolute_url;
+      data.pad_count = 3;
+      if (data.is_reduced_color) { data.color_space - 256; }
       // loadAIMG(res);
       // SPL_pad_count.value = 3;
       // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
@@ -231,9 +256,24 @@ function loadImage() {
 }
 
 function clearImage() {
-  data = defaults
+  // console.log(defaults);
+  // console.log(data);
+  Object.assign(data, defaults);
 }
 
+function toggleCheckerBG() {
+  data.checkerbg_active = !data.checkerbg_active;
+  console.log('now checkerbg is', data.checkerbg_active);
+}
+
+function chooseOutDir() {
+  var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
+  console.log(`Chosen dir: ${choosen_dir}`);
+  if (choosen_dir === undefined) {return}
+  data.split_outdir = choosen_dir;
+  data.create_msgbox = "";
+  // mboxClear(create_msgbox);
+}
 
 export default {
   data: function() {
@@ -242,6 +282,8 @@ export default {
   methods: {
     loadImage: loadImage,
     clearImage: clearImage,
+    toggleCheckerBG: toggleCheckerBG,
+    chooseOutDir: chooseOutDir,
   }
 };
 </script>

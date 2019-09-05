@@ -14,7 +14,10 @@ const createWindow = () => {
         maxWidth: 950, maxHeight: 700,
         center: true, 
         frame: false,
-        icon: path.join(__dirname, 'imgs/TridentFrame_Icon_200px.png')
+        icon: path.join(__dirname, 'imgs/TridentFrame_Icon_200px.png'),
+        webPreferences: {
+            webSecurity: false,
+        },
     });
     mainWindow.setMenu(null);
     mainWindow.loadURL("http://localhost:8080/") // Development environment
