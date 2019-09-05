@@ -11,51 +11,50 @@
           >
             <div class="spl-aimg-container">
               <span class="aimg-helper"></span>
-              <img id="SPL_aimg_stage" src />
+              <img v-bind:src="aimg_path" />
             </div>
-            <input id="SPL_aimg_path" name="SPL_aimg_path_field" type="hidden" value />
           </td>
           <td width="55%" class="is-paddingless silver-bordered">
             <table class="table spl-aimg-info-table" width="100%">
               <thead>
                 <tr>
                   <th colspan="2">
-                    <p id="info_header" class="is-white-d">Information</p>
+                    <p class="is-white-d">{{ info_header }}</p>
                   </th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td class="spl-info-label is-cyan">Name</td>
-                  <td class="spl-info-data" id="aimg_name">-</td>
+                  <td class="spl-info-data">{{ name }}</td>
                 </tr>
                 <tr>
                   <td class="spl-info-label is-cyan">Dimensions</td>
-                  <td class="spl-info-data" id="aimg_dimens">-</td>
+                  <td class="spl-info-data">{{ dimensions }}</td>
                 </tr>
                 <tr>
                   <td class="spl-info-label is-cyan">File Size</td>
-                  <td class="spl-info-data" id="aimg_file_size">-</td>
+                  <td class="spl-info-data">{{ file_size }}</td>
                 </tr>
                 <tr>
                   <td class="spl-info-label is-cyan">Total frames</td>
-                  <td class="spl-info-data" id="aimg_frame_count">-</td>
+                  <td class="spl-info-data">{{ frame_count }}</td>
                 </tr>
                 <tr>
                   <td class="spl-info-label is-cyan">Total frames (DS)</td>
-                  <td class="spl-info-data" id="aimg_frame_count_ds">-</td>
+                  <td class="spl-info-data">{{ frame_count_ds }}</td>
                 </tr>
                 <tr>
                   <td class="spl-info-label is-cyan">Frame rate</td>
-                  <td class="spl-info-data" id="aimg_fps">-</td>
+                  <td class="spl-info-data">{{ fps }}</td>
                 </tr>
                 <tr>
                   <td class="spl-info-label is-cyan">Frame delay</td>
-                  <td class="spl-info-data" id="aimg_frame_delay">-</td>
+                  <td class="spl-info-data">{{ delay }}</td>
                 </tr>
                 <tr>
                   <td class="spl-info-label is-cyan">Loop duration</td>
-                  <td class="spl-info-data" id="aimg_duration">-</td>
+                  <td class="spl-info-data">{{ loop_duration }}</td>
                 </tr>
               </tbody>
             </table>
@@ -63,13 +62,13 @@
         </tr>
         <tr>
           <td class="is-hpaddingless">
-            <a class="button is-neon-cyan" id="SPL_load_aimg_button">
+            <a v-on:click="loadImage" class="button is-neon-cyan">
               <span class="icon is-small">
                 <i class="fas fa-plus"></i>
               </span>
               <span>Load GIF/APNG</span>
             </a>
-            <a class="button is-neon-white" id="SPL_clear_aimg_button">
+            <a v-on:click="clearImage" class="button is-neon-white">
               <span class="icon is-small">
                 <i class="fas fa-trash-alt"></i>
               </span>
@@ -164,3 +163,85 @@
     </div>
   </div>
 </template>
+
+<script>
+import { log } from 'util';
+
+const remote = require('electron').remote;
+const dialog = remote.dialog;
+const session = remote.getCurrentWebContents().session;
+const { client } = require("./Client.vue");
+
+let extension_filters = [
+    { name: 'Images', extensions: ['png', 'gif'] },
+];
+let file_dialog_props = ['openfile'];
+let dir_dialog_props = ['openDirectory', 'createDirectory'];
+
+var defaults = {
+  info_header: "Information",
+  name: "-",
+  dimensions: "-",
+  file_size: "-",
+  frame_count: "-",
+  frame_count_ds: "-",
+  fps: "-",
+  delay: "-",
+  loop_duration: "-",
+  aimg_path: "",
+};
+
+var data = JSON.parse(JSON.stringify(defaults));
+
+function loadImage() {
+  console.log('spl load iamge')
+  var chosen_path = dialog.showOpenDialog({
+    filters: extension_filters,
+    properties: file_dialog_props
+  });
+  console.log(`chosen path: ${chosen_path}`);
+  if (chosen_path === undefined) {
+    return;
+  }
+  client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
+    if (error) {
+      console.error(error);
+      // mboxError(split_msgbox, error);
+    } else {
+      data.name = res.name;
+      data.info_header = `${res.extension} Information`;
+      data.file_size = res.fsize;
+      data.frame_count = `${res.frame_count} frames`;
+      data.frame_count_ds = `${res.frame_count_ds} frames`;
+      data.fps = `${res.fps} fps`;
+      data.dimensions = `${res.width} x ${res.height}`;
+      let delay_info = `${res.avg_duration} seconds`
+      if (res.duration_is_uneven) { delay_info += ` (uneven)`; }
+      data.delay = delay_info;
+      data.loop_duration = `${res.loop_duration} seconds`;
+      data.aimg_path = res.absolute_url;
+      // loadAIMG(res);
+      // SPL_pad_count.value = 3;
+      // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
+    }
+  });
+  console.log("registered!");
+  console.log(data);
+  console.log(defaults);
+}
+
+function clearImage() {
+  data = defaults
+}
+
+
+export default {
+  data: function() {
+    return data;
+  },
+  methods: {
+    loadImage: loadImage,
+    clearImage: clearImage,
+  }
+};
+</script>

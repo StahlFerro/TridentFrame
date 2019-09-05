@@ -41,7 +41,7 @@
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
-                    <a v-on:click="CRTLoadAIMG" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}">
+                    <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}">
                       <span class="icon is-small">
                         <i class="fas fa-plus"></i>
                       </span>
@@ -266,7 +266,8 @@ let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
-function CRTLoadAIMG() {
+function loadImage() {
+  console.log("crt load image")
   var img_paths = dialog.showOpenDialog({
     filters: extension_filters,
     properties: imgs_dialog_props
@@ -385,7 +386,7 @@ export default {
     isButtonFrozen: isButtonFrozen,
   },
   methods: {
-    CRTLoadAIMG: CRTLoadAIMG,
+    loadImage: loadImage,
     CRTClearAIMG: CRTClearAIMG,
     CRTChooseOutdir: CRTChooseOutdir,
     CRTCreateAIMG: CRTCreateAIMG,
