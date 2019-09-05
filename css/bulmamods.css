@@ -7241,6 +7241,10 @@ div.mod-left-menu::-webkit-scrollbar {
 .table.is-borderless td, th {
   border: 0; }
 
+/* Checkerboard background image */
+.has-checkerboard-bg {
+  background-image: url("../imgs/Transparency500.png"); }
+
 /* Horizontal and vertical paddingless */
 .is-hpaddingless {
   padding-left: 0px !important;

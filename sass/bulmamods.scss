@@ -153,6 +153,12 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 }
 
 
+/* Checkerboard background image */
+.has-checkerboard-bg {
+    background-image: url("../imgs/Transparency500.png");
+}
+
+
 /* Horizontal and vertical paddingless */
 .is-hpaddingless {
     padding-left: 0px !important;

@@ -27,10 +27,10 @@
             id="create_aimg_cell"
             class="silver-bordered force-center is-paddingless"
             style="width: 320px; height: 320px;"
-          >
+            v-bind:class="{'has-checkerboard-bg': CRT_checkerbg_active}">
             <div class="crt-aimg-container">
               <span class="aimg-helper"></span>
-              <img id="CRT_aimg_stage" style="background: url('./imgs/Transparency500.png')"/>
+              <img id="CRT_aimg_stage"/>
             </div>
             <input id="CRT_aimg_path" name="CRT_aimg_path_field" type="hidden" value />
           </td>
@@ -241,6 +241,7 @@ var data = {
   CRT_aimg_path: "",
   create_msgbox: "",
   CRT_checkerbg_active: false,
+  CRT_checkerbg_url: "",
   CRT_IS_LOADING: false,
   CRT_IS_CREATING: false,
 }
@@ -368,6 +369,15 @@ function CRTCreateAIMG() {
 
 function CRTToggleCheckerBG() {
   data.CRT_checkerbg_active = !data.CRT_checkerbg_active;
+  console.log('now checkerbg is', data.CRT_checkerbg_active);
+  if (data.CRT_checkerbg_active) {
+    data.CRT_checkerbg_url = "./imgs/Transparency500.png";
+    console.log('loading checkerbg url');
+  }
+  else {
+    data.CRT_checkerbg_url = "";
+    console.log('removing checkerbg url')
+  }
 }
 
 function isButtonFrozen() {

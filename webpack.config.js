@@ -22,7 +22,11 @@ module.exports = {
           hmr: process.env.NODE_ENV == 'development'
         },
       }, 'css-loader',]},
-      { test: /.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/, use: [{
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: 'file-loader',
+      },
+      { test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/, use: [{
         loader: 'file-loader',
         options: {
           name: '[name].[ext]',

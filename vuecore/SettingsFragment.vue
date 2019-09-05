@@ -20,13 +20,23 @@
             </a>
           </td>
         </tr>
+        <tr>
+          <td>
+            <a v-on:click="openInspector" class="button is-large is-neon-cyan">
+              <span class="icon is-large">
+                <i class="fas fa-bug"></i>
+              </span>
+              <span>Open Inspector</span>
+            </a>
+          </td>
+        </tr>
       </table>
     </div>
   </div>
 </template>
 
 <script>
-const remote = require("electron").remote;
+const { remote, BrowserWindow } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
@@ -46,10 +56,17 @@ function purgeCache() {
   });
 }
 
+function openInspector() {
+  remote.getCurrentWebContents().openDevTools();
+  var devtools = remote.getCurrentWindow().devToolsWebContents;
+  if (devtools) { devtools.focus(); }
+}
+
 export default {
   methods: {
     refreshWindow: refreshWindow,
     purgeCache: purgeCache,
+    openInspector: openInspector,
   }
 };
 </script>
