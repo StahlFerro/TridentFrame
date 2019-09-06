@@ -4,29 +4,25 @@
     <table class="table is-borderless" style="padding: 5px;" width="100%">
       <tr>
         <!-- <td width="3%"></td> -->
-        <td
-          width="35%"
+        <td width="35%"
           colspan="3"
-          id="MOD_orig_cell"
           class="silver-bordered force-center is-paddingless"
-          style="height: 250px;"
-        >
+          v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active}"
+          style="height: 250px;">
           <div class="mod-aimg-container">
             <span class="aimg-helper"></span>
-            <img id="MOD_orig_stage" src />
+            <img v-bind:src="orig_path" />
           </div>
-          <input id="MOD_orig_path" name="MOD_orig_path_field" type="hidden" value />
+          <!-- <input id="MOD_orig_path" name="MOD_orig_path_field" type="hidden" value /> -->
         </td>
         <!-- <td width="3%"></td> -->
 
         <td width="6%"></td>
         <td width="9%"></td>
-        <td
-          width="35%"
-          id="MOD_new_cell"
+        <td width="35%"
           class="silver-bordered force-center is-paddingless"
-          style="height: 250px;"
-        >
+          v-bind:class="{'has-checkerboard-bg': new_checkerbg_active}"
+          style="height: 250px;">
           <div class="mod-aimg-container">
             <span class="aimg-helper"></span>
             <img id="MOD_new_stage" src />
@@ -37,7 +33,7 @@
         <td width="6%"></td>
       </tr>
       <tr>
-        <td width="41%" colspan="3" class="has-text-centered is-hpaddingless">
+        <td colspan="3" class="has-text-centered is-hpaddingless">
           <a v-on:click="loadImage" class="button is-neon-cyan">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
@@ -50,20 +46,20 @@
             </span>
             <span>Clear</span>
           </a>
-          <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white" >
+          <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
         </td>
-        <td width="59%" colspan="5" class="has-text-centered is-hpaddingless">
+        <td colspan="5" class="has-text-centered is-hpaddingless">
           <a class="button is-neon-cyan" id="MOD_prev_res_button">
             <span class="icon is-small">
               <i class="fas fa-eye"></i>
             </span>
             <span>Preview</span>
           </a>
-          <a class="button is-neon-white" v-on:click="toggleNewCheckerBG">
+          <a v-on:click="toggleNewCheckerBG" class="button is-neon-white">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
@@ -218,8 +214,8 @@
                           <div class="control">
                             <div class="select is-neon-cyan">
                               <select v-model="format">
-                                <option value="gif">GIF</option>
-                                <option value="apng">APNG</option>
+                                <option value="GIF">GIF</option>
+                                <option value="APNG">APNG</option>
                               </select>
                             </div>
                           </div>
@@ -317,7 +313,7 @@
                               type="number"
                               min="30"
                               max="200"
-                              value="30"
+                              placeholder="30 - 200"
                               v-bind:disabled="!is_lossy"
                             />
                           </div>
@@ -341,7 +337,7 @@
                               type="number"
                               min="2"
                               max="256"
-                              value="256"
+                              placeholder="2 - 256"
                               v-bind:disabled="!is_reduced_color"
                             />
                           </div>
@@ -372,13 +368,13 @@ const { client } = require('./Client.vue');
 
 
 var data = {
-  orig_name: "",
-  orig_dimensions: "",
-  orig_frame_count: "",
-  orig_fps: "",
-  orig_delay: "",
-  orig_loop_duration: "",
-  orig_format: "",
+  orig_name: "-",
+  orig_dimensions: "-",
+  orig_frame_count: "-",
+  orig_fps: "-",
+  orig_delay: "-",
+  orig_loop_duration: "-",
+  orig_format: "-",
   orig_path: "",
   name: "",
   width: "",
@@ -403,11 +399,31 @@ var data = {
   orig_checkerbg_active: false,
   new_checkerbg_active: false,
   new_path: "",
+  MOD_IS_LOADING: false,
+  MOD_IS_MODIFYING: false,
 };
 
-function clearOrigFields() {}
+function clearOrigFields() {
+  data.orig_name = "-";
+  data.orig_dimensions = "-";
+  data.orig_frame_count = "-";
+  data.orig_fps = "-";
+  data.orig_delay = "-";
+  data.orig_loop_duration = "-";
+  data.orig_format = "-";
+  data.orig_path = "";
+}
 
-function clearNewFields() {}
+function clearNewFields() {
+  data.name = "";
+  data.width = "";
+  data.height = "";
+  data.rotation = "";
+  data.fps = "";
+  data.delay = "";
+  data.skip_frame = "";
+  
+}
 
 function toggleOrigCheckerBG() {
   data.orig_checkerbg_active = !data.orig_checkerbg_active;
@@ -468,6 +484,7 @@ function loadOrigInfo(res) {
 }
 
 function loadNewInfo(res) {
+  console.log(res.extension);
   data.name = res.name;
   data.format = res.extension;
   data.width = res.width;
@@ -478,12 +495,18 @@ function loadNewInfo(res) {
 
 
 function clearImage() {
-
+  clearOrigFields();
+  clearNewFields();
 }
 
 function chooseOutDir() {}
 
 function modifyImage() {}
+
+function buttonIsFrozen() {
+  if (data.MOD_IS_LOADING || data.MOD_IS_MODIFYING) return true;
+  else return false;
+}
 
 export default {
   data: function() {
@@ -495,7 +518,10 @@ export default {
     chooseOutDir: chooseOutDir,
     modifyImage: modifyImage,
     toggleOrigCheckerBG: toggleOrigCheckerBG,
-    toggleNewCheckerBG: toggleNewCheckerBG
+    toggleNewCheckerBG: toggleNewCheckerBG,
+  },
+  computed: {
+    buttonIsFrozen: buttonIsFrozen,
   }
 };
 </script>

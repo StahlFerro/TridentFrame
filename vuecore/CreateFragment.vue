@@ -96,9 +96,9 @@
                 </td>
                 <td>
                   <div class="field">
-                    <label class="label">Duration</label>
+                    <label class="label">Delay (seconds)</label>
                     <div class="control">
-                      <input v-model="create_duration" class="input is-neon-white" type="number" />
+                      <input v-model="create_delay" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
@@ -106,13 +106,7 @@
                   <div class="field">
                     <label class="label">Frame rate</label>
                     <div class="control">
-                      <input
-                        v-model="create_fps"
-                        class="input is-neon-white"
-                        type="number"
-                        min="1"
-                        max="50"
-                      />
+                      <input v-model="create_fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
                     </div>
                   </div>
                 </td>
@@ -221,7 +215,7 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+const { client, GIF_DELAY_DECIMAL_PRECISION } = require("./Client.vue");
 
 var data = {
   sequence_paths: [],
@@ -229,7 +223,7 @@ var data = {
   create_fps: "",
   create_width: "",
   create_height: "",
-  create_duration: "",
+  create_delay: "",
   is_disposed: false,
   is_reversed: false,
   flip_horizontal: false,
@@ -289,10 +283,9 @@ function loadImage() {
       // console.log("obtained sequences", data.sequence_paths);
       // quintcell_generator(sequence_paths, CRT_sequence_body);
       data.create_name = res.name;
-      if (data.create_fps == "") {
-        data.create_fps = 50;
-        data.create_duration = 0.02;
-      }
+      // if (data.create_fps == "") {
+      //   data.syncDelay = 0.02;
+      // }
       data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
       data.create_width = res.width;
       data.create_height = res.height;
@@ -319,7 +312,7 @@ function CRTChooseOutdir() {
 function CRTClearAIMG() {
   data.sequence_paths = [];
   data.create_name = "";
-  data.create_duration = "";
+  data.create_delay = "";
   data.create_fps = "";
   data.create_width = "";
   data.create_height = "";
@@ -333,16 +326,17 @@ function CRTClearAIMG() {
 
 function CRTCreateAIMG() {
   data.create_msgbox = "";
-  console.log(data.sequence_paths, data.create_outdir, data.create_name, parseFloat(data.create_fps), 
-  data.CRT_out_format, false, data.is_disposed);
   console.log('console log', data.is_disposed);
   // create_aimg_button.classList.add('is-loading');
   // freezeButtons();
   data.CRT_IS_CREATING = true;
   // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), CRT_out_format.value, false, is_disposed.checked);
-  client.invoke("combine_image", data.sequence_paths, data.create_outdir, data.create_name, parseFloat(data.create_fps), 
+  console.log('data before create');
+  console.log(data);
+  // console.log(getFPS());
+  client.invoke("combine_image", data.sequence_paths, data.create_outdir, data.create_name, data.create_fps, 
     data.CRT_out_format, data.create_width, data.create_height, data.is_reversed, data.is_disposed, data.flip_horizontal, data.flip_vertical, (error, res) => {
-    console.log('createfragment fps', data.create_fps);
+    // console.log('createfragment fps', data.create_fps);
     if (error) {
       console.error(error);
       data.create_msgbox = error;
@@ -376,13 +370,36 @@ function isButtonFrozen() {
   else return false;
 }
 
+// function getFPS() {
+//   return Math.round(1/data.create_delay * 1000) / 1000;
+// }
+
+function delayConstrain (event) {
+  console.log("delay event", event);
+  var value = event.target.value;
+  if (value && value.includes(".")) {
+    var numdec = value.split(".");
+    console.log("numdec", numdec);
+    if (numdec[1].length > GIF_DELAY_DECIMAL_PRECISION) {
+      var twodecs = numdec[1].substring(0, GIF_DELAY_DECIMAL_PRECISION);
+      console.log("twodecs limit triggered", twodecs);
+      data.create_delay = `${numdec[0]}.${twodecs}`;
+    }
+  }
+  data.create_fps = Math.round(1000 / data.create_delay) / 1000;
+}
+
+function fpsConstrain (event) {
+  console.log("fps event", event);
+  var value = event.target.value;
+  if (value) {
+    data.create_delay = Math.round(100 / data.create_fps) / 100;
+  }
+}
+
 export default {
   data: function() {
     return data;
-  },
-  computed: {
-    quintcell_lister: quintcell_lister,
-    isButtonFrozen: isButtonFrozen,
   },
   methods: {
     loadImage: loadImage,
@@ -390,6 +407,12 @@ export default {
     CRTChooseOutdir: CRTChooseOutdir,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
-  }
+    delayConstrain: delayConstrain,
+    fpsConstrain: fpsConstrain,
+  },
+  computed: {
+    quintcell_lister: quintcell_lister,
+    isButtonFrozen: isButtonFrozen,
+  },
 };
 </script>

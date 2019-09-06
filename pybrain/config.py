@@ -28,7 +28,7 @@ def imagemagick_exec():
 
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """
-    def __init__(self, fps, extension, reverse, transparent):
+    def __init__(self, fps, delay, extension, reverse, transparent):
         try:
             fps = float(fps)
         except Exception as e:
