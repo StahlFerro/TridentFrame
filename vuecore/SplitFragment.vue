@@ -63,7 +63,7 @@
         </tr>
         <tr>
           <td class="is-hpaddingless">
-            <a v-on:click="loadImage" class="button is-neon-cyan">
+            <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_LOADING, 'is-static': isButtonFrozen}">
               <span class="icon is-small">
                 <i class="fas fa-plus"></i>
               </span>
@@ -75,7 +75,11 @@
               </span>
               <span>Clear</span>
             </a>
-            <a v-on:click="toggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
+            <a
+              v-on:click="toggleCheckerBG"
+              class="button is-neon-white"
+              v-bind:class="{'is-active': checkerbg_active}"
+            >
               <span class="icon is-medium">
                 <i class="fas fa-chess-board"></i>
               </span>
@@ -111,7 +115,7 @@
                         type="number"
                         min="2"
                         max="256"
-                        disabled
+                        v-bind:disabled="!is_reduced_color"
                       />
                     </div>
                   </div>
@@ -151,7 +155,8 @@
                   </div>
                 </td>
                 <td class="has-text-centered">
-                  <a class="button is-neon-cyan" id="SPL_split_aimg_button">Split to folder</a>
+                  <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'is-static': isButtonFrozen}">
+                    Split to folder</a>
                 </td>
               </tr>
             </table>
@@ -168,18 +173,16 @@
 </template>
 
 <script>
-import { log } from 'util';
+import { log } from "util";
 
-const remote = require('electron').remote;
+const remote = require("electron").remote;
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 
-let extension_filters = [
-    { name: 'Images', extensions: ['png', 'gif'] },
-];
-let file_dialog_props = ['openfile'];
-let dir_dialog_props = ['openDirectory', 'createDirectory'];
+let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
+let file_dialog_props = ["openfile"];
+let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 var defaults = {
   info_header: "Information",
@@ -192,8 +195,8 @@ var defaults = {
   delay: "-",
   loop_duration: "-",
   aimg_path: "",
-  split_msgbox: "",
-}
+  split_msgbox: ""
+};
 
 var data = {
   info_header: "Information",
@@ -213,11 +216,12 @@ var data = {
   color_space: "",
   split_outdir: "",
   split_msgbox: "",
+  SPL_IS_LOADING: false,
+  SPL_IS_SPLITTING: false,
 };
 
-
 function loadImage() {
-  console.log('spl load iamge')
+  console.log("spl load iamge");
   var chosen_path = dialog.showOpenDialog({
     filters: extension_filters,
     properties: file_dialog_props
@@ -226,10 +230,13 @@ function loadImage() {
   if (chosen_path === undefined) {
     return;
   }
+  data.SPL_IS_LOADING = true;
   client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
     if (error) {
       console.error(error);
+      data.split_msgbox = error;
       // mboxError(split_msgbox, error);
+      data.SPL_IS_LOADING = false;
     } else {
       data.name = res.name;
       data.info_header = `${res.extension} Information`;
@@ -238,13 +245,19 @@ function loadImage() {
       data.frame_count_ds = `${res.frame_count_ds} frames`;
       data.fps = `${res.fps} fps`;
       data.dimensions = `${res.width} x ${res.height}`;
-      let delay_info = `${res.avg_duration} seconds`
-      if (res.duration_is_uneven) { delay_info += ` (uneven)`; }
+      let delay_info = `${res.avg_duration} seconds`;
+      if (res.duration_is_uneven) {
+        delay_info += ` (uneven)`;
+      }
       data.delay = delay_info;
       data.loop_duration = `${res.loop_duration} seconds`;
       data.aimg_path = res.absolute_url;
       data.pad_count = 3;
-      if (data.is_reduced_color) { data.color_space - 256; }
+      if (data.is_reduced_color) {
+        data.color_space - 256;
+      }
+      data.split_msgbox = "";
+      data.SPL_IS_LOADING = false;
       // loadAIMG(res);
       // SPL_pad_count.value = 3;
       // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
@@ -256,34 +269,71 @@ function loadImage() {
 }
 
 function clearImage() {
-  // console.log(defaults);
-  // console.log(data);
   Object.assign(data, defaults);
 }
 
 function toggleCheckerBG() {
   data.checkerbg_active = !data.checkerbg_active;
-  console.log('now checkerbg is', data.checkerbg_active);
+  console.log("now checkerbg is", data.checkerbg_active);
 }
 
 function chooseOutDir() {
   var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
   console.log(`Chosen dir: ${choosen_dir}`);
-  if (choosen_dir === undefined) {return}
-  data.split_outdir = choosen_dir;
-  data.create_msgbox = "";
+  if (choosen_dir === undefined) { return; }
+  data.split_outdir = choosen_dir[0];
+  data.split_msgbox = "";
   // mboxClear(create_msgbox);
+}
+
+function splitImage() {
+  // mboxClear(split_msgbox);
+  data.SPL_IS_SPLITTING = true;
+  // freezeButtons();
+  // console.log(`in path: ${in_path} out path: ${out_path}`);
+  var color_space = data.color_space;
+  if (!data.is_reduced_color || color_space == "") {
+    color_space = 0;
+  }
+  console.log(data);
+  client.invoke(
+    "split_image", data.aimg_path, data.split_outdir, data.pad_count, color_space, data.is_duration_sensitive, (error, res) => {
+      if (error) {
+        console.log(error);
+        data.split_msgbox = error;
+        data.SPL_IS_SPLITTING = false;
+        // unfreezeButtons();
+      } else {
+        if (res) {
+          console.log("res", res);
+          data.split_msgbox = res;
+          if (res == "Finished!") {
+            data.SPL_IS_SPLITTING = false;
+          }
+        }
+      }
+    }
+  );
+}
+
+function isButtonFrozen() {
+  if (data.SPL_IS_LOADING || data.SPL_IS_SPLITTING) return true;
+  else return false;
 }
 
 export default {
   data: function() {
     return data;
   },
+  computed: {
+    isButtonFrozen: isButtonFrozen,
+  },
   methods: {
     loadImage: loadImage,
     clearImage: clearImage,
     toggleCheckerBG: toggleCheckerBG,
     chooseOutDir: chooseOutDir,
+    splitImage: splitImage
   }
 };
 </script>

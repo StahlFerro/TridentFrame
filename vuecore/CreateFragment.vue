@@ -311,7 +311,7 @@ function CRTChooseOutdir() {
   var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
   console.log(`Chosen dir: ${choosen_dir}`);
   if (choosen_dir === undefined) {return}
-  data.create_outdir = choosen_dir;
+  data.create_outdir = choosen_dir[0];
   data.create_msgbox = "";
   // mboxClear(create_msgbox);
 }
@@ -340,7 +340,7 @@ function CRTCreateAIMG() {
   // freezeButtons();
   data.CRT_IS_CREATING = true;
   // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), CRT_out_format.value, false, is_disposed.checked);
-  client.invoke("combine_image", data.sequence_paths, data.create_outdir[0], data.create_name, parseFloat(data.create_fps), 
+  client.invoke("combine_image", data.sequence_paths, data.create_outdir, data.create_name, parseFloat(data.create_fps), 
     data.CRT_out_format, data.create_width, data.create_height, data.is_reversed, data.is_disposed, data.flip_horizontal, data.flip_vertical, (error, res) => {
     console.log('createfragment fps', data.create_fps);
     if (error) {
