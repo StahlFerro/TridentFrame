@@ -154,7 +154,6 @@ import AboutFragment from "./vuecore/AboutFragment.vue";
 
 var data = {
   menuselection: 0,
-  message: "Hi!"
 };
 
 export default {

@@ -38,19 +38,19 @@
       </tr>
       <tr>
         <td width="41%" colspan="3" class="has-text-centered is-hpaddingless">
-          <a class="button is-neon-cyan" id="MOD_load_aimg_button">
+          <a v-on:click="loadImage" class="button is-neon-cyan">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
             <span>Load GIF/APNG</span>
           </a>
-          <a class="button is-neon-white" id="MOD_clear_aimg_button">
+          <a v-on:click="clearImage" class="button is-neon-white">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>
             <span>Clear</span>
           </a>
-          <a class="button is-neon-white" id="MOD_orig_bgprev_button">
+          <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white" >
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
@@ -63,7 +63,7 @@
             </span>
             <span>Preview</span>
           </a>
-          <a class="button is-neon-white" id="MOD_new_bgprev_button">
+          <a class="button is-neon-white" v-on:click="toggleNewCheckerBG">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
@@ -76,31 +76,31 @@
             <tbody>
               <tr>
                 <td class="mod-info-label is-cyan">Name</td>
-                <td class="mod-info-data" id="MOD_orig_name">-</td>
+                <td class="mod-info-data">{{ orig_name }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Dimensions</td>
-                <td class="mod-info-data" id="MOD_orig_dimensions">-</td>
+                <td class="mod-info-data">{{ orig_dimensions }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Total frames</td>
-                <td class="mod-info-data" id="MOD_orig_framecount">-</td>
+                <td class="mod-info-data">{{ orig_frame_count }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Frame rate</td>
-                <td class="mod-info-data" id="MOD_orig_fps">-</td>
+                <td class="mod-info-data">{{ orig_fps }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Frame delay</td>
-                <td class="mod-info-data" id="MOD_orig_delay">-</td>
+                <td class="mod-info-data">{{ orig_delay }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Loop duration</td>
-                <td class="mod-info-data" id="MOD_orig_loopduration">-</td>
+                <td class="mod-info-data">{{ orig_loop_duration }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Format</td>
-                <td class="mod-info-data" id="MOD_orig_format">-</td>
+                <td class="mod-info-data">{{ orig_format }}</td>
               </tr>
             </tbody>
           </table>
@@ -116,16 +116,24 @@
                 <div class="mod-left-menu">
                   <aside class="menu has-text-centered" style="margin: 0;">
                     <ul class="menu-list mod-left-menu">
-                      <li id="MOD_box_general" class="mod-menu-item is-selected">
-                        <a id="MOD_menu_general">
+                      <li
+                        id="MOD_box_general"
+                        class="mod-menu-item"
+                        v-bind:class="{'is-selected': mod_menuselection == 0}"
+                      >
+                        <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
                           <span class="icon is-large">
                             <i class="fas fa-image fa-2x fa-inverse"></i>
                           </span>
                           <p class="is-white-d">General</p>
                         </a>
                       </li>
-                      <li id="MOD_box_gif" class="mod-menu-item">
-                        <a id="MOD_menu_gif">
+                      <li
+                        id="MOD_box_gif"
+                        class="mod-menu-item"
+                        v-bind:class="{'is-selected': mod_menuselection == 1}"
+                      >
+                        <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1">
                           <span class="icon is-large">
                             <i class="far fa-images fa-2x fa-inverse"></i>
                           </span>
@@ -137,14 +145,14 @@
                 </div>
               </td>
               <td width="90%" class="is-paddingless">
-                <div id="MOD_general_control_panel">
+                <div v-show="mod_menuselection == 0">
                   <table class="table mod-new-control-table is-hpaddingless" width="100%">
                     <tr>
                       <td width="40%" colspan="2">
                         <div class="field">
                           <label class="label">Name</label>
                           <div class="control">
-                            <input id="MOD_new_name" class="input is-neon-white" type="text" />
+                            <input v-model="name" class="input is-neon-white" type="text" />
                           </div>
                         </div>
                       </td>
@@ -152,7 +160,7 @@
                         <div class="field">
                           <label class="label">Width</label>
                           <div class="control">
-                            <input id="MOD_new_width" class="input is-neon-white" type="text" />
+                            <input v-model="width" class="input is-neon-white" type="text" />
                           </div>
                         </div>
                       </td>
@@ -160,7 +168,7 @@
                         <div class="field">
                           <label class="label">Height</label>
                           <div class="control">
-                            <input id="MOD_new_height" class="input is-neon-white" type="text" />
+                            <input v-model="height" class="input is-neon-white" type="text" />
                           </div>
                         </div>
                       </td>
@@ -168,7 +176,7 @@
                         <div class="field">
                           <label class="label">Rotation</label>
                           <div class="control">
-                            <input id="MOD_new_rotation" class="input is-neon-white" type="number" />
+                            <input v-model="rotation" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -178,7 +186,7 @@
                         <div class="field">
                           <label class="label">FPS</label>
                           <div class="control">
-                            <input id="MOD_new_fps" class="input is-neon-white" type="number" />
+                            <input v-model="fps" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -186,7 +194,7 @@
                         <div class="field">
                           <label class="label">Duration</label>
                           <div class="control">
-                            <input id="MOD_new_delay" class="input is-neon-white" type="number" />
+                            <input v-model="duration" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -209,7 +217,7 @@
                           <label class="label">Format</label>
                           <div class="control">
                             <div class="select is-neon-cyan">
-                              <select id="MOD_new_format">
+                              <select v-model="format">
                                 <option value="gif">GIF</option>
                                 <option value="apng">APNG</option>
                               </select>
@@ -221,21 +229,21 @@
                     <tr>
                       <td width="20%" class="force-vcenter">
                         <label class="checkbox">
-                          <input id="MOD_new_flip_x" type="checkbox" />
+                          <input v-model="flip_horizontal" type="checkbox" />
                           Flip X
                         </label>
                         <label class="checkbox">
-                          <input id="MOD_new_flip_y" type="checkbox" />
+                          <input v-model="flip_vertical" type="checkbox" />
                           Flip Y
                         </label>
                       </td>
                       <td width="40%" class="force-vcenter" colspan="2">
                         <label class="checkbox">
-                          <input id="MOD_new_reversed" type="checkbox" />
+                          <input v-model="is_reversed" type="checkbox" />
                           Reversed
                         </label>
                         <label class="checkbox">
-                          <input id="MOD_new_preserve_alpha" type="checkbox" />
+                          <input v-model="preserve_alpha" type="checkbox" />
                           Preserve Transparency
                         </label>
                       </td>
@@ -268,12 +276,12 @@
                     </tr>
                   </table>
                 </div>
-                <div id="MOD_gif_control_panel" style="display: none;">
+                <div v-show="mod_menuselection == 1">
                   <table class="table mod-new-control-table is-hpaddingless" width="100%">
                     <tr>
                       <td class="force-vcenter" width="20%">
                         <label class="checkbox">
-                          <input id="MOD_new_is_optimized" type="checkbox" />
+                          <input v-model="is_optimized" type="checkbox" />
                           Optimize
                         </label>
                       </td>
@@ -282,7 +290,7 @@
                           <!-- <label class="label">Optimization Level</label> -->
                           <div class="control">
                             <div class="select is-neon-cyan">
-                              <select id="MOD_new_optimization_level" disabled>
+                              <select v-model="optimization_level" v-bind:disabled="!is_optimized">
                                 <option value="opt_1">Level 1</option>
                                 <option value="opt_2">Level 2</option>
                                 <option value="opt_3">Level 3</option>
@@ -295,7 +303,7 @@
                     <tr>
                       <td class="force-vcenter" width="20%">
                         <label class="checkbox">
-                          <input id="MOD_new_is_lossy" type="checkbox" />
+                          <input v-model="is_lossy" type="checkbox" />
                           Lossy-compress
                         </label>
                       </td>
@@ -304,13 +312,13 @@
                           <!-- <label class="label">Color space</label> -->
                           <div class="control">
                             <input
-                              id="MOD_new_lossy_value"
+                              v-model="lossy_value"
                               class="input is-neon-white"
                               type="number"
                               min="30"
                               max="200"
                               value="30"
-                              disabled
+                              v-bind:disabled="!is_lossy"
                             />
                           </div>
                         </div>
@@ -319,7 +327,7 @@
                     <tr>
                       <td class="force-vcenter" width="20%">
                         <label class="checkbox">
-                          <input id="MOD_new_reduced_color" type="checkbox" />
+                          <input v-model="is_reduced_color" type="checkbox" />
                           Reduce Colors
                         </label>
                       </td>
@@ -328,13 +336,13 @@
                           <!-- <label class="label">Color space</label> -->
                           <div class="control">
                             <input
-                              id="MOD_color_space"
+                              v-model="color_space"
                               class="input is-neon-white"
                               type="number"
                               min="2"
                               max="256"
                               value="256"
-                              disabled
+                              v-bind:disabled="!is_reduced_color"
                             />
                           </div>
                         </div>
@@ -354,3 +362,140 @@
     <!-- </div> -->
   </div>
 </template>
+
+<script>
+
+const remote = require('electron').remote;
+const dialog = remote.dialog;
+const session = remote.getCurrentWebContents().session;
+const { client } = require('./Client.vue');
+
+
+var data = {
+  orig_name: "",
+  orig_dimensions: "",
+  orig_frame_count: "",
+  orig_fps: "",
+  orig_delay: "",
+  orig_loop_duration: "",
+  orig_format: "",
+  orig_path: "",
+  name: "",
+  width: "",
+  height: "",
+  rotation: "",
+  fps: "",
+  duration: "",
+  delay: "",
+  format: "gif",
+  skip_frame: "",
+  flip_horizontal: false,
+  flip_vertical: false,
+  is_reversed: false,
+  preserve_alpha: false,
+  is_optimized: false,
+  optimization_level: "opt_1",
+  is_lossy: false,
+  lossy_value: "",
+  is_reduced_color: false,
+  color_space: "",
+  mod_menuselection: 0,
+  orig_checkerbg_active: false,
+  new_checkerbg_active: false,
+  new_path: "",
+};
+
+function clearOrigFields() {}
+
+function clearNewFields() {}
+
+function toggleOrigCheckerBG() {
+  data.orig_checkerbg_active = !data.orig_checkerbg_active;
+  console.log("orig checkerbg is", data.orig_checkerbg_active);
+}
+
+function toggleNewCheckerBG() {
+  data.new_checkerbg_active = !data.new_checkerbg_active;
+  console.log("new checkerbg is", data.new_checkerbg_active);
+}
+
+let extension_filters = [
+    { name: 'Images', extensions: ['png', 'gif'] },
+];
+let file_dialog_props = ['openfile'];
+let dir_dialog_props = ['openDirectory', 'createDirectory'];
+
+function loadImage() {
+  console.log("mod load image called");
+  var chosen_path = dialog.showOpenDialog({
+    filters: extension_filters,
+    properties: file_dialog_props
+  });
+  console.log(`chosen path: ${chosen_path}`);
+  if (chosen_path === undefined) {
+    return;
+  }
+  client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
+    if (error) {
+      console.error(error);
+      // mboxError(modify_msgbox, error);
+    } else {
+      loadOrigInfo(res);
+      loadNewInfo(res);
+      // clearOrigFields();
+      // clearNewFields();
+      // fillOrigData(res);
+      // fillNewData(res);
+      // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
+    }
+  });
+  console.log("registered!");
+}
+
+function loadOrigInfo(res) {
+  data.orig_name = res.name;
+  data.orig_dimensions= `${res.width} x ${res.height}`;
+  data.orig_fps = `${res.fps} fps`;
+  data.orig_frame_count= `${res.frame_count} (${res.frame_count_ds})`;
+  data.orig_format = res.extension;
+  let delay_info = `${res.avg_duration} seconds`;
+  if (res.duration_is_uneven) {
+      delay_info += ` (uneven)`;
+  }
+  data.orig_delay = delay_info;
+  data.orig_loop_duration = `${res.loop_duration} seconds`;
+  data.orig_path = res.absolute_url;
+}
+
+function loadNewInfo(res) {
+  data.name = res.name;
+  data.format = res.extension;
+  data.width = res.width;
+  data.height = res.height;
+  data.delay = res.delay;
+  data.fps = res.fps;
+}
+
+
+function clearImage() {
+
+}
+
+function chooseOutDir() {}
+
+function modifyImage() {}
+
+export default {
+  data: function() {
+    return data;
+  },
+  methods: {
+    loadImage: loadImage,
+    clearImage: clearImage,
+    chooseOutDir: chooseOutDir,
+    modifyImage: modifyImage,
+    toggleOrigCheckerBG: toggleOrigCheckerBG,
+    toggleNewCheckerBG: toggleNewCheckerBG
+  }
+};
+</script>
