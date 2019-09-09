@@ -10,7 +10,7 @@
           >
             <table class="sequence-grid is-paddingless" width="100%">
               <tbody>
-                <tr v-for="(paths, row) in quintcell_lister" v-bind:key="row">
+                <tr v-for="(paths, row) in CRTQuintcellLister" v-bind:key="row">
                   <td v-for="path in paths" v-bind:key="path">
                     <div class="seqdiv">
                       <img v-bind:src="path"/>
@@ -215,7 +215,8 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { client, GIF_DELAY_DECIMAL_PRECISION } = require("./Client.vue");
+const { client } = require("./Client.vue");
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION } from "./Utility.vue";
 
 var data = {
   sequence_paths: [],
@@ -237,23 +238,6 @@ var data = {
   CRT_checkerbg_active: false,
   CRT_IS_LOADING: false,
   CRT_IS_CREATING: false,
-}
-
-function quintcell_lister() {
-  var quintrow = {};
-  for (var row = 0; row < Math.ceil(data.sequence_paths.length / 5); row++) {
-    var quintcells = []
-    for (var c = 0; c < 5; c++) {
-      const index = row * 5 + c;
-      const img_path = data.sequence_paths[index];
-      if (img_path === undefined) {continue;}
-      quintcells.push(img_path);
-    }
-    quintrow[row] = quintcells;
-  }
-  console.log("quintrow")
-  console.log(quintrow);
-  return quintrow;
 }
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
@@ -397,6 +381,10 @@ function fpsConstrain (event) {
   }
 }
 
+function CRTQuintcellLister() {
+  return quintcellLister(data.sequence_paths);
+}
+
 export default {
   data: function() {
     return data;
@@ -411,7 +399,7 @@ export default {
     fpsConstrain: fpsConstrain,
   },
   computed: {
-    quintcell_lister: quintcell_lister,
+    CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
   },
 };
