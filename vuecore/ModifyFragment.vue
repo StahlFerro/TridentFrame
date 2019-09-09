@@ -248,7 +248,7 @@
                       <td colspan="4">
                         <div class="field has-addons">
                           <div class="control">
-                            <a class="button is-neon-cyan" id="MOD_outdir_button">
+                            <a class="button is-neon-cyan" id="chooseOutDir">
                               <span class="icon is-small">
                                 <i class="fas fa-folder-open"></i>
                               </span>
@@ -499,7 +499,12 @@ function clearImage() {
   clearNewFields();
 }
 
-function chooseOutDir() {}
+function chooseOutDir() {
+  var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
+  console.log(`Chosen dir: ${choosen_dir}`);
+  if (choosen_dir === undefined) { return; }
+  data.outdir = choosen_dir[0];
+}
 
 function modifyImage() {}
 

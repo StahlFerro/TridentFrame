@@ -145,7 +145,7 @@
                     </div>
                     <div class="control is-expanded">
                       <input
-                        v-model="split_outdir"
+                        v-model="outdir"
                         class="input is-neon-white"
                         type="text"
                         placeholder="Output folder"
@@ -214,7 +214,7 @@ var data = {
   is_duration_sensitive: false,
   is_reduced_color: false,
   color_space: "",
-  split_outdir: "",
+  outdir: "",
   split_msgbox: "",
   SPL_IS_LOADING: false,
   SPL_IS_SPLITTING: false,
@@ -281,7 +281,7 @@ function chooseOutDir() {
   var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
   console.log(`Chosen dir: ${choosen_dir}`);
   if (choosen_dir === undefined) { return; }
-  data.split_outdir = choosen_dir[0];
+  data.outdir = choosen_dir[0];
   data.split_msgbox = "";
   // mboxClear(create_msgbox);
 }
@@ -297,7 +297,7 @@ function splitImage() {
   }
   console.log(data);
   client.invoke(
-    "split_image", data.aimg_path, data.split_outdir, data.pad_count, color_space, data.is_duration_sensitive, (error, res) => {
+    "split_image", data.aimg_path, data.outdir, data.pad_count, color_space, data.is_duration_sensitive, (error, res) => {
       if (error) {
         console.log(error);
         data.split_msgbox = error;
