@@ -224,21 +224,21 @@
                     </tr>
                     <tr>
                       <td width="20%" class="force-vcenter">
-                        <label class="checkbox">
+                        <label class="checkbox" title="Flip the image horizontally">
                           <input v-model="flip_horizontal" type="checkbox" />
                           Flip X
                         </label>
-                        <label class="checkbox">
+                        <label class="checkbox" title="Flip the image vertically">
                           <input v-model="flip_vertical" type="checkbox" />
                           Flip Y
                         </label>
                       </td>
                       <td width="40%" class="force-vcenter" colspan="2">
-                        <label class="checkbox">
+                        <label class="checkbox" title="Reverse the sequences">
                           <input v-model="is_reversed" type="checkbox" />
                           Reversed
                         </label>
-                        <label class="checkbox">
+                        <label class="checkbox" title="Preserve transparent pixels">
                           <input v-model="preserve_alpha" type="checkbox" />
                           Preserve Transparency
                         </label>
@@ -276,8 +276,8 @@
                   <table class="table mod-new-control-table is-hpaddingless" width="100%">
                     <tr>
                       <td class="force-vcenter" width="20%">
-                        <label class="checkbox">
-                          <input v-model="is_optimized" type="checkbox" />
+                        <label class="checkbox" title="Optimize GIFs to reduce output filesize">
+                          <input v-model="is_optimized" type="checkbox"/>
                           Optimize
                         </label>
                       </td>
@@ -298,7 +298,7 @@
                     </tr>
                     <tr>
                       <td class="force-vcenter" width="20%">
-                        <label class="checkbox">
+                        <label class="checkbox" title="Performs significant filesize reduction at the cost of quality">
                           <input v-model="is_lossy" type="checkbox" />
                           Lossy-compress
                         </label>
@@ -322,7 +322,7 @@
                     </tr>
                     <tr>
                       <td class="force-vcenter" width="20%">
-                        <label class="checkbox">
+                        <label class="checkbox" title="Reduces the number of colors. This also eliminates local/per-frame color tables">
                           <input v-model="is_reduced_color" type="checkbox" />
                           Reduce Colors
                         </label>
