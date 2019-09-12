@@ -330,6 +330,7 @@ function buildSpritesheet() {
       if (error) {
           console.error(error);
           data.bspr_msgbox = error;
+          data.BSPR_IS_BUILDING = false;
           // mboxError(bspr_msgbox, error);
       } else {
           if (res) {
