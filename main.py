@@ -48,14 +48,15 @@ class API(object):
         return split_aimg(image_path, out_dir, criteria)
 
     @zerorpc.stream
-    def modify_aimg(self, image_path, out_dir, width, height, duration, fps, reduce_color, color_space, new_format, reverse):
+    def modify_aimg(self, image_path, out_dir, vals):
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
         elif not image_path:
             raise Exception("Please load a GIF or APNG!")
         elif not out_dir:
             raise Exception("Please choose an output folder!")
-        criteria = ModificationCriteria(width, height, duration, fps, reduce_color, color_space, new_format, reverse)
+        criteria = ModificationCriteria(vals)
+        yield criteria.__dict__
         
 
     @zerorpc.stream

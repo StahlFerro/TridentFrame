@@ -245,7 +245,7 @@
                       <td colspan="4">
                         <div class="field has-addons">
                           <div class="control">
-                            <a class="button is-neon-cyan" id="chooseOutDir">
+                            <a v-on:click="chooseOutDir" class="button is-neon-cyan">
                               <span class="icon is-small">
                                 <i class="fas fa-folder-open"></i>
                               </span>
@@ -253,8 +253,7 @@
                             </a>
                           </div>
                           <div class="control is-expanded">
-                            <input
-                              id="MOD_outdir"
+                            <input v-model="outdir"
                               class="input is-neon-white"
                               type="text"
                               placeholder="Output folder"
@@ -264,7 +263,7 @@
                         </div>
                       </td>
                       <td>
-                        <a class="button is-neon-cyan" id="MOD_modify_aimg_button">MODIFY</a>
+                        <a v-on:click="modifyImage" class="button is-neon-cyan">MODIFY</a>
                       </td>
                     </tr>
                   </table>
@@ -396,7 +395,7 @@ var data = {
   mod_menuselection: 0,
   orig_checkerbg_active: false,
   new_checkerbg_active: false,
-  new_path: "",
+  outdir: "",
   MOD_IS_LOADING: false,
   MOD_IS_MODIFYING: false,
 };
@@ -506,7 +505,16 @@ function chooseOutDir() {
   data.outdir = choosen_dir[0];
 }
 
-function modifyImage() {}
+function modifyImage() {
+  client.invoke("modify_aimg", data.orig_path, data.outdir, data, (error, res) => {
+    if (error) {
+      console.error(error);
+    }
+    else {
+      console.log(res);
+    }
+  });
+}
 
 function buttonIsFrozen() {
   if (data.MOD_IS_LOADING || data.MOD_IS_MODIFYING) return true;

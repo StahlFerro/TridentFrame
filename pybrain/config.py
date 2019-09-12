@@ -28,7 +28,7 @@ def imagemagick_exec():
 
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """
-    def __init__(self, fps, delay, extension, reverse, transparent):
+    def __init__(self, fps, extension, reverse, transparent):
         try:
             fps = float(fps)
         except Exception as e:
@@ -71,15 +71,15 @@ class SplitCriteria():
 class ModificationCriteria():
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
-    def __init__(self, width, height, duration, fps, reduce_color, color_space, new_format, reverse):
-        self.width = width
-        self.height = height
-        self.duration = duration
-        self.fps = fps
-        self.reduce_color = reduce_color
-        self.color_space = color_space
-        self.format = new_format
-        self.reverse = reverse
+    def __init__(self, json_vals):
+        self.width = json_vals['width']
+        self.height = json_vals['height']
+        self.duration = json_vals['duration']
+        self.fps = json_vals['fps']
+        self.is_reduced_color = json_vals['is_reduced_color']
+        self.color_space = json_vals['color_space']
+        self.format = json_vals['format']
+        self.is_reversed = json_vals['is_reversed']
 
 
 class SpritesheetBuildCriteria():
