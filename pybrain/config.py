@@ -74,12 +74,23 @@ class ModificationCriteria():
     def __init__(self, json_vals):
         self.width = json_vals['width']
         self.height = json_vals['height']
-        self.duration = json_vals['duration']
+        self.delay = json_vals['delay']
+        self.rotation = json_vals['rotation']
         self.fps = json_vals['fps']
+        self.format = json_vals['format']
+        self.skip_frame = json_vals['skip_frame']
+
+        self.flip_x = json_vals['flip_x']
+        self.flip_y = json_vals['flip_y']
+        self.is_reversed = json_vals['is_reversed']
+        self.preserve_alpha = json_vals['preserve_alpha']
+
+        self.is_optimized = json_vals['is_optimized']
+        self.optimization_level = json_vals['optimization_level']
+        self.is_lossy = json_vals['is_lossy']
+        self.lossy_value = json_vals['lossy_value']
         self.is_reduced_color = json_vals['is_reduced_color']
         self.color_space = json_vals['color_space']
-        self.format = json_vals['format']
-        self.is_reversed = json_vals['is_reversed']
 
 
 class SpritesheetBuildCriteria():

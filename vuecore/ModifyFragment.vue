@@ -34,7 +34,7 @@
       </tr>
       <tr>
         <td colspan="3" class="has-text-centered is-hpaddingless">
-          <a v-on:click="loadImage" class="button is-neon-cyan">
+          <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_LOADING, 'is-static': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
@@ -179,15 +179,15 @@
                         <div class="field">
                           <label class="label">FPS</label>
                           <div class="control">
-                            <input v-model="fps" class="input is-neon-white" type="number" />
+                            <input v-model="fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
                       <td width="20%">
                         <div class="field">
-                          <label class="label">Duration</label>
+                          <label class="label">Delay</label>
                           <div class="control">
-                            <input v-model="duration" class="input is-neon-white" type="number" />
+                            <input v-model="delay" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -195,12 +195,7 @@
                         <div class="field">
                           <label class="label">Skip Frames</label>
                           <div class="control">
-                            <input
-                              id="MOD_new_frame_skip"
-                              class="input is-neon-white"
-                              type="number"
-                              min="0"
-                            />
+                            <input v-model="skip_frame" class="input is-neon-white" type="number" min="0"/>
                           </div>
                         </div>
                       </td>
@@ -222,11 +217,11 @@
                     <tr>
                       <td width="20%" class="force-vcenter">
                         <label class="checkbox" title="Flip the image horizontally">
-                          <input v-model="flip_horizontal" type="checkbox" />
+                          <input v-model="flip_x" type="checkbox" />
                           Flip X
                         </label>
                         <label class="checkbox" title="Flip the image vertically">
-                          <input v-model="flip_vertical" type="checkbox" />
+                          <input v-model="flip_y" type="checkbox" />
                           Flip Y
                         </label>
                       </td>
@@ -263,7 +258,8 @@
                         </div>
                       </td>
                       <td>
-                        <a v-on:click="modifyImage" class="button is-neon-cyan">MODIFY</a>
+                        <a v-on:click="modifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'is-static': buttonIsFrozen}">
+                          MODIFY</a>
                       </td>
                     </tr>
                   </table>
@@ -361,6 +357,7 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
+const { GIF_DELAY_DECIMAL_PRECISION } = require("./Utility.vue");
 
 
 var data = {
@@ -378,12 +375,11 @@ var data = {
   height: "",
   rotation: "",
   fps: "",
-  duration: "",
   delay: "",
   format: "GIF",
   skip_frame: "",
-  flip_horizontal: false,
-  flip_vertical: false,
+  flip_x: false,
+  flip_y: false,
   is_reversed: false,
   preserve_alpha: false,
   is_optimized: false,
@@ -392,10 +388,10 @@ var data = {
   lossy_value: "",
   is_reduced_color: false,
   color_space: "",
+  outdir: "",
   mod_menuselection: 0,
   orig_checkerbg_active: false,
   new_checkerbg_active: false,
-  outdir: "",
   MOD_IS_LOADING: false,
   MOD_IS_MODIFYING: false,
 };
@@ -449,6 +445,7 @@ function loadImage() {
   if (chosen_path === undefined) {
     return;
   }
+  data.MOD_IS_LOADING = true;
   client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
     if (error) {
       console.error(error);
@@ -462,6 +459,7 @@ function loadImage() {
       // fillNewData(res);
       // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
     }
+    data.MOD_IS_LOADING = false;
   });
   console.log("registered!");
 }
@@ -488,7 +486,7 @@ function loadNewInfo(res) {
   data.format = res.extension;
   data.width = res.width;
   data.height = res.height;
-  data.delay = res.delay;
+  data.delay = res.avg_duration;
   data.fps = res.fps;
 }
 
@@ -508,9 +506,11 @@ function chooseOutDir() {
 function modifyImage() {
   client.invoke("modify_aimg", data.orig_path, data.outdir, data, (error, res) => {
     if (error) {
+      console.error("error spit")
       console.error(error);
     }
     else {
+      console.log("Res spit back");
       console.log(res);
     }
   });
@@ -520,6 +520,30 @@ function buttonIsFrozen() {
   if (data.MOD_IS_LOADING || data.MOD_IS_MODIFYING) return true;
   else return false;
 }
+
+function delayConstrain (event) {
+  console.log("delay event", event);
+  var value = event.target.value;
+  if (value && value.includes(".")) {
+    var numdec = value.split(".");
+    console.log("numdec", numdec);
+    if (numdec[1].length > GIF_DELAY_DECIMAL_PRECISION) {
+      var twodecs = numdec[1].substring(0, GIF_DELAY_DECIMAL_PRECISION);
+      console.log("twodecs limit triggered", twodecs);
+      data.delay = `${numdec[0]}.${twodecs}`;
+    }
+  }
+  data.fps = Math.round(1000 / data.delay) / 1000;
+}
+
+function fpsConstrain (event) {
+  console.log("fps event", event);
+  var value = event.target.value;
+  if (value) {
+    data.delay = Math.round(100 / data.fps) / 100;
+  }
+}
+
 
 export default {
   data: function() {
@@ -532,6 +556,8 @@ export default {
     modifyImage: modifyImage,
     toggleOrigCheckerBG: toggleOrigCheckerBG,
     toggleNewCheckerBG: toggleNewCheckerBG,
+    delayConstrain: delayConstrain,
+    fpsConstrain: fpsConstrain,
   },
   computed: {
     buttonIsFrozen: buttonIsFrozen,
