@@ -46,20 +46,22 @@
             </span>
             <span>Clear</span>
           </a>
-          <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white">
+          <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white"
+            v-bind:class="{'is-active': orig_checkerbg_active}">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
         </td>
         <td colspan="5" class="has-text-centered is-hpaddingless">
-          <a class="button is-neon-cyan" id="MOD_prev_res_button">
+          <a class="button is-neon-cyan" id="MOD_prev_res_button" >
             <span class="icon is-small">
               <i class="fas fa-eye"></i>
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="toggleNewCheckerBG" class="button is-neon-white">
+          <a v-on:click="toggleNewCheckerBG" class="button is-neon-white"
+            v-bind:class="{'is-active': new_checkerbg_active}">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
@@ -95,28 +97,26 @@
                 <td class="mod-info-data">{{ orig_loop_duration }}</td>
               </tr>
               <tr>
+                <td class="mod-info-label is-cyan">File size</td>
+                <td class="mod-info-data">{{ orig_file_size }}</td>
+              </tr>
+              <tr>
                 <td class="mod-info-label is-cyan">Format</td>
                 <td class="mod-info-data">{{ orig_format }}</td>
               </tr>
             </tbody>
           </table>
         </td>
-        <td
-          width="65%"
-          colspan="5"
-          class="has-text-centered is-right-paddingless silver-bordered-left-thicc"
-        >
+        <td width="65%" colspan="5"
+          class="has-text-centered is-right-paddingless silver-bordered-left-thicc">
           <table class="table is-paddingless is-marginless" width="100%">
             <tr>
               <td width="10%" class="mod-menu-cell is-paddingless">
                 <div class="mod-left-menu">
                   <aside class="menu has-text-centered" style="margin: 0;">
                     <ul class="menu-list mod-left-menu">
-                      <li
-                        id="MOD_box_general"
-                        class="mod-menu-item"
-                        v-bind:class="{'is-selected': mod_menuselection == 0}"
-                      >
+                      <li id="MOD_box_general" class="mod-menu-item"
+                        v-bind:class="{'is-selected': mod_menuselection == 0}">
                         <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
                           <span class="icon is-large">
                             <i class="fas fa-image fa-2x fa-inverse"></i>
@@ -124,11 +124,8 @@
                           <p class="is-white-d">General</p>
                         </a>
                       </li>
-                      <li
-                        id="MOD_box_gif"
-                        class="mod-menu-item"
-                        v-bind:class="{'is-selected': mod_menuselection == 1}"
-                      >
+                      <li id="MOD_box_gif" class="mod-menu-item"
+                        v-bind:class="{'is-selected': mod_menuselection == 1}">
                         <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1">
                           <span class="icon is-large">
                             <i class="far fa-images fa-2x fa-inverse"></i>
@@ -374,6 +371,7 @@ var data = {
   orig_fps: "-",
   orig_delay: "-",
   orig_loop_duration: "-",
+  orig_file_size: "-",
   orig_format: "-",
   orig_path: "",
   name: "",
@@ -383,7 +381,7 @@ var data = {
   fps: "",
   duration: "",
   delay: "",
-  format: "gif",
+  format: "GIF",
   skip_frame: "",
   flip_horizontal: false,
   flip_vertical: false,
@@ -410,6 +408,7 @@ function clearOrigFields() {
   data.orig_fps = "-";
   data.orig_delay = "-";
   data.orig_loop_duration = "-";
+  data.orig_file_size = "-";
   data.orig_format = "-";
   data.orig_path = "";
 }
@@ -472,7 +471,7 @@ function loadOrigInfo(res) {
   data.orig_name = res.name;
   data.orig_dimensions= `${res.width} x ${res.height}`;
   data.orig_fps = `${res.fps} fps`;
-  data.orig_frame_count= `${res.frame_count} (${res.frame_count_ds})`;
+  data.orig_frame_count= `${res.frame_count} (${res.frame_count_ds} DS)`;
   data.orig_format = res.extension;
   let delay_info = `${res.avg_duration} seconds`;
   if (res.duration_is_uneven) {
@@ -481,11 +480,12 @@ function loadOrigInfo(res) {
   data.orig_delay = delay_info;
   data.orig_loop_duration = `${res.loop_duration} seconds`;
   data.orig_path = res.absolute_url;
+  data.orig_file_size = res.fsize;
 }
 
 function loadNewInfo(res) {
   console.log(res.extension);
-  data.name = res.name;
+  data.name = res.base_fname;
   data.format = res.extension;
   data.width = res.width;
   data.height = res.height;
