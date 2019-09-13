@@ -154,28 +154,6 @@
                   </div>
                 </td>
               </tr>
-              <!-- <tr>
-                    <td>
-                        <div class="field">
-                            <label class="label">Name</label>
-                            <div class="control"><input id="BSPR_create_name" class="input is-neon-white" type="text"/></div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="field">
-                            <label class="label">Sheet Columns</label>
-                            <div class="control"><input id="spr_sheet_columns" class="input is-neon-white" type="number"/></div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="field">
-                            <label class="label">Sheet Rows</label>
-                            <div class="control"><input id="spr_sheet_rows" class="input is-neon-white" type="number" min="1" max="50"/></div>
-                        </div>
-                    </td>
-                    <td>
-                    </td>
-              </tr>-->
               <tr>
                 <td colspan="2" style="padding-top: 25px;">
                   <div class="field has-addons">
@@ -338,11 +316,7 @@ function buildSpritesheet() {
             if (res == "Finished!") {
               data.BSPR_IS_BUILDING = false;
             }
-              // mboxSuccess(bspr_msgbox, res);
           }
-          // console.log('res', res);
-          // console.log("SUCCESS!");
-          // mboxSuccess(bspr_msgbox, 'Spritesheet successfully built!!1, check out the output directory');
       }
   });
 }

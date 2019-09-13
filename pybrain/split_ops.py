@@ -91,10 +91,10 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
 def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
     """ Umbrella function for splitting animated images into individual frames """
     # print(error)
-    abspath = os.path.abspath(image_path)
-    if not os.path.isfile(abspath):
+    image_path = os.path.abspath(image_path)
+    if not os.path.isfile(image_path):
         raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file")
-    filename = str(os.path.basename(abspath))
+    filename = str(os.path.basename(image_path))
 
     # Custom output dirname and frame names if specified on the cli
     if '.' not in filename:
@@ -110,10 +110,10 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
     print(out_dir)
     # Image processing
     if ext == 'gif':
-        return _split_gif(abspath, out_dir, criteria)
+        return _split_gif(image_path, out_dir, criteria)
 
     elif ext == 'png':
-        return _split_apng(abspath, out_dir, name, criteria)
+        return _split_apng(image_path, out_dir, name, criteria)
 
 
 # if __name__ == "__main__":

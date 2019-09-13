@@ -39,6 +39,7 @@ def _purge_cache():
 
 
 def _mk_temp_dir(prefix_name: str = ''):
+    """ Creates a temporary directory for AIMG manipulation purposes. Returns the absolutee path """
     dirname = time.strftime("%Y%m%d_%H%M%S")
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"
@@ -109,11 +110,11 @@ def generate_gifsicle_args(criteria: ModificationCriteria):
     args = []
     if criteria.must_resize():
         args.append(f"--resize={criteria.width}x{criteria.height}")
-    if criteria.is_optimized:
+    if criteria.is_optimized and criteria.optimization_level:
         args.append(f"--optimize={criteria.optimization_level}")
-    if criteria.is_lossy:
+    if criteria.is_lossy and criteria.lossy_value:
         args.append(f"--lossy={criteria.lossy_value}")
-    if criteria.is_reduced_color:
+    if criteria.is_reduced_color and criteria.color_space:
         args.append(f"--colors={criteria.color_space}")
     if criteria.flip_x:
         args.append("--flip-horizontal")

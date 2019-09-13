@@ -44,6 +44,8 @@ class ModificationCriteria():
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
     def __init__(self, json_vals):
+        self.orig_name = json_vals['orig_name']
+        self.name = json_vals['name']
         self.orig_width = json_vals['orig_width']
         self.orig_height = json_vals['orig_height']
         self.width = json_vals['width']

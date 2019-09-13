@@ -507,16 +507,21 @@ function chooseOutDir() {
 }
 
 function modifyImage() {
+  data.BSPR_IS_BUILDING = true;
   client.invoke("modify_image", data.orig_path, data.outdir, data, (error, res) => {
     if (error) {
       console.error("error spit")
       console.error(error);
       data.modify_msgbox = error;
+      data.BSPR_IS_BUILDING = false;
     }
     else {
       console.log("Res spit back");
       console.log(res);
-      data.modify_msgbox = "";
+      data.modify_msgbox = res;
+      if (res == "Finished!") {
+        data.BSPR_IS_BUILDING = false;
+      }
     }
   });
 }
