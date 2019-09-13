@@ -250,36 +250,22 @@ function loadImage() {
     filters: extension_filters,
     properties: imgs_dialog_props
   });
-  // console.log(`chosen path: ${img_paths}`);
-  if (img_paths === undefined) {
-    return;
-  }
-  // console.log(img_paths);
-  // freezeButtons();
+  if (img_paths === undefined) { return; }
   data.CRT_IS_LOADING = true;
-  // CRT_load_imgs_button.classList.add("is-loading");
   client.invoke("inspect_sequence", img_paths, (error, res) => {
     if (error) {
       console.error(error);
       data.create_msgbox = error;
     } else {
       data.sequence_paths = res.sequence;
-      // console.log("obtained sequences", data.sequence_paths);
-      // quintcell_generator(sequence_paths, CRT_sequence_body);
       data.create_name = res.name;
-      // if (data.create_fps == "") {
-      //   data.syncDelay = 0.02;
-      // }
       data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
       data.create_width = res.width;
       data.create_height = res.height;
-      // console.log(res);
-      // mboxClear(create_msgbox);
-      data.create_msgbox = '';
-      // reloadTempAIMG();
+      data.create_fps = 50;
+      data.create_delay = 0.02;
+      data.create_msgbox = "";
     }
-    // CRT_load_imgs_button.classList.remove("is-loading");
-    // unfreezeButtons();
     data.CRT_IS_LOADING = false;
   });
 }
