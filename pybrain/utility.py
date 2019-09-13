@@ -2,13 +2,13 @@ import os
 import shutil
 import time
 import subprocess
-from typing import List
+from typing import List, Tuple
 
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
 from apng import APNG
 
-from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria
+from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria, ModificationCriteria
 # from .create_ops import create_aimg
 # from .split_ops import split_aimg
 
@@ -103,6 +103,9 @@ def _restore_disposed_frames(frame_paths: List[str]):
 def _log(message):
     return {"log": message}
 
+
+def generate_gifsicle_args(orig_dimens: Tuple[int, int], criteria: ModificationCriteria):
+    pass
 
 # def gs_build():
 #     gifsicle_exec = os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")

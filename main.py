@@ -12,6 +12,7 @@ from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
 from pybrain.create_ops import create_aimg
 from pybrain.split_ops import split_aimg
 from pybrain.sprite_ops import _build_spritesheet
+from pybrain.modify_ops import modify_aimg
 
 
 class API(object):
@@ -48,7 +49,7 @@ class API(object):
         return split_aimg(image_path, out_dir, criteria)
 
     @zerorpc.stream
-    def modify_aimg(self, image_path, out_dir, vals):
+    def modify_image(self, image_path, out_dir, vals):
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
         elif not image_path:
@@ -56,7 +57,7 @@ class API(object):
         elif not out_dir:
             raise Exception("Please choose an output folder!")
         criteria = ModificationCriteria(vals)
-        yield criteria.__dict__
+        return modify_aimg(image_path, out_dir, criteria)
         
 
     @zerorpc.stream

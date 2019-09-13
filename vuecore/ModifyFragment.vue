@@ -504,7 +504,7 @@ function chooseOutDir() {
 }
 
 function modifyImage() {
-  client.invoke("modify_aimg", data.orig_path, data.outdir, data, (error, res) => {
+  client.invoke("modify_image", data.orig_path, data.outdir, data, (error, res) => {
     if (error) {
       console.error("error spit")
       console.error(error);

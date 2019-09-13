@@ -21,7 +21,7 @@ from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restor
 
 
 def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
-    """ Returns a list of dual-valued tuples, first value being the frame numbers of the GIF, second being the ratiko of the frame's delay to the lowest delay"""
+    """ Returns a list of dual-valued tuples, first value being the frame numbers of the GIF, second being the ratio of the frame's delay to the lowest delay"""
     with Image.open(gif_path) as gif:
         indices = list(range(0, gif.n_frames))
         durations = []
@@ -35,29 +35,6 @@ def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> Li
             ratios = [1 for dur in durations]
         indexed_ratios = list(zip(indices, ratios))
     return indexed_ratios
-
-
-# def _split_gif_imagemagick(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
-#     orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
-#     indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
-#     total_ratio = sum([ir[1] for ir in indexed_ratios])
-#     sequence = 0
-#     gifragment_paths = []
-#     for index, ratio in indexed_ratios[0:80]:
-#         selector = f"'{unop_gif_path}[{index}]'"
-#         for n in range(0, ratio):
-#             yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
-#             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), 3)}.png')
-#             executable = imagemagick_exec()
-#             args = [executable, selector, save_path]
-#             cmd = ' '.join(args)
-#             # raise Exception(cmd)
-#             yield cmd
-#             subprocess.run(args)
-#             # subprocess.run(cmd, shell=True)
-#             gifragment_paths.append(save_path)
-#             sequence += 1
-#             # time.sleep(0.3)
 
 
 def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
