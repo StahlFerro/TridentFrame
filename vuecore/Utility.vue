@@ -1,6 +1,6 @@
 <script>
 function quintcellLister(sequence_paths, from_where="") {
-  var quintrow = {};
+  var quintrows = {};
   for (var row = 0; row < Math.ceil(sequence_paths.length / 5); row++) {
     var quintcells = []
     for (var c = 0; c < 5; c++) {
@@ -9,11 +9,11 @@ function quintcellLister(sequence_paths, from_where="") {
       if (img_path === undefined) {continue;}
       quintcells.push(img_path);
     }
-    quintrow[row] = quintcells;
+    quintrows[row] = quintcells;
   }
   console.log("quintrow", from_where)
-  console.log(quintrow);
-  return quintrow;
+  console.log(quintrows);
+  return quintrows;
 }
 
 const GIF_DELAY_DECIMAL_PRECISION = 2;
