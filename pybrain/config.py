@@ -94,6 +94,9 @@ class ModificationCriteria():
         self.is_reduced_color = json_vals['is_reduced_color']
         self.color_space = json_vals['color_space']
 
+    def must_resize(self):
+        return self.orig_width != self.width or self.orig_height != self.height
+
 
 class SpritesheetBuildCriteria():
     """ Contains all of the criterias to build a spritesheet """

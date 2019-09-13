@@ -279,9 +279,9 @@
                           <div class="control">
                             <div class="select is-neon-cyan">
                               <select v-model="optimization_level" v-bind:disabled="!is_optimized">
-                                <option value="opt_1">Level 1</option>
-                                <option value="opt_2">Level 2</option>
-                                <option value="opt_3">Level 3</option>
+                                <option value="1">Level 1</option>
+                                <option value="2">Level 2</option>
+                                <option value="3">Level 3</option>
                               </select>
                             </div>
                           </div>
@@ -383,7 +383,7 @@ var data = {
   is_reversed: false,
   preserve_alpha: false,
   is_optimized: false,
-  optimization_level: "opt_1",
+  optimization_level: "1",
   is_lossy: false,
   lossy_value: "",
   is_reduced_color: false,
