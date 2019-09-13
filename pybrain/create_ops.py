@@ -16,7 +16,8 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, CreationCriteria, ABS_CACHE_PATH, gifsicle_exec
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, gifsicle_exec
+from .criterion import CreationCriteria
 from .utility import _mk_temp_dir
 
 
@@ -70,7 +71,6 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     yield from _create_gifragments(image_paths, gifragment_dir, criteria, absolute_paths=False)
     executable = gifsicle_exec()
-    colors = 256
     delay = int(100 // criteria.fps)
     opti_mode = "--unoptimize"
     disposal = "background"

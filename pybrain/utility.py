@@ -8,7 +8,8 @@ from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
 from apng import APNG
 
-from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH, CreationCriteria, SplitCriteria, ModificationCriteria
+from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH
+from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 # from .create_ops import create_aimg
 # from .split_ops import split_aimg
 
@@ -123,7 +124,7 @@ def generate_gifsicle_args(criteria: ModificationCriteria):
 
 def generate_imagemagick_args(criteria: ModificationCriteria):
     args = []
-    if criteria.rotation != 0:
+    if not criteria.rotation:
         args.append(f"-rotation {criteria.rotation}")
     return args
 

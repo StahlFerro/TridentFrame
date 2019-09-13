@@ -78,7 +78,7 @@
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Dimensions</td>
-                <td class="mod-info-data">{{ orig_dimensions }}</td>
+                <td class="mod-info-data">{{ origDimensions }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Total frames</td>
@@ -344,7 +344,9 @@
         </td>
       </tr>
       <tr>
-        <td colspan="8" class="has-text-left" style="vertical-align: middle;" id="modify_msgbox"></td>
+        <td colspan="8" class="has-text-left" style="vertical-align: middle;">
+          {{ modify_msgbox }}
+        </td>
       </tr>
     </table>
     <!-- </div> -->
@@ -362,7 +364,8 @@ const { GIF_DELAY_DECIMAL_PRECISION } = require("./Utility.vue");
 
 var data = {
   orig_name: "-",
-  orig_dimensions: "-",
+  orig_width: "",
+  orig_height: "",
   orig_frame_count: "-",
   orig_fps: "-",
   orig_delay: "-",
@@ -394,11 +397,13 @@ var data = {
   new_checkerbg_active: false,
   MOD_IS_LOADING: false,
   MOD_IS_MODIFYING: false,
+  modify_msgbox: "",
 };
 
 function clearOrigFields() {
   data.orig_name = "-";
-  data.orig_dimensions = "-";
+  data.orig_width = "";
+  data.orig_height = "";
   data.orig_frame_count = "-";
   data.orig_fps = "-";
   data.orig_delay = "-";
@@ -449,15 +454,12 @@ function loadImage() {
   client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
     if (error) {
       console.error(error);
+      data.modify_msgbox = error;
       // mboxError(modify_msgbox, error);
     } else {
       loadOrigInfo(res);
       loadNewInfo(res);
-      // clearOrigFields();
-      // clearNewFields();
-      // fillOrigData(res);
-      // fillNewData(res);
-      // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
+      data.modify_msgbox = "";
     }
     data.MOD_IS_LOADING = false;
   });
@@ -466,7 +468,8 @@ function loadImage() {
 
 function loadOrigInfo(res) {
   data.orig_name = res.name;
-  data.orig_dimensions= `${res.width} x ${res.height}`;
+  data.orig_width = res.width;
+  data.orig_height = res.height;
   data.orig_fps = `${res.fps} fps`;
   data.orig_frame_count= `${res.frame_count} (${res.frame_count_ds} DS)`;
   data.orig_format = res.extension;
@@ -508,10 +511,12 @@ function modifyImage() {
     if (error) {
       console.error("error spit")
       console.error(error);
+      data.modify_msgbox = error;
     }
     else {
       console.log("Res spit back");
       console.log(res);
+      data.modify_msgbox = "";
     }
   });
 }
@@ -544,6 +549,15 @@ function fpsConstrain (event) {
   }
 }
 
+function origDimensions() {
+  if (data.orig_width && data.orig_height) {
+    return `${data.orig_width} x ${data.orig_height}`;
+  }
+  else {
+    return "-";
+  }
+}
+
 
 export default {
   data: function() {
@@ -560,6 +574,7 @@ export default {
     fpsConstrain: fpsConstrain,
   },
   computed: {
+    origDimensions: origDimensions,
     buttonIsFrozen: buttonIsFrozen,
   }
 };

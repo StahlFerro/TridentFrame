@@ -6,7 +6,7 @@ from typing import List
 
 import zerorpc
 
-from pybrain.config import CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from pybrain.criterion import CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 from pybrain.utility import _purge_cache
 from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
 from pybrain.create_ops import create_aimg
