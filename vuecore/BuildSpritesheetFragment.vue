@@ -292,8 +292,8 @@ function sheetDimensions() {
   var image_count = data.sequence_count;
   var x_count = Math.min(image_count, data.tile_row);
   var y_count = Math.ceil(image_count / data.tile_row);
-  console.log('xcount', x_count);
-  console.log('ycount', y_count);
+  // console.log('xcount', x_count);
+  // console.log('ycount', y_count);
   var sheet_width = data.tile_width * x_count;
   var sheet_height = data.tile_height * y_count;
   if (sheet_width && sheet_height) {
@@ -311,7 +311,6 @@ function chooseOutDir() {
 }
 
 function BSPRQuintcellLister() {
-  console.log("BSPRQuintcellLister triggered");
   return quintcellLister(data.sequence_paths);
 }
 

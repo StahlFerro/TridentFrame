@@ -42,7 +42,6 @@
 </template>
 
 <script>
-console.log("AboutFragment.vue loaded!");
 const { remote, shell } = require('electron');
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;

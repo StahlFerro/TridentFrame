@@ -11,7 +11,6 @@ function quintcellLister(sequence_paths, from_where="") {
     }
     quintrows[row] = quintcells;
   }
-  console.log("quintrow", from_where)
   console.log(quintrows);
   return quintrows;
 }
