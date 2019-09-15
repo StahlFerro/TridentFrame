@@ -18,7 +18,7 @@ from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, gifsicle_exec, imagemagick_exec
 from .criterion import ModificationCriteria
-from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames, generate_gifsicle_args, generate_imagemagick_args
+from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames
 
 
 def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
@@ -29,12 +29,43 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     full_name = f"{criteria.name}.{criteria.format.lower()}"
     temp_dir = _mk_temp_dir(prefix_name="temp_mods")
     temp_save_path = os.path.join(temp_dir, full_name)
-    sicle_args = generate_gifsicle_args(criteria)
-    magick_args = generate_imagemagick_args(criteria)
+    sicle_args = _generate_gifsicle_args(criteria)
+    magick_args = _generate_imagemagick_args(criteria)
 
     if sicle_args:
-        args = [gifsicle_exec(), " ".join(sicle_args), img_path, "--output", temp_save_path]
-        cmd = ' '.join(args)
-        yield "Modifying gif..."
-        subprocess.run(cmd, shell=True)
-        yield "Finished"
+        target_path = str(img_path)
+        for index, (arg, description) in enumerate(sicle_args, start=1):
+            yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+            cmdlist = [gifsicle_exec(), arg, target_path, "--output", temp_save_path]
+            cmd = ' '.join(cmdlist)
+            yield {"msg": f"cmd: {cmd}"}
+            yield {"msg": f"[{index}/{len(sicle_args)}] {description}"}
+            subprocess.run(cmd, shell=True)
+            if target_path != temp_save_path:
+                target_path = temp_save_path
+    yield {"preview_path": temp_save_path}
+    yield {"msg": "Finished!"}
+
+
+def _generate_gifsicle_args(criteria: ModificationCriteria):
+    args = []
+    if criteria.must_resize():
+        args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
+    if criteria.is_optimized and criteria.optimization_level:
+        args.append((f"--optimize={criteria.optimization_level}", f"Optimizing image with level, {criteria.optimization_level}..."))
+    if criteria.is_lossy and criteria.lossy_value:
+        args.append((f"--lossy={criteria.lossy_value}", f"Lossy compressing with value: {criteria.lossy_value}..."))
+    if criteria.is_reduced_color and criteria.color_space:
+        args.append((f"--colors={criteria.color_space}", f"Reducing colors to: {criteria.color_space}..."))
+    if criteria.flip_x:
+        args.append(("--flip-horizontal", "Flipping image horizontally..."))
+    if criteria.flip_y:
+        args.append((f"--flip-vertical", "Flipping image vertically..."))
+    return args
+
+
+def _generate_imagemagick_args(criteria: ModificationCriteria):
+    args = []
+    if not criteria.rotation:
+        args.append(f"-rotation {criteria.rotation}")
+    return args

@@ -20,7 +20,7 @@ class API(object):
     def inspect_aimg(self, image_path):
         info = _inspect_aimg(image_path)
         return info
-
+    
     def inspect_sequence(self, dir_path):
         info = _inspect_sequence(dir_path)
         return info

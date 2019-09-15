@@ -106,28 +106,7 @@ def _log(message):
     return {"log": message}
 
 
-def generate_gifsicle_args(criteria: ModificationCriteria):
-    args = []
-    if criteria.must_resize():
-        args.append(f"--resize={criteria.width}x{criteria.height}")
-    if criteria.is_optimized and criteria.optimization_level:
-        args.append(f"--optimize={criteria.optimization_level}")
-    if criteria.is_lossy and criteria.lossy_value:
-        args.append(f"--lossy={criteria.lossy_value}")
-    if criteria.is_reduced_color and criteria.color_space:
-        args.append(f"--colors={criteria.color_space}")
-    if criteria.flip_x:
-        args.append("--flip-horizontal")
-    if criteria.flip_y:
-        args.append("--flip-vertical")
-    return args
 
-
-def generate_imagemagick_args(criteria: ModificationCriteria):
-    args = []
-    if not criteria.rotation:
-        args.append(f"-rotation {criteria.rotation}")
-    return args
 
 # def gs_build():
 #     gifsicle_exec = os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")

@@ -25,9 +25,8 @@
           style="height: 250px;">
           <div class="mod-aimg-container">
             <span class="aimg-helper"></span>
-            <img id="MOD_new_stage" src />
+            <img v-bind:src="preview_path" />
           </div>
-          <input id="MOD_new_path" name="MOD_new_path_field" type="hidden" value />
         </td>
         <td width="9%"></td>
         <td width="6%"></td>
@@ -54,11 +53,16 @@
           </a>
         </td>
         <td colspan="5" class="has-text-centered is-hpaddingless">
-          <a class="button is-neon-cyan" id="MOD_prev_res_button" >
+          <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'is-static': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-eye"></i>
             </span>
             <span>Preview</span>
+          </a>
+          <a v-on:click="clearPrevImage" class="button is-neon-white">
+            <span class="icon is-small">
+              <i class="fas fa-trash-alt"></i>
+            </span>
           </a>
           <a v-on:click="toggleNewCheckerBG" class="button is-neon-white"
             v-bind:class="{'is-active': new_checkerbg_active}">
@@ -279,9 +283,9 @@
                           <div class="control">
                             <div class="select is-neon-cyan">
                               <select v-model="optimization_level" v-bind:disabled="!is_optimized">
-                                <option value="1">Level 1</option>
-                                <option value="2">Level 2</option>
-                                <option value="3">Level 3</option>
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
                               </select>
                             </div>
                           </div>
@@ -391,12 +395,14 @@ var data = {
   lossy_value: "",
   is_reduced_color: false,
   color_space: "",
+  preview_path: "",
   outdir: "",
   mod_menuselection: 0,
   orig_checkerbg_active: false,
   new_checkerbg_active: false,
   MOD_IS_LOADING: false,
   MOD_IS_MODIFYING: false,
+  MOD_IS_PREVIEWING: false,
   modify_msgbox: "",
 };
 
@@ -421,7 +427,7 @@ function clearNewFields() {
   data.fps = "";
   data.delay = "";
   data.skip_frame = "";
-  
+  data.preview_path = "";  
 }
 
 function toggleOrigCheckerBG() {
@@ -499,6 +505,10 @@ function clearImage() {
   clearNewFields();
 }
 
+function clearPrevImage() {
+  data.preview_path = "";
+}
+
 function chooseOutDir() {
   var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
   console.log(`Chosen dir: ${choosen_dir}`);
@@ -507,27 +517,51 @@ function chooseOutDir() {
 }
 
 function modifyImage() {
-  data.BSPR_IS_BUILDING = true;
+  data.MOD_IS_MODIFYING = true;
   client.invoke("modify_image", data.orig_path, data.outdir, data, (error, res) => {
     if (error) {
-      console.error("error spit")
       console.error(error);
       data.modify_msgbox = error;
-      data.BSPR_IS_BUILDING = false;
+      data.MOD_IS_MODIFYING = false;
     }
-    else {
-      console.log("Res spit back");
+    else if (res) {
       console.log(res);
-      data.modify_msgbox = res;
-      if (res == "Finished!") {
-        data.BSPR_IS_BUILDING = false;
+      if (res.msg) {
+        data.modify_msgbox = res.msg;
+        if (res.msg == "Finished!") {
+          data.MOD_IS_MODIFYING = false;
+        }
+      }
+    }
+  });
+}
+
+function previewModImg() {
+  data.MOD_IS_PREVIEWING = true;
+  client.invoke("modify_image", data.orig_path, "./temp", data, (error, res) => {
+    if (error) {
+      console.error(error);
+      data.modify_msgbox = error;
+      data.MOD_IS_PREVIEWING = false;
+    }
+    else if (res) {
+      console.log(res);
+      if (res.msg) {
+        data.modify_msgbox = res.msg;
+      }
+      if (res.preview_path) {
+        data.preview_path = res.preview_path
+      }
+      if (res.msg == "Finished!") {
+        data.MOD_IS_PREVIEWING = false;
+        var orig_path = data.orig_path;
       }
     }
   });
 }
 
 function buttonIsFrozen() {
-  if (data.MOD_IS_LOADING || data.MOD_IS_MODIFYING) return true;
+  if (data.MOD_IS_LOADING || data.MOD_IS_MODIFYING || data.MOD_IS_PREVIEWING) return true;
   else return false;
 }
 
@@ -571,7 +605,9 @@ export default {
   methods: {
     loadImage: loadImage,
     clearImage: clearImage,
+    clearPrevImage: clearPrevImage,
     chooseOutDir: chooseOutDir,
+    previewModImg: previewModImg,
     modifyImage: modifyImage,
     toggleOrigCheckerBG: toggleOrigCheckerBG,
     toggleNewCheckerBG: toggleNewCheckerBG,
