@@ -222,50 +222,53 @@ var data = {
 
 function loadImage() {
   console.log("spl load iamge");
-  var chosen_path = dialog.showOpenDialog({
+  var options = {
     filters: extension_filters,
     properties: file_dialog_props
-  });
-  console.log(`chosen path: ${chosen_path}`);
-  if (chosen_path === undefined) {
-    return;
-  }
-  data.SPL_IS_LOADING = true;
-  client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
-    if (error) {
-      console.error(error);
-      data.split_msgbox = error;
-      // mboxError(split_msgbox, error);
-      data.SPL_IS_LOADING = false;
-    } else {
-      data.name = res.name;
-      data.info_header = `${res.extension} Information`;
-      data.file_size = res.fsize;
-      data.frame_count = `${res.frame_count} frames`;
-      data.frame_count_ds = `${res.frame_count_ds} frames`;
-      data.fps = `${res.fps} fps`;
-      data.dimensions = `${res.width} x ${res.height}`;
-      let delay_info = `${res.avg_duration} seconds`;
-      if (res.duration_is_uneven) {
-        delay_info += ` (uneven)`;
-      }
-      data.delay = delay_info;
-      data.loop_duration = `${res.loop_duration} seconds`;
-      data.aimg_path = res.absolute_url;
-      data.pad_count = 3;
-      if (data.is_reduced_color) {
-        data.color_space - 256;
-      }
-      data.split_msgbox = "";
-      data.SPL_IS_LOADING = false;
-      // loadAIMG(res);
-      // SPL_pad_count.value = 3;
-      // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
+  };
+  dialog.showOpenDialog(options, (chosen_path) => {
+    console.log(`chosen path: ${chosen_path}`);
+    if (chosen_path === undefined) {
+      return;
     }
+    data.SPL_IS_LOADING = true;
+    client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
+      if (error) {
+        console.error(error);
+        data.split_msgbox = error;
+        // mboxError(split_msgbox, error);
+        data.SPL_IS_LOADING = false;
+      } else {
+        data.name = res.name;
+        data.info_header = `${res.extension} Information`;
+        data.file_size = res.fsize;
+        data.frame_count = `${res.frame_count} frames`;
+        data.frame_count_ds = `${res.frame_count_ds} frames`;
+        data.fps = `${res.fps} fps`;
+        data.dimensions = `${res.width} x ${res.height}`;
+        let delay_info = `${res.avg_duration} seconds`;
+        if (res.duration_is_uneven) {
+          delay_info += ` (uneven)`;
+        }
+        data.delay = delay_info;
+        data.loop_duration = `${res.loop_duration} seconds`;
+        data.aimg_path = res.absolute_url;
+        data.pad_count = 3;
+        if (data.is_reduced_color) {
+          data.color_space - 256;
+        }
+        data.split_msgbox = "";
+        data.SPL_IS_LOADING = false;
+        // loadAIMG(res);
+        // SPL_pad_count.value = 3;
+        // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
+      }
+    });
+    console.log("registered!");
+    console.log(data);
+    console.log(defaults);
+
   });
-  console.log("registered!");
-  console.log(data);
-  console.log(defaults);
 }
 
 function clearImage() {
@@ -278,12 +281,12 @@ function toggleCheckerBG() {
 }
 
 function chooseOutDir() {
-  var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
-  console.log(`Chosen dir: ${choosen_dir}`);
-  if (choosen_dir === undefined) { return; }
-  data.outdir = choosen_dir[0];
-  data.split_msgbox = "";
-  // mboxClear(create_msgbox);
+  dialog.showOpenDialog({ properties: dir_dialog_props }, (choosen_dir) => {
+    console.log(`Chosen dir: ${choosen_dir}`);
+    if (choosen_dir === undefined) { return; }
+    data.outdir = choosen_dir[0];
+    data.split_msgbox = "";
+  });
 }
 
 function splitImage() {
