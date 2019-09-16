@@ -21,7 +21,10 @@ Important notes:
 ZeroMQ v5.1.0 was installed and built successfully based on Electron v6.0.9 using this procedure:
 
 ```
+npm install
 npm install zeromq@5.1.0
 npm install electron@6.0.9
+npm install zerorpc
+npm rebuild zeromq --runtime=electron
 npm run rebuiltron
 ```
