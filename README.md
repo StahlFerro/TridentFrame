@@ -21,6 +21,3 @@ TridentFrame consists of two main parts. The python backend handling image proce
 *   [Sass](https://sass-lang.com/) : Modifying bulma's styles
 *   [Font Awesome](https://fontawesome.com/) : Icons
 
-Devnotes: 
-
-ZeroMQ fix: `npm rebuild zeromq --runtime=electron --target=1.8.8`
