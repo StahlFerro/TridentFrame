@@ -246,36 +246,39 @@ let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 function loadImage() {
   console.log("crt load image")
-  var img_paths = dialog.showOpenDialog({
+  var options = {
     filters: extension_filters,
     properties: imgs_dialog_props
-  });
-  if (img_paths === undefined) { return; }
-  data.CRT_IS_LOADING = true;
-  client.invoke("inspect_sequence", img_paths, (error, res) => {
-    if (error) {
-      console.error(error);
-      data.create_msgbox = error;
-    } else {
-      data.sequence_paths = res.sequence;
-      data.create_name = res.name;
-      data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
-      data.create_width = res.width;
-      data.create_height = res.height;
-      data.create_fps = 50;
-      data.create_delay = 0.02;
-      data.create_msgbox = "";
-    }
-    data.CRT_IS_LOADING = false;
+  }
+  dialog.showOpenDialog(options, (img_paths) => {
+    if (img_paths === undefined) { return; }
+    data.CRT_IS_LOADING = true;
+    client.invoke("inspect_sequence", img_paths, (error, res) => {
+      if (error) {
+        console.error(error);
+        data.create_msgbox = error;
+      } else {
+        data.sequence_paths = res.sequence;
+        data.create_name = res.name;
+        data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
+        data.create_width = res.width;
+        data.create_height = res.height;
+        data.create_fps = 50;
+        data.create_delay = 0.02;
+        data.create_msgbox = "";
+      }
+      data.CRT_IS_LOADING = false;
+    });
   });
 }
 
 function CRTChooseOutdir() {
-  var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
-  console.log(`Chosen dir: ${choosen_dir}`);
-  if (choosen_dir === undefined) {return}
-  data.create_outdir = choosen_dir[0];
-  data.create_msgbox = "";
+  dialog.showOpenDialog({ properties: dir_dialog_props }, (choosen_dir) => {
+    console.log(`Chosen dir: ${choosen_dir}`);
+    if (choosen_dir === undefined) {return}
+    data.create_outdir = choosen_dir[0];
+    data.create_msgbox = "";
+  });
   // mboxClear(create_msgbox);
 }
 
