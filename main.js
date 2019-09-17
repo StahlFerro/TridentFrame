@@ -14,18 +14,20 @@ const createWindow = () => {
         maxWidth: 950, maxHeight: 700,
         center: true, 
         frame: false,
+        darkTheme: true,
         icon: path.join(__dirname, 'imgs/TridentFrame_Icon_200px.png'),
         webPreferences: {
             webSecurity: false,
+            nodeIntegration: true,
         },
     });
     mainWindow.setMenu(null);
     mainWindow.loadURL("http://localhost:8080/") // Development environment
     // Production environment
     // mainWindow.loadURL(require('url').format({
-        // pathname: path.join(__dirname, './dist/index.html'),
-        // protocol: 'file:',
-        // slashes: true
+    //     pathname: path.join(__dirname, './dist/index.html'),
+    //     protocol: 'file:',
+    //     slashes: true
     // }));
     mainWindow.webContents.openDevTools();
     mainWindow.focus();

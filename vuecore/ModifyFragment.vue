@@ -448,28 +448,30 @@ let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
 function loadImage() {
   console.log("mod load image called");
-  var chosen_path = dialog.showOpenDialog({
+  var options = {
     filters: extension_filters,
     properties: file_dialog_props
-  });
-  console.log(`chosen path: ${chosen_path}`);
-  if (chosen_path === undefined) {
-    return;
-  }
-  data.MOD_IS_LOADING = true;
-  client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
-    if (error) {
-      console.error(error);
-      data.modify_msgbox = error;
-      // mboxError(modify_msgbox, error);
-    } else {
-      loadOrigInfo(res);
-      loadNewInfo(res);
-      data.modify_msgbox = "";
+  };
+  dialog.showOpenDialog(options, (chosen_path) => {
+    console.log(`chosen path: ${chosen_path}`);
+    if (chosen_path === undefined || chosen_path.length == 0) {
+      return;
     }
-    data.MOD_IS_LOADING = false;
+    data.MOD_IS_LOADING = true;
+    client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
+      if (error) {
+        console.error(error);
+        data.modify_msgbox = error;
+        // mboxError(modify_msgbox, error);
+      } else {
+        loadOrigInfo(res);
+        loadNewInfo(res);
+        data.modify_msgbox = "";
+      }
+      data.MOD_IS_LOADING = false;
+    });
+    console.log("registered!");
   });
-  console.log("registered!");
 }
 
 function loadOrigInfo(res) {
@@ -510,10 +512,11 @@ function clearPrevImage() {
 }
 
 function chooseOutDir() {
-  var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
-  console.log(`Chosen dir: ${choosen_dir}`);
-  if (choosen_dir === undefined) { return; }
-  data.outdir = choosen_dir[0];
+  dialog.showOpenDialog({ properties: dir_dialog_props }, (choosen_dir) => {
+    console.log(`Chosen dir: ${choosen_dir}`);
+    if (choosen_dir === undefined) { return; }
+    data.outdir = choosen_dir[0];
+  });
 }
 
 function modifyImage() {
