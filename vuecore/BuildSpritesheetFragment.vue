@@ -236,16 +236,21 @@ let dir_dialog_props = ['openDirectory', 'createDirectory'];
 let extension_filters = [{ name: 'Images', extensions: ['png', 'gif'] }];
 
 function loadInput() {
-  var img_paths = dialog.showOpenDialog({ filters: extension_filters, properties: sequence_dialog_props }); 
-  if (img_paths === undefined) { return; }
-  console.log(img_paths);
-  data.BSPR_IS_LOADING = true;
-  if (data.input_format == "sequence") {
-    loadSequence(img_paths);
+  var options = {
+    filters: extension_filters,
+    properties: sequence_dialog_props
   }
+  dialog.showOpenDialog(options, (img_paths) => {
+    if (img_paths === undefined || img_paths.length == 0) { return; }
+    console.log(img_paths);
+    if (data.input_format == "sequence") {
+      loadSequence(img_paths);
+    }
+  });
 }
 
 function loadSequence(img_paths) {
+  data.BSPR_IS_LOADING = true;
   client.invoke("inspect_sequence", img_paths, (error, res) => {
     if (error || !res.sequence) {
       console.error(error);
