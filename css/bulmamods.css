@@ -7157,7 +7157,8 @@ label.panel-block {
 
 body {
   font-family: 'Share Tech', 'sans-serif';
-  font-size: 18px; }
+  font-size: 18px;
+  overflow-y: auto; }
 
 /* Color helpers */
 .is-dark-2 {
