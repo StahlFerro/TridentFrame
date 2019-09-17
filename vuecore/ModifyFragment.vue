@@ -454,7 +454,7 @@ function loadImage() {
   };
   dialog.showOpenDialog(options, (chosen_path) => {
     console.log(`chosen path: ${chosen_path}`);
-    if (chosen_path === undefined) {
+    if (chosen_path === undefined || chosen_path.length == 0) {
       return;
     }
     data.MOD_IS_LOADING = true;

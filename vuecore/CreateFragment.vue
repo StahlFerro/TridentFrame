@@ -251,7 +251,8 @@ function loadImage() {
     properties: imgs_dialog_props
   }
   dialog.showOpenDialog(options, (img_paths) => {
-    if (img_paths === undefined) { return; }
+    console.log(img_paths);
+    if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;
     client.invoke("inspect_sequence", img_paths, (error, res) => {
       if (error) {
