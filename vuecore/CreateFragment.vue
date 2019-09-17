@@ -214,9 +214,10 @@
 <script>
 const remote = require("electron").remote;
 const dialog = remote.dialog;
+const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION } from "./Utility.vue";
+import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION } from "./Utility.vue";
 
 var data = {
   sequence_paths: [],
@@ -250,7 +251,7 @@ function loadImage() {
     filters: extension_filters,
     properties: imgs_dialog_props
   }
-  dialog.showOpenDialog(options, (img_paths) => {
+  dialog.showOpenDialog(mainWindow, options, (img_paths) => {
     console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;
@@ -274,11 +275,14 @@ function loadImage() {
 }
 
 function CRTChooseOutdir() {
-  dialog.showOpenDialog({ properties: dir_dialog_props }, (choosen_dir) => {
-    console.log(`Chosen dir: ${choosen_dir}`);
-    if (choosen_dir === undefined) {return}
-    data.create_outdir = choosen_dir[0];
-    data.create_msgbox = "";
+  var options = { properties: dir_dialog_props };
+  dialog.showOpenDialog(mainWindow, options, (out_dirs) => {
+    console.log(out_dirs)
+    if (out_dirs && out_dirs.length > 0) {
+      console.log("folder selected");
+      data.create_outdir = out_dirs[0];
+      data.create_msgbox = "";
+    }
   });
   // mboxClear(create_msgbox);
 }
@@ -300,13 +304,13 @@ function CRTClearAIMG() {
 
 function CRTCreateAIMG() {
   data.create_msgbox = "";
-  console.log('console log', data.is_disposed);
-  // create_aimg_button.classList.add('is-loading');
-  // freezeButtons();
+  var validator = validateFilename(data.create_name);
+  if (!validator.valid) {
+    console.error(validator.msg);
+    data.create_msgbox = validator.msg;
+    return;
+  }
   data.CRT_IS_CREATING = true;
-  // build_aimg(sequence_paths, create_outdir.value, create_name.value, parseInt(create_fps.value), CRT_out_format.value, false, is_disposed.checked);
-  console.log('data before create');
-  console.log(data);
   // console.log(getFPS());
   client.invoke("combine_image", data.sequence_paths, data.create_outdir, data.create_name, data.create_fps, 
     data.CRT_out_format, data.create_width, data.create_height, data.is_reversed, data.is_disposed, data.flip_horizontal, data.flip_vertical, (error, res) => {

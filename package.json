@@ -10,6 +10,7 @@
     "build": "npm run clean && webpack --mode production",
     "electron": "electron .",
     "liverelease": "npm run clean && webpack --watch",
+    "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
     "wpserve": "webpack-dev-server --mode development"
   },
@@ -31,7 +32,7 @@
     "npm": "^6.11.3",
     "tar": "^4.4.10",
     "zeromq": "^5.1.0",
-    "zerorpc": "git+https://github.com/fyears/zerorpc-node.git"
+    "zerorpc": "^0.9.8"
   },
   "devDependencies": {
     "@babel/core": "^7.6.0",

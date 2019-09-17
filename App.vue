@@ -1,10 +1,5 @@
 <template>
-  <table
-    id="main_table"
-    class="table is-borderless is-desktop"
-    style="width: 950px;height: 700px;table-layout: fixed; margin: 0;"
-    width="100%"
-  >
+  <table class="table root-table is-borderless">
     <thead>
       <tr class="has-background-dark-2 frame-title-bar" style="height: 30px;">
         <td width="10%" class="is-paddingless" style="vertical-align: middle;">

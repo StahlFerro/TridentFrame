@@ -15,8 +15,20 @@ function quintcellLister(sequence_paths, from_where="") {
   return quintrows;
 }
 
+function validateFilename(filename) {
+  // Valid if the filename does not contain these characters: <>:"/\|?*
+  var is_valid = !filename.match(/[<>:"\/\\|\?\*]/g);
+  if (is_valid) {
+    return {"valid": true, "msg": ""};
+  }
+  else {
+    return {"valid": false, "msg": `File names must not contain these following characters: < > : " / \ | ? *`};
+  }
+}
+
 const GIF_DELAY_DECIMAL_PRECISION = 2;
 
 module.exports.quintcellLister = quintcellLister;
 module.exports.GIF_DELAY_DECIMAL_PRECISION = GIF_DELAY_DECIMAL_PRECISION;
+module.exports.validateFilename = validateFilename;
 </script>

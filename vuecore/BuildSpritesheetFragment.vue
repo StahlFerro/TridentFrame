@@ -202,6 +202,7 @@
 <script>
 const remote = require("electron").remote;
 const dialog = remote.dialog;
+const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION } from './Utility.vue';
@@ -240,7 +241,7 @@ function loadInput() {
     filters: extension_filters,
     properties: sequence_dialog_props
   }
-  dialog.showOpenDialog(options, (img_paths) => {
+  dialog.showOpenDialog(mainWindow, options, (img_paths) => {
     if (img_paths === undefined || img_paths.length == 0) { return; }
     console.log(img_paths);
     if (data.input_format == "sequence") {
@@ -286,11 +287,14 @@ function sheetDimensions() {
 }
 
 function chooseOutDir() {
-  var choosen_dir = dialog.showOpenDialog({ properties: dir_dialog_props });
-  console.log(`Chosen dir: ${choosen_dir}`);
-  if (choosen_dir === undefined) {return}
-  data.outdir = choosen_dir[0];
-  data.bspr_msgbox = "";
+  var options = { properties: dir_dialog_props };
+  dialog.showOpenDialog(mainWindow, options, (out_dirs) => {
+    console.log(out_dirs);
+    if (out_dirs && out_dirs.length > 0) {
+      data.outdir = out_dirs[0];
+    }
+    data.bspr_msgbox = "";
+  });
 }
 
 function BSPRQuintcellLister() {

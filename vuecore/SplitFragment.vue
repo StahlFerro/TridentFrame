@@ -177,6 +177,7 @@ import { log } from "util";
 
 const remote = require("electron").remote;
 const dialog = remote.dialog;
+const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 
@@ -226,7 +227,7 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(options, (chosen_path) => {
+  dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
@@ -281,10 +282,12 @@ function toggleCheckerBG() {
 }
 
 function chooseOutDir() {
-  dialog.showOpenDialog({ properties: dir_dialog_props }, (choosen_dir) => {
-    console.log(`Chosen dir: ${choosen_dir}`);
-    if (choosen_dir === undefined) { return; }
-    data.outdir = choosen_dir[0];
+  var options = { properties: dir_dialog_props };
+  dialog.showOpenDialog(mainWindow, options, (out_dirs) => {
+    console.log(out_dirs);
+    if (out_dirs && out_dirs.length > 0) { 
+      data.outdir = out_dirs[0];
+    }
     data.split_msgbox = "";
   });
 }

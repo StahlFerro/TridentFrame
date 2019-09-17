@@ -7155,10 +7155,20 @@ label.panel-block {
   font-style: normal;
   src: url("../webfonts/ShareTech-Regular.ttf") format("truetype"); }
 
+html {
+  overflow-y: auto !important; }
+
 body {
   font-family: 'Share Tech', 'sans-serif';
   font-size: 18px;
-  overflow-y: auto; }
+  width: 950px !important;
+  height: 700px !important; }
+
+table.root-table {
+  width: 950px;
+  height: 700px;
+  table-layout: fixed;
+  margin: 0px !important; }
 
 /* Color helpers */
 .is-dark-2 {
