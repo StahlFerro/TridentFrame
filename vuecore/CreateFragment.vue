@@ -66,7 +66,7 @@
             <nav class="level">
               <div class="level-item has-text-centered">
                 <div>
-                  <a v-on:click="previewAIMG" class="button is-neon-white">
+                  <a v-on:click="previewAIMG" class="button is-neon-white" v-bind:class="{'is-loading': CRT_IS_PREVIEWING, 'is-static': isButtonFrozen}">
                     <span class="icon is-medium">
                       <i id="autoprev_icon" class="far fa-eye"></i>
                     </span>
@@ -309,6 +309,7 @@ function CRTClearAIMG() {
 }
 
 function previewAIMG() {
+  console.log("preview called");
   data.create_msgbox = "";
   var validator = validateFilename(data.name);
   if (!validator.valid) {
@@ -316,8 +317,25 @@ function previewAIMG() {
     data.create_msgbox = validator.msg;
     return;
   }
-  client.invoke("combine_image", data, (error, res) => {
-
+  data.CRT_IS_PREVIEWING = true;
+  client.invoke("combine_image", data.image_paths, "./temp", data.name, data, (error, res) => {
+    if (error) {
+      console.error(error);
+      data.create_msgbox = error;
+      data.CRT_IS_PREVIEWING = false;
+    } else {
+      if (res) {
+        if (res.msg) {
+          data.create_msgbox = res.msg;
+        }
+        if (res.preview_path) {
+          data.preview_path = res.preview_path;
+        }
+        if (res.msg == "Finished!") {
+          data.CRT_IS_PREVIEWING = false;
+        }
+      }
+    }
   });
 }
 
@@ -330,25 +348,18 @@ function CRTCreateAIMG() {
     return;
   }
   data.CRT_IS_CREATING = true;
-  // console.log(getFPS());
   client.invoke("combine_image", data.image_paths, data.outdir, data.name, data, (error, res) => {
-    // console.log('createfragment fps', data.fps);
     if (error) {
       console.error(error);
       data.create_msgbox = error;
-      // create_aimg_button.classList.remove('is-loading');
       data.CRT_IS_CREATING = false;
-      // unfreezeButtons();
     } else {
       if (res) {
-        if ("msg" in res) {
-          console.log(res["msg"])
-          data.create_msgbox = res["msg"]
-            // mboxSuccess(create_msgbox, res["msg"]);
+        console.log(res);
+        if (res.msg) {
+          data.create_msgbox = res.msg;
         }
-        if (res["msg"] == "Finished!") {
-            // create_aimg_button.classList.remove('is-loading');
-            // unfreezeButtons();
+        if (res.msg == "Finished!") {
           data.CRT_IS_CREATING = false;
         }
       }
@@ -362,7 +373,7 @@ function CRTToggleCheckerBG() {
 }
 
 function isButtonFrozen() {
-  if (data.CRT_IS_LOADING || data.CRT_IS_CREATING) return true;
+  if (data.CRT_IS_LOADING || data.CRT_IS_PREVIEWING || data.CRT_IS_CREATING) return true;
   else return false;
 }
 
