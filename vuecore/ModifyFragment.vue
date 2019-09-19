@@ -63,6 +63,7 @@
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>
+            <span>Clear</span>
           </a>
           <a v-on:click="toggleNewCheckerBG" class="button is-neon-white"
             v-bind:class="{'is-active': new_checkerbg_active}">
@@ -230,13 +231,13 @@
                         </label>
                       </td>
                       <td width="40%" class="force-vcenter" colspan="2">
-                        <label class="checkbox" title="Reverse the sequences">
+                        <label class="checkbox" title="Reverse the animation">
                           <input v-model="is_reversed" type="checkbox" />
                           Reversed
                         </label>
                         <label class="checkbox" title="Preserve transparent pixels">
                           <input v-model="preserve_alpha" type="checkbox" />
-                          Preserve Transparency
+                          Preserve Alpha
                         </label>
                       </td>
                     </tr>

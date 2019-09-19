@@ -111,12 +111,12 @@
                   </div>
                 </td>
                 <td style="vertical-align: bottom;">
-                  <label class="checkbox">
+                  <label class="checkbox" title="Preserve transparent pixels">
                     <input v-model="is_disposed" type="checkbox" />
-                    Preserve Transparency
+                    Preserve Alpha
                   </label>
                   <br />
-                  <label class="checkbox">
+                  <label class="checkbox" title="Reverse the animation">
                     <input v-model="is_reversed" type="checkbox" />
                     Reversed
                   </label>
