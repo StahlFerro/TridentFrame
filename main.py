@@ -26,7 +26,7 @@ class API(object):
         return info
 
     @zerorpc.stream
-    def combine_image(self, image_paths, out_dir, filename, fps, extension, width, height, reverse, transparent, flip_h, flip_v):
+    def combine_image(self, image_paths, out_dir, vals):
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
         if not image_paths and not out_dir:
             raise Exception("Please load the images and choose the output folder!")
@@ -34,7 +34,7 @@ class API(object):
             raise Exception("Please load the images!")
         elif not out_dir:
             raise Exception("Please choose the output folder!")
-        criteria = CreationCriteria(fps, extension, reverse, transparent).transform(width, height, flip_h, flip_v)
+        criteria = CreationCriteria(vals)
         return create_aimg(image_paths, out_dir, filename, criteria)
 
     @zerorpc.stream

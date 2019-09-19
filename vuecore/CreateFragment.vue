@@ -27,12 +27,11 @@
             id="create_aimg_cell"
             class="silver-bordered force-center is-paddingless"
             style="width: 320px; height: 320px;"
-            v-bind:class="{'has-checkerboard-bg': CRT_checkerbg_active}">
+            v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
             <div class="crt-aimg-container">
               <span class="aimg-helper"></span>
-              <img id="CRT_aimg_stage"/>
+              <img v-bind:src="preview_path"/>
             </div>
-            <input id="CRT_aimg_path" name="CRT_aimg_path_field" type="hidden" value />
           </td>
         </tr>
         <tr>
@@ -67,13 +66,13 @@
             <nav class="level">
               <div class="level-item has-text-centered">
                 <div>
-                  <a id="CRT_autoprev_button" class="button is-neon-white">
+                  <a v-on:click="previewAIMG" class="button is-neon-white">
                     <span class="icon is-medium">
                       <i id="autoprev_icon" class="far fa-eye"></i>
                     </span>
                     <span>Preview</span>
                   </a>
-                  <a v-on:click="CRTToggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': CRT_checkerbg_active}">
+                  <a v-on:click="CRTToggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
                     <span class="icon is-medium">
                       <i class="fas fa-chess-board"></i>
                     </span>
@@ -91,7 +90,7 @@
                   <div class="field">
                     <label class="label">Name</label>
                     <div class="control">
-                      <input v-model="create_name" class="input is-neon-white" type="text" />
+                      <input v-model="name" class="input is-neon-white" type="text" />
                     </div>
                   </div>
                 </td>
@@ -99,7 +98,7 @@
                   <div class="field">
                     <label class="label">Delay (seconds)</label>
                     <div class="control">
-                      <input v-model="create_delay" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
+                      <input v-model="delay" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
@@ -107,7 +106,7 @@
                   <div class="field">
                     <label class="label">Frame rate</label>
                     <div class="control">
-                      <input v-model="create_fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
+                      <input v-model="fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
                     </div>
                   </div>
                 </td>
@@ -128,7 +127,7 @@
                   <div class="field">
                     <label class="label">Width</label>
                     <div class="control">
-                      <input v-model="create_width" class="input is-neon-white" type="number" />
+                      <input v-model="width" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
@@ -136,7 +135,7 @@
                   <div class="field">
                     <label class="label">Height</label>
                     <div class="control">
-                      <input v-model="create_height" class="input is-neon-white" type="number" />
+                      <input v-model="height" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
@@ -166,7 +165,7 @@
                     </div>
                     <div class="control is-expanded">
                       <input
-                        v-model="create_outdir"
+                        v-model="outdir"
                         class="input is-neon-white"
                         type="text"
                         placeholder="Output folder"
@@ -180,7 +179,7 @@
                     <!-- <label class="label">Format</label> -->
                     <div class="control">
                       <div class="select is-neon-cyan">
-                        <select v-model="CRT_out_format">
+                        <select v-model="format">
                           <option value="gif">GIF</option>
                           <option value="apng">APNG</option>
                         </select>
@@ -222,23 +221,23 @@ import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION } from "
 
 var data = {
   sequence_paths: [],
-  create_name: "",
-  create_fps: "",
-  create_width: "",
-  create_height: "",
-  create_delay: "",
+  name: "",
+  fps: "",
+  width: "",
+  height: "",
+  delay: "",
   is_disposed: false,
   is_reversed: false,
   flip_horizontal: false,
   flip_vertical: false,
-  CRT_out_format: "gif",
-  create_outdir: "",
-  CRT_aimg_stage: "",
-  CRT_aimg_path: "",
+  format: "gif",
+  outdir: "",
+  preview_path: "",
   create_msgbox: "",
   sequence_counter: "",
-  CRT_checkerbg_active: false,
+  checkerbg_active: false,
   CRT_IS_LOADING: false,
+  CRT_IS_PREVIEWING: false,
   CRT_IS_CREATING: false,
 }
 
@@ -262,12 +261,12 @@ function loadImage() {
         data.create_msgbox = error;
       } else {
         data.sequence_paths = res.sequence;
-        data.create_name = res.name;
+        data.name = res.name;
         data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
-        data.create_width = res.width;
-        data.create_height = res.height;
-        data.create_fps = 50;
-        data.create_delay = 0.02;
+        data.width = res.width;
+        data.height = res.height;
+        data.fps = 50;
+        data.delay = 0.02;
         data.create_msgbox = "";
       }
       data.CRT_IS_LOADING = false;
@@ -281,7 +280,7 @@ function CRTChooseOutdir() {
     console.log(out_dirs)
     if (out_dirs && out_dirs.length > 0) {
       console.log("folder selected");
-      data.create_outdir = out_dirs[0];
+      data.outdir = out_dirs[0];
       data.create_msgbox = "";
     }
   });
@@ -290,11 +289,11 @@ function CRTChooseOutdir() {
 
 function CRTClearAIMG() {
   data.sequence_paths = [];
-  data.create_name = "";
-  data.create_delay = "";
-  data.create_fps = "";
-  data.create_width = "";
-  data.create_height = "";
+  data.name = "";
+  data.delay = "";
+  data.fps = "";
+  data.width = "";
+  data.height = "";
   data.CRT_sequence_counter = "";
   data.create_msgbox = "";
   data.sequence_counter = "";
@@ -303,9 +302,22 @@ function CRTClearAIMG() {
   // session.clearCache(testcallback);
 }
 
+function previewAIMG() {
+  data.create_msgbox = "";
+  var validator = validateFilename(data.name);
+  if (!validator.valid) {
+    console.error(validator.msg);
+    data.create_msgbox = validator.msg;
+    return;
+  }
+  client.invoke("combine_image", data, (error, res) => {
+
+  });
+}
+
 function CRTCreateAIMG() {
   data.create_msgbox = "";
-  var validator = validateFilename(data.create_name);
+  var validator = validateFilename(data.name);
   if (!validator.valid) {
     console.error(validator.msg);
     data.create_msgbox = validator.msg;
@@ -313,9 +325,8 @@ function CRTCreateAIMG() {
   }
   data.CRT_IS_CREATING = true;
   // console.log(getFPS());
-  client.invoke("combine_image", data.sequence_paths, data.create_outdir, data.create_name, data.create_fps, 
-    data.CRT_out_format, data.create_width, data.create_height, data.is_reversed, data.is_disposed, data.flip_horizontal, data.flip_vertical, (error, res) => {
-    // console.log('createfragment fps', data.create_fps);
+  client.invoke("combine_image", data, (error, res) => {
+    // console.log('createfragment fps', data.fps);
     if (error) {
       console.error(error);
       data.create_msgbox = error;
@@ -340,8 +351,8 @@ function CRTCreateAIMG() {
 }
 
 function CRTToggleCheckerBG() {
-  data.CRT_checkerbg_active = !data.CRT_checkerbg_active;
-  console.log('now checkerbg is', data.CRT_checkerbg_active);
+  data.checkerbg_active = !data.checkerbg_active;
+  console.log('now checkerbg is', data.checkerbg_active);
 }
 
 function isButtonFrozen() {
@@ -350,7 +361,7 @@ function isButtonFrozen() {
 }
 
 // function getFPS() {
-//   return Math.round(1/data.create_delay * 1000) / 1000;
+//   return Math.round(1/data.delay * 1000) / 1000;
 // }
 
 function delayConstrain (event) {
@@ -362,17 +373,17 @@ function delayConstrain (event) {
     if (numdec[1].length > GIF_DELAY_DECIMAL_PRECISION) {
       var twodecs = numdec[1].substring(0, GIF_DELAY_DECIMAL_PRECISION);
       console.log("twodecs limit triggered", twodecs);
-      data.create_delay = `${numdec[0]}.${twodecs}`;
+      data.delay = `${numdec[0]}.${twodecs}`;
     }
   }
-  data.create_fps = Math.round(1000 / data.create_delay) / 1000;
+  data.fps = Math.round(1000 / data.delay) / 1000;
 }
 
 function fpsConstrain (event) {
   console.log("fps event", event);
   var value = event.target.value;
   if (value) {
-    data.create_delay = Math.round(100 / data.create_fps) / 100;
+    data.delay = Math.round(100 / data.fps) / 100;
   }
 }
 
@@ -388,6 +399,7 @@ export default {
     loadImage: loadImage,
     CRTClearAIMG: CRTClearAIMG,
     CRTChooseOutdir: CRTChooseOutdir,
+    previewAIMG: previewAIMG,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
     delayConstrain: delayConstrain,
