@@ -1,29 +1,28 @@
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """
-    def __init__(self, fps, extension, reverse, transparent):
-        try:
-            fps = float(fps)
-        except Exception as e:
-            raise Exception(e)
-        self.fps: float = fps
-        self.duration: float = round(1000 / fps)
-        self.extension: str = extension
-        self.reverse: bool = reverse
-        self.transparent: bool = transparent
-        self.flip_h: bool = False
-        self.flip_v: bool = False
+    def __init__(self, vals):
+        self.fps: float = float(vals['fps'])
+        self.duration: float = float(vals['delay'])
+        self.extension: str = vals['format']
+        self.reverse: bool = vals['is_reversed']
+        self.transparent: bool = vals['is_transparent']
+        self.orig_width = int(vals['orig_width'])
+        self.flip_h: bool = vals['flip_x']
+        self.flip_v: bool = vals['flip_y']
+        self.resize_width = int(vals['width'])
+        self.resize_height = int(vals['height'])
     
-    def transform(self, resize_width, resize_height, flip_h, flip_v):
-        try:
-            resize_width = float(resize_width)
-            resize_height = float(resize_height)
-        except Exception as e:
-            raise Exception(e)        
-        self.resize_width: int = resize_width
-        self.resize_height: int = resize_height
-        self.flip_h = flip_h
-        self.flip_v = flip_v
-        return self
+    # def transform(self, resize_width, resize_height, flip_h, flip_v):
+    #     try:
+    #         resize_width = float(resize_width)
+    #         resize_height = float(resize_height)
+    #     except Exception as e:
+    #         raise Exception(e)        
+    #     self.resize_width: int = resize_width
+    #     self.resize_height: int = resize_height
+    #     self.flip_h = flip_h
+    #     self.flip_v = flip_v
+    #     return self
 
 
 class SplitCriteria():

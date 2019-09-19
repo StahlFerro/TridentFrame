@@ -21,7 +21,7 @@ from .criterion import CreationCriteria
 from .utility import _mk_temp_dir
 
 
-def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria, absolute_paths=True) -> Tuple[str, List[str]]:
+def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
     """ Generate a sequence of GIFs created from the input sequence with the specified criteria, before compiling them into a single animated GIF"""
     disposal = 0
     # if criteria.reverse:
@@ -69,7 +69,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
 
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
-    yield from _create_gifragments(image_paths, gifragment_dir, criteria, absolute_paths=False)
+    yield from _create_gifragments(image_paths, gifragment_dir, criteria)
     executable = gifsicle_exec()
     delay = int(100 // criteria.fps)
     opti_mode = "--unoptimize"

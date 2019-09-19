@@ -40,7 +40,7 @@
               <div class="level-left">
                 <div class="level-item has-text-centered">
                   <div>
-                    <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}">
+                    <a v-on:click="loadImages" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}">
                       <span class="icon is-small">
                         <i class="fas fa-plus"></i>
                       </span>
@@ -112,7 +112,7 @@
                 </td>
                 <td style="vertical-align: bottom;">
                   <label class="checkbox" title="Preserve transparent pixels">
-                    <input v-model="is_disposed" type="checkbox" />
+                    <input v-model="is_transparent" type="checkbox" />
                     Preserve Alpha
                   </label>
                   <br />
@@ -142,12 +142,12 @@
                 <td></td>
                 <td style="vertical-align: bottom;">
                   <label class="checkbox">
-                    <input v-model="flip_horizontal" type="checkbox" />
+                    <input v-model="flip_x" type="checkbox" />
                     Flip Horizontally
                   </label>
                   <br />
                   <label class="checkbox">
-                    <input v-model="flip_vertical" type="checkbox" />
+                    <input v-model="flip_y" type="checkbox" />
                     Flip Vertically
                   </label>
                 </td>
@@ -220,16 +220,18 @@ const { client } = require("./Client.vue");
 import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION } from "./Utility.vue";
 
 var data = {
-  sequence_paths: [],
+  image_paths: [],
   name: "",
   fps: "",
+  orig_width: "",
+  orig_height: "",
   width: "",
   height: "",
   delay: "",
-  is_disposed: false,
+  is_transparent: false,
   is_reversed: false,
-  flip_horizontal: false,
-  flip_vertical: false,
+  flip_x: false,
+  flip_y: false,
   format: "gif",
   outdir: "",
   preview_path: "",
@@ -245,7 +247,7 @@ let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
-function loadImage() {
+function loadImages() {
   console.log("crt load image")
   var options = {
     filters: extension_filters,
@@ -260,10 +262,12 @@ function loadImage() {
         console.error(error);
         data.create_msgbox = error;
       } else {
-        data.sequence_paths = res.sequence;
+        data.image_paths = res.sequence;
         data.name = res.name;
         data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
+        data.orig_width = res.width;
         data.width = res.width;
+        data.orig_height = res.height;
         data.height = res.height;
         data.fps = 50;
         data.delay = 0.02;
@@ -288,11 +292,13 @@ function CRTChooseOutdir() {
 }
 
 function CRTClearAIMG() {
-  data.sequence_paths = [];
+  data.image_paths = [];
   data.name = "";
   data.delay = "";
   data.fps = "";
+  data.orig_width = "";
   data.width = "";
+  data.orig_height = "";
   data.height = "";
   data.CRT_sequence_counter = "";
   data.create_msgbox = "";
@@ -388,7 +394,7 @@ function fpsConstrain (event) {
 }
 
 function CRTQuintcellLister() {
-  return quintcellLister(data.sequence_paths);
+  return quintcellLister(data.image_paths);
 }
 
 export default {
@@ -396,7 +402,7 @@ export default {
     return data;
   },
   methods: {
-    loadImage: loadImage,
+    loadImages: loadImages,
     CRTClearAIMG: CRTClearAIMG,
     CRTChooseOutdir: CRTChooseOutdir,
     previewAIMG: previewAIMG,
