@@ -67,14 +67,15 @@
             <nav class="level">
               <div class="level-item has-text-centered">
                 <div>
+                  <a id="CRT_autoprev_button" class="button is-neon-white">
+                    <span class="icon is-medium">
+                      <i id="autoprev_icon" class="far fa-eye"></i>
+                    </span>
+                    <span>Preview</span>
+                  </a>
                   <a v-on:click="CRTToggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': CRT_checkerbg_active}">
                     <span class="icon is-medium">
                       <i class="fas fa-chess-board"></i>
-                    </span>
-                  </a>
-                  <a id="CRT_autoprev_button" class="button is-neon-white">
-                    <span class="icon is-medium">
-                      <i id="autoprev_icon" class="far fa-eye-slash"></i>
                     </span>
                   </a>
                 </div>
