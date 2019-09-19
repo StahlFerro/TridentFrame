@@ -26,11 +26,8 @@ class API(object):
         return info
 
     @zerorpc.stream
-    def combine_image(self, vals: dict):
+    def combine_image(self, image_paths, out_dir, filename, vals: dict):
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
-        image_paths = vals.get('image_paths')
-        out_dir = vals.get('outdir')
-        filename = vals.get('name')
         if not image_paths and not out_dir:
             raise Exception("Please load the images and choose the output folder!")
         elif not image_paths:

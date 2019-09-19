@@ -331,7 +331,7 @@ function CRTCreateAIMG() {
   }
   data.CRT_IS_CREATING = true;
   // console.log(getFPS());
-  client.invoke("combine_image", data, (error, res) => {
+  client.invoke("combine_image", data.image_paths, data.outdir, data.name, data, (error, res) => {
     // console.log('createfragment fps', data.fps);
     if (error) {
       console.error(error);
