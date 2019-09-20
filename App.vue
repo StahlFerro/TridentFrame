@@ -121,13 +121,13 @@
           </div>
         </td>
         <td width="90%" id="panel_container">
-          <CreateFragment v-show="menuselection == 0" />
-          <SplitFragment v-show="menuselection == 1" />
-          <ModifyFragment v-show="menuselection == 2" />
-          <BuildSpritesheetFragment v-show="menuselection == 3" />
-          <SliceSpritesheetFragment v-show="menuselection == 4" />
-          <SettingsFragment v-show="menuselection == 5" />
-          <AboutFragment v-show="menuselection == 6" />
+          <CreatePanel v-show="menuselection == 0" />
+          <SplitPanel v-show="menuselection == 1" />
+          <ModifyPanel v-show="menuselection == 2" />
+          <BuildSpritesheetPanel v-show="menuselection == 3" />
+          <SliceSpritesheetPanel v-show="menuselection == 4" />
+          <SettingsPanel v-show="menuselection == 5" />
+          <AboutPanel v-show="menuselection == 6" />
         </td>
       </tr>
     </tbody>
@@ -139,13 +139,13 @@ const remote = require("electron").remote;
 const session = remote.getCurrentWebContents().session;
 
 import { client, ImageViewer } from "./vuecore/Client.vue";
-import CreateFragment from "./vuecore/CreateFragment.vue";
-import SplitFragment from "./vuecore/SplitFragment.vue";
-import ModifyFragment from "./vuecore/ModifyFragment.vue";
-import BuildSpritesheetFragment from "./vuecore/BuildSpritesheetFragment.vue";
-import SliceSpritesheetFragment from "./vuecore/SliceSpritesheetFragment.vue";
-import SettingsFragment from "./vuecore/SettingsFragment.vue";
-import AboutFragment from "./vuecore/AboutFragment.vue";
+import CreatePanel from "./vuecore/CreatePanel.vue";
+import SplitPanel from "./vuecore/SplitPanel.vue";
+import ModifyPanel from "./vuecore/ModifyPanel.vue";
+import BuildSpritesheetPanel from "./vuecore/BuildSpritesheetPanel.vue";
+import SliceSpritesheetPanel from "./vuecore/SliceSpritesheetPanel.vue";
+import SettingsPanel from "./vuecore/SettingsPanel.vue";
+import AboutPanel from "./vuecore/AboutPanel.vue";
 
 var data = {
   menuselection: 0,
@@ -157,13 +157,13 @@ export default {
     return data;
   },
   components: {
-    CreateFragment,
-    SplitFragment,
-    ModifyFragment,
-    BuildSpritesheetFragment,
-    SliceSpritesheetFragment,
-    SettingsFragment,
-    AboutFragment
+    CreatePanel,
+    SplitPanel,
+    ModifyPanel,
+    BuildSpritesheetPanel,
+    SliceSpritesheetPanel,
+    SettingsPanel,
+    AboutPanel
   },
   methods: {
     minimizeWindow: function () {
