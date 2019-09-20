@@ -270,78 +270,12 @@
                   </table>
                 </div>
                 <div v-show="mod_menuselection == 1">
-                  <table class="table mod-new-control-table is-hpaddingless" width="100%">
-                    <tr>
-                      <td class="force-vcenter" width="20%">
-                        <label class="checkbox" title="Optimize GIFs to reduce output filesize">
-                          <input v-model="is_optimized" type="checkbox"/>
-                          Optimize
-                        </label>
-                      </td>
-                      <td class="force-vcenter" width="20%">
-                        <div class="field">
-                          <!-- <label class="label">Optimization Level</label> -->
-                          <div class="control">
-                            <div class="select is-neon-cyan">
-                              <select v-model="optimization_level" v-bind:disabled="!is_optimized">
-                                <option value="1">Low</option>
-                                <option value="2">Medium</option>
-                                <option value="3">High</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="force-vcenter" width="20%">
-                        <label class="checkbox" title="Performs significant filesize reduction at the cost of quality">
-                          <input v-model="is_lossy" type="checkbox" />
-                          Lossy-compress
-                        </label>
-                      </td>
-                      <td class="force-vcenter" width="20%">
-                        <div class="field">
-                          <!-- <label class="label">Color space</label> -->
-                          <div class="control">
-                            <input
-                              v-model="lossy_value"
-                              class="input is-neon-white"
-                              type="number"
-                              min="30"
-                              max="200"
-                              placeholder="30 - 200"
-                              v-bind:disabled="!is_lossy"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td class="force-vcenter" width="20%">
-                        <label class="checkbox" title="Reduces the number of colors. This also eliminates local/per-frame color tables">
-                          <input v-model="is_reduced_color" type="checkbox" />
-                          Reduce Colors
-                        </label>
-                      </td>
-                      <td class="force-vcenter" width="20%">
-                        <div class="field">
-                          <!-- <label class="label">Color space</label> -->
-                          <div class="control">
-                            <input
-                              v-model="color_space"
-                              class="input is-neon-white"
-                              type="number"
-                              min="2"
-                              max="256"
-                              placeholder="2 - 256"
-                              v-bind:disabled="!is_reduced_color"
-                            />
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  </table>
+                  <GIFOptimizationTable 
+                    :is_lossy.sync="is_lossy"
+                    :lossy_value.sync="lossy_value"
+                    :is_reduced_color.sync="is_reduced_color"
+                    :color_space.sync="color_space"
+                  />
                 </div>
               </td>
             </tr>
@@ -366,6 +300,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
 const { GIF_DELAY_DECIMAL_PRECISION, ticks } = require("./Utility.vue");
+import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 
 
 var data = {
@@ -508,6 +443,7 @@ function loadNewInfo(res) {
 
 
 function clearImage() {
+  console.log(data);
   clearOrigFields();
   clearNewFields();
 }
@@ -611,6 +547,9 @@ function origDimensions() {
 export default {
   data: function() {
     return data;
+  },
+  components: {
+    GIFOptimizationTable,
   },
   methods: {
     loadImage: loadImage,
