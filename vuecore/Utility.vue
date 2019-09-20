@@ -26,9 +26,14 @@ function validateFilename(filename) {
   }
 }
 
+function ticks() {
+  return new Date().getTime() * 10000;
+}
+
 const GIF_DELAY_DECIMAL_PRECISION = 2;
 
 module.exports.quintcellLister = quintcellLister;
 module.exports.GIF_DELAY_DECIMAL_PRECISION = GIF_DELAY_DECIMAL_PRECISION;
 module.exports.validateFilename = validateFilename;
+module.exports.ticks = ticks;
 </script>

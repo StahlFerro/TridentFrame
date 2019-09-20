@@ -217,7 +217,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION } from "./Utility.vue";
+import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, ticks } from "./Utility.vue";
 
 var data = {
   image_paths: [],
@@ -329,7 +329,7 @@ function previewAIMG() {
           data.create_msgbox = res.msg;
         }
         if (res.preview_path) {
-          data.preview_path = res.preview_path;
+          data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
         }
         if (res.msg == "Finished!") {
           data.CRT_IS_PREVIEWING = false;
