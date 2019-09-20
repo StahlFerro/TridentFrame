@@ -66,7 +66,7 @@
             <nav class="level">
               <div class="level-item has-text-centered">
                 <div>
-                  <a v-on:click="previewAIMG" class="button is-neon-white" v-bind:class="{'is-loading': CRT_IS_PREVIEWING, 'is-static': isButtonFrozen}">
+                  <a v-on:click="previewAIMG" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_PREVIEWING, 'is-static': isButtonFrozen}">
                     <span class="icon is-medium">
                       <i id="autoprev_icon" class="far fa-eye"></i>
                     </span>

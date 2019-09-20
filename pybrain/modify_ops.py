@@ -27,23 +27,24 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
         raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file")
     out_dir = os.path.abspath(out_dir)
     full_name = f"{criteria.name}.{criteria.format.lower()}"
-    temp_dir = _mk_temp_dir(prefix_name="temp_mods")
-    temp_save_path = os.path.join(temp_dir, full_name)
+    # temp_dir = _mk_temp_dir(prefix_name="temp_mods")
+    # temp_save_path = os.path.join(temp_dir, full_name)
+    out_full_path = os.path.join(out_dir, full_name)
     sicle_args = _generate_gifsicle_args(criteria)
     magick_args = _generate_imagemagick_args(criteria)
-
+    yield sicle_args
     if sicle_args:
         target_path = str(img_path)
         for index, (arg, description) in enumerate(sicle_args, start=1):
             yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-            cmdlist = [gifsicle_exec(), arg, target_path, "--output", temp_save_path]
+            cmdlist = [gifsicle_exec(), arg, target_path, "--output", out_full_path]
             cmd = ' '.join(cmdlist)
             yield {"msg": f"cmd: {cmd}"}
             yield {"msg": f"[{index}/{len(sicle_args)}] {description}"}
             subprocess.run(cmd, shell=True)
-            if target_path != temp_save_path:
-                target_path = temp_save_path
-    yield {"preview_path": temp_save_path}
+            if target_path != out_full_path:
+                target_path = out_full_path
+    yield {"preview_path": out_full_path}
     yield {"msg": "Finished!"}
 
 
@@ -51,6 +52,8 @@ def _generate_gifsicle_args(criteria: ModificationCriteria):
     args = []
     if criteria.must_resize():
         args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
+    if criteria.orig_delay != criteria.delay:
+        args.append((f"--delay={criteria.delay * 100}", f"Setting per-frame delay to {criteria.delay}"))
     if criteria.is_optimized and criteria.optimization_level:
         args.append((f"--optimize={criteria.optimization_level}", f"Optimizing image with level, {criteria.optimization_level}..."))
     if criteria.is_lossy and criteria.lossy_value:

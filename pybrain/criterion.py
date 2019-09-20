@@ -6,7 +6,6 @@ class CreationCriteria():
         self.extension: str = vals['format']
         self.reverse: bool = vals['is_reversed']
         self.transparent: bool = vals['is_transparent']
-        self.orig_width = int(vals['orig_width'])
         self.flip_h: bool = vals['flip_x']
         self.flip_v: bool = vals['flip_y']
         self.resize_width = int(vals['width'])
@@ -49,6 +48,7 @@ class ModificationCriteria():
         self.orig_height = json_vals['orig_height']
         self.width = json_vals['width']
         self.height = json_vals['height']
+        self.orig_delay = json_vals['orig_delay']
         self.delay = json_vals['delay']
         self.rotation = json_vals['rotation']
         self.fps = json_vals['fps']

@@ -95,7 +95,7 @@
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Frame delay</td>
-                <td class="mod-info-data">{{ orig_delay }}</td>
+                <td class="mod-info-data">{{ orig_delay_info }}</td>
               </tr>
               <tr>
                 <td class="mod-info-label is-cyan">Loop duration</td>
@@ -365,7 +365,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, ticks } = require("./Utility.vue");
 
 
 var data = {
@@ -374,7 +374,8 @@ var data = {
   orig_height: "",
   orig_frame_count: "-",
   orig_fps: "-",
-  orig_delay: "-",
+  orig_delay: "",
+  orig_delay_info: "-",
   orig_loop_duration: "-",
   orig_file_size: "-",
   orig_format: "-",
@@ -414,7 +415,8 @@ function clearOrigFields() {
   data.orig_height = "";
   data.orig_frame_count = "-";
   data.orig_fps = "-";
-  data.orig_delay = "-";
+  data.orig_delay = "";
+  data.orig_delay_info = "-";
   data.orig_loop_duration = "-";
   data.orig_file_size = "-";
   data.orig_format = "-";
@@ -487,7 +489,8 @@ function loadOrigInfo(res) {
   if (res.duration_is_uneven) {
       delay_info += ` (uneven)`;
   }
-  data.orig_delay = delay_info;
+  data.orig_delay = res.avg_duration;
+  data.orig_delay_info = delay_info;
   data.orig_loop_duration = `${res.loop_duration} seconds`;
   data.orig_path = res.absolute_url;
   data.orig_file_size = res.fsize;
@@ -557,7 +560,7 @@ function previewModImg() {
         data.modify_msgbox = res.msg;
       }
       if (res.preview_path) {
-        data.preview_path = res.preview_path
+        data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
       }
       if (res.msg == "Finished!") {
         data.MOD_IS_PREVIEWING = false;
