@@ -15,6 +15,8 @@ const createWindow = () => {
         center: true, 
         frame: false,
         darkTheme: true,
+        fullscreen: false,
+        resizable: false,
         icon: path.join(__dirname, 'imgs/TridentFrame_Icon_200px.png'),
         webPreferences: {
             webSecurity: false,

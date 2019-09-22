@@ -3,7 +3,7 @@
     <tr>
       <td class="force-vcenter" width="20%">
         <label class="checkbox" title="Optimize GIFs to reduce output filesize">
-          <input v-model="is_optimized" type="checkbox" />
+          <input v-model="is_optimized" @change="$emit('update:is_optimized', is_optimized)" type="checkbox" />
           Optimize
         </label>
       </td>
@@ -12,7 +12,7 @@
           <!-- <label class="label">Optimization Level</label> -->
           <div class="control">
             <div class="select is-neon-cyan">
-              <select v-model="optimization_level" v-bind:disabled="!is_optimized">
+              <select v-model="optimization_level" @change="$emit('update:optimization_level', optimization_level)" v-bind:disabled="!is_optimized">
                 <option value="1">Low</option>
                 <option value="2">Medium</option>
                 <option value="3">High</option>

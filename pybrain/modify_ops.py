@@ -32,8 +32,10 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     out_full_path = os.path.join(out_dir, full_name)
     sicle_args = _generate_gifsicle_args(criteria)
     magick_args = _generate_imagemagick_args(criteria)
-    yield sicle_args
-    if sicle_args:
+    # yield sicle_args
+    if not (sicle_args and magick_args): 
+        yield {"preview_path": img_path}
+    elif sicle_args:
         target_path = str(img_path)
         for index, (arg, description) in enumerate(sicle_args, start=1):
             yield {"msg": f"index {index}, arg {arg}, description: {description}"}

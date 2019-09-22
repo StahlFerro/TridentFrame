@@ -271,6 +271,8 @@
                 </div>
                 <div v-show="mod_menuselection == 1">
                   <GIFOptimizationTable 
+                    :is_optimized.sync="is_optimized"
+                    :optimization_level.sync="optimization_level"
                     :is_lossy.sync="is_lossy"
                     :lossy_value.sync="lossy_value"
                     :is_reduced_color.sync="is_reduced_color"
