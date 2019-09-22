@@ -1,6 +1,6 @@
 <template>
   <div id="about_panel" class="container has-text-centered" style="display: none; padding:10px;">
-    <div class="content about-content">
+    <div class="about-content">
       <table class="table about-table" width="100%">
         <tr>
           <td class="has-text-centered">

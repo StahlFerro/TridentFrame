@@ -1,174 +1,172 @@
 <template>
   <div id="split_panel" class="container" style="display: none; padding:10px;">
-    <div class="content">
-      <table class="table is-borderless" style="padding: 5px;" width="100%">
-        <tr>
-          <td
-            id="split_aimg_cell"
-            class="silver-bordered force-center is-paddingless"
-            v-bind:class="{'has-checkerboard-bg': checkerbg_active }"
-            width="45%"
-            style="height: 380px;"
+    <table class="table is-borderless" style="padding: 5px;" width="100%">
+      <tr>
+        <td
+          id="split_aimg_cell"
+          class="silver-bordered force-center is-paddingless"
+          v-bind:class="{'has-checkerboard-bg': checkerbg_active }"
+          width="45%"
+          style="height: 380px;"
+        >
+          <div class="spl-aimg-container">
+            <span class="aimg-helper"></span>
+            <img v-bind:src="aimg_path" />
+          </div>
+        </td>
+        <td width="55%" class="is-paddingless silver-bordered">
+          <table class="table spl-aimg-info-table" width="100%">
+            <thead>
+              <tr>
+                <th colspan="2">
+                  <p class="is-white-d">{{ info_header }}</p>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="spl-info-label is-cyan">Name</td>
+                <td class="spl-info-data">{{ name }}</td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Dimensions</td>
+                <td class="spl-info-data">{{ dimensions }}</td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">File Size</td>
+                <td class="spl-info-data">{{ file_size }}</td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Total frames</td>
+                <td class="spl-info-data">{{ frame_count }}</td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Total frames (DS)</td>
+                <td class="spl-info-data">{{ frame_count_ds }}</td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Frame rate</td>
+                <td class="spl-info-data">{{ fps }}</td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Frame delay</td>
+                <td class="spl-info-data">{{ delay }}</td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Loop duration</td>
+                <td class="spl-info-data">{{ loop_duration }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="is-hpaddingless">
+          <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_LOADING, 'is-static': isButtonFrozen}">
+            <span class="icon is-small">
+              <i class="fas fa-plus"></i>
+            </span>
+            <span>Load GIF/APNG</span>
+          </a>
+          <a v-on:click="clearImage" class="button is-neon-white">
+            <span class="icon is-small">
+              <i class="fas fa-trash-alt"></i>
+            </span>
+            <span>Clear</span>
+          </a>
+          <a
+            v-on:click="toggleCheckerBG"
+            class="button is-neon-white"
+            v-bind:class="{'is-active': checkerbg_active}"
           >
-            <div class="spl-aimg-container">
-              <span class="aimg-helper"></span>
-              <img v-bind:src="aimg_path" />
-            </div>
-          </td>
-          <td width="55%" class="is-paddingless silver-bordered">
-            <table class="table spl-aimg-info-table" width="100%">
-              <thead>
-                <tr>
-                  <th colspan="2">
-                    <p class="is-white-d">{{ info_header }}</p>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="spl-info-label is-cyan">Name</td>
-                  <td class="spl-info-data">{{ name }}</td>
-                </tr>
-                <tr>
-                  <td class="spl-info-label is-cyan">Dimensions</td>
-                  <td class="spl-info-data">{{ dimensions }}</td>
-                </tr>
-                <tr>
-                  <td class="spl-info-label is-cyan">File Size</td>
-                  <td class="spl-info-data">{{ file_size }}</td>
-                </tr>
-                <tr>
-                  <td class="spl-info-label is-cyan">Total frames</td>
-                  <td class="spl-info-data">{{ frame_count }}</td>
-                </tr>
-                <tr>
-                  <td class="spl-info-label is-cyan">Total frames (DS)</td>
-                  <td class="spl-info-data">{{ frame_count_ds }}</td>
-                </tr>
-                <tr>
-                  <td class="spl-info-label is-cyan">Frame rate</td>
-                  <td class="spl-info-data">{{ fps }}</td>
-                </tr>
-                <tr>
-                  <td class="spl-info-label is-cyan">Frame delay</td>
-                  <td class="spl-info-data">{{ delay }}</td>
-                </tr>
-                <tr>
-                  <td class="spl-info-label is-cyan">Loop duration</td>
-                  <td class="spl-info-data">{{ loop_duration }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td class="is-hpaddingless">
-            <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_LOADING, 'is-static': isButtonFrozen}">
-              <span class="icon is-small">
-                <i class="fas fa-plus"></i>
-              </span>
-              <span>Load GIF/APNG</span>
-            </a>
-            <a v-on:click="clearImage" class="button is-neon-white">
-              <span class="icon is-small">
-                <i class="fas fa-trash-alt"></i>
-              </span>
-              <span>Clear</span>
-            </a>
-            <a
-              v-on:click="toggleCheckerBG"
-              class="button is-neon-white"
-              v-bind:class="{'is-active': checkerbg_active}"
-            >
-              <span class="icon is-medium">
-                <i class="fas fa-chess-board"></i>
-              </span>
-            </a>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td id="SPL_control_cell" class="is-paddingless" colspan="2">
-            <table class="table control-table" width="100%">
-              <tr>
-                <td width="20%">
-                  <div class="field">
-                    <label class="label">Pad count</label>
-                    <div class="control">
-                      <input
-                        v-model="pad_count"
-                        class="input is-neon-white"
-                        type="number"
-                        min="1"
-                        max="6"
-                      />
-                    </div>
+            <span class="icon is-medium">
+              <i class="fas fa-chess-board"></i>
+            </span>
+          </a>
+        </td>
+        <td></td>
+      </tr>
+      <tr>
+        <td id="SPL_control_cell" class="is-paddingless" colspan="2">
+          <table class="table control-table" width="100%">
+            <tr>
+              <td width="20%">
+                <div class="field">
+                  <label class="label">Pad count</label>
+                  <div class="control">
+                    <input
+                      v-model="pad_count"
+                      class="input is-neon-white"
+                      type="number"
+                      min="1"
+                      max="6"
+                    />
                   </div>
-                </td>
-                <td width="25%">
-                  <div class="field">
-                    <label class="label">Color space</label>
-                    <div class="control">
-                      <input
-                        v-model="color_space"
-                        class="input is-neon-white"
-                        type="number"
-                        min="2"
-                        max="256"
-                        v-bind:disabled="!is_reduced_color"
-                      />
-                    </div>
+                </div>
+              </td>
+              <td width="25%">
+                <div class="field">
+                  <label class="label">Color space</label>
+                  <div class="control">
+                    <input
+                      v-model="color_space"
+                      class="input is-neon-white"
+                      type="number"
+                      min="2"
+                      max="256"
+                      v-bind:disabled="!is_reduced_color"
+                    />
                   </div>
-                </td>
-                <td width="25%" style="vertical-align: middle;">
-                  <label class="checkbox">
-                    <input v-model="is_duration_sensitive" type="checkbox" />
-                    Duration-sensitive
-                  </label>
-                  <label class="checkbox">
-                    <input v-model="is_reduced_color" type="checkbox" />
-                    Reduce Colors
-                  </label>
-                </td>
-                <td width="30%" style="vertical-align: middle;"></td>
-              </tr>
-              <tr>
-                <td colspan="3">
-                  <div class="field has-addons">
-                    <div class="control">
-                      <a v-on:click="chooseOutDir" class="button is-neon-cyan">
-                        <span class="icon is-small">
-                          <i class="fas fa-folder-open"></i>
-                        </span>
-                        <span>Save to</span>
-                      </a>
-                    </div>
-                    <div class="control is-expanded">
-                      <input
-                        v-model="outdir"
-                        class="input is-neon-white"
-                        type="text"
-                        placeholder="Output folder"
-                        readonly
-                      />
-                    </div>
+                </div>
+              </td>
+              <td width="25%" style="vertical-align: middle;">
+                <label class="checkbox">
+                  <input v-model="is_duration_sensitive" type="checkbox" />
+                  Duration-sensitive
+                </label>
+                <label class="checkbox">
+                  <input v-model="is_reduced_color" type="checkbox" />
+                  Reduce Colors
+                </label>
+              </td>
+              <td width="30%" style="vertical-align: middle;"></td>
+            </tr>
+            <tr>
+              <td colspan="3">
+                <div class="field has-addons">
+                  <div class="control">
+                    <a v-on:click="chooseOutDir" class="button is-neon-cyan">
+                      <span class="icon is-small">
+                        <i class="fas fa-folder-open"></i>
+                      </span>
+                      <span>Save to</span>
+                    </a>
                   </div>
-                </td>
-                <td class="has-text-centered">
-                  <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'is-static': isButtonFrozen}">
-                    Split to folder</a>
-                </td>
-              </tr>
-            </table>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="2" class="has-text-left" style="vertical-align: middle;">
-            <span>{{ split_msgbox }}</span>
-          </td>
-        </tr>
-      </table>
-    </div>
+                  <div class="control is-expanded">
+                    <input
+                      v-model="outdir"
+                      class="input is-neon-white"
+                      type="text"
+                      placeholder="Output folder"
+                      readonly
+                    />
+                  </div>
+                </div>
+              </td>
+              <td class="has-text-centered">
+                <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'is-static': isButtonFrozen}">
+                  Split to folder</a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="2" class="has-text-left" style="vertical-align: middle;">
+          <span>{{ split_msgbox }}</span>
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 
