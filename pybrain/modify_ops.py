@@ -46,7 +46,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             subprocess.run(cmd, shell=True)
             if target_path != out_full_path:
                 target_path = out_full_path
-    yield {"preview_path": out_full_path}
+        yield {"preview_path": out_full_path}
     yield {"msg": "Finished!"}
 
 
