@@ -30,6 +30,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
     for index, ipath in enumerate(image_paths):
         yield {"msg": f"Processing frames ({index}/{len(image_paths)})..."}
         with Image.open(ipath) as im:
+            transparency = im.info.get("transparency", False)
             orig_width, orig_height = im.size
             must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
             alpha = None
@@ -59,7 +60,10 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE)
                 im.save(save_path)
             elif im.mode == 'P':
-                im.save(save_path, transparency=im.info['transparency'])
+                if transparency:
+                    im.save(save_path, transparency=transparency)
+                else:
+                    im.save(save_path)
             # yield {"msg": f"Save path: {save_path}"}
             # if absolute_paths:
                 # temp_gifs.append(save_path)

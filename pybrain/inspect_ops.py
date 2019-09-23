@@ -3,9 +3,10 @@ import string
 import math
 from random import choices
 from pprint import pprint
+from typing import List
 from urllib.parse import urlparse
 
-from PIL import Image
+from PIL import Image, ExifTags
 from apng import APNG
 from hurry.filesize import size, alternative
 
@@ -124,12 +125,39 @@ def _inspect_sequence(image_paths):
     # pprint(apngs)
     # pprint(gifs)
     # if any(APNG.open(i) for i in imgs)):
-    sequence_info = {
+    sequence_info = _get_sequence_metadata(static_img_paths)
+    data = {
         "name": filename,
         "total": sequence_count,
         "sequence": static_img_paths,
+        "sequence_info": sequence_info,
         "size": sequence_filesize,
         "width": width,
         "height": height,
     }
-    return sequence_info
+    return data
+
+
+def _get_sequence_metadata(sequence_paths: List):
+    sequence_metadata = []
+    for index, path in enumerate(sequence_paths):
+        with Image.open(path) as im:
+            info = im.info
+            ext = im.format
+            if ext.upper() != "GIF":
+                exif = im._getexif()
+            else:
+                exif = None
+            width, height = im.size
+            sequence_metadata.append({
+                "index": index,
+                "name": os.path.basename(path),
+                "format": ext,
+                "path": path,
+                "color_mode": im.mode,
+                "comment": info.get("comment", ""),
+                "exif": exif,
+                "width": width,
+                "height": height,
+            })
+    return sequence_metadata

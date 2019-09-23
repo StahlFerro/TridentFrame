@@ -1,16 +1,19 @@
 <script>
-function quintcellLister(sequence_paths, from_where="") {
+function quintcellLister(sequence_infos, from_where="") {
+  // console.log(sequence_infos);
   var quintrows = {};
-  for (var row = 0; row < Math.ceil(sequence_paths.length / 5); row++) {
-    var quintcells = []
+  for (var row = 0; row < Math.ceil(sequence_infos.length / 5); row++) {
+    var quintcells = {}
     for (var c = 0; c < 5; c++) {
       const index = row * 5 + c;
-      const img_path = sequence_paths[index];
-      if (img_path === undefined) {continue;}
-      quintcells.push(img_path);
+      const img_info = sequence_infos[index];
+      // console.log(img_info)
+      if (img_info === undefined) {continue;}
+      quintcells[c] = img_info;
     }
     quintrows[row] = quintcells;
   }
+  console.log('after');
   console.log(quintrows);
   return quintrows;
 }

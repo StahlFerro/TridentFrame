@@ -15,6 +15,7 @@ from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 
 
 def _filter_images(image_paths, option="static"):
+    """ Filter out image whether they are static images or animated images """
     for i in image_paths:
         name, ext = os.path.splitext(os.path.basename(i))
         im = Image.open(i)

@@ -9,10 +9,17 @@
         >
           <table class="sequence-grid is-paddingless" width="100%">
             <tbody>
-              <tr v-for="(paths, row) in CRTQuintcellLister" v-bind:key="row">
-                <td v-for="path in paths" v-bind:key="path">
+              <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
+                <td v-for="(item, i) in quintjson" v-bind:key="i">
                   <div class="seqdiv">
-                    <img v-bind:src="path"/>
+                    <!-- <span>{{ i }}</span><br/> -->
+                    <img v-bind:src="item['path']" v-bind:title="
+                      `Name: ${item['name']}\n` + 
+                      `Dimensions: ${item['width']} x ${item['height']}\n` +
+                      `Format: ${item['format']}\n` +
+                      `Mode: ${item['color_mode']}\n` +
+                      `Comment: ${item['comment'] || 'None'}`
+                    "/>
                     <a class="del-anchor">
                       <span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
                     </a>
@@ -219,6 +226,7 @@ import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, ticks }
 
 var data = {
   image_paths: [],
+  sequence_info: [],
   name: "",
   fps: "",
   orig_width: "",
@@ -252,7 +260,7 @@ function loadImages() {
     properties: imgs_dialog_props
   }
   dialog.showOpenDialog(mainWindow, options, (img_paths) => {
-    console.log(img_paths);
+    // console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;
     client.invoke("inspect_sequence", img_paths, (error, res) => {
@@ -260,7 +268,10 @@ function loadImages() {
         console.error(error);
         data.create_msgbox = error;
       } else {
+        console.log('before');
+        console.log(res.sequence_info);
         data.image_paths = res.sequence;
+        data.sequence_info = res.sequence_info;
         data.name = res.name;
         data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
         data.orig_width = res.width;
@@ -291,6 +302,7 @@ function CRTChooseOutdir() {
 
 function CRTClearAIMG() {
   data.image_paths = [];
+  data.sequence_info = [];
   data.name = "";
   data.delay = "";
   data.fps = "";
@@ -324,6 +336,7 @@ function previewAIMG() {
     } else {
       if (res) {
         if (res.msg) {
+          console.log(res.msg);
           data.create_msgbox = res.msg;
         }
         if (res.preview_path) {
@@ -403,7 +416,7 @@ function fpsConstrain (event) {
 }
 
 function CRTQuintcellLister() {
-  return quintcellLister(data.image_paths);
+  return quintcellLister(data.sequence_info);
 }
 
 export default {
