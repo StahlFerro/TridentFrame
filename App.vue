@@ -35,9 +35,9 @@
                 <li
                   id="create_box"
                   class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 0}"
+                  v-bind:class="{'is-selected': menuselection == 'create_panel'}"
                 >
-                  <a id="create_menu" v-on:click="menuselection = 0">
+                  <a id="create_menu" v-on:click="menuselection = 'create_panel'">
                     <span class="icon is-large">
                       <i class="fas fa-image fa-2x fa-inverse"></i>
                     </span>
@@ -47,9 +47,9 @@
                 <li
                   id="split_box"
                   class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 1}"
+                  v-bind:class="{'is-selected': menuselection == 'split_panel'}"
                 >
-                  <a id="split_menu" v-on:click="menuselection = 1">
+                  <a id="split_menu" v-on:click="menuselection = 'split_panel'">
                     <span class="icon is-large">
                       <i class="far fa-images fa-2x fa-inverse"></i>
                     </span>
@@ -59,9 +59,9 @@
                 <li
                   id="modify_box"
                   class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 2}"
+                  v-bind:class="{'is-selected': menuselection == 'modify_panel'}"
                 >
-                  <a id="modify_menu" v-on:click="menuselection = 2">
+                  <a id="modify_menu" v-on:click="menuselection = 'modify_panel'">
                     <span class="icon is-large">
                       <i class="fas fa-exchange-alt fa-2x fa-inverse"></i>
                     </span>
@@ -71,9 +71,9 @@
                 <li
                   id="buildsprite_box"
                   class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 3}"
+                  v-bind:class="{'is-selected': menuselection == 'buildspritesheet_panel'}"
                 >
-                  <a id="buildsprite_menu" v-on:click="menuselection = 3">
+                  <a id="buildsprite_menu" v-on:click="menuselection = 'buildspritesheet_panel'">
                     <span class="icon is-large">
                       <i class="fas fa-border-all fa-2x fa-inverse"></i>
                     </span>
@@ -83,9 +83,9 @@
                 <li
                   id="slicesprite_box"
                   class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 4}"
+                  v-bind:class="{'is-selected': menuselection == 'slicespritesheet_panel'}"
                 >
-                  <a id="slicesprite_menu" v-on:click="menuselection = 4">
+                  <a id="slicesprite_menu" v-on:click="menuselection = 'slicespritesheet_panel'">
                     <span class="icon is-large">
                       <i class="fas fa-th fa-2x fa-inverse"></i>
                     </span>
@@ -95,9 +95,9 @@
                 <li
                   id="settings_box"
                   class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 5}"
+                  v-bind:class="{'is-selected': menuselection == 'settings_panel'}"
                 >
-                  <a id="settings_menu" v-on:click="menuselection = 5">
+                  <a id="settings_menu" v-on:click="menuselection = 'settings_panel'">
                     <span class="icon is-large">
                       <i class="fas fa-cog fa-2x fa-inverse"></i>
                     </span>
@@ -107,9 +107,9 @@
                 <li
                   id="about_box"
                   class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 6}"
+                  v-bind:class="{'is-selected': menuselection == 'about_panel'}"
                 >
-                  <a id="about_menu" v-on:click="menuselection = 6">
+                  <a id="about_menu" v-on:click="menuselection = 'about_panel'">
                     <span class="icon is-large">
                       <i class="fas fa-info-circle fa-2x fa-inverse"></i>
                     </span>
@@ -121,13 +121,13 @@
           </div>
         </td>
         <td width="90%" id="panel_container">
-          <CreatePanel v-show="menuselection == 0" />
-          <SplitPanel v-show="menuselection == 1" />
-          <ModifyPanel v-show="menuselection == 2" />
-          <BuildSpritesheetPanel v-show="menuselection == 3" />
-          <SliceSpritesheetPanel v-show="menuselection == 4" />
-          <SettingsPanel v-show="menuselection == 5" />
-          <AboutPanel v-show="menuselection == 6" />
+          <CreatePanel v-show="menuselection == 'create_panel'" />
+          <SplitPanel v-show="menuselection == 'split_panel'" />
+          <ModifyPanel v-show="menuselection == 'modify_panel'" />
+          <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
+          <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
+          <SettingsPanel v-show="menuselection == 'settings_panel'" />
+          <AboutPanel v-show="menuselection == 'about_panel'" />
         </td>
       </tr>
     </tbody>
@@ -148,7 +148,7 @@ import SettingsPanel from "./vuecore/SettingsPanel.vue";
 import AboutPanel from "./vuecore/AboutPanel.vue";
 
 var data = {
-  menuselection: 0,
+  menuselection: "create_panel",
 };
 
 export default {
