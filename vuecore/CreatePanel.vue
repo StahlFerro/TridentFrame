@@ -303,6 +303,7 @@ function CRTChooseOutdir() {
 function CRTClearAIMG() {
   data.image_paths = [];
   data.sequence_info = [];
+  data.preview_path = "";
   data.name = "";
   data.delay = "";
   data.fps = "";
