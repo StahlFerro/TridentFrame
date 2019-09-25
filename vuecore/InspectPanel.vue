@@ -10,3 +10,12 @@
         </table>
     </div>
 </template>
+
+<script>
+var data = {};
+export default {
+    data: function() {
+        return data;
+    }
+}
+</script>

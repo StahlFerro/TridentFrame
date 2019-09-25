@@ -93,6 +93,18 @@
                   </a>
                 </li>
                 <li
+                  id="inspect_box"
+                  class="menu-item"
+                  v-bind:class="{'is-selected': menuselection == 'inspect_panel'}"
+                >
+                  <a id="inspect_menu" v-on:click="menuselection = 'inspect_panel'">
+                    <span class="icon is-large">
+                      <i class="fas fa-hourglass-half fa-2x fa-inverse"></i>
+                    </span>
+                    <p class="is-white-d">Inspect Image</p>
+                  </a>
+                </li>
+                <li
                   id="settings_box"
                   class="menu-item"
                   v-bind:class="{'is-selected': menuselection == 'settings_panel'}"
@@ -126,6 +138,7 @@
           <ModifyPanel v-show="menuselection == 'modify_panel'" />
           <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
           <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
+          <InspectPanel v-show="menuselection == 'inspect_panel'" />
           <SettingsPanel v-show="menuselection == 'settings_panel'" />
           <AboutPanel v-show="menuselection == 'about_panel'" />
         </td>
@@ -144,6 +157,7 @@ import SplitPanel from "./vuecore/SplitPanel.vue";
 import ModifyPanel from "./vuecore/ModifyPanel.vue";
 import BuildSpritesheetPanel from "./vuecore/BuildSpritesheetPanel.vue";
 import SliceSpritesheetPanel from "./vuecore/SliceSpritesheetPanel.vue";
+import InspectPanel from "./vuecore/InspectPanel.vue";
 import SettingsPanel from "./vuecore/SettingsPanel.vue";
 import AboutPanel from "./vuecore/AboutPanel.vue";
 
@@ -162,6 +176,7 @@ export default {
     ModifyPanel,
     BuildSpritesheetPanel,
     SliceSpritesheetPanel,
+    InspectPanel,
     SettingsPanel,
     AboutPanel
   },
