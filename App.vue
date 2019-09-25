@@ -99,7 +99,7 @@
                 >
                   <a id="inspect_menu" v-on:click="menuselection = 'inspect_panel'">
                     <span class="icon is-large">
-                      <i class="fas fa-hourglass-half fa-2x fa-inverse"></i>
+                      <i class="fas fa-search fa-2x fa-inverse"></i>
                     </span>
                     <p class="is-white-d">Inspect Image</p>
                   </a>
