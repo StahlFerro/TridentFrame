@@ -21,10 +21,10 @@
                   <td colspan="2" class="is-cyan">ANIMATION INFO</td>
                 </tr>
                 <tr v-for="(item, key, index) in item" v-bind:key="key">
-                  <td width="25%">
+                  <td style="width: 123px;">
                     <strong><span class="is-white-d">{{ item.label }}</span></strong>
                   </td>  
-                  <td width="85%">{{ item.value }}</td>
+                  <td style="max-width: 369px; word-wrap: break-all;">{{ item.value }}</td>
                 </tr>
               </template>
             </table>
@@ -74,7 +74,7 @@ const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 const { ticks } = require("./Utility.vue");
 
-let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
+let extension_filters = [{ name: "Images", extensions: ["png", "gif", "jpg"] }];
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 

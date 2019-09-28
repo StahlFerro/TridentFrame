@@ -313,7 +313,9 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 
 
 
-
+.ins-info-table table {
+    table-layout: fixed !important;
+}
 .ins-info-table tr, .ins-info-table td {
     border-bottom: 2px solid $white-d !important;
     border-right: 2px solid $white-d !important;
@@ -321,7 +323,8 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 .ins-info-table td {
     padding-top: 2px;
     padding-bottom: 2px;
-    font-size: 17px;
+    font-size: 16px;
+    word-wrap: break-word !important;
 }
 .ins-info-table table, .ins-info-table tr, .ins-info-table td {
     border-collapse: collapse !important;

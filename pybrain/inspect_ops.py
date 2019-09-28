@@ -86,10 +86,14 @@ def _inspect_simg(image):
         im = Image.open(image)
     info = im.info
     fmt = im.format
-    if fmt.upper() != "GIF":
-        exif = im._getexif()
+    if fmt.upper() != "GIF" and im._getexif():
+        exif = {
+            ExifTags.TAGS[k]: v
+            for k, v in im._getexif().items()
+            if k in ExifTags.TAGS
+        }
     else:
-        exif = None
+        exif = "-"
     width, height = im.size
     path = im.filename
     fsize = size(os.stat(path).st_size, system=alternative)
@@ -146,9 +150,9 @@ def _inspect_agif(abspath: str, gif: Image):
         "animation_info": {
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
-            "delay_is_uneven": {"value": delay_is_uneven, "label": "Uneven Delay"},
+            "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
-            "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (Delay sensitive)"},
+            "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
             "loop_duration": {"value": loop_duration, "label": "Loop"},
         }
     }
@@ -190,9 +194,9 @@ def _inspect_apng(abspath, apng: APNG):
         "animation_info": {
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
-            "delay_is_uneven": {"value": delay_is_uneven, "label": "Uneven Delay"},
+            "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
-            "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (Delay sensitive)"},
+            "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
             "loop_duration": {"value": loop_duration, "label": "Loop"},
         }
     }
@@ -226,28 +230,3 @@ def inspect_sequence(image_paths):
         "height": sequence_info[0]['height']['value'],
     }
     return data
-
-
-def _get_sequence_metadata(sequence_paths: List):
-    sequence_metadata = []
-    for index, path in enumerate(sequence_paths):
-        with Image.open(path) as im:
-            info = im.info
-            ext = im.format
-            if ext.upper() != "GIF":
-                exif = im._getexif()
-            else:
-                exif = None
-            width, height = im.size
-            sequence_metadata.append({
-                "index": index,
-                "name": os.path.basename(path),
-                "format": ext,
-                "path": path,
-                "color_mode": im.mode,
-                "comment": info.get("comment", ""),
-                "exif": exif,
-                "width": width,
-                "height": height,
-            })
-    return sequence_metadata
