@@ -39,7 +39,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
         target_path = str(img_path)
         for index, (arg, description) in enumerate(sicle_args, start=1):
             yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-            cmdlist = [gifsicle_exec(), arg, target_path, "--output", out_full_path]
+            cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
             cmd = ' '.join(cmdlist)
             yield {"msg": f"cmd: {cmd}"}
             yield {"msg": f"[{index}/{len(sicle_args)}] {description}"}
