@@ -86,6 +86,7 @@ def _inspect_simg(image):
         im = Image.open(image)
     info = im.info
     fmt = im.format
+    exif = "-"
     if fmt.upper() != "GIF":
         exif_raw = im._getexif()
         if exif_raw:
@@ -94,8 +95,6 @@ def _inspect_simg(image):
                 for k, v in exif_raw.items()
                 if k in ExifTags.TAGS
             }
-    else:
-        exif = "-"
     width, height = im.size
     path = im.filename
     fsize = size(os.stat(path).st_size, system=alternative)
