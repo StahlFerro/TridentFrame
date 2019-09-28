@@ -8,7 +8,7 @@ import zerorpc
 
 from pybrain.criterion import CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
 from pybrain.utility import _purge_cache
-from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence
+from pybrain.inspect_ops import _inspect_aimg, _inspect_sequence, inspect_general
 from pybrain.create_ops import create_aimg
 from pybrain.split_ops import split_aimg
 from pybrain.sprite_ops import _build_spritesheet
@@ -16,6 +16,10 @@ from pybrain.modify_ops import modify_aimg
 
 
 class API(object):
+    
+    def inspect_image_generic(self, image_path):
+        info = inspect_general(image_path)
+        return info
 
     def inspect_aimg(self, image_path):
         info = _inspect_aimg(image_path)

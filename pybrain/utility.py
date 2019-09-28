@@ -16,15 +16,17 @@ from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 
 def _filter_images(image_paths, option="static"):
     """ Filter out image whether they are static images or animated images """
-    for i in image_paths:
-        name, ext = os.path.splitext(os.path.basename(i))
-        im = Image.open(i)
+    ipath_tuples = []
+    for path in image_paths:
+        name, ext = os.path.splitext(os.path.basename(path))
+        im = Image.open(path)
         if type(im) is GifImageFile and im.n_frames > 1:
             continue
-        apng = APNG.open(i)
+        apng = APNG.open(path)
         if len(apng.frames) > 1:
             continue
-        yield i
+        ipath_tuples.append((im, path))
+    return ipath_tuples
 
 
 def _purge_cache():

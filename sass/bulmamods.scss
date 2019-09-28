@@ -314,6 +314,23 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 
 
 
+.ins-info-table tr, .ins-info-table td {
+    border-bottom: 2px solid $white-d !important;
+    border-right: 2px solid $white-d !important;
+}
+.ins-info-table td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    font-size: 17px;
+}
+.ins-info-table table, .ins-info-table tr, .ins-info-table td {
+    border-collapse: collapse !important;
+}
+
+
+
+
+
 .mod-new-control-table td {
     padding-top: 4px !important;
     padding-bottom: 4px !important;
@@ -357,6 +374,14 @@ table.spr-control-table label{
 .spl-aimg-container {
     max-height: 370px;
     max-width: 370px;
+    overflow: auto;
+    text-align: center;
+    display: inline-block;
+}
+
+.ins-img-container {
+    max-height: 310px;
+    max-width: 320px;
     overflow: auto;
     text-align: center;
     display: inline-block;
@@ -463,10 +488,6 @@ table.spr-control-table label{
     border-color: $cyan;
 }
 
-// .create-msgbox {
-//     // height: 50px; 
-//     // line-height: 1px;
-// }
 
 div.about-content h1 { color: $white-d; }
 div.about-content p { color: $white-d; }

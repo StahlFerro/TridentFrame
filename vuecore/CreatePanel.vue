@@ -10,16 +10,16 @@
           <table class="sequence-grid is-paddingless" width="100%">
             <tbody>
               <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
-                <td v-for="(item, i) in quintjson" v-bind:key="i">
+                <td v-for="(item, i) in quintjson" v-bind:key="i" v-bind:title="
+                      `Name: ${item.name.value}\n` + 
+                      `Dimensions: ${item.width.value} x ${item.height.value}\n` +
+                      `Format: ${item.format.value}\n` +
+                      `Mode: ${item.color_mode.value}\n` +
+                      `Comment: ${item.comments.value || 'None'}`
+                    ">
                   <div class="seqdiv">
                     <!-- <span>{{ i }}</span><br/> -->
-                    <img v-bind:src="item['path']" v-bind:title="
-                      `Name: ${item['name']}\n` + 
-                      `Dimensions: ${item['width']} x ${item['height']}\n` +
-                      `Format: ${item['format']}\n` +
-                      `Mode: ${item['color_mode']}\n` +
-                      `Comment: ${item['comment'] || 'None'}`
-                    "/>
+                    <img v-bind:src="item.absolute_url.value"/>
                     <a class="del-anchor">
                       <span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
                     </a>

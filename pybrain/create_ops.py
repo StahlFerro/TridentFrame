@@ -80,10 +80,11 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     disposal = "background"
     loopcount = "--loopcount"
     globstar_path = os.path.join(gifragment_dir, "*.gif")
-    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", out_full_path]
+    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loopcount, f'"{globstar_path}"', "--output", f'"{out_full_path}"']
     # pprint(args)
     cmd = ' '.join(args)
     # print(cmd) 
+    yield {"msg": cmd}
     yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)
     # shutil.rmtree(gifragment_dir)

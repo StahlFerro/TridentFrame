@@ -7408,6 +7408,18 @@ div.mod-left-menu::-webkit-scrollbar {
 .mod-orig-info-table td.mod-info-data {
   max-width: 200px; }
 
+.ins-info-table tr, .ins-info-table td {
+  border-bottom: 2px solid #cccccc !important;
+  border-right: 2px solid #cccccc !important; }
+
+.ins-info-table td {
+  padding-top: 2px;
+  padding-bottom: 2px;
+  font-size: 17px; }
+
+.ins-info-table table, .ins-info-table tr, .ins-info-table td {
+  border-collapse: collapse !important; }
+
 .mod-new-control-table td {
   padding-top: 4px !important;
   padding-bottom: 4px !important;
@@ -7442,6 +7454,13 @@ table.spr-control-table label {
 .spl-aimg-container {
   max-height: 370px;
   max-width: 370px;
+  overflow: auto;
+  text-align: center;
+  display: inline-block; }
+
+.ins-img-container {
+  max-height: 310px;
+  max-width: 320px;
   overflow: auto;
   text-align: center;
   display: inline-block; }
