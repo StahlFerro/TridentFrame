@@ -3,7 +3,7 @@ import string
 import math
 from random import choices
 from pprint import pprint
-from typing import List
+from typing import List, Dict
 from urllib.parse import urlparse
 
 from PIL import Image, ExifTags, ImageFile
@@ -14,8 +14,12 @@ from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 from .utility import _filter_images
 
 
-def inspect_general(image_path):
-    """ Handler function from InspectPanel """
+def inspect_general(image_path, filter_on="", skip=False) -> Dict:
+    """ Main single image inspection handler function.
+    :param `image_path`: Input path.
+    :param `filter_on`: "" no filter, "static": "Throws error on detecting an animated image", "animated": "Throws error on detecting a static image"
+    :param `skip`: Returns an empty dict instead of throwing an error. Used in conjuntion with fitler_on
+    """
     abspath = os.path.abspath(image_path)
     filename = str(os.path.basename(abspath))
     base_fname, ext = os.path.splitext(filename)
@@ -27,9 +31,21 @@ def inspect_general(image_path):
             raise Exception(f'The chosen file ({filename}) is not a valid GIF image')
         if gif.format == 'GIF':
             if gif.is_animated:
-                return _inspect_agif(image_path, gif)
+                if filter_on == "static":
+                    if skip:
+                        return {}
+                    else:
+                        raise Exception(f"The GIF {base_fname} is not static!")
+                else:
+                    return _inspect_agif(image_path, gif)
             else:
-                return _inspect_image(image_path)
+                if filter_on == "animated":
+                    if skip:
+                        return {}
+                    else:
+                        raise Exception(f"The GIF {base_fname} is not animated!")
+                else:
+                    return _inspect_simg(image_path)
     elif ext == '.png':
         try:
             apng: APNG = APNG.open(abspath)
@@ -38,15 +54,31 @@ def inspect_general(image_path):
         frames = apng.frames
         frame_count = len(frames)
         if frame_count > 1:
-            return _inspect_apng(image_path)
+            if filter_on == "static":
+                if skip:
+                    return {}
+                else:
+                    raise Exception(f"The APNG ({filename}) is not static!")
+            else:
+                return _inspect_apng(image_path, apng)
         else:
-            return _inspect_image(image_path)
+            if filter_on == "animated":
+                if skip:
+                    return {}
+                else:
+                    raise Exception(f"The PNG {base_fname} is not animated!")
+            else:
+                return _inspect_simg(image_path)
     else:
-        return _inspect_image(image_path)
+        return _inspect_simg(image_path)
 
 
-def _inspect_image(image):
-    """ Returns general and EXIF info from static image. Static GIFs will not display EXIF (they don't support it) """
+def _inspect_simg(image):
+    """ Returns general and EXIF info from a static image. Static GIFs will not display EXIF (they don't support it)
+
+    Keyword arguments:
+    image -- Path or Pillow Image
+    """
     img_metadata = {}
     if image.__class__.__bases__[0] is ImageFile.ImageFile:
         im = image
@@ -92,9 +124,9 @@ def _inspect_agif(abspath: str, gif: Image):
     min_duration = min(durations)
     frame_count_ds = sum([dur//min_duration for dur in durations])
     # raise Exception(delays)
-    duration_is_uneven = len(set(durations)) > 1
-    avg_duration = sum(durations) / len(durations)
-    fps = round(1000.0 / avg_duration, 3)
+    delay_is_uneven = len(set(durations)) > 1
+    avg_delay = sum(durations) / len(durations)
+    fps = round(1000.0 / avg_delay, 3)
     loop_duration = round(frame_count / fps, 3)
     fmt = 'GIF'
     image_info = {
@@ -109,8 +141,8 @@ def _inspect_agif(abspath: str, gif: Image):
         },
         "animation_info": {
             "fps": {"value": fps, "label": "FPS"},
-            "avg_duration": {"value": round(avg_duration / 1000, 3), "label": "Average Delay"},
-            "duration_is_uneven": {"value": duration_is_uneven, "label": "Uneven Delay"},
+            "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
+            "delay_is_uneven": {"value": delay_is_uneven, "label": "Uneven Delay"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (Delay sensitive)"},
             "loop_duration": {"value": loop_duration, "label": "Loop"},
@@ -133,9 +165,9 @@ def _inspect_apng(abspath, apng: APNG):
     min_duration = min(durations)
     frame_count_ds = sum([dur//min_duration for dur in durations])
 
-    duration_is_uneven = len(set(durations)) > 1
-    avg_duration = sum(durations) / frame_count
-    fps = round(1000.0 / avg_duration, 3)
+    delay_is_uneven = len(set(durations)) > 1
+    avg_delay = sum(durations) / frame_count
+    fps = round(1000.0 / avg_delay, 3)
     loop_duration = round(frame_count / fps, 3)
 
     image_info = {
@@ -150,8 +182,8 @@ def _inspect_apng(abspath, apng: APNG):
         },
         "animation_info": {
             "fps": {"value": fps, "label": "FPS"},
-            "avg_duration": {"value": round(avg_duration / 1000, 3), "label": "Average Delay"},
-            "duration_is_uneven": {"value": duration_is_uneven, "label": "Uneven Delay"},
+            "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
+            "delay_is_uneven": {"value": delay_is_uneven, "label": "Uneven Delay"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (Delay sensitive)"},
             "loop_duration": {"value": loop_duration, "label": "Loop"},
@@ -169,13 +201,13 @@ def _inspect_aimg(animage_path):
     frame_count = 0  # Actual number of frames
     frame_count_ds = 0  # Duration-sensitive frame-count
     fps = 0
-    avg_duration = 0
+    avg_delay = 0
     fsize = size(os.stat(abspath).st_size, system=alternative)
     # fsize = 0
     width = height = 0
     loop_duration = 0
     extension = ''
-    duration_is_uneven = False
+    delay_is_uneven = False
     comment = ''
 
     if ext == '.gif':
@@ -195,9 +227,9 @@ def _inspect_aimg(animage_path):
         min_duration = min(durations)
         frame_count_ds = sum([dur//min_duration for dur in durations])
         # raise Exception(delays)
-        duration_is_uneven = len(set(durations)) > 1
-        avg_duration = sum(durations) / len(durations)
-        fps = round(1000.0 / avg_duration, 3)
+        delay_is_uneven = len(set(durations)) > 1
+        avg_delay = sum(durations) / len(durations)
+        fps = round(1000.0 / avg_delay, 3)
         loop_duration = round(frame_count / fps, 3)
         extension = 'GIF'
         # comment = gif.comment
@@ -221,17 +253,17 @@ def _inspect_aimg(animage_path):
         min_duration = min(durations)
         frame_count_ds = sum([dur//min_duration for dur in durations])
 
-        duration_is_uneven = len(set(durations)) > 1
-        avg_duration = sum(durations) / frame_count
-        fps = round(1000.0 / avg_duration, 3)
+        delay_is_uneven = len(set(durations)) > 1
+        avg_delay = sum(durations) / frame_count
+        fps = round(1000.0 / avg_delay, 3)
         loop_duration = round(frame_count / fps, 3)
 
     image_info = {
         "name": filename,
         "base_fname": base_fname,
         "fps": fps,
-        "avg_duration": round(avg_duration / 1000, 3),
-        "duration_is_uneven": duration_is_uneven,
+        "avg_delay": round(avg_delay / 1000, 3),
+        "delay_is_uneven": delay_is_uneven,
         "fsize": fsize,
         "extension": extension,
         "frame_count": frame_count,
@@ -245,22 +277,23 @@ def _inspect_aimg(animage_path):
     return image_info
 
 
-def _inspect_sequence(image_paths):
+def inspect_sequence(image_paths):
     """Returns information of a selected sequence of static images"""
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
-    static_imgs, static_img_paths = zip(*_filter_images(abs_image_paths, "static"))
-    print("imgs count", len(static_img_paths))
-    if not static_img_paths:
+    sequence_info = []
+    for path in abs_image_paths:
+        info = inspect_general(path, filter_on="static", skip=True)
+        if info:
+            sequence_info.append(info['general_info'])
+    if not sequence_info:
         raise Exception("No images selected. Make sure the path to them are correct and they are static images")
+    static_img_paths = [si['absolute_url']['value'] for si in sequence_info]
+    print("imgs count", len(static_img_paths))
     first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
     filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     sequence_count = len(static_img_paths)
     sequence_filesize = size(sum([os.stat(i).st_size for i in static_img_paths]), system=alternative)
-    if not static_img_paths:
-        raise Exception("The images choosen must be static images, not animted GIFs or PNGs!")
     width, height = Image.open(static_img_paths[0]).size
-    sequence_info = [_inspect_image(si)['general_info'] for si in static_imgs]
-    # sequence_info = _get_sequence_metadata(static_img_paths)
     data = {
         "name": sequence_info[0]['name']['value'],
         "total": sequence_count,
@@ -268,7 +301,7 @@ def _inspect_sequence(image_paths):
         "sequence_info": sequence_info,
         "size": sequence_filesize,
         "width": sequence_info[0]['width']['value'],
-        "height": sequence_info[0]['width']['value'],
+        "height": sequence_info[0]['height']['value'],
     }
     return data
 

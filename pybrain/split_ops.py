@@ -117,7 +117,7 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
 
 
 # if __name__ == "__main__":
-#     pprint(_inspect_sequence(""))
+#     pprint(inspect_sequence(""))
 
     # gs_split("./test/blobsekiro.gif", "./test/sequence/")
     # test()

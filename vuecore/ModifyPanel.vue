@@ -399,7 +399,7 @@ function loadImage() {
       return;
     }
     data.MOD_IS_LOADING = true;
-    client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
+    client.invoke("inspect_one", chosen_path[0], "animated", (error, res) => {
       if (error) {
         console.error(error);
         data.modify_msgbox = error;
@@ -422,11 +422,11 @@ function loadOrigInfo(res) {
   data.orig_fps = `${res.fps} fps`;
   data.orig_frame_count= `${res.frame_count} (${res.frame_count_ds} DS)`;
   data.orig_format = res.extension;
-  let delay_info = `${res.avg_duration} seconds`;
-  if (res.duration_is_uneven) {
+  let delay_info = `${res.avg_delay} seconds`;
+  if (res.delay_is_uneven) {
       delay_info += ` (uneven)`;
   }
-  data.orig_delay = res.avg_duration;
+  data.orig_delay = res.avg_delay;
   data.orig_delay_info = delay_info;
   data.orig_loop_duration = `${res.loop_duration} seconds`;
   data.orig_path = res.absolute_url;
@@ -439,7 +439,7 @@ function loadNewInfo(res) {
   data.format = res.extension;
   data.width = res.width;
   data.height = res.height;
-  data.delay = res.avg_duration;
+  data.delay = res.avg_delay;
   data.fps = res.fps;
 }
 

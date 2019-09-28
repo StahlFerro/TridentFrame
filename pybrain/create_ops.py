@@ -113,12 +113,13 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)
                 im.save(bytebox, "PNG", optimize=True)
                 yield {"msg": f"Processing frames... ({index + 1}/{len(image_paths)})"}
-                apng.append(PNG.from_bytes(bytebox.getvalue()), delay=criteria.duration)
+                apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.duration * 1000))
         yield {"msg": "Saving APNG...."}
         apng.save(out_full_path)
     else:
         yield {"msg": "Saving APNG..."}
-        APNG.from_files(image_paths, delay=criteria.duration).save(out_full_path)
+        APNG.from_files(image_paths, delay=int(criteria.duration * 1000)).save(out_full_path)
+    yield {"preview_path": out_full_path}
     yield {"msg": "Finished!"}
 
 

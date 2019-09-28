@@ -250,7 +250,7 @@ function loadInput() {
 
 function loadSequence(img_paths) {
   data.BSPR_IS_LOADING = true;
-  client.invoke("inspect_sequence", img_paths, (error, res) => {
+  client.invoke("inspect_many", img_paths, (error, res) => {
     if (error || !res.sequence) {
       console.error(error);
       data.bspr_msgbox = error;

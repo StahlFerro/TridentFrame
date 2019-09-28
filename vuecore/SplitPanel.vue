@@ -231,27 +231,30 @@ function loadImage() {
       return;
     }
     data.SPL_IS_LOADING = true;
-    client.invoke("inspect_aimg", chosen_path[0], (error, res) => {
+    client.invoke("inspect_one", chosen_path[0], "animated", (error, res) => {
       if (error) {
         console.error(error);
         data.split_msgbox = error;
         // mboxError(split_msgbox, error);
         data.SPL_IS_LOADING = false;
       } else {
-        data.name = res.name;
-        data.info_header = `${res.extension} Information`;
-        data.file_size = res.fsize;
-        data.frame_count = `${res.frame_count} frames`;
-        data.frame_count_ds = `${res.frame_count_ds} frames`;
-        data.fps = `${res.fps} fps`;
-        data.dimensions = `${res.width} x ${res.height}`;
-        let delay_info = `${res.avg_duration} seconds`;
-        if (res.duration_is_uneven) {
+        console.log(res);
+        var geninfo = res.general_info;
+        var ainfo = res.animation_info;
+        data.name = geninfo.name.value;
+        data.dimensions = `${geninfo.width.value} x ${geninfo.height.value}`;
+        data.info_header = `${geninfo.format.value} Information`;
+        data.file_size = geninfo.fsize.value;
+        data.frame_count = `${ainfo.frame_count.value} frames`;
+        data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`;
+        data.fps = `${ainfo.fps.value} fps`;
+        let delay_info = `${ainfo.avg_delay.value} seconds`;
+        if (ainfo.delay_is_uneven.value) {
           delay_info += ` (uneven)`;
         }
         data.delay = delay_info;
-        data.loop_duration = `${res.loop_duration} seconds`;
-        data.aimg_path = res.absolute_url;
+        data.loop_duration = `${ainfo.loop_duration.value} seconds`;
+        data.aimg_path = geninfo.absolute_url.value;
         data.pad_count = 3;
         if (data.is_reduced_color) {
           data.color_space - 256;

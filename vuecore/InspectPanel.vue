@@ -93,7 +93,7 @@ function loadImage() {
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
     }
-    client.invoke("inspect_image_generic", chosen_path[0], (error, res) => {
+    client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
       if (error) {
         console.error(error);
       }

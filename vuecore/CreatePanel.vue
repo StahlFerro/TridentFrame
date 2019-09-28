@@ -222,7 +222,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, ticks } from "./Utility.vue";
+import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, ticks } from "./Utility.vue";
 
 var data = {
   image_paths: [],
@@ -263,7 +263,7 @@ function loadImages() {
     // console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;
-    client.invoke("inspect_sequence", img_paths, (error, res) => {
+    client.invoke("inspect_many", img_paths, (error, res) => {
       if (error) {
         console.error(error);
         data.create_msgbox = error;
@@ -399,10 +399,17 @@ function delayConstrain (event) {
   if (value && value.includes(".")) {
     var numdec = value.split(".");
     console.log("numdec", numdec);
-    if (numdec[1].length > GIF_DELAY_DECIMAL_PRECISION) {
-      var twodecs = numdec[1].substring(0, GIF_DELAY_DECIMAL_PRECISION);
-      console.log("twodecs limit triggered", twodecs);
-      data.delay = `${numdec[0]}.${twodecs}`;
+    var precision = 2;
+    if (data.format == 'gif') {
+      precision = GIF_DELAY_DECIMAL_PRECISION;
+    }
+    else if (data.format == 'apng') {
+      precision = APNG_DELAY_DECIMAL_PRECISION;
+    }
+    if (numdec[1].length > precision) {
+      var decs = numdec[1].substring(0, precision);
+      console.log("decs limit triggered", decs);
+      data.delay = `${numdec[0]}.${decs}`;
     }
   }
   data.fps = Math.round(1000 / data.delay) / 1000;
@@ -412,7 +419,10 @@ function fpsConstrain (event) {
   console.log("fps event", event);
   var value = event.target.value;
   if (value) {
-    data.delay = Math.round(100 / data.fps) / 100;
+    var mult = 100
+    if (data.format == 'gif') { mult = 100; }
+    else if (data.format == 'apng') { mult = 1000; }
+    data.delay = Math.round(mult / data.fps) / mult;
   }
 }
 
