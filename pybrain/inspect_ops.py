@@ -86,10 +86,11 @@ def _inspect_simg(image):
         im = Image.open(image)
     info = im.info
     fmt = im.format
-    if fmt.upper() != "GIF" and im._getexif():
+    exif_raw = im._getexif()
+    if fmt.upper() != "GIF" and exif_raw:
         exif = {
             ExifTags.TAGS[k]: v
-            for k, v in im._getexif().items()
+            for k, v in exif_raw.items()
             if k in ExifTags.TAGS
         }
     else:
