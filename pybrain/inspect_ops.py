@@ -13,8 +13,63 @@ from hurry.filesize import size, alternative
 from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 from .utility import _filter_images
 
+
+def _inspector(image_path):
+    """ Handler function from InspectPanel """
+    abspath = os.path.abspath(image_path)
+    filename = str(os.path.basename(abspath))
+    base_fname, ext = os.path.splitext(filename)
+    ext = ext.lower()
+    if ext == '.gif':
+        try:
+            gif: Image = Image.open(abspath)
+        except Exception:
+            raise Exception(f'The chosen file ({filename}) is not a valid GIF image')
+        if gif.format == 'GIF':
+            if gif.is_animated:
+                _inspect_aimg(image_path)
+            else:
+                _inspect_img(image_path)
+    elif ext == '.png':
+        try:
+            apng: APNG = APNG.open(abspath)
+        except Exception:
+            raise Exception(f'The chosen file ({filename}) is not a valid PNG image')
+        frames = apng.frames
+        frame_count = len(frames)
+        if frame_count <= 1:
+            _inspect_img(image_path)
+        else:
+            _inspect_aimg(image_path)
+    else:
+        _inspect_img(image_path)
+
+
+def _inspect_img(image_path):
+    """ Returns general and EXIF info from static image. Static GIFs will not display EXIF (they don't support it) """
+    img_metadata = {}
+    with Image.open(image_path) as im:
+        info = im.info
+        ext = im.format
+        if ext.upper() != "GIF":
+            exif = im._getexif()
+        else:
+            exif = None
+        width, height = im.size
+        img_metadata = {
+            "name": os.path.basename(image_path),
+            "format": ext,
+            "path": image_path,
+            "color_mode": im.mode,
+            "comment": info.get("comment", ""),
+            "exif": exif,
+            "width": width,
+            "height": height,
+        }
+    return img_metadata
+
 def _inspect_aimg(animage_path):
-    """Returns information of an animted GIF/APNG"""
+    """ Returns information of an animated GIF/APNG """
     abspath = os.path.abspath(animage_path)
     filename = str(os.path.basename(abspath))
     base_fname, ext = os.path.splitext(filename)
