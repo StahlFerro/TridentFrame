@@ -416,31 +416,36 @@ function loadImage() {
 }
 
 function loadOrigInfo(res) {
-  data.orig_name = res.name;
-  data.orig_width = res.width;
-  data.orig_height = res.height;
-  data.orig_fps = `${res.fps} fps`;
-  data.orig_frame_count= `${res.frame_count} (${res.frame_count_ds} DS)`;
-  data.orig_format = res.extension;
-  let delay_info = `${res.avg_delay} seconds`;
-  if (res.delay_is_uneven) {
+  var geninfo = res.general_info;
+  var ainfo = res.animation_info;
+  data.orig_name = geninfo.name.value;
+  data.orig_width = geninfo.width.value;
+  data.orig_height = geninfo.height.value;
+  data.orig_fps = `${ainfo.fps.value} fps`;
+  data.orig_frame_count= `${ainfo.frame_count.value} (${ainfo.frame_count_ds.value} DS)`;
+  data.orig_format = geninfo.format.value;
+  let delay_info = `${ainfo.avg_delay.value} seconds`;
+  if (ainfo.delay_is_uneven) {
       delay_info += ` (uneven)`;
   }
-  data.orig_delay = res.avg_delay;
+  data.orig_delay = ainfo.avg_delay.value;
   data.orig_delay_info = delay_info;
-  data.orig_loop_duration = `${res.loop_duration} seconds`;
-  data.orig_path = res.absolute_url;
-  data.orig_file_size = res.fsize;
+  data.orig_loop_duration = `${ainfo.loop_duration.value} seconds`;
+  data.orig_path = geninfo.absolute_url.value;
+  data.orig_file_size = geninfo.fsize.value;
 }
 
 function loadNewInfo(res) {
-  console.log(res.extension);
-  data.name = res.base_fname;
-  data.format = res.extension;
-  data.width = res.width;
-  data.height = res.height;
-  data.delay = res.avg_delay;
-  data.fps = res.fps;
+  var geninfo = res.general_info;
+  var ainfo = res.animation_info;
+  console.log(geninfo);
+  console.log(ainfo);
+  data.name = geninfo.base_fname.value;
+  data.format = geninfo.format.value;
+  data.width = geninfo.width.value;
+  data.height = geninfo.height.value;
+  data.delay = ainfo.avg_delay.value;
+  data.fps = ainfo.fps.value;
 }
 
 

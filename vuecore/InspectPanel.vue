@@ -21,7 +21,9 @@
                   <td colspan="2" class="is-cyan">ANIMATION INFO</td>
                 </tr>
                 <tr v-for="(item, key, index) in item" v-bind:key="key">
-                  <td width="25%" class="is-cyan">{{ item.label }}</td>  
+                  <td width="25%">
+                    <strong><span class="is-white-d">{{ item.label }}</span></strong>
+                  </td>  
                   <td width="85%">{{ item.value }}</td>
                 </tr>
               </template>

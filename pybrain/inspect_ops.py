@@ -122,16 +122,20 @@ def _inspect_agif(abspath: str, gif: Image):
         durations.append(gif.info['duration'])
         comments.append(gif.info.get('comment', ""))
     min_duration = min(durations)
-    frame_count_ds = sum([dur//min_duration for dur in durations])
+    if min_duration == 0:
+        frame_count_ds = frame_count
+    else:
+        frame_count_ds = sum([dur//min_duration for dur in durations])
     # raise Exception(delays)
     delay_is_uneven = len(set(durations)) > 1
-    avg_delay = sum(durations) / len(durations)
-    fps = round(1000.0 / avg_delay, 3)
-    loop_duration = round(frame_count / fps, 3)
+    avg_delay = sum(durations) / len(durations) if sum(durations) != 0 else 0
+    fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
+    loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
     fmt = 'GIF'
     image_info = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
+            "base_fname": {"value": base_fname, "label": "Base Name"},
             "width": {"value": width, "label": "Width"},
             "height": {"value": height, "label": "Height"},
             "fsize": {"value": fsize, "label": "File size"},
@@ -163,16 +167,19 @@ def _inspect_apng(abspath, apng: APNG):
     height = png_one.height
     durations = [f[1].delay for f in frames]
     min_duration = min(durations)
-    frame_count_ds = sum([dur//min_duration for dur in durations])
-
+    if min_duration == 0:
+        frame_count_ds = frame_count
+    else:
+        frame_count_ds = sum([dur//min_duration for dur in durations])
     delay_is_uneven = len(set(durations)) > 1
-    avg_delay = sum(durations) / frame_count
-    fps = round(1000.0 / avg_delay, 3)
-    loop_duration = round(frame_count / fps, 3)
+    avg_delay = sum(durations) / frame_count if sum(durations) != 0 else 0
+    fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
+    loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
 
     image_info = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
+            "base_fname": {"value": base_fname, "label": "Base Name"},
             "width": {"value": width, "label": "Width"},
             "height": {"value": height, "label": "Height"},
             "fsize": {"value": fsize, "label": "File size"},
@@ -188,91 +195,6 @@ def _inspect_apng(abspath, apng: APNG):
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (Delay sensitive)"},
             "loop_duration": {"value": loop_duration, "label": "Loop"},
         }
-    }
-    return image_info
-
-
-def _inspect_aimg(animage_path):
-    """ Returns information of an animated GIF/APNG """
-    abspath = os.path.abspath(animage_path)
-    filename = str(os.path.basename(abspath))
-    base_fname, ext = os.path.splitext(filename)
-    ext = ext.lower()
-    frame_count = 0  # Actual number of frames
-    frame_count_ds = 0  # Duration-sensitive frame-count
-    fps = 0
-    avg_delay = 0
-    fsize = size(os.stat(abspath).st_size, system=alternative)
-    # fsize = 0
-    width = height = 0
-    loop_duration = 0
-    extension = ''
-    delay_is_uneven = False
-    comment = ''
-
-    if ext == '.gif':
-        try:
-            gif: Image = Image.open(abspath)
-        except Exception:
-            raise Exception(f'The chosen file ({filename}) is not a valid GIF image')
-        if gif.format != 'GIF' or not gif.is_animated:
-            raise Exception(f"The chosen GIF ({filename}) is not an animated GIF!")
-        width, height = gif.size
-        frame_count = gif.n_frames
-        # pprint(gif.info)
-        durations = []
-        for f in range(0, gif.n_frames):
-            gif.seek(f)
-            durations.append(gif.info['duration'])
-        min_duration = min(durations)
-        frame_count_ds = sum([dur//min_duration for dur in durations])
-        # raise Exception(delays)
-        delay_is_uneven = len(set(durations)) > 1
-        avg_delay = sum(durations) / len(durations)
-        fps = round(1000.0 / avg_delay, 3)
-        loop_duration = round(frame_count / fps, 3)
-        extension = 'GIF'
-        # comment = gif.comment
-
-    elif ext == '.png':
-        try:
-            apng: APNG = APNG.open(abspath)
-        except Exception:
-            raise Exception(f'The chosen file ({filename}) is not a valid PNG image')
-        frames = apng.frames
-        frame_count = len(frames)
-        if frame_count <= 1:
-            raise Exception(f"The chosen PNG ({filename}) is not an animated PNG!")
-        png_one, controller_one = frames[0]
-        # pprint(png_one.__dict__)
-        # pprint(controller_one.__dict__)
-        extension = 'APNG'
-        width = png_one.width
-        height = png_one.height
-        durations = [f[1].delay for f in frames]
-        min_duration = min(durations)
-        frame_count_ds = sum([dur//min_duration for dur in durations])
-
-        delay_is_uneven = len(set(durations)) > 1
-        avg_delay = sum(durations) / frame_count
-        fps = round(1000.0 / avg_delay, 3)
-        loop_duration = round(frame_count / fps, 3)
-
-    image_info = {
-        "name": filename,
-        "base_fname": base_fname,
-        "fps": fps,
-        "avg_delay": round(avg_delay / 1000, 3),
-        "delay_is_uneven": delay_is_uneven,
-        "fsize": fsize,
-        "extension": extension,
-        "frame_count": frame_count,
-        "frame_count_ds": frame_count_ds,
-        "absolute_url": abspath,
-        "width": width,
-        "height": height,
-        "loop_duration": loop_duration,
-        "comment": comment,
     }
     return image_info
 
