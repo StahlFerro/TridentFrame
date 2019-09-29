@@ -14,6 +14,9 @@ from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 # from .split_ops import split_aimg
 
 
+size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+
+
 def _filter_images(image_paths, option="static"):
     """ Filter out image whether they are static images or animated images """
     ipath_tuples = []
@@ -53,13 +56,14 @@ def _mk_temp_dir(prefix_name: str = ''):
 
 def _unoptimize_gif(gif_path, out_dir, decoder: str) -> str:
     """ Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF """
+    # raise Exception(gif_path, out_dir)
     unop_gif_save_path = os.path.join(out_dir, os.path.basename(gif_path))
     if decoder == 'imagemagick':
-        args = [imagemagick_exec(), "-coalesce", gif_path, unop_gif_save_path]
+        args = [imagemagick_exec(), "-coalesce", f'"{gif_path}"', f'"{unop_gif_save_path}"']
     elif decoder == 'gifsicle':
-        args = [gifsicle_exec(), "-b", "--unoptimize", gif_path, "--output", unop_gif_save_path]
+        args = [gifsicle_exec(), "-b", "--unoptimize", f'"{gif_path}"', "--output", f'"{unop_gif_save_path}"']
     cmd = ' '.join(args)
-    print(cmd)
+    # print(cmd)
     subprocess.run(cmd, shell=True)
     return unop_gif_save_path
 
@@ -107,7 +111,15 @@ def _restore_disposed_frames(frame_paths: List[str]):
 
 def _log(message):
     return {"log": message}
+    
 
+def read_filesize(nbytes):
+    i = 0
+    while nbytes >= 1024 and i < len(size_suffixes)-1:
+        nbytes /= 1024.
+        i += 1
+    size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
+    return f"{size} {size_suffixes[i]}"
 
 
 

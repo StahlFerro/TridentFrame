@@ -11,7 +11,7 @@ from apng import APNG
 from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
-from .utility import _filter_images
+from .utility import _filter_images, read_filesize
 
 
 def inspect_general(image_path, filter_on="", skip=False) -> Dict:
@@ -84,7 +84,6 @@ def _inspect_simg(image):
         im = image
     else:
         im = Image.open(image)
-    info = im.info
     fmt = im.format
     exif = "-"
     if fmt.upper() != "GIF":
@@ -97,7 +96,12 @@ def _inspect_simg(image):
             }
     width, height = im.size
     path = im.filename
-    fsize = size(os.stat(path).st_size, system=alternative)
+    fsize = read_filesize(os.stat(path).st_size)
+    color_mode = im.mode
+    transparency = im.info.get('transparency', "No")
+    # alpha = im.getchannel('A')
+    comment = im.info.get('comment')
+    # fsize = size(os.stat(path).st_size, system=alternative)
     img_metadata = {
         "general_info": {
             "name": {"value": os.path.basename(path), "label": "Name"},
@@ -106,8 +110,10 @@ def _inspect_simg(image):
             "fsize": {"value": fsize, "label": "File size"},
             "absolute_url": {"value": path, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
-            "comments": {"value": info.get("comment", ""), "label": "Comments"},
-            "color_mode": {"value": im.mode, "label": "Color Mode"},
+            "comments": {"value": comment, "label": "Comments"},
+            "color_mode": {"value": color_mode, "label": "Color Mode"},
+            "transparency": {"value": transparency, "label": "Has Transparency"},
+            # "alpha": {"value": alpha, "label": "Has Alpha"},
             "exif": {"value": exif, "label": "EXIF"},
         }
     }
@@ -119,7 +125,7 @@ def _inspect_agif(abspath: str, gif: Image):
     base_fname, ext = os.path.splitext(filename)
     width, height = gif.size
     frame_count = gif.n_frames
-    fsize = size(os.stat(abspath).st_size, system=alternative)
+    fsize = read_filesize(os.stat(abspath).st_size)
     durations = []
     comments = []
     for f in range(0, gif.n_frames):
@@ -137,6 +143,8 @@ def _inspect_agif(abspath: str, gif: Image):
     fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
     loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
     fmt = 'GIF'
+    transparency = gif.info.get('transparency', "No")
+    # alpha = gif.getchannel('A')
     image_info = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
@@ -146,6 +154,8 @@ def _inspect_agif(abspath: str, gif: Image):
             "fsize": {"value": fsize, "label": "File size"},
             "absolute_url": {"value": abspath, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
+            "transparency": {"value": transparency, "label": "Has Transparency"},
+            # "alpha": {"value": alpha, "label": "Has Alpha"},
             "comments": {"value": comments, "label": "Comments"},
         },
         "animation_info": {
@@ -167,7 +177,7 @@ def _inspect_apng(abspath, apng: APNG):
     frame_count = len(frames)
     png_one, controller_one = frames[0]
     fmt = 'APNG'
-    fsize = size(os.stat(abspath).st_size, system=alternative)
+    fsize = read_filesize(os.stat(abspath).st_size)
     width = png_one.width
     height = png_one.height
     durations = [f[1].delay for f in frames]
@@ -219,7 +229,7 @@ def inspect_sequence(image_paths):
     first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
     filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     sequence_count = len(static_img_paths)
-    sequence_filesize = size(sum([os.stat(i).st_size for i in static_img_paths]), system=alternative)
+    sequence_filesize = read_filesize(sum([os.stat(i).st_size for i in static_img_paths]))
     width, height = Image.open(static_img_paths[0]).size
     data = {
         "name": sequence_info[0]['name']['value'],

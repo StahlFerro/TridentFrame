@@ -38,6 +38,24 @@ def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> Li
     return indexed_ratios
 
 
+def _pillow_fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
+    """ Currently UNUSED. Missing pixels """
+    gif = Image.open(unop_gif_path)
+    orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
+    indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
+    total_ratio = sum([ir[1] for ir in indexed_ratios])
+    sequence = 0
+    gifragment_paths = []
+    for index, ratio in indexed_ratios:
+        selector = f'"#{index}"'
+        gif.seek(index)
+        for n in range(0, ratio):
+            yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
+            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), criteria.pad_count)}.png')
+            gif.save(save_path, "PNG")
+            sequence += 1
+
+
 def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
     """ Split GIF into separate images using Gifsicle based on the specified criteria"""
     orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
@@ -50,11 +68,19 @@ def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriter
         for n in range(0, ratio):
             yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), criteria.pad_count)}.png')
-            args = [gifsicle_exec(), unop_gif_path, selector, "--output", save_path]
+            args = [gifsicle_exec(), f'"{unop_gif_path}"', selector, "--output", f'"{save_path}"']
             cmd = ' '.join(args)
             subprocess.run(cmd, shell=True)
             gifragment_paths.append(save_path)
             sequence += 1
+            with Image.open(save_path).convert("RGBA") as gif:
+            # if gif.info.get('transparency'):
+            #     yield {"msg": "Palette has transparency"}
+            #     gif = gif.convert('RGBA')
+            # else:
+            #     yield {"msg": "Palette has no transparency"}
+            #     gif = gif.convert('RGB')
+                gif.save(save_path, "PNG")
 
 
 def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
@@ -73,6 +99,7 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
         yield f"Coalescing frames for splitting..."
         unop_gif_path = _unoptimize_gif(redux_gif_path, unop_dir, "gifsicle")
     yield from _fragment_gif_frames(unop_gif_path, out_dir, criteria)
+    # yield from _pillow_fragment_gif_frames(unop_gif_path, out_dir, criteria)
     yield "Finished!"
 
 
