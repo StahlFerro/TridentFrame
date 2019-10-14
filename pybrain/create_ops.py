@@ -75,16 +75,18 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     yield from _create_gifragments(image_paths, gifragment_dir, criteria)
-    executable = gifsicle_exec()
+    executable = str(gifsicle_exec())
     delay = int(100 // criteria.fps)
     opti_mode = "--unoptimize"
     disposal = "background"
     loopcount = "--loopcount"
     # globstar_path = os.path.join(gifragment_dir, "*.gif")
     globstar_path = "*.gif"
+    ROOT_PATH = str(os.getcwd())
     if os.getcwd() != gifragment_dir:
         yield {"msg": f"Changing directory from {os.getcwd()} to {gifragment_dir}"}
         os.chdir(gifragment_dir)
+    yield {"msg": f"Obtained gifsicle exec path: {executable}"}
     args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", f'"{out_full_path}"']
     # pprint(args)
     cmd = ' '.join(args)
@@ -92,6 +94,7 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     yield {"msg": cmd}
     yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)
+    os.chdir(ROOT_PATH)
     # shutil.rmtree(gifragment_dir)
     yield {"preview_path": out_full_path}
     yield {"msg": "Finished!"}
