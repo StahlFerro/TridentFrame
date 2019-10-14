@@ -1,4 +1,5 @@
 import os
+import platform
 import io
 import string
 import shutil
@@ -79,8 +80,12 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     opti_mode = "--unoptimize"
     disposal = "background"
     loopcount = "--loopcount"
-    globstar_path = os.path.join(gifragment_dir, "*.gif")
-    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loopcount, f'"{globstar_path}"', "--output", f'"{out_full_path}"']
+    # globstar_path = os.path.join(gifragment_dir, "*.gif")
+    globstar_path = "*.gif"
+    if os.getcwd() != gifragment_dir:
+        yield {"msg": f"Changing directory from {os.getcwd()} to {gifragment_dir}"}
+        os.chdir(gifragment_dir)
+    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", f'"{out_full_path}"']
     # pprint(args)
     cmd = ' '.join(args)
     # print(cmd) 
