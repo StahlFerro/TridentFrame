@@ -33,6 +33,13 @@ function ticks() {
   return new Date().getTime() * 10000;
 }
 
+function gcd(a, b) { // Gets the greatest common divisor between two numbers
+  if (b == 0)
+    return a;
+  else
+    return gcd(b, (a % b));
+}
+
 const GIF_DELAY_DECIMAL_PRECISION = 2;
 const APNG_DELAY_DECIMAL_PRECISION = 3;
 
@@ -41,4 +48,5 @@ module.exports.GIF_DELAY_DECIMAL_PRECISION = GIF_DELAY_DECIMAL_PRECISION;
 module.exports.APNG_DELAY_DECIMAL_PRECISION = APNG_DELAY_DECIMAL_PRECISION;
 module.exports.validateFilename = validateFilename;
 module.exports.ticks = ticks;
+module.exports.gcd = gcd;
 </script>

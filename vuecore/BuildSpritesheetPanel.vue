@@ -10,10 +10,17 @@
           <div id="BSPR_from_sequence_subpanel" style="display: block;">
             <table class="sequence-grid is-paddingless" width="100%">
               <tbody>
-                <tr v-for="(paths, row) in BSPRQuintcellLister" v-bind:key="row">
-                  <td v-for="path in paths" v-bind:key="path">
+                <tr v-for="(quintjson, row) in BSPRQuintcellLister" v-bind:key="row">
+                  <td v-for="(item, i) in quintjson" v-bind:key="i" v-bind:title="
+                        `Name: ${item.name.value}\n` + 
+                        `Dimensions: ${item.width.value} x ${item.height.value}\n` +
+                        `Format: ${item.format.value}\n` +
+                        `Mode: ${item.color_mode.value}\n` +
+                        `Comment: ${item.comments.value || 'None'}`
+                      ">
                     <div class="seqdiv">
-                      <img v-bind:src="path"/>
+                      <!-- <span>{{ i }}</span><br/> -->
+                      <img v-bind:src="item.absolute_url.value"/>
                       <a class="del-anchor">
                         <span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
                       </a>
@@ -206,7 +213,8 @@ const { client } = require("./Client.vue");
 import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION } from './Utility.vue';
 
 function clearInfo() {
-  data.sequence_paths = [],
+  data.image_paths = [],
+  data.sequence_info = [];
   data.sequence_count = 0;
   data.name = "";
   data.tile_width = "";
@@ -217,7 +225,8 @@ function clearInfo() {
 }
 
 var data = {
-  sequence_paths: [],
+  image_paths: [],
+  sequence_info: [],
   sequence_count: 0,
   input_format: "sequence",
   name: "",
@@ -251,20 +260,29 @@ function loadInput() {
 function loadSequence(img_paths) {
   data.BSPR_IS_LOADING = true;
   client.invoke("inspect_many", img_paths, (error, res) => {
-    if (error || !res.sequence) {
+    if (error) {
       console.error(error);
       data.bspr_msgbox = error;
       data.BSPR_IS_LOADING = false;
     }
     else {
-      data.sequence_paths = img_paths;
-      data.name = res.name;
-      data.tile_width = res.width;
-      data.tile_height = res.height;
-      data.tile_row = 5;
-      data.sequence_count = res.total;
-      data.bspr_msgbox = "";
-      data.BSPR_IS_LOADING = false;
+      console.log(res);
+      if (res && res.msg) {
+        console.log('msg executed');
+        data.bspr_msgbox = res.msg;
+      }
+      else if (res && res.data) { 
+        let info = res.data;
+        data.image_paths = info.sequence;
+        data.sequence_info = info.sequence_info;
+        data.name = info.name;
+        data.tile_width = info.width;
+        data.tile_height = info.height;
+        data.tile_row = 5;
+        data.sequence_count = info.total;
+        data.bspr_msgbox = "";
+        data.BSPR_IS_LOADING = false;
+      }
     }
   });
 }
@@ -296,7 +314,7 @@ function chooseOutDir() {
 }
 
 function BSPRQuintcellLister() {
-  return quintcellLister(data.sequence_paths);
+  return quintcellLister(data.sequence_info);
 }
 
 function isButtonFrozen() {
@@ -307,7 +325,7 @@ function isButtonFrozen() {
 function buildSpritesheet() {
   data.BSPR_IS_BUILDING = true;
   var paths = null;
-  if (data.input_format == 'sequence') { paths = data.sequence_paths; }
+  if (data.input_format == 'sequence') { paths = data.image_paths; }
   // else if (data.input_format == 'aimg') { paths = bspr_aimg_path_list; }
   client.invoke("build_spritesheet", paths, data.input_format, data.outdir, data.name, 
   data.tile_width, data.tile_height, data.tile_row, 0, 0, 0, 0, true, (error, res) => {

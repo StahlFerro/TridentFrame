@@ -29,6 +29,8 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
             gif: Image = Image.open(abspath)
         except Exception:
             raise Exception(f'The chosen file ({filename}) is not a valid GIF image')
+            
+        # raise Exception(gif.is_animated, filter_on, skip)
         if gif.format == 'GIF':
             if gif.is_animated:
                 if filter_on == "static":
@@ -221,23 +223,26 @@ def inspect_sequence(image_paths):
     for path in abs_image_paths:
         info = inspect_general(path, filter_on="static", skip=True)
         if info:
-            sequence_info.append(info['general_info'])
+            gen_info = info['general_info']
+            sequence_info.append(gen_info)
+            yield {"msg": f"Loading {gen_info['name']['value']}"}
     if not sequence_info:
         raise Exception("No images selected. Make sure the path to them are correct and they are static images")
     static_img_paths = [si['absolute_url']['value'] for si in sequence_info]
-    print("imgs count", len(static_img_paths))
+    # print("imgs count", len(static_img_paths))
     first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
     filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     sequence_count = len(static_img_paths)
     sequence_filesize = read_filesize(sum([os.stat(i).st_size for i in static_img_paths]))
     width, height = Image.open(static_img_paths[0]).size
-    data = {
-        "name": sequence_info[0]['name']['value'],
-        "total": sequence_count,
-        "sequence": static_img_paths,
-        "sequence_info": sequence_info,
-        "size": sequence_filesize,
-        "width": sequence_info[0]['width']['value'],
-        "height": sequence_info[0]['height']['value'],
+    yield {
+        "data": {
+            "name": sequence_info[0]['name']['value'],
+            "total": sequence_count,
+            "sequence": static_img_paths,
+            "sequence_info": sequence_info,
+            "size": sequence_filesize,
+            "width": sequence_info[0]['width']['value'],
+            "height": sequence_info[0]['height']['value'],
+        }
     }
-    return data

@@ -145,7 +145,9 @@
                   </div>
                 </div>
               </td>
-              <td></td>
+              <td>
+                <span></span>
+              </td>
               <td style="vertical-align: bottom;">
                 <label class="checkbox">
                   <input v-model="flip_x" type="checkbox" />
@@ -222,7 +224,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, ticks } from "./Utility.vue";
+import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, ticks, gcd } from "./Utility.vue";
 
 var data = {
   image_paths: [],
@@ -241,6 +243,7 @@ var data = {
   format: "gif",
   outdir: "",
   preview_path: "",
+  lock_aspect_ratio: false,
   create_msgbox: "",
   sequence_counter: "",
   checkerbg_active: false,
@@ -268,19 +271,27 @@ function loadImages() {
         console.error(error);
         data.create_msgbox = error;
       } else {
-        console.log('before');
-        console.log(res.sequence_info);
-        data.image_paths = res.sequence;
-        data.sequence_info = res.sequence_info;
-        data.name = res.name;
-        data.sequence_counter = `${res.total} image${res.total > 1 ? "s" : ""} (${res.size} total)`;
-        data.orig_width = res.width;
-        data.width = res.width;
-        data.orig_height = res.height;
-        data.height = res.height;
-        data.fps = 50;
-        data.delay = 0.02;
-        data.create_msgbox = "";
+        console.log(res);
+        if (res && res.msg) {
+          console.log('msg executed');
+          data.create_msgbox = res.msg;
+        }
+        else if (res && res.data) {
+          let info = res.data
+          console.log('before');
+          console.log(info.sequence_info);
+          data.image_paths = info.sequence;
+          data.sequence_info = info.sequence_info;
+          data.name = info.name;
+          data.sequence_counter = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size} total)`;
+          data.orig_width = info.width;
+          data.width = info.width;
+          data.orig_height = info.height;
+          data.height = info.height;
+          data.fps = 50;
+          data.delay = 0.02;
+          data.create_msgbox = "";
+        }
       }
       data.CRT_IS_LOADING = false;
     });
@@ -426,6 +437,26 @@ function fpsConstrain (event) {
   }
 }
 
+function aspectRatioData() {
+  if (data.width && data.height) {
+    let divisor = gcd(data.width, data.height);
+    let base_width = data.width / divisor;
+    let base_height = data.height / divisor;
+    return {
+      "width": base_width,
+      "height": base_height,
+      "text": `${base_width}:${base_height}`
+    }
+  }
+  else {
+    return {
+      "width": "",
+      "height": "",
+      "text": "",
+    };
+  }
+}
+
 function CRTQuintcellLister() {
   return quintcellLister(data.sequence_info);
 }
@@ -447,6 +478,7 @@ export default {
   computed: {
     CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
+    aspectRatioData: aspectRatioData,
   },
 };
 </script>

@@ -18,9 +18,9 @@ from pybrain.modify_ops import modify_aimg
 class API(object):
     
     def inspect_one(self, image_path, fitler_on=""):
-        info = inspect_general(image_path, filter_on=fitler_on)
-        return info
+        return inspect_general(image_path, filter_on=fitler_on)
     
+    @zerorpc.stream
     def inspect_many(self, dir_path):
         info = inspect_sequence(dir_path)
         return info
