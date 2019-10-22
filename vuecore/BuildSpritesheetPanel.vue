@@ -49,14 +49,8 @@
         >
           <div class="prev-spritesheet-container">
             <span class="spritesheet-helper"></span>
-            <img id="BSPR_prev_spritesheet_stage" src />
+            <img src="preview_path" />
           </div>
-          <input
-            id="BSPR_prev_spritesheet_path"
-            name="BSPR_prev_spritesheet_path_field"
-            type="hidden"
-            value
-          />
         </td>
       </tr>
       <tr>
@@ -242,6 +236,11 @@ var data = {
   tile_height: "",
   tile_row: "",
   outdir: "",
+  offset_x: 0,
+  offset_y: 0,
+  padding_x: 0,
+  padding_y: 0,
+  preserve_alpha: true,
   bspr_msgbox: "",
   BSPR_IS_LOADING: false,
   BSPR_IS_PREVIEWING: false,
@@ -333,15 +332,32 @@ function isButtonFrozen() {
 
 function previewSheet() {
   data.BSPR_IS_PREVIEWING = true;
+  let paths = null;
+  if (data.input_format == 'sequence') { paths = data.image_paths; }
+  client.invoke("build_spritesheet", paths, '/temp', data.name, data, (error, res) => {
+      if (error) {
+          console.error(error);
+          data.bspr_msgbox = error;
+          data.BSPR_IS_PREVIEWING = false;
+          // mboxError(bspr_msgbox, error);
+      } else {
+          if (res) {
+            console.log(res);
+            data.bspr_msgbox = res;
+            if (res == "Finished!") {
+              data.BSPR_IS_PREVIEWING = false;
+            }
+          }
+      }
+  });
 }
 
 function buildSpritesheet() {
   data.BSPR_IS_BUILDING = true;
-  var paths = null;
+  let paths = null;
   if (data.input_format == 'sequence') { paths = data.image_paths; }
   // else if (data.input_format == 'aimg') { paths = bspr_aimg_path_list; }
-  client.invoke("build_spritesheet", paths, data.input_format, data.outdir, data.name, 
-  data.tile_width, data.tile_height, data.tile_row, 0, 0, 0, 0, true, (error, res) => {
+  client.invoke("build_spritesheet", paths, data.outdir, data.name, data, (error, res) => {
       if (error) {
           console.error(error);
           data.bspr_msgbox = error;
@@ -367,6 +383,7 @@ export default {
     loadInput: loadInput,
     chooseOutDir: chooseOutDir,
     clearInfo: clearInfo,
+    previewSheet, previewSheet,
     buildSpritesheet: buildSpritesheet,
   },
   computed: {

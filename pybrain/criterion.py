@@ -74,15 +74,15 @@ class ModificationCriteria():
 class SpritesheetBuildCriteria():
     """ Contains all of the criterias to build a spritesheet """
 
-    def __init__(self, resize_width, resize_height, tiles_per_row, offset_x, offset_y, padding_x, padding_y, preserve_alpha):
-        self.resize_width: int = int(resize_height)
-        self.resize_height: int = int(resize_height)
-        self.tiles_per_row: int = int(tiles_per_row)
-        self.offset_x: int = int(offset_x)
-        self.offset_y: int = int(offset_y)
-        self.padding_x: int = int(padding_x)
-        self.padding_y: int = int(padding_y)
-        self.preserve_alpha: bool = preserve_alpha
+    def __init__(self, vals: dict):
+        self.resize_width: int = int(vals['tile_width'])
+        self.resize_height: int = int(vals['tile_height'])
+        self.tiles_per_row: int = int(vals['tile_row'])
+        self.offset_x: int = int(vals['offset_x'])
+        self.offset_y: int = int(vals['offset_y'])
+        self.padding_x: int = int(vals['padding_x'])
+        self.padding_y: int = int(vals['padding_y'])
+        self.preserve_alpha: bool = vals['preserve_alpha']
 
 
 class SpritesheetSliceCriteria():

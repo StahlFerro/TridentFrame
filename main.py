@@ -61,16 +61,17 @@ class API(object):
         
 
     @zerorpc.stream
-    def build_spritesheet(self, image_paths, input_mode, out_dir, filename, width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha):
+    def build_spritesheet(self, image_paths, out_dir, filename, vals: dict):
+    # def build_spritesheet(self, image_paths, input_mode, out_dir, filename, width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha):
         if not image_paths and not out_dir:
             raise Exception("Please load the images and choose the output folder!")
         elif not image_paths:
             raise Exception("Please load the images!")
         elif not out_dir:
             raise Exception("Please choose the output folder!")
-        criteria = SpritesheetBuildCriteria(width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha)
+        criteria = SpritesheetBuildCriteria(vals)
         # raise Exception(criteria.__dict__)
-        return _build_spritesheet(image_paths, input_mode, out_dir, filename, criteria)
+        return _build_spritesheet(image_paths, 'sequence', out_dir, filename, criteria)
 
     def purge_cache(self):
         _purge_cache()
