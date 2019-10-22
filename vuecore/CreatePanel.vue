@@ -52,7 +52,7 @@
                     </span>
                     <span>Load Images</span>
                   </a>
-                  <a v-on:click="CRTClearAIMG" class="button is-neon-white">
+                  <a v-on:click="CRTClearAIMG" class="button is-neon-white" v-bind:class="{'is-static': isButtonFrozen}">
                     <span class="icon is-small">
                       <i class="fas fa-trash-alt"></i>
                     </span>
@@ -291,9 +291,9 @@ function loadImages() {
           data.fps = 50;
           data.delay = 0.02;
           data.create_msgbox = "";
+          data.CRT_IS_LOADING = false;
         }
       }
-      data.CRT_IS_LOADING = false;
     });
   });
 }

@@ -83,7 +83,7 @@
                         </span>
                         <span>Add</span>
                       </a>
-                      <a v-on:click="clearInfo" class="button is-neon-white">
+                      <a v-on:click="clearInfo" class="button is-neon-white" v-bind:class="{'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-trash-alt"></i>
                         </span>
