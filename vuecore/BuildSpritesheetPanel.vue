@@ -99,6 +99,14 @@
         <td class="is-hpaddingless">
           <nav class="level">
             <div class="level-item has-text-centered">
+              <a v-on:click="previewSheet" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_PREVIEWING, 'is-static': isButtonFrozen}">
+                <span class="icon is-medium">
+                  <i class="far fa-eye"></i>
+                </span>
+                <span>Preview</span>
+              </a>
+            </div>
+            <!-- <div class="level-item has-text-centered">
               <div>
                 <p v-if="sequence_count">{{ sequence_count }} images</p>
               </div>
@@ -107,7 +115,7 @@
               <div>
                 <span v-if="sheetDimensions">Sheet dimensions: {{ sheetDimensions }}</span>
               </div>
-            </div>
+            </div> -->
           </nav>
         </td>
       </tr>
@@ -236,6 +244,7 @@ var data = {
   outdir: "",
   bspr_msgbox: "",
   BSPR_IS_LOADING: false,
+  BSPR_IS_PREVIEWING: false,
   BSPR_IS_BUILDING: false,
 };
 
@@ -320,6 +329,10 @@ function BSPRQuintcellLister() {
 function isButtonFrozen() {
   if (data.BSPR_IS_LOADING || data.BSPR_IS_BUILDING) return true;
   else return false;
+}
+
+function previewSheet() {
+  data.BSPR_IS_PREVIEWING = true;
 }
 
 function buildSpritesheet() {
