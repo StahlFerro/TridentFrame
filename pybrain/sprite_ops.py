@@ -16,7 +16,7 @@ from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 from .criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 
-def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
+def _build_spritesheet(image_paths: List, out_dir: str, filename: str, input_mode: str, criteria: SpritesheetBuildCriteria):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in set(STATIC_IMG_EXTS + ANIMATED_IMG_EXTS)]
     # workpath = os.path.dirname(img_paths[0])
@@ -43,7 +43,7 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
                 bytebox = io.BytesIO()
                 gif.save(bytebox, "PNG", optimize=True)
                 frames.append(Image.open(bytebox))
-                yield f'Splitting GIF... ({cr + 1}/{gif.n_frames})'
+                yield {"msg": f'Splitting GIF... ({cr + 1}/{gif.n_frames})'}
         elif ext.lower() == 'png':
             raise Exception('APNG!')
         else:
@@ -78,12 +78,17 @@ def _build_spritesheet(image_paths: List, input_mode: str, out_dir: str, filenam
 
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
-        yield f'Placing frames to sheet... ({index + 1}/{len(frames)})'
+        yield {"msg": f'Placing frames to sheet... ({index + 1}/{len(frames)})'}
         boxes.append(box)
     outfilename = f"{filename}.png"
     final_path = os.path.join(out_dir, outfilename)
-    yield f'Saving the file...'
+    yield {"msg": f'Saving the file...'}
     spritesheet.save(final_path, "PNG")
-    yield 'Finished!'
+    yield {"preview_path": final_path}
+    if input_mode == 'sequence':
+        for f in frames:
+            f.close()
+            # yield {"msg": f"{f} closed!"}
+    yield {"msg": 'Finished!'}
     # raise Exception(boxes)
     

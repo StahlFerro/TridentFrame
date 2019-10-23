@@ -7350,7 +7350,8 @@ div.mod-left-menu::-webkit-scrollbar {
   display: inline-block; }
 
 .prev-spritesheet-container {
-  height: 300px;
+  max-width: 310px;
+  max-height: 310px;
   overflow: auto;
   text-align: center;
   display: inline-block; }

@@ -110,16 +110,17 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
         for index, ipath in enumerate(image_paths):
             # bytebox = io.BytesIO()
             with io.BytesIO() as bytebox:
-                im = Image.open(ipath)
-                orig_width, orig_height = im.size
-                must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
-                if must_resize:
-                    im = im.resize((round(criteria.resize_width), round(criteria.resize_height)))
-                if criteria.flip_h:
-                    im = im.transpose(Image.FLIP_LEFT_RIGHT)
-                if criteria.flip_v:
-                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
-                im.save(bytebox, "PNG", optimize=True)
+                with Image.open(ipath) as im:
+                    # im = Image.open(ipath)
+                    orig_width, orig_height = im.size
+                    must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
+                    if must_resize:
+                        im = im.resize((round(criteria.resize_width), round(criteria.resize_height)))
+                    if criteria.flip_h:
+                        im = im.transpose(Image.FLIP_LEFT_RIGHT)
+                    if criteria.flip_v:
+                        im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                    im.save(bytebox, "PNG", optimize=True)
                 yield {"msg": f"Processing frames... ({index + 1}/{len(image_paths)})"}
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.duration * 1000))
         yield {"msg": "Saving APNG...."}

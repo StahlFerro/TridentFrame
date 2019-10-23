@@ -7,7 +7,7 @@
           class="silver-bordered is-paddingless"
           style="width: 500px; height: 320px;"
         >
-          <div id="BSPR_from_sequence_subpanel" style="display: block;">
+          <div style="display: block;">
             <table class="sequence-grid is-paddingless" width="100%">
               <tbody>
                 <tr v-for="(quintjson, row) in BSPRQuintcellLister" v-bind:key="row">
@@ -31,15 +31,13 @@
             </table>
           </div>
           <div
-            id="BSPR_from_aimg_subpanel"
             class="force-center"
             style="display: none; vertical-align: middle;"
           >
             <div class="crt-aimg-container">
               <span class="aimg-helper"></span>
-              <img id="BSPR_aimg_stage" src />
+              <img/>
             </div>
-            <input id="BSPR_aimg_path" name="BSPR_aimg_path_field" type="hidden" value />
           </div>
         </td>
         <td
@@ -49,7 +47,7 @@
         >
           <div class="prev-spritesheet-container">
             <span class="spritesheet-helper"></span>
-            <img src="preview_path" />
+            <img v-bind:src="preview_path" />
           </div>
         </td>
       </tr>
@@ -212,7 +210,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION } from './Utility.vue';
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, ticks } from './Utility.vue';
 
 function clearInfo() {
   data.image_paths = [],
@@ -241,6 +239,7 @@ var data = {
   padding_x: 0,
   padding_y: 0,
   preserve_alpha: true,
+  preview_path: "",
   bspr_msgbox: "",
   BSPR_IS_LOADING: false,
   BSPR_IS_PREVIEWING: false,
@@ -334,7 +333,7 @@ function previewSheet() {
   data.BSPR_IS_PREVIEWING = true;
   let paths = null;
   if (data.input_format == 'sequence') { paths = data.image_paths; }
-  client.invoke("build_spritesheet", paths, '/temp', data.name, data, (error, res) => {
+  client.invoke("build_spritesheet", paths, './temp', data.name, data, (error, res) => {
       if (error) {
           console.error(error);
           data.bspr_msgbox = error;
@@ -343,8 +342,13 @@ function previewSheet() {
       } else {
           if (res) {
             console.log(res);
-            data.bspr_msgbox = res;
-            if (res == "Finished!") {
+            if (res.msg) {
+              data.bspr_msgbox = res.msg;
+            }
+            if (res.preview_path) {
+              data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
+            }
+            if (res.msg == "Finished!") {
               data.BSPR_IS_PREVIEWING = false;
             }
           }
@@ -366,9 +370,11 @@ function buildSpritesheet() {
       } else {
           if (res) {
             console.log(res);
-            data.bspr_msgbox = res;
-            if (res == "Finished!") {
-              data.BSPR_IS_BUILDING = false;
+            if (res.msg) {
+              data.bspr_msgbox = res.msg;
+            }
+            if (res.msg == "Finished!") {
+              data.BSPR_IS_PREVIEWING = false;
             }
           }
       }

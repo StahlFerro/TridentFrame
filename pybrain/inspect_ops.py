@@ -119,6 +119,7 @@ def _inspect_simg(image):
             "exif": {"value": exif, "label": "EXIF"},
         }
     }
+    im.close()
     return img_metadata
 
 
@@ -169,6 +170,7 @@ def _inspect_agif(abspath: str, gif: Image):
             "loop_duration": {"value": loop_duration, "label": "Loop"},
         }
     }
+    gif.close()
     return image_info
 
 
