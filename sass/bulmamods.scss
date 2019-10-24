@@ -95,7 +95,9 @@ label { color: $white-d !important; }
     background: #777; 
 }
 .scroll {
-    overflow-x: auto;
+    width: 285px;
+    height: 275px;
+    overflow: auto;
 }
 
 
