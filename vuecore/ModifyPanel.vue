@@ -28,8 +28,12 @@
             <img v-bind:src="preview_path" />
           </div>
         </td>
-        <td width="9%"></td>
-        <td width="6%"></td>
+        <td colspan="2" width="15%">
+          <span v-if="preview_size">
+            Preview size:<br/>{{ preview_size_hr }}<br/>
+            ({{ previewSizePercentage }}% of original)
+            </span>
+        </td>
       </tr>
       <tr>
         <td colspan="3" class="has-text-centered is-hpaddingless">
@@ -52,7 +56,9 @@
             </span>
           </a>
         </td>
-        <td colspan="5" class="has-text-centered is-hpaddingless">
+        <td colspan="2">
+        </td>
+        <td class="has-text-centered is-hpaddingless">
           <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'is-static': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-eye"></i>
@@ -72,10 +78,12 @@
             </span>
           </a>
         </td>
+        <td colspan="2">
+        </td>
       </tr>
       <tr>
         <td style="width: 285px; height: 275px;" colspan="3" class="is-paddingless silver-bordered">
-          <div class="scroll">
+          <div class="mod-orig-info-container">
             <table class="table mod-orig-info-table is-hpaddingless">
               <tbody>
                 <tr>
@@ -85,6 +93,14 @@
                 <tr>
                   <td class="mod-info-label is-cyan">Dimensions</td>
                   <td class="mod-info-data">{{ origDimensions }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">File size</td>
+                  <td class="mod-info-data">{{ orig_file_size_hr }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Format</td>
+                  <td class="mod-info-data">{{ orig_format }}</td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Total frames</td>
@@ -101,14 +117,6 @@
                 <tr>
                   <td class="mod-info-label is-cyan">Loop duration</td>
                   <td class="mod-info-data">{{ orig_loop_duration }}</td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">File size</td>
-                  <td class="mod-info-data">{{ orig_file_size }}</td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Format</td>
-                  <td class="mod-info-data">{{ orig_format }}</td>
                 </tr>
               </tbody>
             </table>
@@ -316,7 +324,8 @@ var data = {
   orig_delay: "",
   orig_delay_info: "-",
   orig_loop_duration: "-",
-  orig_file_size: "-",
+  orig_file_size: "",
+  orig_file_size_hr: "-",
   orig_format: "-",
   orig_path: "",
   name: "",
@@ -339,6 +348,8 @@ var data = {
   color_space: "",
   preview_path: "",
   outdir: "",
+  preview_size: "",
+  preview_size_hr: "",
   mod_menuselection: 0,
   orig_checkerbg_active: false,
   new_checkerbg_active: false,
@@ -418,8 +429,8 @@ function loadImage() {
 }
 
 function loadOrigInfo(res) {
-  var geninfo = res.general_info;
-  var ainfo = res.animation_info;
+  let geninfo = res.general_info;
+  let ainfo = res.animation_info;
   data.orig_name = geninfo.name.value;
   data.orig_width = geninfo.width.value;
   data.orig_height = geninfo.height.value;
@@ -435,6 +446,7 @@ function loadOrigInfo(res) {
   data.orig_loop_duration = `${ainfo.loop_duration.value} seconds`;
   data.orig_path = geninfo.absolute_url.value;
   data.orig_file_size = geninfo.fsize.value;
+  data.orig_file_size_hr = geninfo.fsize_hr.value;
 }
 
 function loadNewInfo(res) {
@@ -459,6 +471,8 @@ function clearImage() {
 
 function clearPrevImage() {
   data.preview_path = "";
+  data.preview_size = "";
+  data.preview_size_hr = "";
 }
 
 function chooseOutDir() {
@@ -506,6 +520,18 @@ function previewModImg() {
       }
       if (res.preview_path) {
         data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
+        console.log(res.preview_path);
+        client.invoke("inspect_one", res.preview_path, "animated", (error, info) => {
+          if (error) {
+            console.error(error);
+          } else {
+            console.log(info);
+            if (info && info.general_info) {
+              data.preview_size = info.general_info.fsize.value;
+              data.preview_size_hr = info.general_info.fsize_hr.value;
+            }
+          }
+        });
       }
       if (res.msg == "Finished!") {
         data.MOD_IS_PREVIEWING = false;
@@ -552,6 +578,14 @@ function origDimensions() {
   }
 }
 
+function previewSizePercentage() {
+  let oldsize = data.orig_file_size
+  let prevsize = data.preview_size;
+  console.log(oldsize, prevsize);
+  let redux = Math.round((prevsize / oldsize) * 100);
+  return redux;
+}
+
 
 export default {
   data: function() {
@@ -575,6 +609,7 @@ export default {
   computed: {
     origDimensions: origDimensions,
     buttonIsFrozen: buttonIsFrozen,
+    previewSizePercentage: previewSizePercentage,
   }
 };
 </script>

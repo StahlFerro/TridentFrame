@@ -94,11 +94,6 @@ label { color: $white-d !important; }
 ::-webkit-scrollbar-thumb {
     background: #777; 
 }
-.scroll {
-    width: 285px;
-    height: 275px;
-    overflow: auto;
-}
 
 
 
@@ -297,14 +292,18 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
     display: inline-block;
 }
 
-
+.mod-orig-info-container {
+    width: 285px;
+    height: 275px;
+    overflow: auto;
+}
 .mod-orig-info-table tbody {
     border-collapse: collapse;
     overflow-x: auto;
     display: block;
 }
 .mod-orig-info-table tbody::-webkit-scrollbar {
-    height: 1px;
+    width: 7px;
 }
 .mod-orig-info-table td {
     padding: 3px !important;

@@ -54,10 +54,9 @@
       <td class="force-vcenter" width="20%">
         <label
           class="checkbox"
-          title="Reduces the number of colors. This also eliminates local/per-frame color tables"
-        >
+          title="Sets the number of colors for the GIF. Ranging from 2 colors (monochrome) to 256 (maximum for GIFs). Warning: this will also eliminate local/per-frame color tables, setting just one global color table for every frame.">
           <input  type="checkbox" v-model="is_reduced_color" @change="$emit('update:is_reduced_color', is_reduced_color)" />
-          Reduce Colors
+          Color space
         </label>
       </td>
       <td class="force-vcenter" width="20%">

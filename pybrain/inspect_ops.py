@@ -98,7 +98,8 @@ def _inspect_simg(image):
             }
     width, height = im.size
     path = im.filename
-    fsize = read_filesize(os.stat(path).st_size)
+    fsize = os.stat(path).st_size
+    fsize_hr = read_filesize(fsize)
     color_mode = im.mode
     transparency = im.info.get('transparency', "No")
     # alpha = im.getchannel('A')
@@ -109,7 +110,8 @@ def _inspect_simg(image):
             "name": {"value": os.path.basename(path), "label": "Name"},
             "width": {"value": width, "label": "Width"},
             "height": {"value": height, "label": "Height"},
-            "fsize": {"value": fsize, "label": "File size"},
+            "fsize": {"value": fsize, "label": "File size (bytes)"},
+            "fsize_hr": {"value": fsize_hr, "label": "File size "},
             "absolute_url": {"value": path, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
             "comments": {"value": comment, "label": "Comments"},
@@ -128,7 +130,8 @@ def _inspect_agif(abspath: str, gif: Image):
     base_fname, ext = os.path.splitext(filename)
     width, height = gif.size
     frame_count = gif.n_frames
-    fsize = read_filesize(os.stat(abspath).st_size)
+    fsize = os.stat(abspath).st_size
+    fsize_hr = read_filesize(fsize)
     durations = []
     comments = []
     for f in range(0, gif.n_frames):
@@ -154,7 +157,8 @@ def _inspect_agif(abspath: str, gif: Image):
             "base_fname": {"value": base_fname, "label": "Base Name"},
             "width": {"value": width, "label": "Width"},
             "height": {"value": height, "label": "Height"},
-            "fsize": {"value": fsize, "label": "File size"},
+            "fsize": {"value": fsize, "label": "File size (bytes)"},
+            "fsize_hr": {"value": fsize_hr, "label": "File size "},
             "absolute_url": {"value": abspath, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
             "transparency": {"value": transparency, "label": "Has Transparency"},
@@ -181,7 +185,8 @@ def _inspect_apng(abspath, apng: APNG):
     frame_count = len(frames)
     png_one, controller_one = frames[0]
     fmt = 'APNG'
-    fsize = read_filesize(os.stat(abspath).st_size)
+    fsize = os.stat(abspath).st_size
+    fsize_hr = read_filesize(fsize)
     width = png_one.width
     height = png_one.height
     durations = [f[1].delay for f in frames]
@@ -201,7 +206,8 @@ def _inspect_apng(abspath, apng: APNG):
             "base_fname": {"value": base_fname, "label": "Base Name"},
             "width": {"value": width, "label": "Width"},
             "height": {"value": height, "label": "Height"},
-            "fsize": {"value": fsize, "label": "File size"},
+            "fsize": {"value": fsize, "label": "File size (bytes)"},
+            "fsize_hr": {"value": fsize_hr, "label": "File size "},
             "absolute_url": {"value": abspath, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
             # "comments": {"value": comments, "label": "Comments"},

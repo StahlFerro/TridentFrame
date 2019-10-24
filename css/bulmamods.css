@@ -7200,11 +7200,6 @@ label {
 ::-webkit-scrollbar-thumb {
   background: #777; }
 
-.scroll {
-  width: 285px;
-  height: 275px;
-  overflow: auto; }
-
 /* Draggable element definition */
 .frame-title-bar {
   -webkit-app-region: drag !important; }
@@ -7392,13 +7387,18 @@ div.mod-left-menu::-webkit-scrollbar {
   text-align: center;
   display: inline-block; }
 
+.mod-orig-info-container {
+  width: 285px;
+  height: 275px;
+  overflow: auto; }
+
 .mod-orig-info-table tbody {
   border-collapse: collapse;
   overflow-x: auto;
   display: block; }
 
 .mod-orig-info-table tbody::-webkit-scrollbar {
-  height: 1px; }
+  width: 7px; }
 
 .mod-orig-info-table td {
   padding: 3px !important;
