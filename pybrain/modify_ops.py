@@ -24,7 +24,7 @@ from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restor
 def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     img_path = os.path.abspath(img_path)
     if not os.path.isfile(img_path):
-        raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file")
+        raise Exception("Cannot Preview/Modify the image. The original file in the system may been removed.")
     out_dir = os.path.abspath(out_dir)
     full_name = f"{criteria.name}.{criteria.format.lower()}"
     # temp_dir = _mk_temp_dir(prefix_name="temp_mods")

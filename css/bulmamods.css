@@ -7193,12 +7193,15 @@ table.root-table {
 label {
   color: #cccccc !important; }
 
-/* Global scrollbar definition */
+/* Global scrollbar definition and overflow helpers */
 ::-webkit-scrollbar {
   width: 7px; }
 
 ::-webkit-scrollbar-thumb {
   background: #777; }
+
+.scroll {
+  overflow-x: auto; }
 
 /* Draggable element definition */
 .frame-title-bar {
@@ -7389,11 +7392,11 @@ div.mod-left-menu::-webkit-scrollbar {
 
 .mod-orig-info-table tbody {
   border-collapse: collapse;
-  overflow: auto;
+  overflow-x: auto;
   display: block; }
 
 .mod-orig-info-table tbody::-webkit-scrollbar {
-  height: 7px; }
+  height: 1px; }
 
 .mod-orig-info-table td {
   padding: 3px !important;
@@ -7407,7 +7410,7 @@ div.mod-left-menu::-webkit-scrollbar {
   width: 120px; }
 
 .mod-orig-info-table td.mod-info-data {
-  max-width: 200px; }
+  max-width: 600px; }
 
 .ins-info-table table {
   table-layout: fixed !important; }

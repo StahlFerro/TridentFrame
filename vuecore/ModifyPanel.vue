@@ -74,45 +74,47 @@
         </td>
       </tr>
       <tr>
-        <td width="35%" colspan="3" class="is-paddingless silver-bordered">
-          <table class="table mod-orig-info-table is-hpaddingless" width="100%">
-            <tbody>
-              <tr>
-                <td class="mod-info-label is-cyan">Name</td>
-                <td class="mod-info-data">{{ orig_name }}</td>
-              </tr>
-              <tr>
-                <td class="mod-info-label is-cyan">Dimensions</td>
-                <td class="mod-info-data">{{ origDimensions }}</td>
-              </tr>
-              <tr>
-                <td class="mod-info-label is-cyan">Total frames</td>
-                <td class="mod-info-data">{{ orig_frame_count }}</td>
-              </tr>
-              <tr>
-                <td class="mod-info-label is-cyan">Frame rate</td>
-                <td class="mod-info-data">{{ orig_fps }}</td>
-              </tr>
-              <tr>
-                <td class="mod-info-label is-cyan">Frame delay</td>
-                <td class="mod-info-data">{{ orig_delay_info }}</td>
-              </tr>
-              <tr>
-                <td class="mod-info-label is-cyan">Loop duration</td>
-                <td class="mod-info-data">{{ orig_loop_duration }}</td>
-              </tr>
-              <tr>
-                <td class="mod-info-label is-cyan">File size</td>
-                <td class="mod-info-data">{{ orig_file_size }}</td>
-              </tr>
-              <tr>
-                <td class="mod-info-label is-cyan">Format</td>
-                <td class="mod-info-data">{{ orig_format }}</td>
-              </tr>
-            </tbody>
-          </table>
+        <td style="width: 285px; height: 275px;" colspan="3" class="is-paddingless silver-bordered">
+          <div class="scroll">
+            <table class="table mod-orig-info-table is-hpaddingless">
+              <tbody>
+                <tr>
+                  <td class="mod-info-label is-cyan">Name</td>
+                  <td class="mod-info-data">{{ orig_name }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Dimensions</td>
+                  <td class="mod-info-data">{{ origDimensions }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Total frames</td>
+                  <td class="mod-info-data">{{ orig_frame_count }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Frame rate</td>
+                  <td class="mod-info-data">{{ orig_fps }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Frame delay</td>
+                  <td class="mod-info-data">{{ orig_delay_info }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Loop duration</td>
+                  <td class="mod-info-data">{{ orig_loop_duration }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">File size</td>
+                  <td class="mod-info-data">{{ orig_file_size }}</td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Format</td>
+                  <td class="mod-info-data">{{ orig_format }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </td>
-        <td width="65%" colspan="5"
+        <td style="width: 581px; height: 275px;" colspan="5"
           class="has-text-centered is-right-paddingless silver-bordered-left-thicc">
           <table class="table is-paddingless is-marginless" width="100%">
             <tr>

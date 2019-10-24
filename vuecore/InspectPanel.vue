@@ -14,6 +14,7 @@
           <div class="is-paddingless is-marginless" style="height: 320px; overflow: auto;">
             <table class="table ins-info-table is-paddingless" width="100%">
               <template v-for="(item, key) in info_data">
+                <!-- <span v-bind:key="key"/> -->
                 <tr v-if="key == 'general_info'">
                   <td colspan="2" class="is-cyan">GENERAL INFO</td>
                 </tr>
@@ -42,7 +43,7 @@
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
-            <span>Load GIF/APNG</span>
+            <span>Load Any Image</span>
           </a>
           <a v-on:click="clearImage" class="button is-neon-white">
             <span class="icon is-small">
