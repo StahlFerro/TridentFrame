@@ -98,6 +98,8 @@ def _inspect_simg(image):
             }
     width, height = im.size
     path = im.filename
+    filename = str(os.path.basename(path))
+    base_fname, ext = os.path.splitext(filename)
     fsize = os.stat(path).st_size
     fsize_hr = read_filesize(fsize)
     color_mode = im.mode
@@ -107,7 +109,8 @@ def _inspect_simg(image):
     # fsize = size(os.stat(path).st_size, system=alternative)
     img_metadata = {
         "general_info": {
-            "name": {"value": os.path.basename(path), "label": "Name"},
+            "name": {"value": filename, "label": "Name"},
+            "base_fname": {"value": base_fname, "label": "Base Name"},
             "width": {"value": width, "label": "Width"},
             "height": {"value": height, "label": "Height"},
             "fsize": {"value": fsize, "label": "File size (bytes)"},
@@ -245,7 +248,7 @@ def inspect_sequence(image_paths):
     width, height = Image.open(static_img_paths[0]).size
     yield {
         "data": {
-            "name": sequence_info[0]['name']['value'],
+            "name": sequence_info[0]['base_fname']['value'],
             "total": sequence_count,
             "sequence": static_img_paths,
             "sequence_info": sequence_info,

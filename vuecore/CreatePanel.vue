@@ -270,6 +270,7 @@ function loadImages() {
       if (error) {
         console.error(error);
         data.create_msgbox = error;
+        data.CRT_IS_LOADING = false;
       } else {
         console.log(res);
         if (res && res.msg) {
@@ -278,7 +279,7 @@ function loadImages() {
         }
         else if (res && res.data) {
           let info = res.data
-          console.log('before');
+          console.log('sequence info');
           console.log(info.sequence_info);
           data.image_paths = info.sequence;
           data.sequence_info = info.sequence_info;
