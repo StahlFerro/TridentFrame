@@ -7392,27 +7392,18 @@ div.mod-left-menu::-webkit-scrollbar {
   height: 275px;
   overflow: auto; }
 
-.mod-orig-info-table tbody {
-  border-collapse: collapse;
-  overflow-x: auto;
-  display: block; }
-
-.mod-orig-info-table tbody::-webkit-scrollbar {
-  width: 7px; }
+.mod-orig-info-container::-webkit-scrollbar {
+  width: 7px;
+  height: 10px; }
 
 .mod-orig-info-table td {
   padding: 3px !important;
   padding-bottom: 0px !important;
-  padding-left: 10px !important; }
-
-.mod-orig-info-table tr {
-  display: block; }
+  padding-left: 5px !important; }
 
 .mod-orig-info-table td.mod-info-label {
-  width: 120px; }
-
-.mod-orig-info-table td.mod-info-data {
-  max-width: 600px; }
+  max-width: 120px;
+  min-width: 120px; }
 
 .ins-info-table table {
   table-layout: fixed !important; }

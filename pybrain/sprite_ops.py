@@ -16,7 +16,7 @@ from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 from .criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 
-def _build_spritesheet(image_paths: List, out_dir: str, filename: str, input_mode: str, criteria: SpritesheetBuildCriteria):
+def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in set(STATIC_IMG_EXTS + ANIMATED_IMG_EXTS)]
     # workpath = os.path.dirname(img_paths[0])
@@ -29,7 +29,7 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, input_mod
     out_dir = os.path.abspath(out_dir)
     if not os.path.exists(out_dir):
         raise Exception("The specified absolute out_dir does not exist!")
-
+    input_mode = criteria.input_format
     frames = []
     if input_mode == 'sequence':
         frames = [Image.open(i) for i in img_paths]

@@ -75,13 +75,14 @@ class SpritesheetBuildCriteria():
     """ Contains all of the criterias to build a spritesheet """
 
     def __init__(self, vals: dict):
-        self.resize_width: int = int(vals['tile_width'])
-        self.resize_height: int = int(vals['tile_height'])
-        self.tiles_per_row: int = int(vals['tile_row'])
-        self.offset_x: int = int(vals['offset_x'])
-        self.offset_y: int = int(vals['offset_y'])
-        self.padding_x: int = int(vals['padding_x'])
-        self.padding_y: int = int(vals['padding_y'])
+        self.resize_width: int = int(vals.get('tile_width') or 0)
+        self.resize_height: int = int(vals.get('tile_height') or 0)
+        self.input_format: str = vals['input_format']
+        self.tiles_per_row: int = int(vals.get('tile_row') or 0)
+        self.offset_x: int = int(vals.get('offset_x') or 0)
+        self.offset_y: int = int(vals.get('offset_y') or 0)
+        self.padding_x: int = int(vals.get('padding_x') or 0)
+        self.padding_y: int = int(vals.get('padding_y') or 0)
         self.preserve_alpha: bool = vals['preserve_alpha']
 
 

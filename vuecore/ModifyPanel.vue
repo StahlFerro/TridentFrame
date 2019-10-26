@@ -65,7 +65,7 @@
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="clearPrevImage" class="button is-neon-white">
+          <a v-on:click="clearPrevImage" class="button is-neon-white" v-bind:class="{'is-static': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>
@@ -368,7 +368,8 @@ function clearOrigFields() {
   data.orig_delay = "";
   data.orig_delay_info = "-";
   data.orig_loop_duration = "-";
-  data.orig_file_size = "-";
+  data.orig_file_size = "";
+  data.orig_file_size_hr = "-";
   data.orig_format = "-";
   data.orig_path = "";
 }

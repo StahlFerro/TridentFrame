@@ -145,6 +145,11 @@
                   </div>
                 </div>
               </td>
+
+              <td>
+                
+              </td>
+
               <td>
                 <div class="field">
                   <label class="label">Max tiles per row</label>
@@ -159,6 +164,69 @@
                   </div>
                 </div>
               </td>
+            </tr>
+            <tr>
+              
+              <td>
+                <div class="field">
+                  <label class="label">Offset X</label>
+                  <div class="control">
+                    <input
+                      v-model="offset_x"
+                      class="input is-neon-white"
+                      type="number"
+                      min="1"
+                      max="50"
+                    />
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="field">
+                  <label class="label">Offset Y</label>
+                  <div class="control">
+                    <input
+                      v-model="offset_y"
+                      class="input is-neon-white"
+                      type="number"
+                      min="1"
+                      max="50"
+                    />
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="field">
+                  <label class="label">Padding X</label>
+                  <div class="control">
+                    <input
+                      v-model="padding_x"
+                      class="input is-neon-white"
+                      type="number"
+                      min="1"
+                      max="50"
+                    />
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <div class="field">
+                  <label class="label">Padding Y</label>
+                  <div class="control">
+                    <input
+                      v-model="padding_y"
+                      class="input is-neon-white"
+                      type="number"
+                      min="1"
+                      max="50"
+                    />
+                  </div>
+                </div>
+              </td>
+
             </tr>
             <tr>
               <td colspan="2" style="padding-top: 25px;">
@@ -222,6 +290,7 @@ function clearInfo() {
   data.tile_row = "";
   data.outdir = "";
   data.bspr_msgbox = "";
+  data.preview_path = "";
 }
 
 var data = {
@@ -234,10 +303,10 @@ var data = {
   tile_height: "",
   tile_row: "",
   outdir: "",
-  offset_x: 0,
-  offset_y: 0,
-  padding_x: 0,
-  padding_y: 0,
+  offset_x: "",
+  offset_y: "",
+  padding_x: "",
+  padding_y: "",
   preserve_alpha: true,
   preview_path: "",
   bspr_msgbox: "",
