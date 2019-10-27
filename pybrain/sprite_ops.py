@@ -69,12 +69,11 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     for index, fr in enumerate(frames):
         top = tile_height * math.floor(index / max_frames_row) + criteria.offset_y
         left = tile_width * (index % max_frames_row) + criteria.offset_x
-        bottom = top + tile_height + criteria.offset_y
-        right = left + tile_width + criteria.offset_x
+        bottom = top + tile_height
+        right = left + tile_width
 
         box = (left, top, right, bottom)
         box = [int(b) for b in box]
-        yield {"msg": box}
 
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)

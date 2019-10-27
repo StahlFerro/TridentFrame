@@ -460,7 +460,7 @@ function previewSheet() {
           data.bspr_msgbox = "Obtaining preview spritesheet information...";
           console.log("Obtaining preview spritesheet information...");
           data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
-          setTimeout(() => {
+          setTimeout(function() {
             console.log('timeout exhausted, invoking zerorpc...');
             client.invoke("inspect_one", res.preview_path, "static", (error, info) => {
               if (error) {
@@ -470,10 +470,11 @@ function previewSheet() {
                 console.log("preview inspect");
                 console.log(info);
                 data.preview_info = info.general_info;
+                data.bspr_msgbox = "Previewed!";
                 data.BSPR_IS_PREVIEWING = false;
               }
             });
-          }, 1000);
+          }, 500);
         }
         // if (res.msg == "Finished!") {
         // }
