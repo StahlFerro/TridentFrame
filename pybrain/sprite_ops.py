@@ -58,7 +58,7 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         spritesheet_width = tile_width * max_frames_row + criteria.offset_x
         required_rows = math.ceil(len(frames)/max_frames_row)
         # print('required rows', required_rows)
-        spritesheet_height = tile_height * required_rows
+        spritesheet_height = tile_height * required_rows + criteria.offset_y
     else:
         spritesheet_width = tile_width * len(frames)
         spritesheet_height = tile_height
@@ -67,13 +67,14 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     # spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
     # boxes = []
     for index, fr in enumerate(frames):
-        top = tile_height * math.floor(index / max_frames_row)
-        left = tile_width * (index % max_frames_row)
-        bottom = top + tile_height
-        right = left + tile_width
+        top = tile_height * math.floor(index / max_frames_row) + criteria.offset_y
+        left = tile_width * (index % max_frames_row) + criteria.offset_x
+        bottom = top + tile_height + criteria.offset_y
+        right = left + tile_width + criteria.offset_x
 
         box = (left, top, right, bottom)
         box = [int(b) for b in box]
+        yield {"msg": box}
 
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
@@ -89,6 +90,5 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         for f in frames:
             f.close()
     yield {"preview_path": final_path}
-    yield {"msg": 'Finished!'}
     # raise Exception('yo')
     

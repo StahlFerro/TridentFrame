@@ -457,18 +457,23 @@ function previewSheet() {
           data.bspr_msgbox = res.msg;
         }
         if (res.preview_path) {
+          data.bspr_msgbox = "Obtaining preview spritesheet information...";
+          console.log("Obtaining preview spritesheet information...");
           data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
-          client.invoke("inspect_one", res.preview_path, "static", (error, info) => {
-            if (error) {
-              console.error(error);
-            }
-            else {
-              console.log("preview inspect");
-              console.log(info);
-              data.preview_info = info.general_info;
-              data.BSPR_IS_PREVIEWING = false;
-            }
-          });
+          setTimeout(() => {
+            console.log('timeout exhausted, invoking zerorpc...');
+            client.invoke("inspect_one", res.preview_path, "static", (error, info) => {
+              if (error) {
+                console.error(error);
+              }
+              else {
+                console.log("preview inspect");
+                console.log(info);
+                data.preview_info = info.general_info;
+                data.BSPR_IS_PREVIEWING = false;
+              }
+            });
+          }, 1000);
         }
         // if (res.msg == "Finished!") {
         // }
