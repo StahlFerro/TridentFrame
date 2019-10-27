@@ -44,10 +44,18 @@
           id="create_spritesheet_cell"
           class="silver-bordered force-center is-paddingless"
           style="width: 320px; height: 320px;"
+          v-bind:class="{'has-checkerboard-bg': checkerbg_active}"
         >
-          <div class="prev-spritesheet-container">
-            <span class="spritesheet-helper"></span>
-            <img v-bind:src="preview_path" />
+          <div v-if="preview_info" class="prev-spritesheet-container">
+            <div v-bind:title="
+              `Dimensions: ${preview_info.width.value} x ${preview_info.height.value}\n` +
+              `File size: ${preview_info.fsize_hr.value}\n` +
+              `Format: ${preview_info.format.value}\n` +
+              `Mode: ${preview_info.color_mode.value}`
+            ">
+              <span class="spritesheet-helper"></span>
+              <img v-bind:src="preview_path" />
+            </div>
           </div>
         </td>
       </tr>
@@ -62,13 +70,13 @@
                       <div class="control">
                         <div class="select is-neon-cyan">
                           <select v-model="input_format">
-                            <option value="sequence">From Sequence</option>
+                            <option value="sequence">Sequence</option>
                             <!-- <option value="aimg">From GIF/APNG</option> -->
                           </select>
                         </div>
                       </div>
                     </div>
-                    <div class="field">
+                    <div class="field force-vcenter">
                       <a v-on:click="loadInput" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_LOADING, 'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-plus"></i>
@@ -85,18 +93,31 @@
                   </div>
                 </div>
               </div>
+              <div class="level-item has-text-centered">
+                <span class="force-vcenter">
+                  {{ sequence_size }}
+                </span>
+              </div>
             </div>
           </nav>
         </td>
         <td class="is-hpaddingless">
           <nav class="level">
             <div class="level-item has-text-centered">
+              <div>
               <a v-on:click="previewSheet" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_PREVIEWING, 'is-static': isButtonFrozen}">
                 <span class="icon is-medium">
                   <i class="far fa-eye"></i>
                 </span>
                 <span>Preview</span>
               </a>
+              
+              <a v-on:click="BSPRToggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
+                <span class="icon is-medium">
+                  <i class="fas fa-chess-board"></i>
+                </span>
+              </a>
+              </div>
             </div>
             <!-- <div class="level-item has-text-centered">
               <div>
@@ -115,7 +136,7 @@
         <td id="BSPR_create_control_table" class="is-paddingless" colspan="2">
           <table class="table spr-control-table" width="100%">
             <tr>
-              <td>
+              <td width="30%">
                 <div class="field">
                   <label class="label">Name</label>
                   <div class="control">
@@ -123,7 +144,7 @@
                   </div>
                 </div>
               </td>
-              <td>
+              <td width="17.5%">
                 <div class="field">
                   <label class="label">Tile Width</label>
                   <div class="control">
@@ -131,7 +152,7 @@
                   </div>
                 </div>
               </td>
-              <td>
+              <td width="17.5%">
                 <div class="field">
                   <label class="label">Tile Height</label>
                   <div class="control">
@@ -146,11 +167,11 @@
                 </div>
               </td>
 
-              <td>
+              <td width="17.5%">
                 
               </td>
 
-              <td>
+              <td width="17.5%">
                 <div class="field">
                   <label class="label">Max tiles per row</label>
                   <div class="control">
@@ -250,7 +271,7 @@
                   </div>
                 </div>
               </td>
-              <td colspan="2" style="padding-top: 25px;">
+              <td colspan="1" style="padding-top: 25px;">
                 <div class="field has-text-centered">
                   <div class="control">
                     <a v-on:click="buildSpritesheet" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_BUILDING, 'is-static': isButtonFrozen}">
@@ -258,6 +279,11 @@
                     </a>
                   </div>
                 </div>
+              </td>
+              <td colspan="2" style="padding-top: 25px;">
+                <span v-if="sheetDimensions">
+                  Sheet dimensions: {{ sheetDimensions }}
+                </span>
               </td>
             </tr>
             <tr>
@@ -284,6 +310,7 @@ function clearInfo() {
   data.image_paths = [],
   data.sequence_info = [];
   data.sequence_count = 0;
+  data.sequence_size = "";
   data.name = "";
   data.tile_width = "";
   data.tile_height = "";
@@ -291,12 +318,14 @@ function clearInfo() {
   data.outdir = "";
   data.bspr_msgbox = "";
   data.preview_path = "";
+  data.preview_info = "";
 }
 
 var data = {
   image_paths: [],
   sequence_info: [],
   sequence_count: 0,
+  sequence_size: "",
   input_format: "sequence",
   name: "",
   tile_width: "",
@@ -309,6 +338,8 @@ var data = {
   padding_y: "",
   preserve_alpha: true,
   preview_path: "",
+  preview_info: "",
+  checkerbg_active: false,
   bspr_msgbox: "",
   BSPR_IS_LOADING: false,
   BSPR_IS_PREVIEWING: false,
@@ -326,7 +357,6 @@ function loadInput() {
   }
   dialog.showOpenDialog(mainWindow, options, (img_paths) => {
     if (img_paths === undefined || img_paths.length == 0) { return; }
-    console.log(img_paths);
     if (data.input_format == "sequence") {
       loadSequence(img_paths);
     }
@@ -334,6 +364,7 @@ function loadInput() {
 }
 
 function loadSequence(img_paths) {
+  console.log('loading sequences...');
   data.BSPR_IS_LOADING = true;
   client.invoke("inspect_many", img_paths, (error, res) => {
     if (error) {
@@ -342,7 +373,6 @@ function loadSequence(img_paths) {
       data.BSPR_IS_LOADING = false;
     }
     else {
-      console.log(res);
       if (res && res.msg) {
         console.log('msg executed');
         data.bspr_msgbox = res.msg;
@@ -351,6 +381,7 @@ function loadSequence(img_paths) {
         let info = res.data;
         data.image_paths = info.sequence;
         data.sequence_info = info.sequence_info;
+        data.sequence_size = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
         data.name = info.name;
         data.tile_width = info.width;
         data.tile_height = info.height;
@@ -365,13 +396,22 @@ function loadSequence(img_paths) {
 
 function sheetDimensions() {
   console.log('compute final dimens called');
-  var image_count = data.sequence_count;
-  var x_count = Math.min(image_count, data.tile_row);
-  var y_count = Math.ceil(image_count / data.tile_row);
-  // console.log('xcount', x_count);
-  // console.log('ycount', y_count);
-  var sheet_width = data.tile_width * x_count;
-  var sheet_height = data.tile_height * y_count;
+  let image_count = data.sequence_count;
+  let x_count = Math.min(image_count, data.tile_row);
+  let y_count = data.tile_row? Math.ceil(image_count / data.tile_row) : 0;
+  let padding_x = data.padding_x? parseInt(data.padding_x) : 0;
+  let padding_y = data.padding_y? parseInt(data.padding_y) : 0;
+  let offset_x = data.offset_x? parseInt(data.offset_x) : 0;
+  let offset_y = data.offset_y? parseInt(data.offset_y) : 0;
+  console.log('xcount', x_count);
+  console.log('ycount', y_count);
+  let total_pad_x = x_count * 2 * padding_x;
+  let total_pad_y = y_count * 2 * padding_y;
+  console.log(data.tile_width, data.tile_height);
+  console.log(total_pad_x, total_pad_y);
+  let sheet_width = data.tile_width * x_count + offset_x + total_pad_x;
+  let sheet_height = data.tile_height * y_count + offset_y + total_pad_y;
+  console.log(sheet_width, sheet_height);
   if (sheet_width && sheet_height) {
     return `${sheet_width}x${sheet_height}`;
   }
@@ -394,7 +434,7 @@ function BSPRQuintcellLister() {
 }
 
 function isButtonFrozen() {
-  if (data.BSPR_IS_LOADING || data.BSPR_IS_BUILDING) return true;
+  if (data.BSPR_IS_LOADING || data.BSPR_IS_PREVIEWING || data.BSPR_IS_BUILDING) return true;
   else return false;
 }
 
@@ -402,26 +442,38 @@ function previewSheet() {
   data.BSPR_IS_PREVIEWING = true;
   let paths = null;
   if (data.input_format == 'sequence') { paths = data.image_paths; }
+  console.log('paths...');
+  console.log(paths);
   client.invoke("build_spritesheet", paths, './temp', data.name, data, (error, res) => {
-      if (error) {
-          console.error(error);
-          data.bspr_msgbox = error;
-          data.BSPR_IS_PREVIEWING = false;
-          // mboxError(bspr_msgbox, error);
-      } else {
-          if (res) {
-            console.log(res);
-            if (res.msg) {
-              data.bspr_msgbox = res.msg;
+    if (error) {
+      console.error(error);
+      data.bspr_msgbox = error;
+      data.BSPR_IS_PREVIEWING = false;
+      // mboxError(bspr_msgbox, error);
+    } else {
+      if (res) {
+        console.log(res);
+        if (res.msg) {
+          data.bspr_msgbox = res.msg;
+        }
+        if (res.preview_path) {
+          data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
+          client.invoke("inspect_one", res.preview_path, "static", (error, info) => {
+            if (error) {
+              console.error(error);
             }
-            if (res.preview_path) {
-              data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
-            }
-            if (res.msg == "Finished!") {
+            else {
+              console.log("preview inspect");
+              console.log(info);
+              data.preview_info = info.general_info;
               data.BSPR_IS_PREVIEWING = false;
             }
-          }
+          });
+        }
+        // if (res.msg == "Finished!") {
+        // }
       }
+    }
   });
 }
 
@@ -431,23 +483,28 @@ function buildSpritesheet() {
   if (data.input_format == 'sequence') { paths = data.image_paths; }
   // else if (data.input_format == 'aimg') { paths = bspr_aimg_path_list; }
   client.invoke("build_spritesheet", paths, data.outdir, data.name, data, (error, res) => {
-      if (error) {
-          console.error(error);
-          data.bspr_msgbox = error;
+    if (error) {
+      console.error(error);
+      data.bspr_msgbox = error;
+      data.BSPR_IS_BUILDING = false;
+      // mboxError(bspr_msgbox, error);
+    } else {
+      if (res) {
+        console.log(res);
+        if (res.msg) {
+          data.bspr_msgbox = res.msg;
+        }
+        if (res.msg == "Finished!") {
           data.BSPR_IS_BUILDING = false;
-          // mboxError(bspr_msgbox, error);
-      } else {
-          if (res) {
-            console.log(res);
-            if (res.msg) {
-              data.bspr_msgbox = res.msg;
-            }
-            if (res.msg == "Finished!") {
-              data.BSPR_IS_PREVIEWING = false;
-            }
-          }
+        }
       }
+    }
   });
+}
+
+function BSPRToggleCheckerBG() {
+  data.checkerbg_active = !data.checkerbg_active;
+  console.log('now checkerbg is', data.checkerbg_active);
 }
 
 export default {
@@ -460,6 +517,7 @@ export default {
     clearInfo: clearInfo,
     previewSheet, previewSheet,
     buildSpritesheet: buildSpritesheet,
+    BSPRToggleCheckerBG: BSPRToggleCheckerBG,
   },
   computed: {
     BSPRQuintcellLister: BSPRQuintcellLister,

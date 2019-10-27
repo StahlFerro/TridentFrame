@@ -284,7 +284,7 @@ function loadImages() {
           data.image_paths = info.sequence;
           data.sequence_info = info.sequence_info;
           data.name = info.name;
-          data.sequence_counter = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size} total)`;
+          data.sequence_counter = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
           data.orig_width = info.width;
           data.width = info.width;
           data.orig_height = info.height;

@@ -71,6 +71,7 @@ class API(object):
             raise Exception("Please choose the output folder!")
         criteria = SpritesheetBuildCriteria(vals)
         # raise Exception(criteria.__dict__)
+        # yield {"msg": "yo"}
         return _build_spritesheet(image_paths, out_dir, filename, criteria)
 
     def purge_cache(self):

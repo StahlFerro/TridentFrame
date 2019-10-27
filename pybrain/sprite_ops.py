@@ -50,15 +50,14 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
             raise Exception('Unknown image format!')
     else:
         raise Exception('Unknown input image mode!')
-
     tile_width = frames[0].size[0]
     tile_height = frames[0].size[1]
 
     max_frames_row = criteria.tiles_per_row
     if len(frames) > max_frames_row:
-        spritesheet_width = tile_width * max_frames_row
+        spritesheet_width = tile_width * max_frames_row + criteria.offset_x
         required_rows = math.ceil(len(frames)/max_frames_row)
-        print('required rows', required_rows)
+        # print('required rows', required_rows)
         spritesheet_height = tile_height * required_rows
     else:
         spritesheet_width = tile_width * len(frames)
@@ -66,7 +65,7 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
 
     spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
     # spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
-    boxes = []
+    # boxes = []
     for index, fr in enumerate(frames):
         top = tile_height * math.floor(index / max_frames_row)
         left = tile_width * (index % max_frames_row)
@@ -79,16 +78,17 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
         yield {"msg": f'Placing frames to sheet... ({index + 1}/{len(frames)})'}
-        boxes.append(box)
+        # boxes.append(box)
     outfilename = f"{filename}.png"
     final_path = os.path.join(out_dir, outfilename)
     yield {"msg": f'Saving the file...'}
     spritesheet.save(final_path, "PNG")
-    yield {"preview_path": final_path}
+    yield {"msg": "closing up images..."}
+    spritesheet.close()
     if input_mode == 'sequence':
         for f in frames:
             f.close()
-            # yield {"msg": f"{f} closed!"}
+    yield {"preview_path": final_path}
     yield {"msg": 'Finished!'}
-    # raise Exception(boxes)
+    # raise Exception('yo')
     
