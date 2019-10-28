@@ -461,7 +461,7 @@ function previewSheet() {
           console.log("Obtaining preview spritesheet information...");
           data.preview_path = res.preview_path;
         }
-        if (res.control == "finish") {
+        if (res.CONTROL == "FINISH") {
           setTimeout(function() {
             console.log('timeout exhausted, invoking zerorpc...');
             client.invoke("inspect_one", data.preview_path, "static", (error, info) => {
@@ -528,12 +528,12 @@ export default {
     previewSheet, previewSheet,
     buildSpritesheet: buildSpritesheet,
     BSPRToggleCheckerBG: BSPRToggleCheckerBG,
-    previewPathCacheBreaker: previewPathCacheBreaker,
   },
   computed: {
     BSPRQuintcellLister: BSPRQuintcellLister,
     sheetDimensions: sheetDimensions,
     isButtonFrozen: isButtonFrozen,
+    previewPathCacheBreaker: previewPathCacheBreaker,
   }
 }
 </script>

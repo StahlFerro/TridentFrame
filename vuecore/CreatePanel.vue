@@ -34,9 +34,15 @@
           class="silver-bordered force-center is-paddingless"
           style="width: 320px; height: 320px;"
           v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
-          <div class="crt-aimg-container">
-            <span class="aimg-helper"></span>
-            <img v-bind:src="preview_path"/>
+          <div v-if="preview_info" class="crt-aimg-container">
+            <div v-bind:title="
+              `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
+              `File size: ${preview_info.general_info.fsize_hr.value}\n` +
+              `Format: ${preview_info.general_info.format.value}`
+            ">
+              <span class="aimg-helper"></span>
+              <img v-bind:src="previewPathCacheBreaker"/>
+            </div>
           </div>
         </td>
       </tr>
@@ -243,6 +249,7 @@ var data = {
   format: "gif",
   outdir: "",
   preview_path: "",
+  preview_info: "",
   lock_aspect_ratio: false,
   create_msgbox: "",
   sequence_counter: "",
@@ -316,6 +323,7 @@ function CRTClearAIMG() {
   data.image_paths = [];
   data.sequence_info = [];
   data.preview_path = "";
+  data.preview_info = "";
   data.name = "";
   data.delay = "";
   data.fps = "";
@@ -353,11 +361,25 @@ function previewAIMG() {
           data.create_msgbox = res.msg;
         }
         if (res.preview_path) {
-          data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
+          data.preview_path = res.preview_path;
         }
-        if (res.msg == "Finished!") {
+        if (res.CONTROL == "FINISH") {
+          setTimeout(function() {
+            console.log('timeout exhausted, invoking zerorpc...');
+            client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
+              if (error) {
+                console.error(error);
+              } else {
+                console.log("preview inspect");
+                console.log(info);
+                data.preview_info = info;
+                data.create_msgbox = "Previewed!";
+                data.BSPR_IS_PREVIEWING = false;
+              }
+            });
+          });
+          data.create_msgbox = "Previewed!"
           data.CRT_IS_PREVIEWING = false;
-          
         }
       }
     }
@@ -384,7 +406,8 @@ function CRTCreateAIMG() {
         if (res.msg) {
           data.create_msgbox = res.msg;
         }
-        if (res.msg == "Finished!") {
+        if (res.CONTROL == "FINISH") {
+          data.create_msgbox = `${data.format} created!`;
           data.CRT_IS_CREATING = false;
         }
       }
@@ -463,6 +486,12 @@ function CRTQuintcellLister() {
   return quintcellLister(data.sequence_info);
 }
 
+function previewPathCacheBreaker() {
+  let cb_url = `${data.preview_path}?timestamp=${ticks()}`;
+  console.log("Cache breaker url", cb_url);
+  return cb_url
+}
+
 export default {
   data: function() {
     return data;
@@ -481,6 +510,7 @@ export default {
     CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
     aspectRatioData: aspectRatioData,
+    previewPathCacheBreaker: previewPathCacheBreaker,
   },
 };
 </script>
