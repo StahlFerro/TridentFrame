@@ -151,8 +151,16 @@
                   </div>
                 </div>
               </td>
-              <td>
-                <span></span>
+              <td style="vertical-align: bottom;">
+                <label class="checkbox">
+                  <input v-model="lock_aspect_ratio" type="checkbox"/>
+                  Lock aspect ratio
+                </label>
+
+                <label class="label">
+                  <span v-if="aspectRatioData.text">{{ aspectRatioData.text }}</span>
+                </label>
+                <span style="display: none;">{{ aspectRatioData }}</span>
               </td>
               <td style="vertical-align: bottom;">
                 <label class="checkbox">
@@ -407,7 +415,7 @@ function CRTCreateAIMG() {
           data.create_msgbox = res.msg;
         }
         if (res.CONTROL == "FINISH") {
-          data.create_msgbox = `${data.format} created!`;
+          data.create_msgbox = `${data.format.toUpperCase()} created!`;
           data.CRT_IS_CREATING = false;
         }
       }
@@ -463,23 +471,24 @@ function fpsConstrain (event) {
 }
 
 function aspectRatioData() {
-  if (data.width && data.height) {
-    let divisor = gcd(data.width, data.height);
-    let base_width = data.width / divisor;
-    let base_height = data.height / divisor;
-    return {
-      "width": base_width,
-      "height": base_height,
-      "text": `${base_width}:${base_height}`
-    }
-  }
-  else {
-    return {
+  console.log('aspect ratio data autocompute');
+  let ARData = {
       "width": "",
       "height": "",
       "text": "",
+  };
+  if (data.width && data.height) {
+    let divisor = gcd(data.width, data.height);
+    let w_ratio = data.width / divisor;
+    let h_ratio = data.height / divisor;
+    ARData = {
+      "width": w_ratio,
+      "height": h_ratio,
+      "text": `${w_ratio}:${h_ratio}`,
     };
   }
+  console.log(ARData);
+  return ARData;
 }
 
 function CRTQuintcellLister() {
