@@ -139,7 +139,7 @@
                 <div class="field">
                   <label class="label">Width</label>
                   <div class="control">
-                    <input v-model="width" class="input is-neon-white" type="number" />
+                    <input v-model="width" v-on:input="widthConstrain" class="input is-neon-white" type="number" />
                   </div>
                 </div>
               </td>
@@ -437,13 +437,23 @@ function isButtonFrozen() {
 //   return Math.round(1/data.delay * 1000) / 1000;
 // }
 
+function widthConstrain(event) {
+  // let ARData = aspectRatioData();
+  // console.log('obtained ARData:', ARData);
+  // console.log("width change event", event);
+  console.log('event', event);
+  console.log('orig value', event.oldValue);
+  let value = event.target.value;
+  console.log('event value', value);
+}
+
 function delayConstrain (event) {
   console.log("delay event", event);
-  var value = event.target.value;
+  let value = event.target.value;
   if (value && value.includes(".")) {
-    var numdec = value.split(".");
+    let numdec = value.split(".");
     console.log("numdec", numdec);
-    var precision = 2;
+    let precision = 2;
     if (data.format == 'gif') {
       precision = GIF_DELAY_DECIMAL_PRECISION;
     }
@@ -451,7 +461,7 @@ function delayConstrain (event) {
       precision = APNG_DELAY_DECIMAL_PRECISION;
     }
     if (numdec[1].length > precision) {
-      var decs = numdec[1].substring(0, precision);
+      let decs = numdec[1].substring(0, precision);
       console.log("decs limit triggered", decs);
       data.delay = `${numdec[0]}.${decs}`;
     }
@@ -461,9 +471,9 @@ function delayConstrain (event) {
 
 function fpsConstrain (event) {
   console.log("fps event", event);
-  var value = event.target.value;
+  let value = event.target.value;
   if (value) {
-    var mult = 100
+    let mult = 100
     if (data.format == 'gif') { mult = 100; }
     else if (data.format == 'apng') { mult = 1000; }
     data.delay = Math.round(mult / data.fps) / mult;
@@ -512,6 +522,7 @@ export default {
     previewAIMG: previewAIMG,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
+    widthConstrain: widthConstrain,
     delayConstrain: delayConstrain,
     fpsConstrain: fpsConstrain,
   },
