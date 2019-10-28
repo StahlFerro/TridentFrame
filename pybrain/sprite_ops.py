@@ -89,5 +89,6 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         for f in frames:
             f.close()
     yield {"preview_path": final_path}
+    yield {"control": "finish"}
     # raise Exception('yo')
     

@@ -357,6 +357,7 @@ function previewAIMG() {
         }
         if (res.msg == "Finished!") {
           data.CRT_IS_PREVIEWING = false;
+          
         }
       }
     }

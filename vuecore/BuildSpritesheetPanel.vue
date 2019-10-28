@@ -54,7 +54,7 @@
               `Mode: ${preview_info.color_mode.value}`
             ">
               <span class="spritesheet-helper"></span>
-              <img v-bind:src="preview_path" />
+              <img v-bind:src="previewPathCacheBreaker" />
             </div>
           </div>
         </td>
@@ -459,14 +459,15 @@ function previewSheet() {
         if (res.preview_path) {
           data.bspr_msgbox = "Obtaining preview spritesheet information...";
           console.log("Obtaining preview spritesheet information...");
-          data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
+          data.preview_path = res.preview_path;
+        }
+        if (res.control == "finish") {
           setTimeout(function() {
             console.log('timeout exhausted, invoking zerorpc...');
-            client.invoke("inspect_one", res.preview_path, "static", (error, info) => {
+            client.invoke("inspect_one", data.preview_path, "static", (error, info) => {
               if (error) {
                 console.error(error);
-              }
-              else {
+              } else {
                 console.log("preview inspect");
                 console.log(info);
                 data.preview_info = info.general_info;
@@ -476,8 +477,6 @@ function previewSheet() {
             });
           }, 500);
         }
-        // if (res.msg == "Finished!") {
-        // }
       }
     }
   });
@@ -500,7 +499,8 @@ function buildSpritesheet() {
         if (res.msg) {
           data.bspr_msgbox = res.msg;
         }
-        if (res.msg == "Finished!") {
+        if (res.control == "finish") {
+          data.bspr_msgbox = "Spritesheet built!";
           data.BSPR_IS_BUILDING = false;
         }
       }
@@ -511,6 +511,10 @@ function buildSpritesheet() {
 function BSPRToggleCheckerBG() {
   data.checkerbg_active = !data.checkerbg_active;
   console.log('now checkerbg is', data.checkerbg_active);
+}
+
+function previewPathCacheBreaker() {
+  return `${data.preview_path}?timestamp=${ticks()}`;
 }
 
 export default {
@@ -524,6 +528,7 @@ export default {
     previewSheet, previewSheet,
     buildSpritesheet: buildSpritesheet,
     BSPRToggleCheckerBG: BSPRToggleCheckerBG,
+    previewPathCacheBreaker: previewPathCacheBreaker,
   },
   computed: {
     BSPRQuintcellLister: BSPRQuintcellLister,
