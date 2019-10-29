@@ -383,7 +383,6 @@ function previewAIMG() {
           previewPathCacheBreaker();
         }
         if (res.CONTROL == "FINISH") {
-          setTimeout(function() {
             console.log('timeout exhausted, invoking zerorpc...');
             client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
               if (error) {
@@ -396,7 +395,6 @@ function previewAIMG() {
                 data.BSPR_IS_PREVIEWING = false;
               }
             });
-          });
           data.create_msgbox = "Previewed!"
           data.CRT_IS_PREVIEWING = false;
         }

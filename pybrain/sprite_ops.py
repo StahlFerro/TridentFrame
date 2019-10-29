@@ -52,20 +52,24 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         raise Exception('Unknown input image mode!')
     tile_width = frames[0].size[0]
     tile_height = frames[0].size[1]
-
+    fcount = len(frames)
     max_frames_row = criteria.tiles_per_row
-    if len(frames) > max_frames_row:
+    if fcount > max_frames_row:
         spritesheet_width = tile_width * max_frames_row + criteria.offset_x
-        required_rows = math.ceil(len(frames)/max_frames_row)
+        required_rows = math.ceil(fcount/max_frames_row)
         # print('required rows', required_rows)
         spritesheet_height = tile_height * required_rows + criteria.offset_y
     else:
-        spritesheet_width = tile_width * len(frames)
+        spritesheet_width = tile_width * fcount
         spritesheet_height = tile_height
 
     spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
     # spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
     # boxes = []
+    yield {"msg": "Placing frames to sheet..."}
+    shout_indices = [round(fcount / 10 * mult) for mult in range(0, 10)]
+    # yield {"msg": shout_indices}
+    # raise Exception(shout_indices)
     for index, fr in enumerate(frames):
         top = tile_height * math.floor(index / max_frames_row) + criteria.offset_y
         left = tile_width * (index % max_frames_row) + criteria.offset_x
@@ -77,17 +81,20 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
 
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
-        yield {"msg": f'Placing frames to sheet... ({index + 1}/{len(frames)})'}
+        cut_frame.close()
+        if index in shout_indices:
+            yield {"msg": f'Placing frames to sheet... ({round(index / fcount, 1) * 100}%)'}
         # boxes.append(box)
     outfilename = f"{filename}.png"
     final_path = os.path.join(out_dir, outfilename)
     yield {"msg": f'Saving the file...'}
+    spritesheet.MAX_IMAGE_PIXELS = None
     spritesheet.save(final_path, "PNG")
     yield {"msg": "closing up images..."}
-    spritesheet.close()
     if input_mode == 'sequence':
         for f in frames:
             f.close()
+    spritesheet.close()
     yield {"preview_path": final_path}
     yield {"CONTROL": "FINISH"}
     # raise Exception('yo')

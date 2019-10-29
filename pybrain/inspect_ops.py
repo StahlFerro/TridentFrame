@@ -7,6 +7,7 @@ from typing import List, Dict
 from urllib.parse import urlparse
 
 from PIL import Image, ExifTags, ImageFile
+Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
 from hurry.filesize import size, alternative
 

@@ -318,6 +318,7 @@ function clearInfo() {
   data.outdir = "";
   data.bspr_msgbox = "";
   data.preview_path = "";
+  data.preview_path_cb = "";
   data.preview_info = "";
 }
 
@@ -338,6 +339,7 @@ var data = {
   padding_y: "",
   preserve_alpha: true,
   preview_path: "",
+  preview_path_cb: "",
   preview_info: "",
   checkerbg_active: false,
   bspr_msgbox: "",
@@ -463,20 +465,18 @@ function previewSheet() {
           previewPathCacheBreaker();
         }
         if (res.CONTROL == "FINISH") {
-          setTimeout(function() {
-            console.log('timeout exhausted, invoking zerorpc...');
-            client.invoke("inspect_one", data.preview_path, "static", (error, info) => {
-              if (error) {
-                console.error(error);
-              } else {
-                console.log("preview inspect");
-                console.log(info);
-                data.preview_info = info.general_info;
-                data.bspr_msgbox = "Previewed!";
-                data.BSPR_IS_PREVIEWING = false;
-              }
-            });
-          }, 500);
+          console.log('timeout exhausted, invoking zerorpc...');
+          client.invoke("inspect_one", data.preview_path, "static", (error, info) => {
+            if (error) {
+              console.error(error);
+            } else {
+              console.log("preview inspect");
+              console.log(info);
+              data.preview_info = info.general_info;
+              data.bspr_msgbox = "Previewed!";
+              data.BSPR_IS_PREVIEWING = false;
+            }
+          });
         }
       }
     }
