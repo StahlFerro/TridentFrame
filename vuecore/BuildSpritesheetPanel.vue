@@ -54,7 +54,7 @@
               `Mode: ${preview_info.color_mode.value}`
             ">
               <span class="spritesheet-helper"></span>
-              <img v-bind:src="previewPathCacheBreaker" />
+              <img v-bind:src="preview_path_cb" />
             </div>
           </div>
         </td>
@@ -304,7 +304,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, ticks } from './Utility.vue';
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString } from './Utility.vue';
 
 function clearInfo() {
   data.image_paths = [],
@@ -460,6 +460,7 @@ function previewSheet() {
           data.bspr_msgbox = "Obtaining preview spritesheet information...";
           console.log("Obtaining preview spritesheet information...");
           data.preview_path = res.preview_path;
+          previewPathCacheBreaker();
         }
         if (res.CONTROL == "FINISH") {
           setTimeout(function() {
@@ -514,7 +515,9 @@ function BSPRToggleCheckerBG() {
 }
 
 function previewPathCacheBreaker() {
-  return `${data.preview_path}?timestamp=${ticks()}`;
+  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  console.log("Cache breaker url", cb_url);
+  data.preview_path_cb = cb_url;
 }
 
 export default {
@@ -533,7 +536,6 @@ export default {
     BSPRQuintcellLister: BSPRQuintcellLister,
     sheetDimensions: sheetDimensions,
     isButtonFrozen: isButtonFrozen,
-    previewPathCacheBreaker: previewPathCacheBreaker,
   }
 }
 </script>

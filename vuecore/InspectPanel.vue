@@ -73,7 +73,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-const { ticks } = require("./Utility.vue");
+const { randString } = require("./Utility.vue");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif", "jpg"] }];
 let file_dialog_props = ["openfile"];
@@ -102,7 +102,7 @@ function loadImage() {
       }
       else {
         data.info_data = res;
-        data.img_path = `${res.general_info.absolute_url.value}?timestamp=${ticks()}`;;
+        data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
         console.log(res);
       }
     })

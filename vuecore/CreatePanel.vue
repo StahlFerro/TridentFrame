@@ -41,7 +41,7 @@
               `Format: ${preview_info.general_info.format.value}`
             ">
               <span class="aimg-helper"></span>
-              <img v-bind:src="previewPathCacheBreaker"/>
+              <img v-bind:src="preview_path_cb"/>
             </div>
           </div>
         </td>
@@ -139,7 +139,8 @@
                 <div class="field">
                   <label class="label">Width</label>
                   <div class="control">
-                    <input v-bind:value="width" v-on:change="changeWidth(width, $event)" class="input is-neon-white" type="number" />
+                    <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
+                    class="input is-neon-white" type="number" min="1" step="1"/>
                   </div>
                 </div>
               </td>
@@ -147,7 +148,8 @@
                 <div class="field">
                   <label class="label">Height</label>
                   <div class="control">
-                    <input v-bind:value="height" v-on:change="changeHeight(height, $event)" class="input is-neon-white" type="number" />
+                    <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
+                    class="input is-neon-white" type="number" />
                   </div>
                 </div>
               </td>
@@ -158,7 +160,8 @@
                 </label>
 
                 <label class="label">
-                  <span v-if="aspectRatioData.text">{{ aspectRatioData.text }}</span>
+                  <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
+                  <span v-else>&nbsp;</span>
                 </label>
               </td>
               <td style="vertical-align: bottom;">
@@ -237,7 +240,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, ticks, gcd } from "./Utility.vue";
+import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, gcd } from "./Utility.vue";
 
 var data = {
   image_paths: [],
@@ -258,7 +261,9 @@ var data = {
   format: "gif",
   outdir: "",
   preview_path: "",
+  preview_path_cb: "",
   preview_info: "",
+  aspect_ratio: "",
   lock_aspect_ratio: false,
   create_msgbox: "",
   sequence_counter: "",
@@ -308,6 +313,7 @@ function loadImages() {
           data.fps = 50;
           data.delay = 0.02;
           data.create_msgbox = "";
+          updateAspectRatio(data.width, data.height);
           data.CRT_IS_LOADING = false;
         }
       }
@@ -332,6 +338,7 @@ function CRTClearAIMG() {
   data.image_paths = [];
   data.sequence_info = [];
   data.preview_path = "";
+  data.preview_path_cb = "";
   data.preview_info = "";
   data.name = "";
   data.delay = "";
@@ -373,6 +380,7 @@ function previewAIMG() {
         }
         if (res.preview_path) {
           data.preview_path = res.preview_path;
+          previewPathCacheBreaker();
         }
         if (res.CONTROL == "FINISH") {
           setTimeout(function() {
@@ -440,17 +448,62 @@ function isButtonFrozen() {
 //   return Math.round(1/data.delay * 1000) / 1000;
 // }
 
-function changeWidth(width, event) {
-  console.log(width);
-  console.log(event.target.value);
-  data.width = event.target.value;
+function wholeNumberConstrain(event) {
+  console.log(event.key, event.key != ".");
+  if (event.key != ".") {
+    console.log("IS DIGIT!");
+    return true;
+  }
+  else {
+    console.log("IS NOT DIGIT!");
+    event.preventDefault();
+  }
 }
 
-function changeHeight(height, $event) {
-  console.log(height);
-  console.log(event.target.value);
-  data.height = event.target.value;
+function widthHandler(width, event) {
+  data.old_width = parseInt(width);
+  console.log(event);
+  let newWidth = event.target.value;
+  data.width = newWidth;
+  if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
+    let raHeight = Math.round(newWidth / data.aspect_ratio.w_ratio * data.aspect_ratio.h_ratio);
+    data.height = raHeight > 0? raHeight : "";
+  }
+  else {
+    updateAspectRatio(data.width, data.height);
+  }
 }
+
+function heightHandler(height, $event) {
+  data.old_height = parseInt(height);
+  let newHeight = event.target.value;
+  data.height = newHeight;
+  if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
+    let raWidth = Math.round(newHeight / data.aspect_ratio.h_ratio * data.aspect_ratio.w_ratio);
+    console.log(raWidth);
+    data.width = raWidth > 0? raWidth : "";
+  }
+  else {
+    updateAspectRatio(data.width, data.height);
+  }
+}
+
+function updateAspectRatio(width, height) {
+  if (data.width && data.height) {
+    console.log('uAR', width, height);
+    let divisor = gcd(width, height);
+    let w_ratio = width / divisor;
+    let h_ratio = height / divisor;
+    let ARData = {
+      "w_ratio": w_ratio,
+      "h_ratio": h_ratio,
+      "text": `${w_ratio}:${h_ratio}`,
+    };
+    console.log(ARData);
+    data.aspect_ratio = ARData;
+  }
+}
+
 
 function delayConstrain (event) {
   console.log("delay event", event);
@@ -485,35 +538,14 @@ function fpsConstrain (event) {
   }
 }
 
-function aspectRatioData() {
-  console.log('aspect ratio data autocompute');
-  let ARData = {
-    "width": "",
-    "height": "",
-    "text": "",
-  };
-  if (data.width && data.height) {
-    let divisor = gcd(data.width, data.height);
-    let w_ratio = data.width / divisor;
-    let h_ratio = data.height / divisor;
-    ARData = {
-      "width": w_ratio,
-      "height": h_ratio,
-      "text": `${w_ratio}:${h_ratio}`,
-    };
-  }
-  console.log(ARData);
-  return ARData;
-}
-
 function CRTQuintcellLister() {
   return quintcellLister(data.sequence_info);
 }
 
 function previewPathCacheBreaker() {
-  let cb_url = `${data.preview_path}?timestamp=${ticks()}`;
+  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
   console.log("Cache breaker url", cb_url);
-  return cb_url
+  data.preview_path_cb = cb_url;
 }
 
 export default {
@@ -527,15 +559,15 @@ export default {
     previewAIMG: previewAIMG,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
-    changeWidth: changeWidth,
+    wholeNumberConstrain: wholeNumberConstrain,
+    widthHandler: widthHandler,
+    heightHandler: heightHandler,
     delayConstrain: delayConstrain,
     fpsConstrain: fpsConstrain,
   },
   computed: {
     CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
-    aspectRatioData: aspectRatioData,
-    previewPathCacheBreaker: previewPathCacheBreaker,
   },
 };
 </script>

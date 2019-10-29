@@ -34,6 +34,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
             transparency = im.info.get("transparency", False)
             orig_width, orig_height = im.size
             must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
+            # raise Exception(criteria.resize_width, criteria.resize_height, im.size, must_resize)
             alpha = None
             if criteria.flip_h:
                 im = im.transpose(Image.FLIP_LEFT_RIGHT)

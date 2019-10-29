@@ -311,7 +311,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION, ticks } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, randString } = require("./Utility.vue");
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 
 
@@ -520,7 +520,7 @@ function previewModImg() {
         data.modify_msgbox = res.msg;
       }
       if (res.preview_path) {
-        data.preview_path = `${res.preview_path}?timestamp=${ticks()}`;
+        data.preview_path = `${res.preview_path}?timestamp=${randString()}`;
         console.log(res.preview_path);
         client.invoke("inspect_one", res.preview_path, "animated", (error, info) => {
           if (error) {

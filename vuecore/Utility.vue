@@ -30,7 +30,19 @@ function validateFilename(filename) {
 }
 
 function ticks() {
-  return new Date().getTime() * 10000;
+  let epoch = new Date().getTime() * 10000;
+  console.log(epoch);
+  return epoch
+}
+
+function randString() {
+   let result = '';
+   let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   let charactersLength = characters.length;
+   for ( let i = 0; i < 50; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   }
+   return result;
 }
 
 function gcd(a, b) { // Gets the greatest common divisor between two numbers
@@ -47,6 +59,6 @@ module.exports.quintcellLister = quintcellLister;
 module.exports.GIF_DELAY_DECIMAL_PRECISION = GIF_DELAY_DECIMAL_PRECISION;
 module.exports.APNG_DELAY_DECIMAL_PRECISION = APNG_DELAY_DECIMAL_PRECISION;
 module.exports.validateFilename = validateFilename;
-module.exports.ticks = ticks;
+module.exports.randString = randString;
 module.exports.gcd = gcd;
 </script>
