@@ -139,7 +139,7 @@
                 <div class="field">
                   <label class="label">Width</label>
                   <div class="control">
-                    <input v-model="width" v-on:input="widthConstrain" class="input is-neon-white" type="number" />
+                    <input v-bind:value="width" v-on:change="changeWidth(width, $event)" class="input is-neon-white" type="number" />
                   </div>
                 </div>
               </td>
@@ -147,7 +147,7 @@
                 <div class="field">
                   <label class="label">Height</label>
                   <div class="control">
-                    <input v-model="height" class="input is-neon-white" type="number" />
+                    <input v-bind:value="height" v-on:change="changeHeight(height, $event)" class="input is-neon-white" type="number" />
                   </div>
                 </div>
               </td>
@@ -160,7 +160,6 @@
                 <label class="label">
                   <span v-if="aspectRatioData.text">{{ aspectRatioData.text }}</span>
                 </label>
-                <span style="display: none;">{{ aspectRatioData }}</span>
               </td>
               <td style="vertical-align: bottom;">
                 <label class="checkbox">
@@ -246,7 +245,9 @@ var data = {
   name: "",
   fps: "",
   orig_width: "",
+  old_width: "",
   orig_height: "",
+  old_height: "",
   width: "",
   height: "",
   delay: "",
@@ -336,8 +337,10 @@ function CRTClearAIMG() {
   data.delay = "";
   data.fps = "";
   data.orig_width = "";
+  data.old_width = "";
   data.width = "";
   data.orig_height = "";
+  data.old_height = "";
   data.height = "";
   data.CRT_sequence_counter = "";
   data.create_msgbox = "";
@@ -437,14 +440,16 @@ function isButtonFrozen() {
 //   return Math.round(1/data.delay * 1000) / 1000;
 // }
 
-function widthConstrain(event) {
-  // let ARData = aspectRatioData();
-  // console.log('obtained ARData:', ARData);
-  // console.log("width change event", event);
-  console.log('event', event);
-  console.log('orig value', event.oldValue);
-  let value = event.target.value;
-  console.log('event value', value);
+function changeWidth(width, event) {
+  console.log(width);
+  console.log(event.target.value);
+  data.width = event.target.value;
+}
+
+function changeHeight(height, $event) {
+  console.log(height);
+  console.log(event.target.value);
+  data.height = event.target.value;
 }
 
 function delayConstrain (event) {
@@ -483,9 +488,9 @@ function fpsConstrain (event) {
 function aspectRatioData() {
   console.log('aspect ratio data autocompute');
   let ARData = {
-      "width": "",
-      "height": "",
-      "text": "",
+    "width": "",
+    "height": "",
+    "text": "",
   };
   if (data.width && data.height) {
     let divisor = gcd(data.width, data.height);
@@ -522,7 +527,7 @@ export default {
     previewAIMG: previewAIMG,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
-    widthConstrain: widthConstrain,
+    changeWidth: changeWidth,
     delayConstrain: delayConstrain,
     fpsConstrain: fpsConstrain,
   },
