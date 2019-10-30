@@ -136,7 +136,7 @@
         <td id="BSPR_create_control_table" class="is-paddingless" colspan="2">
           <table class="table spr-control-table" width="100%">
             <tr>
-              <td width="30%">
+              <td width="20%">
                 <div class="field">
                   <label class="label">Name</label>
                   <div class="control">
@@ -144,34 +144,45 @@
                   </div>
                 </div>
               </td>
-              <td width="17.5%">
+              <td width="20%">
                 <div class="field">
                   <label class="label">Tile Width</label>
                   <div class="control">
-                    <input v-model="tile_width" class="input is-neon-white" type="number" />
+                    <input
+                      v-bind:value="tile_width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(tile_width, $event)"
+                      class="input is-neon-white"
+                      type="number" 
+                      min="1" step="1"/>
                   </div>
                 </div>
               </td>
-              <td width="17.5%">
+              <td width="20%">
                 <div class="field">
                   <label class="label">Tile Height</label>
                   <div class="control">
                     <input
-                      v-model="tile_height"
+                      v-bind:value="tile_height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(tile_width, $event)"
                       class="input is-neon-white"
                       type="number"
-                      min="1"
-                      max="50"
+                      min="1" step="1"
                     />
                   </div>
                 </div>
               </td>
 
-              <td width="17.5%">
-                
+              <td width="20%" style="vertical-align: bottom;">
+                <label class="checkbox">
+                  <input v-model="lock_aspect_ratio" type="checkbox"/>
+                  Lock aspect ratio
+                </label>
+
+                <label class="label">
+                  <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
+                  <span v-else>&nbsp;</span>
+                </label>
               </td>
 
-              <td width="17.5%">
+              <td width="20%">
                 <div class="field">
                   <label class="label">Max tiles per row</label>
                   <div class="control">
@@ -180,7 +191,7 @@
                       class="input is-neon-white"
                       type="number"
                       min="1"
-                      max="50"
+                      step="1"
                     />
                   </div>
                 </div>
@@ -196,8 +207,7 @@
                       v-model="offset_x"
                       class="input is-neon-white"
                       type="number"
-                      min="1"
-                      max="50"
+                      step="1"
                     />
                   </div>
                 </div>
@@ -211,8 +221,7 @@
                       v-model="offset_y"
                       class="input is-neon-white"
                       type="number"
-                      min="1"
-                      max="50"
+                      step="1"
                     />
                   </div>
                 </div>
@@ -226,8 +235,7 @@
                       v-model="padding_x"
                       class="input is-neon-white"
                       type="number"
-                      min="1"
-                      max="50"
+                      step="1"
                     />
                   </div>
                 </div>
@@ -241,8 +249,7 @@
                       v-model="padding_y"
                       class="input is-neon-white"
                       type="number"
-                      min="1"
-                      max="50"
+                      step="1"
                     />
                   </div>
                 </div>
@@ -304,7 +311,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString } from './Utility.vue';
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd } from './Utility.vue';
 
 function clearInfo() {
   data.image_paths = [],
@@ -312,7 +319,9 @@ function clearInfo() {
   data.sequence_count = 0;
   data.sequence_size = "";
   data.name = "";
+  data.old_tile_width = "";
   data.tile_width = "";
+  data.old_tile_height = "";
   data.tile_height = "";
   data.tile_row = "";
   data.outdir = "";
@@ -329,7 +338,9 @@ var data = {
   sequence_size: "",
   input_format: "sequence",
   name: "",
+  old_tile_width: "",
   tile_width: "",
+  old_tile_height: "",
   tile_height: "",
   tile_row: "",
   outdir: "",
@@ -341,6 +352,8 @@ var data = {
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",
+  aspect_ratio: "",
+  lock_aspect_ratio: false,
   checkerbg_active: false,
   bspr_msgbox: "",
   BSPR_IS_LOADING: false,
@@ -389,11 +402,69 @@ function loadSequence(img_paths) {
         data.tile_height = info.height;
         data.tile_row = 5;
         data.sequence_count = info.total;
+        updateAspectRatio(data.tile_width, data.tile_height);
         data.bspr_msgbox = "";
         data.BSPR_IS_LOADING = false;
       }
     }
   });
+}
+
+function wholeNumberConstrain(event) {
+  console.log(event.key, event.key != ".");
+  if (event.key != ".") {
+    console.log("IS DIGIT!");
+    return true;
+  }
+  else {
+    console.log("IS NOT DIGIT!");
+    event.preventDefault();
+  }
+}
+
+function widthHandler(tile_width, event) {
+  data.old_tile_width = parseInt(tile_width);
+  console.log(event);
+  let newWidth = event.target.value;
+  data.tile_width = newWidth;
+  if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
+    console.log('sync aspect ratio');
+    let raHeight = Math.round(newWidth / data.aspect_ratio.w_ratio * data.aspect_ratio.h_ratio);
+    data.tile_height = raHeight > 0? raHeight : "";
+  }
+  else {
+    updateAspectRatio(data.tile_width, data.tile_height);
+  }
+}
+
+function heightHandler(tile_height, event) {
+  data.old_tile_height = parseInt(tile_height);
+  let newHeight = event.target.value;
+  data.tile_height = newHeight;
+  if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
+    let raWidth = Math.round(newHeight / data.aspect_ratio.h_ratio * data.aspect_ratio.w_ratio);
+    console.log(raWidth);
+    data.tile_width = raWidth > 0? raWidth : "";
+  }
+  else {
+    updateAspectRatio(data.tile_width, data.tile_height);
+  }
+}
+
+function updateAspectRatio(width, height) {
+  if (data.tile_width && data.tile_height) {
+    console.log('uAR', width, height);
+    let divisor = gcd(width, height);
+    let w_ratio = width / divisor;
+    let h_ratio = height / divisor;
+    let ARData = {
+      "w_ratio": w_ratio,
+      "h_ratio": h_ratio,
+      "text": `${w_ratio}:${h_ratio}`,
+    };
+    console.log(ARData);
+    data.aspect_ratio = ARData;
+  }
 }
 
 function sheetDimensions() {
@@ -500,7 +571,7 @@ function buildSpritesheet() {
         if (res.msg) {
           data.bspr_msgbox = res.msg;
         }
-        if (res.control == "finish") {
+        if (res.CONTROL == "FINISH") {
           data.bspr_msgbox = "Spritesheet built!";
           data.BSPR_IS_BUILDING = false;
         }
@@ -529,6 +600,9 @@ export default {
     chooseOutDir: chooseOutDir,
     clearInfo: clearInfo,
     previewSheet, previewSheet,
+    wholeNumberConstrain: wholeNumberConstrain,
+    widthHandler: widthHandler,
+    heightHandler: heightHandler,
     buildSpritesheet: buildSpritesheet,
     BSPRToggleCheckerBG: BSPRToggleCheckerBG,
   },

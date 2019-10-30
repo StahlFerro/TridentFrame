@@ -472,7 +472,7 @@ function widthHandler(width, event) {
   }
 }
 
-function heightHandler(height, $event) {
+function heightHandler(height, event) {
   data.old_height = parseInt(height);
   let newHeight = event.target.value;
   data.height = newHeight;
