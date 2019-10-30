@@ -168,7 +168,8 @@
                         <div class="field">
                           <label class="label">Width</label>
                           <div class="control">
-                            <input v-model="width" class="input is-neon-white" type="text" />
+                            <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
+                              class="input is-neon-white" type="text" />
                           </div>
                         </div>
                       </td>
@@ -176,7 +177,8 @@
                         <div class="field">
                           <label class="label">Height</label>
                           <div class="control">
-                            <input v-model="height" class="input is-neon-white" type="text" />
+                            <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
+                             class="input is-neon-white" type="text" />
                           </div>
                         </div>
                       </td>
@@ -250,6 +252,17 @@
                           Preserve Alpha
                         </label>
                       </td>
+                      <td width="40%" class="force-vcenter" colspan="2">
+                        <label class="checkbox">
+                          <input v-model="lock_aspect_ratio" type="checkbox"/>
+                          Lock aspect ratio
+                        </label>
+
+                        <label class="label">
+                          <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
+                          <span v-else>&nbsp;</span>
+                        </label>
+                      </td>
                     </tr>
                     <tr>
                       <td colspan="4">
@@ -311,7 +324,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION, randString } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumberConstrain, gcd } = require("./Utility.vue");
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 
 
@@ -329,7 +342,9 @@ var data = {
   orig_format: "-",
   orig_path: "",
   name: "",
+  old_width: "",
   width: "",
+  old_height: "",
   height: "",
   rotation: "",
   fps: "",
@@ -350,6 +365,8 @@ var data = {
   outdir: "",
   preview_size: "",
   preview_size_hr: "",
+  aspect_ratio: "",
+  lock_aspect_ratio: false,
   mod_menuselection: 0,
   orig_checkerbg_active: false,
   new_checkerbg_active: false,
@@ -376,7 +393,9 @@ function clearOrigFields() {
 
 function clearNewFields() {
   data.name = "";
+  data.old_width = "";
   data.width = "";
+  data.old_height = "";
   data.height = "";
   data.rotation = "";
   data.fps = "";
@@ -461,6 +480,7 @@ function loadNewInfo(res) {
   data.height = geninfo.height.value;
   data.delay = ainfo.avg_delay.value;
   data.fps = ainfo.fps.value;
+  updateAspectRatio(data.width, data.height);
 }
 
 
@@ -485,6 +505,51 @@ function chooseOutDir() {
     }
   });
 }
+
+function widthHandler(width, event) {
+  data.old_width = parseInt(width);
+  console.log(event);
+  let newWidth = event.target.value;
+  data.width = newWidth;
+  if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
+    let raHeight = Math.round(newWidth / data.aspect_ratio.w_ratio * data.aspect_ratio.h_ratio);
+    data.height = raHeight > 0? raHeight : "";
+  }
+  else {
+    updateAspectRatio(data.width, data.height);
+  }
+}
+
+function heightHandler(height, event) {
+  data.old_height = parseInt(height);
+  let newHeight = event.target.value;
+  data.height = newHeight;
+  if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
+    let raWidth = Math.round(newHeight / data.aspect_ratio.h_ratio * data.aspect_ratio.w_ratio);
+    console.log(raWidth);
+    data.width = raWidth > 0? raWidth : "";
+  }
+  else {
+    updateAspectRatio(data.width, data.height);
+  }
+}
+
+function updateAspectRatio(width, height) {
+  if (data.width && data.height) {
+    console.log('uAR', width, height);
+    let divisor = gcd(width, height);
+    let w_ratio = width / divisor;
+    let h_ratio = height / divisor;
+    let ARData = {
+      "w_ratio": w_ratio,
+      "h_ratio": h_ratio,
+      "text": `${w_ratio}:${h_ratio}`,
+    };
+    console.log(ARData);
+    data.aspect_ratio = ARData;
+  }
+}
+
 
 function modifyImage() {
   data.MOD_IS_MODIFYING = true;
@@ -602,6 +667,9 @@ export default {
     chooseOutDir: chooseOutDir,
     previewModImg: previewModImg,
     modifyImage: modifyImage,
+    wholeNumberConstrain: wholeNumberConstrain,
+    widthHandler: widthHandler,
+    heightHandler: heightHandler,
     toggleOrigCheckerBG: toggleOrigCheckerBG,
     toggleNewCheckerBG: toggleNewCheckerBG,
     delayConstrain: delayConstrain,

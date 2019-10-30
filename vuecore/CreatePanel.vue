@@ -240,7 +240,8 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, gcd } from "./Utility.vue";
+import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION,
+  randString, gcd, wholeNumberConstrain } from "./Utility.vue";
 
 var data = {
   image_paths: [],
@@ -445,18 +446,6 @@ function isButtonFrozen() {
 // function getFPS() {
 //   return Math.round(1/data.delay * 1000) / 1000;
 // }
-
-function wholeNumberConstrain(event) {
-  console.log(event.key, event.key != ".");
-  if (event.key != ".") {
-    console.log("IS DIGIT!");
-    return true;
-  }
-  else {
-    console.log("IS NOT DIGIT!");
-    event.preventDefault();
-  }
-}
 
 function widthHandler(width, event) {
   data.old_width = parseInt(width);

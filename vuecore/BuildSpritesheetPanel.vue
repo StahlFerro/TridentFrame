@@ -257,7 +257,7 @@
 
             </tr>
             <tr>
-              <td colspan="2" style="padding-top: 25px;">
+              <td colspan="3" style="padding-top: 25px;">
                 <div class="field has-addons">
                   <div class="control">
                     <a v-on:click="chooseOutDir" class="button is-neon-cyan">
@@ -282,14 +282,14 @@
                 <div class="field has-text-centered">
                   <div class="control">
                     <a v-on:click="buildSpritesheet" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_BUILDING, 'is-static': isButtonFrozen}">
-                      Create
+                      Build Spritesheet
                     </a>
                   </div>
                 </div>
               </td>
-              <td colspan="2" style="padding-top: 25px;">
+              <td style="padding-top: 15px;">
                 <span v-if="sheetDimensions">
-                  Sheet dimensions: {{ sheetDimensions }}
+                  Sheet dimensions<br/>{{ sheetDimensions }}
                 </span>
               </td>
             </tr>
@@ -311,7 +311,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd } from './Utility.vue';
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumberConstrain } from './Utility.vue';
 
 function clearInfo() {
   data.image_paths = [],
@@ -408,18 +408,6 @@ function loadSequence(img_paths) {
       }
     }
   });
-}
-
-function wholeNumberConstrain(event) {
-  console.log(event.key, event.key != ".");
-  if (event.key != ".") {
-    console.log("IS DIGIT!");
-    return true;
-  }
-  else {
-    console.log("IS NOT DIGIT!");
-    event.preventDefault();
-  }
 }
 
 function widthHandler(tile_width, event) {

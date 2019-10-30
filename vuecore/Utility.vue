@@ -52,13 +52,29 @@ function gcd(a, b) { // Gets the greatest common divisor between two numbers
     return gcd(b, (a % b));
 }
 
+function wholeNumberConstrain(event) {
+  console.log(event.key, event.key != ".");
+  if (event.key != ".") {
+    console.log("IS DIGIT!");
+    return true;
+  }
+  else {
+    console.log("IS NOT DIGIT!");
+    event.preventDefault();
+  }
+}
+
 const GIF_DELAY_DECIMAL_PRECISION = 2;
 const APNG_DELAY_DECIMAL_PRECISION = 3;
 
-module.exports.quintcellLister = quintcellLister;
-module.exports.GIF_DELAY_DECIMAL_PRECISION = GIF_DELAY_DECIMAL_PRECISION;
-module.exports.APNG_DELAY_DECIMAL_PRECISION = APNG_DELAY_DECIMAL_PRECISION;
-module.exports.validateFilename = validateFilename;
-module.exports.randString = randString;
-module.exports.gcd = gcd;
+module.exports = {
+  quintcellLister: quintcellLister,
+  GIF_DELAY_DECIMAL_PRECISION: GIF_DELAY_DECIMAL_PRECISION,
+  APNG_DELAY_DECIMAL_PRECISION: APNG_DELAY_DECIMAL_PRECISION,
+  validateFilename: validateFilename,
+  randString: randString,
+  gcd: gcd,
+  wholeNumberConstrain: wholeNumberConstrain,
+}
+
 </script>
