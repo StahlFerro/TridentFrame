@@ -123,7 +123,7 @@
           </div>
         </td>
         <td style="width: 581px; height: 275px;" colspan="5"
-          class="has-text-centered is-right-paddingless silver-bordered-left-thicc">
+          class="has-text-centered is-right-padding-only silver-bordered-left-thicc">
           <table class="table is-paddingless is-marginless" width="100%">
             <tr>
               <td width="10%" class="mod-menu-cell is-paddingless">
@@ -459,7 +459,7 @@ function loadOrigInfo(res) {
   data.orig_format = geninfo.format.value;
   let delay_info = `${ainfo.avg_delay.value} seconds`;
   if (ainfo.delay_is_uneven) {
-      delay_info += ` (uneven)`;
+    delay_info += ` (uneven)`;
   }
   data.orig_delay = ainfo.avg_delay.value;
   data.orig_delay_info = delay_info;
@@ -482,7 +482,6 @@ function loadNewInfo(res) {
   data.fps = ainfo.fps.value;
   updateAspectRatio(data.width, data.height);
 }
-
 
 function clearImage() {
   console.log(data);

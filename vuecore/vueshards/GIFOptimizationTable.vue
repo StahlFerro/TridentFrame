@@ -3,7 +3,8 @@
     <tr>
       <td class="force-vcenter" width="20%">
         <label class="checkbox" title="Optimize GIFs to reduce output filesize">
-          <input v-model="is_optimized" @change="$emit('update:is_optimized', is_optimized)" type="checkbox" />
+          <input v-model="is_optimized" v-bind:disabled="is_unoptimized"
+           @change="$emit('update:is_optimized', is_optimized)" type="checkbox" />
           Optimize
         </label>
       </td>
@@ -13,9 +14,9 @@
           <div class="control">
             <div class="select is-neon-cyan">
               <select v-model="optimization_level" @change="$emit('update:optimization_level', optimization_level)" v-bind:disabled="!is_optimized">
-                <option value="1">Low</option>
-                <option value="2">Medium</option>
-                <option value="3">High</option>
+                <option value="1">Lv. 1 Store changed portion only</option>
+                <option value="2">Lv. 2 Also uses transparency</option>
+                <option value="3">Lv. 3 All optimization methods</option>
               </select>
             </div>
           </div>
@@ -26,10 +27,11 @@
       <td class="force-vcenter" width="20%">
         <label
           class="checkbox"
-          title="Performs significant filesize reduction at the cost of quality"
+          title="Performs significant file size reduction at the cost of quality (artifacts and noise)"
         >
-          <input v-model="is_lossy" type="checkbox" @change="$emit('update:is_lossy', is_lossy)" />
-          Lossy-compress
+          <input v-model="is_lossy" type="checkbox" v-bind:disabled="is_unoptimized"
+            @change="$emit('update:is_lossy', is_lossy)" />
+          Lossy-compression
         </label>
       </td>
       <td class="force-vcenter" width="20%">
@@ -55,7 +57,8 @@
         <label
           class="checkbox"
           title="Sets the number of colors for the GIF. Ranging from 2 colors (monochrome) to 256 (maximum for GIFs). Warning: this will also eliminate local/per-frame color tables, setting just one global color table for every frame.">
-          <input  type="checkbox" v-model="is_reduced_color" @change="$emit('update:is_reduced_color', is_reduced_color)" />
+          <input  type="checkbox" v-model="is_reduced_color" v-bind:disabled="is_unoptimized"
+            @change="$emit('update:is_reduced_color', is_reduced_color)" />
           Color space
         </label>
       </td>
@@ -77,19 +80,30 @@
         </div>
       </td>
     </tr>
+    <tr>
+      <td colspan="2" class="force-vcenter" width="100%">
+        <label
+          class="checkbox"
+          title="Unoptimize each frame of the GIF to fully define their original look. Allows editing of each frame on any other application at the cost of increased file size.">
+          <input type="checkbox" v-model="is_unoptimized" v-bind:disabled="is_optimized || is_lossy || is_reduced_color"
+          @change="$emit('update:is_unoptimized', is_unoptimized)" />
+          Unoptimize
+        </label>
+      </td>
+    </tr>
   </table>
 </template>
 
 <script>
 var data = {
-  is_reversed: false,
   preserve_alpha: false,
   is_optimized: false,
   optimization_level: "1",
   is_lossy: false,
   lossy_value: "",
   is_reduced_color: false,
-  color_space: ""
+  color_space: "",
+  is_unoptimized: false,
 };
 
 export default {

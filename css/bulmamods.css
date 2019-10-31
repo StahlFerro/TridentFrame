@@ -7289,7 +7289,7 @@ div.mod-left-menu::-webkit-scrollbar {
   padding-top: 0px !important;
   padding-bottom: 0px !important; }
 
-.is-right-paddingless {
+.is-right-padding-only {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
   padding-left: 0px !important; }
