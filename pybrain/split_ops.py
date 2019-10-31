@@ -66,7 +66,7 @@ def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriter
     for index, ratio in indexed_ratios:
         selector = f'"#{index}"'
         for n in range(0, ratio):
-            yield f"Splitting GIF... ({sequence + 1}/{total_ratio})"
+            yield {"msg": f"Splitting GIF... ({sequence + 1}/{total_ratio})"}
             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), criteria.pad_count)}.png')
             args = [gifsicle_exec(), f'"{unop_gif_path}"', selector, "--output", f'"{save_path}"']
             cmd = ' '.join(args)
@@ -87,20 +87,19 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
     """ Unoptimizes GIF, and then splits the frames into separate images """
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
-    unop_gif_path = ''
-    if not color_space:
-        yield f"Unoptimizing frames for splitting (GIFs above 10MB will take minutes to process)..."
-        unop_gif_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
-    else:
+    target_path = gif_path
+    if color_space:
         if color_space < 2 or color_space > 256:
             raise Exception("Color space must be between 2 and 256!")
-        yield f"Globalizing and reducing color space to {color_space}"
-        redux_gif_path = _reduce_color(gif_path, unop_dir, color=color_space)
-        yield f"Coalescing frames for splitting..."
-        unop_gif_path = _unoptimize_gif(redux_gif_path, unop_dir, "gifsicle")
-    yield from _fragment_gif_frames(unop_gif_path, out_dir, criteria)
+        else:
+            yield {"msg": f"Reducing colors to {color_space}..."}
+            target_path = _reduce_color(gif_path, unop_dir, color=color_space)
+    if criteria.is_unoptimized:
+        yield {"msg": f"Unoptimizing GIF..."}
+        target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
+    yield from _fragment_gif_frames(target_path, out_dir, criteria)
     # yield from _pillow_fragment_gif_frames(unop_gif_path, out_dir, criteria)
-    yield "Finished!"
+    yield {"CONTROL": "FINISH"}
 
 
 def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria):
@@ -111,8 +110,9 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
     # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
     # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
     for index, (png, control) in enumerate(iframes):
-        yield f'Splitting APNG... ({index + 1}/{len(iframes)})'
+        yield {"msg": f'Splitting APNG... ({index + 1}/{len(iframes)})'}
         png.save(os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png"))
+    yield {"CONTROL": "FINISH"}
 
 
 def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:

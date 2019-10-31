@@ -33,20 +33,31 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     sicle_args = _generate_gifsicle_args(criteria)
     magick_args = _generate_imagemagick_args(criteria)
     # yield sicle_args
-    if not (sicle_args and magick_args): 
+    target_path = str(img_path)
+    if not (sicle_args or magick_args): 
         yield {"preview_path": img_path}
-    elif sicle_args:
-        target_path = str(img_path)
+    total_ops = len(sicle_args) + len(magick_args)
+    if sicle_args:
         for index, (arg, description) in enumerate(sicle_args, start=1):
             yield {"msg": f"index {index}, arg {arg}, description: {description}"}
             cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
             cmd = ' '.join(cmdlist)
             yield {"msg": f"cmd: {cmd}"}
-            yield {"msg": f"[{index}/{len(sicle_args)}] {description}"}
+            yield {"msg": f"[{index}/{total_ops}] {description}"}
             subprocess.run(cmd, shell=True)
             if target_path != out_full_path:
                 target_path = out_full_path
-        yield {"preview_path": out_full_path}
+    if magick_args:
+        for index, (arg, description) in enumerate(magick_args, start=1):
+            yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+            cmdlist = [imagemagick_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+            cmd = ' '.join(cmdlist)
+            yield {"msg": f"cmd: {cmd}"}
+            yield {"msg": f"[{len(sicle_args) + index}/{total_ops}] {description}"}
+            subprocess.run(cmd, shell=True)
+            if target_path != out_full_path:
+                target_path = out_full_path
+    yield {"preview_path": out_full_path}
     yield {"msg": "Finished!"}
 
 
@@ -71,6 +82,8 @@ def _generate_gifsicle_args(criteria: ModificationCriteria):
 
 def _generate_imagemagick_args(criteria: ModificationCriteria):
     args = []
-    if not criteria.rotation:
-        args.append(f"-rotation {criteria.rotation}")
+    if criteria.is_unoptimized:
+        args.append(("-coalesce", "Unoptimizing GIF..."))
+    if criteria.rotation:
+        args.append((f"-rotation {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
     return args

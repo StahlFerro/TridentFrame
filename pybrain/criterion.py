@@ -27,15 +27,11 @@ class CreationCriteria():
 class SplitCriteria():
     """ Contains all of the criterias for Splitting an animated image """
 
-    def __init__(self, pad_count, color_space, is_duration_sensitive=False):
-        try:
-            pad_count = int(pad_count)
-            color_space = int(color_space)
-        except Exception as e:
-            raise Exception(e)
-        self.pad_count: int = pad_count
-        self.color_space: int = color_space
-        self.is_duration_sensitive: bool = is_duration_sensitive
+    def __init__(self, json_vals):
+        self.pad_count: int = int(json_vals['pad_count'] or 0)
+        self.color_space: int = int(json_vals['color_space'] or 0)
+        self.is_duration_sensitive: bool = json_vals['is_duration_sensitive']
+        self.is_unoptimized: bool = json_vals['is_unoptimized']
 
 
 class ModificationCriteria():
@@ -66,6 +62,8 @@ class ModificationCriteria():
         self.lossy_value = json_vals['lossy_value']
         self.is_reduced_color = json_vals['is_reduced_color']
         self.color_space = json_vals['color_space']
+
+        self.is_unoptimized = json_vals['is_unoptimized']
 
     def must_resize(self):
         return self.orig_width != self.width or self.orig_height != self.height

@@ -34,7 +34,7 @@
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">File Size</td>
-                <td class="spl-info-data">{{ file_size }}</td>
+                <td class="spl-info-data">{{ file_size_hr }}</td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Total frames</td>
@@ -90,7 +90,7 @@
         <td id="SPL_control_cell" class="is-paddingless" colspan="2">
           <table class="table control-table" width="100%">
             <tr>
-              <td width="20%">
+              <td width="25%">
                 <div class="field">
                   <label class="label">Pad count</label>
                   <div class="control">
@@ -129,7 +129,12 @@
                   Reduce Colors
                 </label>
               </td>
-              <td width="30%" style="vertical-align: middle;"></td>
+              <td width="25%" style="vertical-align: middle;">
+                <label class="checkbox">
+                  <input v-model="is_unoptimized" type="checkbox" />
+                  Unoptimize
+                </label>
+              </td>
             </tr>
             <tr>
               <td colspan="3">
@@ -188,6 +193,7 @@ var defaults = {
   name: "-",
   dimensions: "-",
   file_size: "-",
+  file_size_hr: "-",
   frame_count: "-",
   frame_count_ds: "-",
   fps: "-",
@@ -202,6 +208,7 @@ var data = {
   name: "-",
   dimensions: "-",
   file_size: "-",
+  file_size_hr: "-",
   frame_count: "-",
   frame_count_ds: "-",
   fps: "-",
@@ -213,6 +220,7 @@ var data = {
   is_duration_sensitive: false,
   is_reduced_color: false,
   color_space: "",
+  is_unoptimized: false,
   outdir: "",
   split_msgbox: "",
   SPL_IS_LOADING: false,
@@ -245,6 +253,7 @@ function loadImage() {
         data.dimensions = `${geninfo.width.value} x ${geninfo.height.value}`;
         data.info_header = `${geninfo.format.value} Information`;
         data.file_size = geninfo.fsize.value;
+        data.file_size_hr = geninfo.fsize_hr.value;
         data.frame_count = `${ainfo.frame_count.value} frames`;
         data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`;
         data.fps = `${ainfo.fps.value} fps`;
@@ -304,7 +313,7 @@ function splitImage() {
   }
   console.log(data);
   client.invoke(
-    "split_image", data.aimg_path, data.outdir, data.pad_count, color_space, data.is_duration_sensitive, (error, res) => {
+    "split_image", data.aimg_path, data.outdir, data, (error, res) => {
       if (error) {
         console.log(error);
         data.split_msgbox = error;
@@ -313,8 +322,11 @@ function splitImage() {
       } else {
         if (res) {
           console.log("res", res);
-          data.split_msgbox = res;
-          if (res == "Finished!") {
+          if (res.msg) {
+            data.split_msgbox = res.msg;
+          }
+          if (res.CONTROL == "FINISH") {
+            data.split_msgbox = "All frames successfully split!"
             data.SPL_IS_SPLITTING = false;
           }
         }

@@ -300,6 +300,7 @@
                     :lossy_value.sync="lossy_value"
                     :is_reduced_color.sync="is_reduced_color"
                     :color_space.sync="color_space"
+                    :is_unoptimized.sync="is_unoptimized"
                   />
                 </div>
               </td>
@@ -361,6 +362,7 @@ var data = {
   lossy_value: "",
   is_reduced_color: false,
   color_space: "",
+  is_unoptimized: false,
   preview_path: "",
   outdir: "",
   preview_size: "",

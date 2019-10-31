@@ -11,7 +11,7 @@ CACHE_PATH = './cache/'
 ABS_CACHE_PATH = os.path.abspath(CACHE_PATH)
 
 
-def gifsicle_exec():
+def gifsicle_exec() -> str:
     if platform.system() == 'Windows':
         return os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
     elif platform.system() == 'Linux':
@@ -19,7 +19,7 @@ def gifsicle_exec():
     else:
         return False
 
-def imagemagick_exec():
+def imagemagick_exec() -> str:
     if platform.system() == 'Windows':
         return os.path.abspath("./bin/ImageMagick-7.0.8-61-win/convert.exe")
     elif platform.system() == 'Linux':
