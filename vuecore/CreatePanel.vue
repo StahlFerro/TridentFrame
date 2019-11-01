@@ -259,7 +259,7 @@ var data = {
   is_reversed: false,
   flip_x: false,
   flip_y: false,
-  format: "gif",
+  format: "GIF",
   outdir: "",
   preview_path: "",
   preview_path_cb: "",
