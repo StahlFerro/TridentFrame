@@ -137,20 +137,20 @@ def _inspect_agif(abspath: str, gif: Image):
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
     fsize_hr = read_filesize(fsize)
-    durations = []
+    delays = []
     comments = []
     for f in range(0, gif.n_frames):
         gif.seek(f)
-        durations.append(gif.info['duration'])
+        delays.append(gif.info['duration'])
         comments.append(gif.info.get('comment', ""))
-    min_duration = min(durations)
+    min_duration = min(delays)
     if min_duration == 0:
         frame_count_ds = frame_count
     else:
-        frame_count_ds = sum([dur//min_duration for dur in durations])
+        frame_count_ds = sum([delay//min_duration for delay in delays])
     # raise Exception(delays)
-    delay_is_uneven = len(set(durations)) > 1
-    avg_delay = sum(durations) / len(durations) if sum(durations) != 0 else 0
+    delay_is_uneven = len(set(delays)) > 1
+    avg_delay = sum(delays) / len(delays) if sum(delays) != 0 else 0
     fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
     loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
     fmt = 'GIF'
@@ -175,6 +175,7 @@ def _inspect_agif(abspath: str, gif: Image):
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
             "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
+            "delays": {"value": delays, "label": "Delays"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
             "loop_duration": {"value": loop_duration, "label": "Loop"},
@@ -190,19 +191,19 @@ def _inspect_apng(abspath, apng: APNG):
     frames = apng.frames
     frame_count = len(frames)
     png_one, controller_one = frames[0]
-    fmt = 'APNG'
+    fmt = 'PNG'
     fsize = os.stat(abspath).st_size
     fsize_hr = read_filesize(fsize)
     width = png_one.width
     height = png_one.height
-    durations = [f[1].delay for f in frames]
-    min_duration = min(durations)
+    delays = [f[1].delay for f in frames]
+    min_duration = min(delays)
     if min_duration == 0:
         frame_count_ds = frame_count
     else:
-        frame_count_ds = sum([dur//min_duration for dur in durations])
-    delay_is_uneven = len(set(durations)) > 1
-    avg_delay = sum(durations) / frame_count if sum(durations) != 0 else 0
+        frame_count_ds = sum([delay//min_duration for delay in delays])
+    delay_is_uneven = len(set(delays)) > 1
+    avg_delay = sum(delays) / frame_count if sum(delays) != 0 else 0
     fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
     loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
 
@@ -223,6 +224,7 @@ def _inspect_apng(abspath, apng: APNG):
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
             "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
+            "delays": {"value": delays, "label": "Delays"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
             "loop_duration": {"value": loop_duration, "label": "Loop"},

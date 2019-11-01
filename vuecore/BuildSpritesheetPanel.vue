@@ -294,7 +294,7 @@
               </td>
             </tr>
             <tr>
-              <td colspan="4" class="has-text-left" style="vertical-align: middle;">
+              <td colspan="5" class="has-text-left" style="vertical-align: middle;">
                 <span>{{ bspr_msgbox }}</span>
               </td>
             </tr>
@@ -523,7 +523,7 @@ function previewSheet() {
           data.preview_path = res.preview_path;
           previewPathCacheBreaker();
         }
-        if (res.CONTROL == "FINISH") {
+        if (res.CONTROL == "BSPR_FINISH") {
           console.log('timeout exhausted, invoking zerorpc...');
           client.invoke("inspect_one", data.preview_path, "static", (error, info) => {
             if (error) {
@@ -559,7 +559,7 @@ function buildSpritesheet() {
         if (res.msg) {
           data.bspr_msgbox = res.msg;
         }
-        if (res.CONTROL == "FINISH") {
+        if (res.CONTROL == "BSPR_FINISH") {
           data.bspr_msgbox = "Spritesheet built!";
           data.BSPR_IS_BUILDING = false;
         }

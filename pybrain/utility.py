@@ -45,7 +45,7 @@ def _purge_cache():
 
 
 def _mk_temp_dir(prefix_name: str = ''):
-    """ Creates a temporary directory for AIMG manipulation purposes. Returns the absolutee path """
+    """ Creates a temporary directory for AIMG manipulation purposes. Returns the absolute path """
     dirname = time.strftime("%Y%m%d_%H%M%S")
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"

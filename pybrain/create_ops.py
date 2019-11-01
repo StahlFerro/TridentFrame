@@ -98,7 +98,7 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     os.chdir(ROOT_PATH)
     # shutil.rmtree(gifragment_dir)
     yield {"preview_path": out_full_path}
-    yield {"CONTROL": "FINISH"}
+    yield {"CONTROL": "CRT_FINISH"}
 
 
 def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
@@ -130,10 +130,10 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
         yield {"msg": "Saving APNG..."}
         APNG.from_files(image_paths, delay=int(criteria.duration * 1000)).save(out_full_path)
     yield {"preview_path": out_full_path}
-    yield {"CONTROL": "FINISH"}
+    yield {"CONTROL": "CRT_FINISH"}
 
 
-def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria):
+def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria) -> bool:
     """ Umbrella function for creating animated images from a sequence of images """
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
@@ -147,13 +147,12 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     out_dir = os.path.abspath(out_dir)
     if not os.path.exists(out_dir):
         raise Exception("The specified absolute out_dir does not exist!")
-
-    if criteria.extension == 'gif':
+    if criteria.extension == 'GIF':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         filename = f"{filename}.gif"
         return _build_gif(image_paths, out_full_path, criteria)
     
-    elif criteria.extension == 'apng':
+    elif criteria.extension == 'PNG':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
         return _build_apng(img_paths, out_full_path, criteria)
 

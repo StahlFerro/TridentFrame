@@ -99,7 +99,7 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
         target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
     yield from _fragment_gif_frames(target_path, out_dir, criteria)
     # yield from _pillow_fragment_gif_frames(unop_gif_path, out_dir, criteria)
-    yield {"CONTROL": "FINISH"}
+    yield {"CONTROL": "SPL_FINISH"}
 
 
 def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria):
@@ -112,7 +112,7 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
     for index, (png, control) in enumerate(iframes):
         yield {"msg": f'Splitting APNG... ({index + 1}/{len(iframes)})'}
         png.save(os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png"))
-    yield {"CONTROL": "FINISH"}
+    yield {"CONTROL": "SPL_FINISH"}
 
 
 def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
@@ -120,7 +120,7 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
     # print(error)
     image_path = os.path.abspath(image_path)
     if not os.path.isfile(image_path):
-        raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file")
+        raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file", image_path)
     filename = str(os.path.basename(image_path))
 
     # Custom output dirname and frame names if specified on the cli

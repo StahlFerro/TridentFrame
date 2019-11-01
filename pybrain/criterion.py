@@ -46,8 +46,12 @@ class ModificationCriteria():
         self.height = json_vals['height']
         self.orig_delay = json_vals['orig_delay']
         self.delay = json_vals['delay']
-        self.rotation = json_vals['rotation']
         self.fps = json_vals['fps']
+        self.orig_frame_count = json_vals['orig_frame_count']
+        self.orig_frame_count_ds = json_vals['orig_frame_count_ds']
+        self.orig_loop_duration = json_vals['orig_loop_duration']
+        self.rotation = json_vals['rotation']
+        self.orig_format = json_vals['orig_format']
         self.format = json_vals['format']
         self.skip_frame = json_vals['skip_frame']
 
@@ -67,6 +71,9 @@ class ModificationCriteria():
 
     def must_resize(self):
         return self.orig_width != self.width or self.orig_height != self.height
+
+    def change_format(self):
+        return self.orig_format !=self.format
 
 
 class SpritesheetBuildCriteria():

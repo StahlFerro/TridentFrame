@@ -23,9 +23,15 @@
           class="silver-bordered force-center is-paddingless"
           v-bind:class="{'has-checkerboard-bg': new_checkerbg_active}"
           style="height: 250px;">
-          <div class="mod-aimg-container">
-            <span class="aimg-helper"></span>
-            <img v-bind:src="preview_path" />
+          <div v-if="preview_info" class="mod-aimg-container">
+            <div v-bind:title="
+              `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
+              `File size: ${preview_info.general_info.fsize_hr.value}\n` +
+              `Format: ${preview_info.general_info.format.value}`
+            ">
+              <span class="aimg-helper"></span>
+              <img v-bind:src="preview_path_cb" />
+            </div>
           </div>
         </td>
         <td colspan="2" width="15%">
@@ -104,7 +110,10 @@
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Total frames</td>
-                  <td class="mod-info-data">{{ orig_frame_count }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="orig_frame_count">{{ orig_frame_count }} ({{ orig_frame_count_ds }})</span>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Frame rate</td>
@@ -116,7 +125,10 @@
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Loop duration</td>
-                  <td class="mod-info-data">{{ orig_loop_duration }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="orig_loop_duration">{{ orig_loop_duration }} seconds</span>
+                    <span v-else>-</span>
+                    </td>
                 </tr>
               </tbody>
             </table>
@@ -224,7 +236,7 @@
                             <div class="select is-neon-cyan">
                               <select v-model="format">
                                 <option value="GIF">GIF</option>
-                                <option value="APNG">APNG</option>
+                                <option value="PNG">APNG</option>
                               </select>
                             </div>
                           </div>
@@ -333,11 +345,12 @@ var data = {
   orig_name: "-",
   orig_width: "",
   orig_height: "",
-  orig_frame_count: "-",
+  orig_frame_count: "",
+  orig_frame_count_ds: "",
   orig_fps: "-",
   orig_delay: "",
   orig_delay_info: "-",
-  orig_loop_duration: "-",
+  orig_loop_duration: "",
   orig_file_size: "",
   orig_file_size_hr: "-",
   orig_format: "-",
@@ -364,6 +377,8 @@ var data = {
   color_space: "",
   is_unoptimized: false,
   preview_path: "",
+  preview_path_cb: "",
+  preview_info: "",
   outdir: "",
   preview_size: "",
   preview_size_hr: "",
@@ -382,15 +397,17 @@ function clearOrigFields() {
   data.orig_name = "-";
   data.orig_width = "";
   data.orig_height = "";
-  data.orig_frame_count = "-";
+  data.orig_frame_count = "";
+  data.orig_frame_count_ds = "";
   data.orig_fps = "-";
   data.orig_delay = "";
   data.orig_delay_info = "-";
-  data.orig_loop_duration = "-";
+  data.orig_loop_duration = "";
   data.orig_file_size = "";
   data.orig_file_size_hr = "-";
   data.orig_format = "-";
   data.orig_path = "";
+  data.modify_msgbox = "";
 }
 
 function clearNewFields() {
@@ -403,7 +420,7 @@ function clearNewFields() {
   data.fps = "";
   data.delay = "";
   data.skip_frame = "";
-  data.preview_path = "";  
+  data.modify_msgbox = "";
 }
 
 function toggleOrigCheckerBG() {
@@ -457,7 +474,8 @@ function loadOrigInfo(res) {
   data.orig_width = geninfo.width.value;
   data.orig_height = geninfo.height.value;
   data.orig_fps = `${ainfo.fps.value} fps`;
-  data.orig_frame_count= `${ainfo.frame_count.value} (${ainfo.frame_count_ds.value} DS)`;
+  data.orig_frame_count= ainfo.frame_count.value;
+  data.orig_frame_count_ds= ainfo.frame_count_ds.value;
   data.orig_format = geninfo.format.value;
   let delay_info = `${ainfo.avg_delay.value} seconds`;
   if (ainfo.delay_is_uneven) {
@@ -465,7 +483,7 @@ function loadOrigInfo(res) {
   }
   data.orig_delay = ainfo.avg_delay.value;
   data.orig_delay_info = delay_info;
-  data.orig_loop_duration = `${ainfo.loop_duration.value} seconds`;
+  data.orig_loop_duration = ainfo.loop_duration.value;
   data.orig_path = geninfo.absolute_url.value;
   data.orig_file_size = geninfo.fsize.value;
   data.orig_file_size_hr = geninfo.fsize_hr.value;
@@ -489,10 +507,12 @@ function clearImage() {
   console.log(data);
   clearOrigFields();
   clearNewFields();
+  clearPrevImage();
 }
 
 function clearPrevImage() {
   data.preview_path = "";
+  data.preview_path_cb = "";
   data.preview_size = "";
   data.preview_size_hr = "";
 }
@@ -580,29 +600,33 @@ function previewModImg() {
       data.modify_msgbox = error;
       data.MOD_IS_PREVIEWING = false;
     }
-    else if (res) {
-      console.log(res);
-      if (res.msg) {
-        data.modify_msgbox = res.msg;
-      }
-      if (res.preview_path) {
-        data.preview_path = `${res.preview_path}?timestamp=${randString()}`;
-        console.log(res.preview_path);
-        client.invoke("inspect_one", res.preview_path, "animated", (error, info) => {
-          if (error) {
-            console.error(error);
-          } else {
-            console.log(info);
-            if (info && info.general_info) {
+    else {
+      if (res) {
+        console.log(res);
+        if (res.msg) {
+          data.modify_msgbox = res.msg;
+        }
+        if (res.preview_path) {
+          data.preview_path = res.preview_path;
+          previewPathCacheBreaker();
+        }
+        if (res.CONTROL == "MOD_FINISH") {
+          console.log(data.preview_path);
+          client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
+            if (error) {
+              console.error(error);
+              data.MOD_IS_PREVIEWING = false;
+            } else {
+              console.log("preview inspect");
+              console.log(info);
+              data.preview_info = info;
               data.preview_size = info.general_info.fsize.value;
               data.preview_size_hr = info.general_info.fsize_hr.value;
+              data.modify_msgbox = "Previewed!"
+              data.MOD_IS_PREVIEWING = false;
             }
-          }
-        });
-      }
-      if (res.msg == "Finished!") {
-        data.MOD_IS_PREVIEWING = false;
-        var orig_path = data.orig_path;
+          });
+        }
       }
     }
   });
@@ -651,6 +675,13 @@ function previewSizePercentage() {
   console.log(oldsize, prevsize);
   let redux = Math.round((prevsize / oldsize) * 100);
   return redux;
+}
+
+
+function previewPathCacheBreaker() {
+  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  console.log("Cache breaker url", cb_url);
+  data.preview_path_cb = cb_url;
 }
 
 

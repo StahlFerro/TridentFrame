@@ -102,6 +102,6 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     #         f.close()
     spritesheet.close()
     yield {"preview_path": final_path}
-    yield {"CONTROL": "FINISH"}
+    yield {"CONTROL": "BSPR_FINISH"}
     # raise Exception('yo')
     

@@ -204,8 +204,8 @@
                   <div class="control">
                     <div class="select is-neon-cyan">
                       <select v-model="format">
-                        <option value="gif">GIF</option>
-                        <option value="apng">APNG</option>
+                        <option value="GIF">GIF</option>
+                        <option value="PNG">APNG</option>
                       </select>
                     </div>
                   </div>
@@ -383,21 +383,19 @@ function previewAIMG() {
           data.preview_path = res.preview_path;
           previewPathCacheBreaker();
         }
-        if (res.CONTROL == "FINISH") {
-            console.log('timeout exhausted, invoking zerorpc...');
-            client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
-              if (error) {
-                console.error(error);
-              } else {
-                console.log("preview inspect");
-                console.log(info);
-                data.preview_info = info;
-                data.create_msgbox = "Previewed!";
-                data.BSPR_IS_PREVIEWING = false;
-              }
-            });
-          data.create_msgbox = "Previewed!"
-          data.CRT_IS_PREVIEWING = false;
+        if (res.CONTROL == "CRT_FINISH") {
+          client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
+            if (error) {
+              console.error(error);
+              data.CRT_IS_PREVIEWING = false;
+            } else {
+              console.log("preview inspect");
+              console.log(info);
+              data.preview_info = info;
+              data.create_msgbox = "Previewed!"
+              data.CRT_IS_PREVIEWING = false;
+            }
+          });
         }
       }
     }
@@ -424,7 +422,7 @@ function CRTCreateAIMG() {
         if (res.msg) {
           data.create_msgbox = res.msg;
         }
-        if (res.CONTROL == "FINISH") {
+        if (res.CONTROL == "CRT_FINISH") {
           data.create_msgbox = `${data.format.toUpperCase()} created!`;
           data.CRT_IS_CREATING = false;
         }
@@ -499,10 +497,10 @@ function delayConstrain (event) {
     let numdec = value.split(".");
     console.log("numdec", numdec);
     let precision = 2;
-    if (data.format == 'gif') {
+    if (data.format == 'GIF') {
       precision = GIF_DELAY_DECIMAL_PRECISION;
     }
-    else if (data.format == 'apng') {
+    else if (data.format == 'PNG') {
       precision = APNG_DELAY_DECIMAL_PRECISION;
     }
     if (numdec[1].length > precision) {
@@ -519,8 +517,8 @@ function fpsConstrain (event) {
   let value = event.target.value;
   if (value) {
     let mult = 100
-    if (data.format == 'gif') { mult = 100; }
-    else if (data.format == 'apng') { mult = 1000; }
+    if (data.format == 'GIF') { mult = 100; }
+    else if (data.format == 'PNG') { mult = 1000; }
     data.delay = Math.round(mult / data.fps) / mult;
   }
 }

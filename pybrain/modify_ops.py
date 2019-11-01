@@ -17,8 +17,10 @@ from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, gifsicle_exec, imagemagick_exec
-from .criterion import ModificationCriteria
+from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames
+from .create_ops import create_aimg
+from .split_ops import split_aimg
 
 
 def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
@@ -26,7 +28,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     if not os.path.isfile(img_path):
         raise Exception("Cannot Preview/Modify the image. The original file in the system may been removed.")
     out_dir = os.path.abspath(out_dir)
-    full_name = f"{criteria.name}.{criteria.format.lower()}"
+    full_name = f"{criteria.name}.{criteria.orig_format.lower()}"
     # temp_dir = _mk_temp_dir(prefix_name="temp_mods")
     # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = os.path.join(out_dir, full_name)
@@ -57,8 +59,11 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             subprocess.run(cmd, shell=True)
             if target_path != out_full_path:
                 target_path = out_full_path
-    yield {"preview_path": out_full_path}
-    yield {"msg": "Finished!"}
+    yield {"preview_path": target_path}
+    if criteria.change_format():
+        yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
+        yield from _change_aimg_format(target_path, "./temp", criteria)
+    yield {"CONTROL": "MOD_FINISH"}
 
 
 def _generate_gifsicle_args(criteria: ModificationCriteria):
@@ -87,3 +92,30 @@ def _generate_imagemagick_args(criteria: ModificationCriteria):
     if criteria.rotation:
         args.append((f"-rotation {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
     return args
+
+
+def _change_aimg_format(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
+    frames_dir = _mk_temp_dir(prefix_name="formod_frames")
+    split_criteria = SplitCriteria({
+        'pad_count': 6,
+        'color_space': mod_criteria.color_space,
+        'is_duration_sensitive': True,
+        'is_unoptimized': True,
+    })
+    yield from split_aimg(img_path, frames_dir, split_criteria)
+    frames = [str(os.path.join(frames_dir, f)) for f in os.listdir(frames_dir)]
+    yield {"msg": frames}
+    ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
+    ds_delay = 1 / ds_fps
+    create_criteria = CreationCriteria({
+        'fps': ds_fps,
+        'delay': ds_delay,
+        'format': mod_criteria.format,
+        'is_reversed': mod_criteria.is_reversed,
+        'is_transparent': True,
+        'flip_x': mod_criteria.flip_x,
+        'flip_y': mod_criteria.flip_y,
+        'width': mod_criteria.width,
+        'height': mod_criteria.height,
+    })
+    yield from create_aimg(frames, out_dir, os.path.basename(img_path), create_criteria)
