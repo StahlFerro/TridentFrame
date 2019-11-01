@@ -123,6 +123,7 @@ def _inspect_simg(image):
             "transparency": {"value": transparency, "label": "Has Transparency"},
             # "alpha": {"value": alpha, "label": "Has Alpha"},
             "exif": {"value": exif, "label": "EXIF"},
+            "is_animated": {"value": False, "label": "Is Animated"},
         }
     }
     im.close()
@@ -168,6 +169,7 @@ def _inspect_agif(abspath: str, gif: Image):
             "transparency": {"value": transparency, "label": "Has Transparency"},
             # "alpha": {"value": alpha, "label": "Has Alpha"},
             "comments": {"value": comments, "label": "Comments"},
+            "is_animated": {"value": True, "label": "Is Animated"},
         },
         "animation_info": {
             "fps": {"value": fps, "label": "FPS"},
@@ -214,6 +216,7 @@ def _inspect_apng(abspath, apng: APNG):
             "fsize_hr": {"value": fsize_hr, "label": "File size "},
             "absolute_url": {"value": abspath, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
+            "is_animated": {"value": True, "label": "Is Animated"},
             # "comments": {"value": comments, "label": "Comments"},
         },
         "animation_info": {
