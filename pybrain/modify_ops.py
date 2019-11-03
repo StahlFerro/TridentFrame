@@ -28,7 +28,7 @@ def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_fu
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
         cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
-        yield {"msg": f"cmd: {cmd}"}
+        # yield {"msg": f"cmd: {cmd}"}
         yield {"msg": f"[{index}/{total_ops}] {description}"}
         subprocess.run(cmd, shell=True)
         if target_path != out_full_path:
@@ -41,7 +41,7 @@ def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, ou
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
         cmdlist = [imagemagick_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
-        yield {"msg": f"cmd: {cmd}"}
+        # yield {"msg": f"cmd: {cmd}"}
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         subprocess.run(cmd, shell=True)
         if target_path != out_full_path:
@@ -57,7 +57,7 @@ def _change_aimg_format(img_path: str, out_dir: str, mod_criteria: ModificationC
         'is_duration_sensitive': True,
         'is_unoptimized': mod_criteria.is_unoptimized,
     })
-    yield {"msg": split_criteria.__dict__}
+    # yield {"msg": split_criteria.__dict__}
     yield from split_aimg(img_path, frames_dir, split_criteria)
     frames = [str(os.path.join(frames_dir, f)) for f in os.listdir(frames_dir)]
     yield {"msg": frames}
@@ -75,9 +75,6 @@ def _change_aimg_format(img_path: str, out_dir: str, mod_criteria: ModificationC
         'height': mod_criteria.height,
     })
     new_image = yield from create_aimg(frames, out_dir, os.path.basename(img_path), create_criteria)
-    yield {"msg": f"NEW IMAGE: {new_image}"}
-    # mod_path = os.path.join(out_dir, f"{os.path.splitext(img_path)[0]}.gif")
-    # raise Exception(new_image)
     return new_image
 
 

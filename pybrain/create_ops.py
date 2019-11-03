@@ -92,14 +92,13 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     # pprint(args)
     cmd = ' '.join(args)
     # print(cmd) 
-    yield {"msg": cmd}
+    # yield {"msg": cmd}
     yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)
     os.chdir(ROOT_PATH)
     # shutil.rmtree(gifragment_dir)
     yield {"preview_path": out_full_path}
     yield {"CONTROL": "CRT_FINISH"}
-    # yield {"msg": f"MEGADONGGGGGGGGGGGGGGGGGGGGGG {out_full_path}"}
     return out_full_path
 
 
