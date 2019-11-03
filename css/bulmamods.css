@@ -7289,6 +7289,9 @@ div.mod-left-menu::-webkit-scrollbar {
   padding-top: 0px !important;
   padding-bottom: 0px !important; }
 
+.is-toppaddingless {
+  padding-top: 0px !important; }
+
 .is-right-padding-only {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
@@ -7485,6 +7488,38 @@ table.spr-control-table label {
   display: inline-block;
   height: 100%;
   vertical-align: middle; }
+
+td.slicegrid-cell {
+  width: 525px;
+  height: 500px !important;
+  max-height: 500px !important; }
+
+div.slicegrid-container {
+  display: inline-block;
+  width: 521px !important;
+  height: 490px;
+  margin: 0 auto;
+  padding: 0px !important;
+  background: #93a0ad;
+  position: relative; }
+
+div.slicegrid-container img {
+  position: absolute;
+  z-index: 1;
+  max-width: 521px !important;
+  max-height: 490px !important;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); }
+
+td.sliceinfo-cell {
+  width: 297px !important; }
+
+canvas.slicegrid-canvas {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20; }
 
 /* Neon-cyan buttons. $cyan outlines with $dark-3 BG to match the global $dark-3 BG color */
 .button.is-neon-cyan {

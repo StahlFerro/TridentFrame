@@ -175,6 +175,8 @@
   </div>
 </template>
 
+
+
 <script>
 import { log } from "util";
 
@@ -278,7 +280,6 @@ function loadImage() {
     console.log("registered!");
     console.log(data);
     console.log(defaults);
-
   });
 }
 
