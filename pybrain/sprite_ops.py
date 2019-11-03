@@ -73,9 +73,10 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     for index, fr in enumerate(frames):
 
         orig_width, orig_height = fr.size
-        must_resize = criteria.tile_width != orig_width or criteria.tile_height
+        must_resize = criteria.tile_width != orig_width or criteria.tile_height != orig_height
         if must_resize:
-            fr = fr.resize((round(criteria.resize_width) , round(criteria.resize_height))) != orig_height
+            fr = fr.resize((round(criteria.tile_width) , round(criteria.tile_height)))
+            yield {"msg": f"RESIZING {must_resize}"}
         top = tile_height * math.floor(index / max_frames_row) + criteria.offset_y
         left = tile_width * (index % max_frames_row) + criteria.offset_x
         bottom = top + tile_height
@@ -90,16 +91,15 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         if index in shout_indices:
             yield {"msg": f'Placing frames to sheet... ({round(index / fcount, 1) * 100}%)'}
         # boxes.append(box)
-        fr.close()
     outfilename = f"{filename}.png"
     final_path = os.path.join(out_dir, outfilename)
     yield {"msg": f'Saving the file...'}
     spritesheet.MAX_IMAGE_PIXELS = None
     spritesheet.save(final_path, "PNG")
     yield {"msg": "closing up images..."}
-    # if input_mode == 'sequence':
-    #     for f in frames:
-    #         f.close()
+    if input_mode == 'sequence':
+        for f in frames:
+            f.close()
     spritesheet.close()
     yield {"preview_path": final_path}
     yield {"CONTROL": "BSPR_FINISH"}

@@ -23,6 +23,64 @@ from .create_ops import create_aimg
 from .split_ops import split_aimg
 
 
+def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int) -> str:
+    for index, (arg, description) in enumerate(sicle_args, start=1):
+        yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+        cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+        cmd = ' '.join(cmdlist)
+        yield {"msg": f"cmd: {cmd}"}
+        yield {"msg": f"[{index}/{total_ops}] {description}"}
+        subprocess.run(cmd, shell=True)
+        if target_path != out_full_path:
+            target_path = out_full_path
+    return target_path
+
+
+def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int) -> str:
+    for index, (arg, description) in enumerate(magick_args, start=1):
+        yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+        cmdlist = [imagemagick_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+        cmd = ' '.join(cmdlist)
+        yield {"msg": f"cmd: {cmd}"}
+        yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
+        subprocess.run(cmd, shell=True)
+        if target_path != out_full_path:
+            target_path = out_full_path
+    return target_path
+
+
+def _change_aimg_format(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
+    frames_dir = _mk_temp_dir(prefix_name="formod_frames")
+    split_criteria = SplitCriteria({
+        'pad_count': 6,
+        'color_space': "",
+        'is_duration_sensitive': True,
+        'is_unoptimized': mod_criteria.is_unoptimized,
+    })
+    yield {"msg": split_criteria.__dict__}
+    yield from split_aimg(img_path, frames_dir, split_criteria)
+    frames = [str(os.path.join(frames_dir, f)) for f in os.listdir(frames_dir)]
+    yield {"msg": frames}
+    ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
+    ds_delay = 1 / ds_fps
+    create_criteria = CreationCriteria({
+        'fps': ds_fps,
+        'delay': ds_delay,
+        'format': mod_criteria.format,
+        'is_reversed': mod_criteria.is_reversed,
+        'is_transparent': True,
+        'flip_x': mod_criteria.flip_x,
+        'flip_y': mod_criteria.flip_y,
+        'width': mod_criteria.width,
+        'height': mod_criteria.height,
+    })
+    new_image = yield from create_aimg(frames, out_dir, os.path.basename(img_path), create_criteria)
+    yield {"msg": f"NEW IMAGE: {new_image}"}
+    # mod_path = os.path.join(out_dir, f"{os.path.splitext(img_path)[0]}.gif")
+    # raise Exception(new_image)
+    return new_image
+
+
 def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     img_path = os.path.abspath(img_path)
     if not os.path.isfile(img_path):
@@ -32,41 +90,74 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     # temp_dir = _mk_temp_dir(prefix_name="temp_mods")
     # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = os.path.join(out_dir, full_name)
+    yield {"msg": f"OUT FULL PATH: {out_full_path}"}
     sicle_args = _generate_gifsicle_args(criteria)
     magick_args = _generate_imagemagick_args(criteria)
     # yield sicle_args
     target_path = str(img_path)
-    if not (sicle_args or magick_args): 
-        yield {"preview_path": img_path}
     total_ops = len(sicle_args) + len(magick_args)
-    if sicle_args:
-        for index, (arg, description) in enumerate(sicle_args, start=1):
-            yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-            cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
-            cmd = ' '.join(cmdlist)
-            yield {"msg": f"cmd: {cmd}"}
-            yield {"msg": f"[{index}/{total_ops}] {description}"}
-            subprocess.run(cmd, shell=True)
-            if target_path != out_full_path:
-                target_path = out_full_path
-    if magick_args:
-        for index, (arg, description) in enumerate(magick_args, start=1):
-            yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-            cmdlist = [imagemagick_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
-            cmd = ' '.join(cmdlist)
-            yield {"msg": f"cmd: {cmd}"}
-            yield {"msg": f"[{len(sicle_args) + index}/{total_ops}] {description}"}
-            subprocess.run(cmd, shell=True)
-            if target_path != out_full_path:
-                target_path = out_full_path
-    yield {"preview_path": target_path}
+
     if criteria.change_format():
-        yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
-        yield from _change_aimg_format(target_path, "./temp", criteria)
+        if criteria.orig_format == "GIF":
+            if sicle_args:
+                target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
+            if magick_args:
+                target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))
+            yield {"preview_path": target_path}
+            yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
+            target_path = yield from _change_aimg_format(target_path, out_dir, criteria)
+        elif criteria.orig_format == "PNG":
+            yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
+            target_path = yield from _change_aimg_format(target_path, out_dir, criteria)
+            out_full_path = str(target_path)
+            if sicle_args:
+                target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
+            if magick_args:
+                target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))             
+            yield {"preview_path": target_path}
+    else:
+        if criteria.orig_format == "GIF":
+            if sicle_args:
+                target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
+            if magick_args:
+                target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))
+            yield {"preview_path": target_path}
+        elif criteria.orig_format == "PNG":
+            yield {"preview_path": target_path}
+
     yield {"CONTROL": "MOD_FINISH"}
 
+            
+    # if sicle_args:
+    #     target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
+    #     # for index, (arg, description) in enumerate(sicle_args, start=1):
+    #     #     yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+    #     #     cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+    #     #     cmd = ' '.join(cmdlist)
+    #     #     yield {"msg": f"cmd: {cmd}"}
+    #     #     yield {"msg": f"[{index}/{total_ops}] {description}"}
+    #     #     subprocess.run(cmd, shell=True)
+    #     #     if target_path != out_full_path:
+    #     #         target_path = out_full_path
+    # if magick_args:
+    #     target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))
+    #     # for index, (arg, description) in enumerate(magick_args, start=1):
+    #     #     yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+    #     #     cmdlist = [imagemagick_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+    #     #     cmd = ' '.join(cmdlist)
+    #     #     yield {"msg": f"cmd: {cmd}"}
+    #     #     yield {"msg": f"[{len(sicle_args) + index}/{total_ops}] {description}"}
+    #     #     subprocess.run(cmd, shell=True)
+    #     #     if target_path != out_full_path:
+    #     #         target_path = out_full_path
 
-def _generate_gifsicle_args(criteria: ModificationCriteria):
+    # yield {"preview_path": target_path}
+    # if criteria.change_format():
+    #     yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
+    #     yield from _change_aimg_format(target_path, "./temp", criteria)
+
+
+def _generate_gifsicle_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []
     if criteria.must_resize():
         args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
@@ -85,37 +176,10 @@ def _generate_gifsicle_args(criteria: ModificationCriteria):
     return args
 
 
-def _generate_imagemagick_args(criteria: ModificationCriteria):
+def _generate_imagemagick_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []
     if criteria.is_unoptimized:
         args.append(("-coalesce", "Unoptimizing GIF..."))
     if criteria.rotation:
         args.append((f"-rotation {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
     return args
-
-
-def _change_aimg_format(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
-    frames_dir = _mk_temp_dir(prefix_name="formod_frames")
-    split_criteria = SplitCriteria({
-        'pad_count': 6,
-        'color_space': mod_criteria.color_space,
-        'is_duration_sensitive': True,
-        'is_unoptimized': True,
-    })
-    yield from split_aimg(img_path, frames_dir, split_criteria)
-    frames = [str(os.path.join(frames_dir, f)) for f in os.listdir(frames_dir)]
-    yield {"msg": frames}
-    ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
-    ds_delay = 1 / ds_fps
-    create_criteria = CreationCriteria({
-        'fps': ds_fps,
-        'delay': ds_delay,
-        'format': mod_criteria.format,
-        'is_reversed': mod_criteria.is_reversed,
-        'is_transparent': True,
-        'flip_x': mod_criteria.flip_x,
-        'flip_y': mod_criteria.flip_y,
-        'width': mod_criteria.width,
-        'height': mod_criteria.height,
-    })
-    yield from create_aimg(frames, out_dir, os.path.basename(img_path), create_criteria)

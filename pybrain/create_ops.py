@@ -99,6 +99,8 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     # shutil.rmtree(gifragment_dir)
     yield {"preview_path": out_full_path}
     yield {"CONTROL": "CRT_FINISH"}
+    # yield {"msg": f"MEGADONGGGGGGGGGGGGGGGGGGGGGG {out_full_path}"}
+    return out_full_path
 
 
 def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
@@ -131,6 +133,7 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
         APNG.from_files(image_paths, delay=int(criteria.duration * 1000)).save(out_full_path)
     yield {"preview_path": out_full_path}
     yield {"CONTROL": "CRT_FINISH"}
+    return out_full_path
 
 
 def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria) -> bool:

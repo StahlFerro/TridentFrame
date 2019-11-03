@@ -375,8 +375,8 @@ function previewAIMG() {
       data.CRT_IS_PREVIEWING = false;
     } else {
       if (res) {
+        console.log(res);
         if (res.msg) {
-          console.log(res.msg);
           data.create_msgbox = res.msg;
         }
         if (res.preview_path) {

@@ -584,7 +584,8 @@ function modifyImage() {
       console.log(res);
       if (res.msg) {
         data.modify_msgbox = res.msg;
-        if (res.msg == "Finished!") {
+        if (res.CONTROL == "MOD_FINISH") {
+          data.modify_msgbox = "Modified and saved!"
           data.MOD_IS_MODIFYING = false;
         }
       }
