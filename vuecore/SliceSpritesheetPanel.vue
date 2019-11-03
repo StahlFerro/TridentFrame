@@ -72,6 +72,12 @@
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
+          <a v-on:click="drawGrid" class="button is-neon-cyan">
+            <span>Draw Grid</span>
+          </a>
+          <a v-on:click="clearGrid" class="button is-neon-white">
+            <span>Clear Grid</span>
+          </a>
         </td>
         <td></td>
       </tr>
@@ -141,6 +147,8 @@ let data = {
   sspr_msgbox: "",
   el_width: 0,
   el_height: 0,
+  wprev_ratio: 0,
+  hprev_ratio: 0,
   outdir: "",
 }
 
@@ -175,6 +183,8 @@ function loadSheet() {
         console.log(res);
         let geninfo = res.general_info
         data.sheet_path = geninfo.absolute_url.value;
+        data.width = geninfo.width.value;
+        data.height = geninfo.height.value;
         sheetPathCacheBreaker();
         // for (const [key, value] of Object.entries(slicegrid_image.attributes)) {
         //   console.log(`${key}: ${value}`);
@@ -191,15 +201,40 @@ function sheetElementDimensions(event) {
   data.el_width = img.clientWidth;
   data.el_height = img.clientHeight;
   console.log(img.clientWidth, img.clientHeight);
+  computePreviewRatio();
+}
+
+function computePreviewRatio() {
+  data.wprev_ratio = data.el_width / data.width;
+  data.hprev_ratio = data.el_height / data.height;
 }
 
 function drawGrid() {
   let context = slicegrid_canvas.getContext("2d");
-  let grid_width = data.el_width;
-  let grid_height = data.el_height;
-  for (let x = 0; x <= grid_width; x += 100) {
-
+  let sheet_width = data.width;
+  let sheet_height = data.height;
+  let preview_width = data.el_width;
+  let preview_height = data.el_height;
+  let wprev_ratio = data.wprev_ratio
+  let hprev_ratio = data.hprev_ratio;
+  console.log(sheet_width, sheet_height, preview_width, preview_height, wprev_ratio, hprev_ratio);
+  let prev_tile_width = 200 * wprev_ratio;
+  let prev_tile_height = 200 * hprev_ratio;
+  for (let x = 0; x <= preview_width; x += prev_tile_width) {
+    context.moveTo(0.5 + x, 0);
+    context.lineTo(0.5 + x, preview_height);
   }
+  for (let x = 0; x <= preview_height; x += prev_tile_height) {
+    context.moveTo(0, 0.5 + x);
+    context.lineTo(preview_width, 0.5 + x);
+  }
+  context.strokeStyle = "black";
+  context.stroke();
+}
+
+function clearGrid() {
+  let context = slicegrid_canvas.getContext('2d');
+  context.clearRect(0, 0, slicegrid_canvas.width, slicegrid_canvas.height);
 }
 
 // function resizeCanvas() {
@@ -215,6 +250,7 @@ function drawGrid() {
 // }
 
 function clearSheet() {
+  clearGrid();
   data.sheet_path = "";
   data.sheet_path_cb = "";
   data.name = "";
@@ -284,6 +320,8 @@ export default {
     loadSheet: loadSheet,
     clearSheet: clearSheet,
     chooseOutDir: chooseOutDir,
+    drawGrid: drawGrid,
+    clearGrid: clearGrid,
     toggleCheckerBG: toggleCheckerBG,
     sheetElementDimensions: sheetElementDimensions,
     sliceSheet: sliceSheet,
