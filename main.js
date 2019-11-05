@@ -2,6 +2,7 @@ const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
+const deploy_env = process.env.DEPLOY_ENV;
 let pyProc = null;
 let pyPort = null;
 
@@ -24,13 +25,17 @@ const createWindow = () => {
         },
     });
     mainWindow.setMenu(null);
-    mainWindow.loadURL("http://localhost:8080/") // Development environment
-    // Production environment
-    // mainWindow.loadURL(require('url').format({
-    //     pathname: path.join(__dirname, './dist/index.html'),
-    //     protocol: 'file:',
-    //     slashes: true
-    // }));
+    if (deploy_env && deploy_env == "DEV") { // Development environment
+        mainWindow.loadURL("http://localhost:8080/")
+    }
+    else {
+        // Production environment
+        mainWindow.loadURL(require('url').format({
+            pathname: path.join(__dirname, './dist/index.html'),
+            protocol: 'file:',
+            slashes: true
+        }));
+    }
     mainWindow.webContents.openDevTools();
     mainWindow.focus();
     mainWindow.on('closed', () => {

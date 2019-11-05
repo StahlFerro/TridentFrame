@@ -4,7 +4,7 @@
       <table class="table about-table" width="100%">
         <tr>
           <td class="has-text-centered">
-            <img src="imgs/TridentFrame_Icon_200px.png" width="200px;" height="200px;" />
+            <img v-bind:src="logo" width="200px;" height="200px;" />
           </td>
         </tr>
         <tr>
@@ -45,6 +45,7 @@
 const { remote, shell } = require('electron');
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
+const logo = require('../imgs/TridentFrame_Icon_200px.png');
 
 function warpGithub() {
   shell.openExternal("https://github.com/StahlFerro/TridentFrame");
@@ -54,7 +55,14 @@ function warpDonate() {
   shell.openExternal("https://en.liberapay.com/StahlFerro");
 }
 
+let data = {
+  logo: logo,
+}
+
 export default {
+  data: function() {
+    return data;
+  },
   methods: {
     warpGithub: warpGithub,
     warpDonate: warpDonate,
