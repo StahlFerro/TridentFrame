@@ -45,12 +45,38 @@
                   <span v-else>-</span>
                 </td>
               </tr>
+              <tr>
+                <td>
+                  <div class="field">
+                    <label class="label">Tile Width</label>
+                    <div class="control">
+                      <input
+                        v-bind:value="tile_width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileWidthHandler(tile_width, $event)"
+                        class="input is-neon-white"
+                        type="number" 
+                        min="1" step="1"/>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="field">
+                    <label class="label">Tile Width</label>
+                    <div class="control">
+                      <input
+                        v-bind:value="tile_height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileHeightHandler(tile_height, $event)"
+                        class="input is-neon-white"
+                        type="number" 
+                        min="1" step="1"/>
+                    </div>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
         </td>
       </tr>
       <tr>
-        <td class="is-hpaddingless">
+        <td colspan="2" class="is-hpaddingless">
           <a v-on:click="loadSheet" class="button is-neon-cyan" v-bind:class="{'is-loading': SSPR_IS_LOADING, 'is-static': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
@@ -77,6 +103,9 @@
           </a>
           <a v-on:click="clearGrid" class="button is-neon-white">
             <span>Clear Grid</span>
+          </a>
+          <a v-on:click="show_canvas = !show_canvas" class="button is-neon-white">
+            Show Grid
           </a>
         </td>
         <td></td>
@@ -125,23 +154,31 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-const { randString } = require("./Utility.vue");
+const { randString, wholeNumberConstrain, gcd } = require("./Utility.vue");
 
 let extension_filters = [{ name: "Spritesheet image", extensions: ["png", "jpg"] }];
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 let slicegrid_image = null;
 let slicegrid_canvas = null;
+let canvas_context = null;
 
 let data = {
   sheet_path: "",
   sheet_path_cb: "",
   name: "",
-  width: "",
-  height: "",
+  sheet_width: "",
+  sheet_height: "",
+  old_tile_width: "",
+  old_tile_height: "",
+  tile_width: "",
+  tile_height: "",
   file_size: "",
   file_size_hr: "",
+  aspect_ratio: "",
+  lock_aspect_ratio: false,
   checkerbg_active: false,
+  show_canvas: false,
   SSPR_IS_LOADING: false,
   SSPR_IS_SLICING: false,
   sspr_msgbox: "",
@@ -158,6 +195,7 @@ function mountElements() {
   console.log(this.$refs);
   slicegrid_image = this.$refs['slicegrid_image'];
   slicegrid_canvas = this.$refs['slicegrid_canvas'];
+  canvas_context = slicegrid_canvas.getContext("2d");
   console.log("MOUNTED!");
   console.log(slicegrid_image);
   console.log(slicegrid_canvas);
@@ -183,8 +221,8 @@ function loadSheet() {
         console.log(res);
         let geninfo = res.general_info
         data.sheet_path = geninfo.absolute_url.value;
-        data.width = geninfo.width.value;
-        data.height = geninfo.height.value;
+        data.sheet_width = geninfo.width.value;
+        data.sheet_height = geninfo.height.value;
         sheetPathCacheBreaker();
         // for (const [key, value] of Object.entries(slicegrid_image.attributes)) {
         //   console.log(`${key}: ${value}`);
@@ -205,36 +243,39 @@ function sheetElementDimensions(event) {
 }
 
 function computePreviewRatio() {
-  data.wprev_ratio = data.el_width / data.width;
-  data.hprev_ratio = data.el_height / data.height;
+  data.wprev_ratio = data.el_width / data.sheet_width;
+  data.hprev_ratio = data.el_height / data.sheet_height;
+}
+
+function autoDrawCanvasGrid() {
+  console.log('autodraw', data.show_canvas, data.tile_width, data.tile_height)
+  if (data.show_canvas && data.tile_width && data.tile_height) {
+    clearGrid();
+    drawGrid();
+  }
 }
 
 function drawGrid() {
-  let context = slicegrid_canvas.getContext("2d");
-  let sheet_width = data.width;
-  let sheet_height = data.height;
-  let preview_width = data.el_width;
-  let preview_height = data.el_height;
   let wprev_ratio = data.wprev_ratio
   let hprev_ratio = data.hprev_ratio;
-  console.log(sheet_width, sheet_height, preview_width, preview_height, wprev_ratio, hprev_ratio);
-  let prev_tile_width = 200 * wprev_ratio;
-  let prev_tile_height = 200 * hprev_ratio;
-  for (let x = 0; x <= preview_width; x += prev_tile_width) {
-    context.moveTo(0.5 + x, 0);
-    context.lineTo(0.5 + x, preview_height);
+  let prev_tile_width = parseInt(data.tile_width) * wprev_ratio;
+  let prev_tile_height = parseInt(data.tile_height) * hprev_ratio;
+  console.log('prevratios', wprev_ratio, hprev_ratio);
+  console.log(data.el_width, data.el_height, prev_tile_width, prev_tile_height);
+  for (let x = 0; x <= data.el_width; x += prev_tile_width) {
+    canvas_context.moveTo(0.5 + x, 0);
+    canvas_context.lineTo(0.5 + x, data.el_height);
   }
-  for (let x = 0; x <= preview_height; x += prev_tile_height) {
-    context.moveTo(0, 0.5 + x);
-    context.lineTo(preview_width, 0.5 + x);
+  for (let x = 0; x <= data.el_height; x += prev_tile_height) {
+    canvas_context.moveTo(0, 0.5 + x);
+    canvas_context.lineTo(data.el_width, 0.5 + x);
   }
-  context.strokeStyle = "black";
-  context.stroke();
+  canvas_context.strokeStyle = "black";
+  canvas_context.stroke();
 }
 
 function clearGrid() {
-  let context = slicegrid_canvas.getContext('2d');
-  context.clearRect(0, 0, slicegrid_canvas.width, slicegrid_canvas.height);
+  canvas_context.clearRect(0, 0, slicegrid_canvas.width, slicegrid_canvas.height);
 }
 
 // function resizeCanvas() {
@@ -254,13 +295,45 @@ function clearSheet() {
   data.sheet_path = "";
   data.sheet_path_cb = "";
   data.name = "";
-  data.width = "";
-  data.height = "";
+  data.sheet_width = "";
+  data.sheet_height = "";
+  data.tile_width = "";
+  data.tile_height = "";
   data.file_size = "";
   data.file_size_hr = "";
   data.sspr_msgbox = "";
   data.el_width = 0;
   data.el_height = 0;
+}
+
+function tileWidthHandler(tile_width, event) {
+  data.old_tile_width = parseInt(tile_width);
+  console.log(event);
+  let newWidth = event.target.value;
+  data.tile_width = newWidth;
+  if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
+    let raHeight = Math.round(newWidth / data.aspect_ratio.w_ratio * data.aspect_ratio.h_ratio);
+    data.tile_height = raHeight > 0? raHeight : "";
+  }
+  else {
+    updateAspectRatio(data.tile_width, data.tile_height);
+  }
+  autoDrawCanvasGrid();
+}
+
+function tileHeightHandler(tile_height, event) {
+  data.old_tile_height = parseInt(tile_height);
+  let newHeight = event.target.value;
+  data.tile_height = newHeight;
+  if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
+    let raWidth = Math.round(newHeight / data.aspect_ratio.h_ratio * data.aspect_ratio.w_ratio);
+    console.log(raWidth);
+    data.tile_width = raWidth > 0? raWidth : "";
+  }
+  else {
+    updateAspectRatio(data.tile_width, data.tile_height);
+  }
+  autoDrawCanvasGrid();
 }
 
 function sheetPathCacheBreaker() {
@@ -269,6 +342,21 @@ function sheetPathCacheBreaker() {
   data.sheet_path_cb = cb_url;
 }
 
+function updateAspectRatio(tile_width, tile_height) {
+  if (data.tile_width && data.tile_height) {
+    console.log('uAR', tile_width, tile_height);
+    let divisor = gcd(tile_width, tile_height);
+    let w_ratio = tile_width / divisor;
+    let h_ratio = tile_height / divisor;
+    let ARData = {
+      "w_ratio": w_ratio,
+      "h_ratio": h_ratio,
+      "text": `${w_ratio}:${h_ratio}`,
+    };
+    console.log(ARData);
+    data.aspect_ratio = ARData;
+  }
+}
 
 function toggleCheckerBG() {
   data.checkerbg_active = !data.checkerbg_active;
@@ -325,6 +413,9 @@ export default {
     toggleCheckerBG: toggleCheckerBG,
     sheetElementDimensions: sheetElementDimensions,
     sliceSheet: sliceSheet,
+    wholeNumberConstrain: wholeNumberConstrain,
+    tileWidthHandler: tileWidthHandler,
+    tileHeightHandler: tileHeightHandler,
   },
 }
 </script>
