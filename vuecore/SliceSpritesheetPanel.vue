@@ -99,7 +99,7 @@
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
-          <a v-on:click="show_canvas = !show_canvas" class="button is-neon-white"
+          <a v-on:click="toggleGridView" class="button is-neon-white"
             v-bind:class="{'is-active': show_canvas}">
             <span class="icon is-medium">
               <i class="fas fa-th"></i>
@@ -260,6 +260,11 @@ function autoDrawCanvasGrid() {
   }
 }
 
+function toggleGridView() {
+  data.show_canvas = !data.show_canvas;
+  autoDrawCanvasGrid();
+}
+
 function drawGrid() {
   console.log("Draw GRID...");
   let wprev_ratio = data.wprev_ratio
@@ -284,7 +289,7 @@ function drawGrid() {
   canvas_context.strokeStyle = "black";
   canvas_context.stroke();
   canvas_context.closePath();
-  console.log("X and Y lines:", xlines, ylines);
+  console.log("X and Y segments:", xlines, ylines);
 }
 
 function clearGrid() {
@@ -424,6 +429,7 @@ export default {
     chooseOutDir: chooseOutDir,
     drawGrid: drawGrid,
     clearGrid: clearGrid,
+    toggleGridView: toggleGridView,
     toggleCheckerBG: toggleCheckerBG,
     sheetHandler: sheetHandler,
     sliceSheet: sliceSheet,
