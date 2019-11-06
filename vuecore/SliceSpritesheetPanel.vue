@@ -9,8 +9,9 @@
           <!-- <div class="spl-aimg-container"> -->
           <div class="slicegrid-container">
             <!-- <span class="aimg-helper"></span> -->
-            <img ref="slicegrid_image" v-bind:src="sheet_path_cb" v-on:load="sheetElementDimensions($event)"/>
-            <canvas ref="slicegrid_canvas" class="slicegrid-canvas" v-bind:width="el_width" v-bind:height="el_height"></canvas>
+            <img ref="slicegrid_image" v-bind:src="sheet_path_cb" v-on:load="sheetHandler($event)"/>
+            <canvas ref="slicegrid_canvas" class="slicegrid-canvas" v-show="show_canvas"
+             v-bind:width="el_width" v-bind:height="el_height"></canvas>
           </div>
           <!-- </div> -->
         </td>
@@ -34,7 +35,7 @@
               <tr>
                 <td class="is-cyan">Dimensions</td>
                 <td class="">
-                  <span v-if="dimensions">{{ dimensions }}</span>
+                  <span v-if="dimensionsText">{{ dimensionsText }}</span>
                   <span v-else>-</span>
                 </td>
               </tr>
@@ -98,14 +99,12 @@
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
-          <a v-on:click="drawGrid" class="button is-neon-cyan">
-            <span>Draw Grid</span>
-          </a>
-          <a v-on:click="clearGrid" class="button is-neon-white">
-            <span>Clear Grid</span>
-          </a>
-          <a v-on:click="show_canvas = !show_canvas" class="button is-neon-white">
-            Show Grid
+          <a v-on:click="show_canvas = !show_canvas" class="button is-neon-white"
+            v-bind:class="{'is-active': show_canvas}">
+            <span class="icon is-medium">
+              <i class="fas fa-th"></i>
+            </span>
+            <span>Preview Grid</span>
           </a>
         </td>
         <td></td>
@@ -233,48 +232,63 @@ function loadSheet() {
   });
 }
 
-function sheetElementDimensions(event) {
+function sheetHandler(event) {
   let img = event.target;
   console.log(img);
   data.el_width = img.clientWidth;
   data.el_height = img.clientHeight;
   console.log(img.clientWidth, img.clientHeight);
   computePreviewRatio();
+  autoDrawCanvasGrid();
 }
 
 function computePreviewRatio() {
-  data.wprev_ratio = data.el_width / data.sheet_width;
-  data.hprev_ratio = data.el_height / data.sheet_height;
+  if (data.el_width && data.sheet_width) {
+    data.wprev_ratio = data.el_width / data.sheet_width;
+  }
+  if (data.el_height && data.sheet_height) {
+    data.hprev_ratio = data.el_height / data.sheet_height;
+  }
 }
 
 function autoDrawCanvasGrid() {
-  console.log('autodraw', data.show_canvas, data.tile_width, data.tile_height)
-  if (data.show_canvas && data.tile_width && data.tile_height) {
+  console.log('autodraw', data.tile_width, data.tile_height)
+  if (data.tile_width > 0 && data.tile_height > 0 && data.el_width > 0 && data.el_height && data.sheet_width > 0 && data.sheet_height > 0) {
+    console.log("CANVAS REDRAWING....")
     clearGrid();
     drawGrid();
   }
 }
 
 function drawGrid() {
+  console.log("Draw GRID...");
   let wprev_ratio = data.wprev_ratio
   let hprev_ratio = data.hprev_ratio;
   let prev_tile_width = parseInt(data.tile_width) * wprev_ratio;
   let prev_tile_height = parseInt(data.tile_height) * hprev_ratio;
   console.log('prevratios', wprev_ratio, hprev_ratio);
   console.log(data.el_width, data.el_height, prev_tile_width, prev_tile_height);
+  let xlines = 0;
+  let ylines = 0;
+  canvas_context.beginPath();
   for (let x = 0; x <= data.el_width; x += prev_tile_width) {
-    canvas_context.moveTo(0.5 + x, 0);
-    canvas_context.lineTo(0.5 + x, data.el_height);
+    canvas_context.moveTo(x, 0);
+    canvas_context.lineTo(x, data.el_height);
+    xlines++;
   }
   for (let x = 0; x <= data.el_height; x += prev_tile_height) {
-    canvas_context.moveTo(0, 0.5 + x);
-    canvas_context.lineTo(data.el_width, 0.5 + x);
+    canvas_context.moveTo(0, x);
+    canvas_context.lineTo(data.el_width, x);
+    ylines++;
   }
   canvas_context.strokeStyle = "black";
   canvas_context.stroke();
+  canvas_context.closePath();
+  console.log("X and Y lines:", xlines, ylines);
 }
 
 function clearGrid() {
+  console.log('Clearing GRID...')
   canvas_context.clearRect(0, 0, slicegrid_canvas.width, slicegrid_canvas.height);
 }
 
@@ -379,9 +393,9 @@ function isButtonFrozen() {
   else return false;
 }
 
-function dimensions() {
-  if (data.width && data.height) {
-    return `${data.width}  ${data.height}`;
+function dimensionsText() {
+  if (data.sheet_width && data.sheet_height) {
+    return `${data.sheet_width} x ${data.sheet_height}`;
   }
   else{
     return "";
@@ -401,7 +415,7 @@ export default {
   },
   computed: {
     isButtonFrozen: isButtonFrozen,
-    dimensions: dimensions,
+    dimensionsText: dimensionsText,
   },
   mounted: mountElements,
   methods: {
@@ -411,7 +425,7 @@ export default {
     drawGrid: drawGrid,
     clearGrid: clearGrid,
     toggleCheckerBG: toggleCheckerBG,
-    sheetElementDimensions: sheetElementDimensions,
+    sheetHandler: sheetHandler,
     sliceSheet: sliceSheet,
     wholeNumberConstrain: wholeNumberConstrain,
     tileWidthHandler: tileWidthHandler,
