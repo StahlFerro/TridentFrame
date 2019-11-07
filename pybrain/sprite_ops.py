@@ -76,7 +76,7 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         must_resize = criteria.tile_width != orig_width or criteria.tile_height != orig_height
         if must_resize:
             fr = fr.resize((round(criteria.tile_width) , round(criteria.tile_height)))
-            yield {"msg": f"RESIZING {must_resize}"}
+            # yield {"msg": f"RESIZING {must_resize}"}
         top = tile_height * math.floor(index / max_frames_row) + criteria.offset_y
         left = tile_width * (index % max_frames_row) + criteria.offset_x
         bottom = top + tile_height

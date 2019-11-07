@@ -77,7 +77,8 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     yield from _create_gifragments(image_paths, gifragment_dir, criteria)
     executable = str(gifsicle_exec())
-    delay = int(100 // criteria.fps)
+    delay = criteria.delay
+    # raise Exception(delay)
     opti_mode = "--unoptimize"
     disposal = "background"
     loopcount = "--loopcount"

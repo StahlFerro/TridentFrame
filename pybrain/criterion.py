@@ -1,15 +1,15 @@
 class CreationCriteria():
     """ Contains all of the criterias for Creating an animated image """
     def __init__(self, vals):
-        self.fps: float = float(vals['fps'])
-        self.duration: float = float(vals['delay'])
+        self.fps: float = float(vals['fps'] or 0)
+        self.delay: float = float(vals['delay'] or 0)
         self.extension: str = vals['format']
         self.reverse: bool = vals['is_reversed']
         self.transparent: bool = vals['is_transparent']
         self.flip_h: bool = vals['flip_x']
         self.flip_v: bool = vals['flip_y']
-        self.resize_width = int(vals['width'])
-        self.resize_height = int(vals['height'])
+        self.resize_width = int(vals['width'] or 1)
+        self.resize_height = int(vals['height'] or 1)
     
     # def transform(self, resize_width, resize_height, flip_h, flip_v):
     #     try:

@@ -10,6 +10,7 @@
     "build": "npm run clean && webpack --mode production",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
     "prod": "electron .",
+    "dist": "npm run build && npm run prod",
     "liverelease": "npm run clean && webpack --watch",
     "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
