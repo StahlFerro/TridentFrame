@@ -47,23 +47,36 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 reverse_index = len(image_paths) - (index + 1)
                 fragment_name = f"rev_{str.zfill(str(reverse_index), 3)}_{fragment_name}"
             save_path = f'{os.path.join(out_path, fragment_name)}.gif'
-            if im.mode == 'RGBA' and criteria.transparent:
-                alpha = im.getchannel('A')
-                # alpha.show(title='alpha')
-                im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
-                # im.show('im first convert')
-                mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-                # mask.show('mask')
-                im.paste(255, mask)
-                # im.show('masked im')
-                im.info['transparency'] = 255
+            if im.mode == 'RGBA':
+                if criteria.transparent:
+                    alpha = im.getchannel('A')
+                    im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
+                    mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+                    im.paste(255, mask)
+                    im.info['transparency'] = 255
+                else:
+                    black_bg = Image.new("RGBA", size=im.size)
+                    black_bg.alpha_composite(im)
+                    # im.show()
+                    im = black_bg
+                    # black_bg.show()
+                    im = im.convert('P', palette=Image.ADAPTIVE)
                 im.save(save_path)
-            elif im.mode == 'RGB' or not criteria.transparent:
+            elif im.mode == 'RGB':
                 im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE)
                 im.save(save_path)
             elif im.mode == 'P':
                 if transparency:
-                    im.save(save_path, transparency=transparency)
+                    if type(transparency) is int:
+                        im.save(save_path, transparency=transparency)
+                    else:
+                        im = im.convert('RGBA')
+                        alpha = im.getchannel('A')
+                        im = im.convert('RGB').convert('P', palette=Image.ADAPTIVE, colors=255)
+                        mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+                        im.paste(255, mask)
+                        im.info['transparency'] = 255
+                        im.save(save_path)
                 else:
                     im.save(save_path)
             # yield {"msg": f"Save path: {save_path}"}
