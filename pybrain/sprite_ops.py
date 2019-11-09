@@ -17,6 +17,19 @@ from .criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
 from .utility import shout_indices
 
 
+def get_boxes(tile_width, tile_height, sheet_width, sheet_height):
+    hbox_count = math.ceil(sheet_width / tile_width)
+    vbox_count = math.ceil(sheet_height / tile_height)
+    for v in range(0, vbox_count):
+        for h in range(0, hbox_count):
+            top = tile_height * v
+            left = tile_width * h
+            bottom = min(top + tile_height, sheet_height)
+            right = min(left + tile_width, sheet_width)
+            box = (left, top, right, bottom)
+            yield box
+
+
 def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in set(STATIC_IMG_EXTS + ANIMATED_IMG_EXTS)]
@@ -73,6 +86,8 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     yield {"msg": shout_nums}
     # yield {"msg": shout_indices}
     # raise Exception(shout_indices)
+    boxes = list(get_boxes(tile_width, tile_height, spritesheet_width, spritesheet_height))
+    yield {"msg": boxes}
     for index, fr in enumerate(frames):
 
         orig_width, orig_height = fr.size
@@ -80,16 +95,16 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         if must_resize:
             fr = fr.resize((round(criteria.tile_width) , round(criteria.tile_height)))
             # yield {"msg": f"RESIZING {must_resize}"}
-        top = tile_height * math.floor(index / max_frames_row) + criteria.offset_y
-        left = tile_width * (index % max_frames_row) + criteria.offset_x
-        bottom = top + tile_height
-        right = left + tile_width
+        # top = tile_height * math.floor(index / max_frames_row) + criteria.offset_y
+        # left = tile_width * (index % max_frames_row) + criteria.offset_x
+        # bottom = top + tile_height
+        # right = left + tile_width
 
-        box = (left, top, right, bottom)
-        box = [int(b) for b in box]
+        # box = (left, top, right, bottom)
+        # box = [int(b) for b in box]
 
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
-        spritesheet.paste(cut_frame, box)
+        spritesheet.paste(cut_frame, boxes[index])
         cut_frame.close()
         if shout_nums.get(index):
             yield {"msg": f'Placing frames to sheet... ({shout_nums.get(index)})'}

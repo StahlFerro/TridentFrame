@@ -38,7 +38,7 @@
             <div v-bind:title="
               `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
               `File size: ${preview_info.general_info.fsize_hr.value}\n` +
-              `FPS: ${prerview_info.animation_info.fps.value}\n` +
+              `FPS: ${preview_info.animation_info.fps.value}\n` +
               `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
               `Format: ${preview_info.general_info.format.value}`
             ">
