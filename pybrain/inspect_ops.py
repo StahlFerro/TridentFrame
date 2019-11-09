@@ -12,7 +12,7 @@ from apng import APNG
 from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
-from .utility import _filter_images, read_filesize
+from .utility import _filter_images, read_filesize, shout_indices
 
 
 def inspect_general(image_path, filter_on="", skip=False) -> Dict:
@@ -77,7 +77,7 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
 
 
 def _inspect_simg(image):
-    """ Returns general and EXIF info from a static image. Static GIFs will not display EXIF (they don't support it)
+    """ Returns general and EXIF info from a static image. Static GIFs will not display EXIF (GIFs don't support it)
 
     Keyword arguments:
     image -- Path or Pillow Image
@@ -237,12 +237,15 @@ def inspect_sequence(image_paths):
     """Returns information of a selected sequence of static images"""
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     sequence_info = []
-    for path in abs_image_paths:
+    perc_skip = 5
+    shout_nums = shout_indices(len(abs_image_paths), perc_skip)
+    for index, path in enumerate(abs_image_paths):
+        if shout_nums.get(index):
+            yield {"msg": f'Loading images... ({shout_nums.get(index)})'}
         info = inspect_general(path, filter_on="static", skip=True)
         if info:
             gen_info = info['general_info']
             sequence_info.append(gen_info)
-            yield {"msg": f"Loading {gen_info['name']['value']}"}
     if not sequence_info:
         raise Exception("No images selected. Make sure the path to them are correct and they are static images")
     static_img_paths = [si['absolute_url']['value'] for si in sequence_info]

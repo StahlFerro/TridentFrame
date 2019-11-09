@@ -2,7 +2,7 @@ import os
 import shutil
 import time
 import subprocess
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
@@ -69,7 +69,7 @@ def _unoptimize_gif(gif_path, out_dir, decoder: str) -> str:
 
 
 def _reduce_color(gif_path, out_dir, color: int = 256) -> str:
-    " Reduce the color of a gif. Overwrites the GIF "
+    " Reduce the color of a gif. Returns the reduxed GIF path"
     print("Performing color reduction...")
     executable = gifsicle_exec()
     redux_gif_path = os.path.join(out_dir, os.path.basename(gif_path))
@@ -122,6 +122,13 @@ def read_filesize(nbytes):
     return f"{size} {size_suffixes[i]}"
 
 
+def shout_indices(frame_count: int, percentage_skip: int) -> Dict[int, str]:
+    """ Returns a dictionary of indices for message yielding, with the specified percentage skip. Examples:\n
+        shout_incides(24, 50) -> {0: "0%", 12: "50%"}\n
+        shout_indices(40, 25) -> {0: "25%", 10: "25%", 20: "50%", 30: "75%"}
+    """
+    mults = 100 // percentage_skip
+    return {round(frame_count / mults * mult): f"{mult * percentage_skip}%" for mult in range(0, mults)}
 
 # def gs_build():
 #     gifsicle_exec = os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")

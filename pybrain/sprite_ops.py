@@ -14,6 +14,7 @@ from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 from .criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from .utility import shout_indices
 
 
 def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
@@ -67,7 +68,9 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     # spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
     # boxes = []
     yield {"msg": "Placing frames to sheet..."}
-    shout_indices = [round(fcount / 10 * mult) for mult in range(0, 10)]
+    perc_skip = 5
+    shout_nums = shout_indices(fcount, perc_skip)
+    yield {"msg": shout_nums}
     # yield {"msg": shout_indices}
     # raise Exception(shout_indices)
     for index, fr in enumerate(frames):
@@ -88,8 +91,8 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
         cut_frame = fr.crop((0, 0, tile_width, tile_height))
         spritesheet.paste(cut_frame, box)
         cut_frame.close()
-        if index in shout_indices:
-            yield {"msg": f'Placing frames to sheet... ({round(index / fcount, 1) * 100}%)'}
+        if shout_nums.get(index):
+            yield {"msg": f'Placing frames to sheet... ({shout_nums.get(index)})'}
         # boxes.append(box)
     outfilename = f"{filename}.png"
     final_path = os.path.join(out_dir, outfilename)

@@ -19,7 +19,7 @@ from hurry.filesize import size, alternative
 
 from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, gifsicle_exec
 from .criterion import CreationCriteria
-from .utility import _mk_temp_dir
+from .utility import _mk_temp_dir, shout_indices
 
 
 def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
@@ -28,8 +28,12 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
     # if criteria.reverse:
     #     image_paths.reverse()
     # temp_gifs = []
+    fcount = len(image_paths)
+    perc_skip = 5
+    shout_nums = shout_indices(fcount, perc_skip)
     for index, ipath in enumerate(image_paths):
-        yield {"msg": f"Processing frames ({index}/{len(image_paths)})..."}
+        if shout_nums.get(index):
+            yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
         with Image.open(ipath) as im:
             transparency = im.info.get("transparency", False)
             orig_width, orig_height = im.size
