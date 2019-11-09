@@ -7512,7 +7512,7 @@ div.slicegrid-container img {
   top: 50%;
   transform: translate(-50%, -50%); }
 
-td.sliceinfo-cell {
+td.sliceinfo-cell table {
   width: 297px !important; }
 
 canvas.slicegrid-canvas {

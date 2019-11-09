@@ -61,7 +61,7 @@
                 </td>
                 <td>
                   <div class="field">
-                    <label class="label">Tile Width</label>
+                    <label class="label">Tile Height</label>
                     <div class="control">
                       <input
                         v-bind:value="tile_height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileHeightHandler(tile_height, $event)"
