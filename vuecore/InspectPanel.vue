@@ -46,7 +46,8 @@
             </span>
             <span>Load Any Image</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-white">
+          <a v-on:click="clearImage" class="button is-neon-white"
+            v-bind:class="{'is-static': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>
@@ -93,6 +94,7 @@ function loadImage() {
     properties: file_dialog_props
   };
   dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
+    data.INS_IS_INSPECTING = true;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
@@ -100,11 +102,13 @@ function loadImage() {
     client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
       if (error) {
         console.error(error);
+      data.INS_IS_INSPECTING = false;
       }
       else {
         data.info_data = res;
         data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
         console.log(res);
+      data.INS_IS_INSPECTING = false;
       }
     })
   });
