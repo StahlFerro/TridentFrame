@@ -72,6 +72,14 @@
                   </div>
                 </td>
               </tr>
+              <tr>
+                <td>
+                  <label class="checkbox" title="Preserve alpha on tiles that have their width or height cut-off on the edges">
+                    <input v-model="is_edge_alpha" type="checkbox" />
+                    Edge Alpha
+                  </label>
+                </td>
+              </tr>
             </tbody>
           </table>
         </td>
@@ -137,7 +145,7 @@
         </td>
       </tr>
       <tr>
-        <td colspan="2" class="has-text-left" style="vertical-align: middle;">
+        <td colspan="2" class="has-text-left is-paddingless" style="vertical-align: middle;">
           <span>{{ sspr_msgbox }}</span>
         </td>
       </tr>
@@ -172,6 +180,11 @@ let data = {
   old_tile_height: "",
   tile_width: "",
   tile_height: "",
+  offset_x: "",
+  offset_y: "",
+  padding_x: "",
+  padding_y: "",
+  is_edge_alpha: false,
   file_size: "",
   file_size_hr: "",
   aspect_ratio: "",
@@ -219,6 +232,7 @@ function loadSheet() {
       } else {
         console.log(res);
         let geninfo = res.general_info
+        data.name = geninfo.base_fname.value;
         data.sheet_path = geninfo.absolute_url.value;
         data.sheet_width = geninfo.width.value;
         data.sheet_height = geninfo.height.value;
@@ -318,11 +332,17 @@ function clearSheet() {
   data.sheet_height = "";
   data.tile_width = "";
   data.tile_height = "";
+  data.offset_x = "",
+  data.offset_y = "",
+  data.padding_x = "",
+  data.padding_y = "",
+  data.is_edge_alpha = false;
   data.file_size = "";
   data.file_size_hr = "";
   data.sspr_msgbox = "";
   data.el_width = 0;
   data.el_height = 0;
+  data.sspr_msgbox = "";
 }
 
 function tileWidthHandler(tile_width, event) {
@@ -411,7 +431,26 @@ function overlayGrid() {
 }
 
 function sliceSheet() {
-    
+    data.SSPR_IS_SLICING = true;
+    client.invoke("slice_spritesheet", data.sheet_path, data.outdir, data.name, data, (error, res) => {
+      if (error) {
+        console.error(error);
+        data.sspr_msgbox = error;
+        data.SSPR_IS_SLICING = false;
+      }
+      else {
+        if (res) {
+          console.log(res);
+          if (res.msg) {
+            data.sspr_msgbox = res.msg;
+          }
+          if (res.CONTROL == "SSPR_FINISH") {
+            data.bspr_msgbox = "Spritesheet built!";
+            data.SSPR_IS_SLICING = false;
+          }
+        }
+      }
+    });
 }
 
 export default {

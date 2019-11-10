@@ -69,11 +69,11 @@ class ModificationCriteria():
 
         self.is_unoptimized = json_vals['is_unoptimized']
 
-    def must_resize(self):
+    def must_resize(self) -> bool:
         return self.orig_width != self.width or self.orig_height != self.height
 
-    def change_format(self):
-        return self.orig_format !=self.format
+    def change_format(self) -> bool:
+        return self.orig_format != self.format
 
 
 class SpritesheetBuildCriteria():
@@ -94,10 +94,13 @@ class SpritesheetBuildCriteria():
 class SpritesheetSliceCriteria():
     """ Contains all of the criterias to slice a spritesheet """
 
-    def __init__(self, tile_x, tile_y, offset_x, offset_y, padding_x, padding_y):
-        self.tile_x: int = int(tile_x)
-        self.tile_y: int = int(tile_y)
-        self.offset_x: int = int(offset_x)
-        self.offset_y: int = int(offset_y)
-        self.padding_x: int = int(padding_x)
-        self.padding_y: int = int(padding_y)
+    def __init__(self, vals):
+        self.sheet_width: int = int(vals.get('sheet_width') or 0)
+        self.sheet_height: int = int(vals.get('sheet_height') or 0)
+        self.tile_width: int = int(vals.get('tile_width') or 0)
+        self.tile_height: int = int(vals.get('tile_height') or 0)
+        self.offset_x: int = int(vals.get('offset_x') or 0)
+        self.offset_y: int = int(vals.get('offset_y') or 0)
+        self.padding_x: int = int(vals.get('padding_x') or 0)
+        self.padding_y: int = int(vals.get('padding_y') or 0)
+        self.is_edge_alpha: bool = vals.get('is_edge_alpha')

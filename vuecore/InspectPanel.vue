@@ -3,7 +3,8 @@
     <table class="table is-borderless" style="padding: 5px;" width="100%">
       <tr>
         <td class="silver-bordered force-center is-paddingless" 
-            style="width: 320px; height: 320px;">
+            style="width: 320px; height: 320px;"
+            v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
           <div class="ins-img-container is-paddingless is-marginless">
             <span class="aimg-helper"></span>
             <img v-bind:src="img_path"/>
@@ -113,7 +114,8 @@ function clearImage() {
   data.info_data = "";
 }
 function toggleCheckerBG() {
-
+  data.checkerbg_active = !data.checkerbg_active;
+  console.log('now checkerbg is', data.checkerbg_active);
 }
 export default {
   data: function() {

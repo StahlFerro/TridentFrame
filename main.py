@@ -11,7 +11,7 @@ from pybrain.utility import _purge_cache
 from pybrain.inspect_ops import inspect_sequence, inspect_general
 from pybrain.create_ops import create_aimg
 from pybrain.split_ops import split_aimg
-from pybrain.sprite_ops import _build_spritesheet
+from pybrain.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pybrain.modify_ops import modify_aimg
 
 
@@ -73,6 +73,17 @@ class API(object):
         # raise Exception(criteria.__dict__)
         # yield {"msg": "yo"}
         return _build_spritesheet(image_paths, out_dir, filename, criteria)
+    
+    @zerorpc.stream
+    def slice_spritesheet(self, image_path, out_dir, filename, vals: dict):
+        if not image_path and not out_dir:
+            raise Exception("Please load the spritesheet and choose the output folder!")
+        elif not image_path:
+            raise Exception("Please load the spritesheet!")
+        elif not out_dir:
+            raise Exception("Please choos the output folder")
+        criteria = SpritesheetSliceCriteria(vals)
+        return _slice_spritesheet(image_path, out_dir, filename, criteria)
 
     def purge_cache(self):
         _purge_cache()

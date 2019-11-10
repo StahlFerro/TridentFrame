@@ -17,7 +17,7 @@ from .criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
 from .utility import shout_indices
 
 
-def get_boxes(tile_width, tile_height, sheet_width, sheet_height):
+def _get_boxes(tile_width, tile_height, sheet_width, sheet_height):
     hbox_count = math.ceil(sheet_width / tile_width)
     vbox_count = math.ceil(sheet_height / tile_height)
     for v in range(0, vbox_count):
@@ -28,6 +28,25 @@ def get_boxes(tile_width, tile_height, sheet_width, sheet_height):
             right = min(left + tile_width, sheet_width)
             box = (left, top, right, bottom)
             yield box
+
+
+def _slice_spritesheet(image_path: str, out_dir:str, filename: str, criteria: SpritesheetSliceCriteria):
+    sheet = Image.open(os.path.abspath(image_path))
+    boxes = _get_boxes(criteria.tile_width, criteria.tile_height, criteria.sheet_width, criteria.sheet_height)
+    alpha_layer = Image.new("RGBA", (criteria.tile_width, criteria.tile_height))
+    for index, box in enumerate(boxes):
+        cut_frame = sheet.crop(box).convert("RGBA")
+        # cut_frame = cut_frame.convert("RGBA")
+        if criteria.is_edge_alpha and cut_frame.size != (criteria.tile_width, criteria.tile_height):
+            alpha_copy = alpha_layer.copy()
+            alpha_copy.alpha_composite(cut_frame)
+            cut_frame = alpha_copy
+        yield {"msg": cut_frame.size}
+        save_name = os.path.join(out_dir, f"{filename}_{str(index).zfill(3)}.png")
+        cut_frame.save(save_name)
+    # yield {"msg": boxes}
+    yield {"msg": "e"}
+    yield {"CONTROL": "SSPR_FINISH"}
 
 
 def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria: SpritesheetBuildCriteria):
@@ -86,7 +105,7 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     yield {"msg": shout_nums}
     # yield {"msg": shout_indices}
     # raise Exception(shout_indices)
-    boxes = list(get_boxes(tile_width, tile_height, spritesheet_width, spritesheet_height))
+    boxes = list(_get_boxes(tile_width, tile_height, spritesheet_width, spritesheet_height))
     yield {"msg": boxes}
     for index, fr in enumerate(frames):
 
