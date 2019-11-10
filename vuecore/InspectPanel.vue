@@ -94,11 +94,11 @@ function loadImage() {
     properties: file_dialog_props
   };
   dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
-    data.INS_IS_INSPECTING = true;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
     }
+    data.INS_IS_INSPECTING = true;
     client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
       if (error) {
         console.error(error);
