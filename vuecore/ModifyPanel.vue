@@ -181,7 +181,7 @@
                           <label class="label">Width</label>
                           <div class="control">
                             <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
-                              class="input is-neon-white" type="text" />
+                              class="input is-neon-white" type="number" min="1" step="1"/>
                           </div>
                         </div>
                       </td>
@@ -190,7 +190,7 @@
                           <label class="label">Height</label>
                           <div class="control">
                             <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
-                             class="input is-neon-white" type="text" />
+                             class="input is-neon-white" type="number" min="1" step="1"/>
                           </div>
                         </div>
                       </td>
