@@ -26,62 +26,65 @@
             </thead>
             <tbody>
               <tr>
-                <td class="is-cyan">Name</td>
+                <td class="is-cyan force-vcenter">Name</td>
                 <td class="">
-                  <span v-if="name">{{ name }}</span>
-                  <span v-else>-</span>
+                  <input class="input is-neon-white" type="text" v-model="name" readonly="readonly"/>
+                  <!-- <span v-if="name">{{ name }}</span>
+                  <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="is-cyan">Dimensions</td>
+                <td class="is-cyan force-vcenter">Dimensions</td>
                 <td class="">
-                  <span v-if="dimensionsText">{{ dimensionsText }}</span>
-                  <span v-else>-</span>
+                  <input class="input is-border-colorless" type="text" v-model="dimensionsText" readonly="readonly"/>
                 </td>
               </tr>
               <tr>
-                <td class="is-cyan">File Size</td>
+                <td class="is-cyan force-vcenter">File Size</td>
                 <td class="">
-                  <span v-if="file_size_hr">{{ file_size_hr }}</span>
-                  <span v-else>-</span>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="field">
-                    <label class="label">Tile Width</label>
-                    <div class="control">
-                      <input
-                        v-bind:value="tile_width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileWidthHandler(tile_width, $event)"
-                        class="input is-neon-white"
-                        type="number" 
-                        min="1" step="1"/>
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="field">
-                    <label class="label">Tile Height</label>
-                    <div class="control">
-                      <input
-                        v-bind:value="tile_height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileHeightHandler(tile_height, $event)"
-                        class="input is-neon-white"
-                        type="number" 
-                        min="1" step="1"/>
-                    </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <label class="checkbox" title="Preserve alpha on tiles that have their width or height cut-off on the edges">
-                    <input v-model="is_edge_alpha" type="checkbox" />
-                    Edge Alpha
-                  </label>
+                  <input class="input is-border-colorless" type="text" v-model="file_size_hr" readonly="readonly"/>
                 </td>
               </tr>
             </tbody>
           </table>
+          
+          <table class="slicecontrol-cell" width="100%">
+            <tr>
+              <td>
+                <div class="field">
+                  <label class="label">Tile Width</label>
+                  <div class="control">
+                    <input
+                      v-bind:value="tile_width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileWidthHandler(tile_width, $event)"
+                      class="input is-neon-white"
+                      type="number" 
+                      min="1" step="1"/>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="field">
+                  <label class="label">Tile Height</label>
+                  <div class="control">
+                    <input
+                      v-bind:value="tile_height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileHeightHandler(tile_height, $event)"
+                      class="input is-neon-white"
+                      type="number" 
+                      min="1" step="1"/>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label class="checkbox" title="Preserve alpha on tiles that have their width or height cut-off on the edges">
+                  <input v-model="is_edge_alpha" type="checkbox" />
+                  Edge Alpha
+                </label>
+              </td>
+            </tr>
+          </table>
+
         </td>
       </tr>
       <tr>
@@ -233,6 +236,7 @@ function loadSheet() {
         console.log(res);
         let geninfo = res.general_info
         data.name = geninfo.base_fname.value;
+        data.file_size_hr = geninfo.fsize_hr.value;
         data.sheet_path = geninfo.absolute_url.value;
         data.sheet_width = geninfo.width.value;
         data.sheet_height = geninfo.height.value;
@@ -254,6 +258,12 @@ function sheetHandler(event) {
   console.log(img.clientWidth, img.clientHeight);
   computePreviewRatio();
   autoDrawCanvasGrid();
+}
+
+function boxCountEstimation() {
+  if (data.tile_width && data.tile_height && data.sheet_width && data.sheet_height) {
+
+  }
 }
 
 function computePreviewRatio() {

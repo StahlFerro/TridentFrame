@@ -62,10 +62,20 @@ const selectPort = () => {
 
 const createPyProc = () => {
     let port = '' + selectPort();
-    let script = path.join(__dirname, 'main.py');
-    pyProc = require('child_process').spawn('python', [script, port]);
-    if (pyProc != null) {
-      console.log('child process success');
+    if (deploy_env && deploy_env == 'DEV') {
+        let script = path.join(__dirname, 'main.py');
+        pyProc = require('child_process').spawn('python', [script, port]);
+        if (pyProc != null) {
+          console.log('development child process success');
+        }
+    }
+    else if (deploy_env && deploy_env == 'PRODUCTION') {
+        let script = path.join(__dirname, 'dist/tridentframe_win/main.exe');
+        console.log(script);
+        pyProc = require('child_process').spawn(script);
+        if (pyProc != null) {
+          console.log('production child process success');
+        }
     }
 }
 

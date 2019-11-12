@@ -45,7 +45,7 @@ def _slice_spritesheet(image_path: str, out_dir:str, filename: str, criteria: Sp
         save_name = os.path.join(out_dir, f"{filename}_{str(index).zfill(3)}.png")
         cut_frame.save(save_name)
     # yield {"msg": boxes}
-    yield {"msg": "e"}
+    # yield {"msg": "e"}
     yield {"CONTROL": "SSPR_FINISH"}
 
 
