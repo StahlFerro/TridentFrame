@@ -422,7 +422,7 @@ function dimensionsText() {
   if (data.sheet_width && data.sheet_height) {
     return `${data.sheet_width} x ${data.sheet_height}`;
   }
-  else{
+  else {
     return "";
   }
 }
@@ -431,26 +431,26 @@ function overlayGrid() {
 }
 
 function sliceSheet() {
-    data.SSPR_IS_SLICING = true;
-    client.invoke("slice_spritesheet", data.sheet_path, data.outdir, data.name, data, (error, res) => {
-      if (error) {
-        console.error(error);
-        data.sspr_msgbox = error;
-        data.SSPR_IS_SLICING = false;
-      }
-      else {
-        if (res) {
-          console.log(res);
-          if (res.msg) {
-            data.sspr_msgbox = res.msg;
-          }
-          if (res.CONTROL == "SSPR_FINISH") {
-            data.bspr_msgbox = "Spritesheet built!";
-            data.SSPR_IS_SLICING = false;
-          }
+  data.SSPR_IS_SLICING = true;
+  client.invoke("slice_spritesheet", data.sheet_path, data.outdir, data.name, data, (error, res) => {
+    if (error) {
+      console.error(error);
+      data.sspr_msgbox = error;
+      data.SSPR_IS_SLICING = false;
+    }
+    else {
+      if (res) {
+        console.log(res);
+        if (res.msg) {
+          data.sspr_msgbox = res.msg;
+        }
+        if (res.CONTROL == "SSPR_FINISH") {
+          data.bspr_msgbox = "Spritesheet built!";
+          data.SSPR_IS_SLICING = false;
         }
       }
-    });
+    }
+  });
 }
 
 export default {

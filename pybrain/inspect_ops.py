@@ -251,10 +251,12 @@ def inspect_sequence(image_paths):
     static_img_paths = [si['absolute_url']['value'] for si in sequence_info]
     # print("imgs count", len(static_img_paths))
     first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
-    filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
+    # filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     sequence_count = len(static_img_paths)
     sequence_filesize = read_filesize(sum([os.stat(i).st_size for i in static_img_paths]))
-    width, height = Image.open(static_img_paths[0]).size
+    # im = Image.open(static_img_paths[0])
+    # width, height = im.size
+    # im.close()
     yield {
         "data": {
             "name": sequence_info[0]['base_fname']['value'],

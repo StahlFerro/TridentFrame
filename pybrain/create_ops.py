@@ -24,7 +24,7 @@ from .utility import _mk_temp_dir, shout_indices
 
 def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
     """ Generate a sequence of GIFs created from the input sequence with the specified criteria, before compiling them into a single animated GIF"""
-    disposal = 0
+    # disposal = 0
     # if criteria.reverse:
     #     image_paths.reverse()
     # temp_gifs = []

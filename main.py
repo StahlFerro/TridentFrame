@@ -19,6 +19,9 @@ class API(object):
     
     def inspect_one(self, image_path, fitler_on=""):
         return inspect_general(image_path, filter_on=fitler_on)
+
+    def echo(self, msg):
+        return f"{msg} echoed"
     
     @zerorpc.stream
     def inspect_many(self, dir_path):
