@@ -1,4 +1,2 @@
-Remove-Item .\build\ -Recurse -Force
-Remove-Item .\dist\main -Recurse -Force
-Remove-Item .\dist\tridentframe_py -Recurse -Force
+Remove-item .\release\tridentframe_win -Recurse -Force
 pyinstaller tridentframe_win.spec

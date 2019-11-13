@@ -5,7 +5,7 @@ const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
 let pyProc = null;
 let pyPort = null;
-let appath = app.getPath();
+let appath = app.getAppPath();
 console.log("DIRNAME", __dirname);
 console.log("APP PATH", appath);
 
@@ -79,7 +79,7 @@ const createPyProc = () => {
     else {
         let script = "";
         if (process.platform == 'win32') {
-            script = path.join(__dirname, 'dist/tridentframe_win/main.exe');
+            script = path.join(__dirname, 'tridentframe_win/main.exe');
         }
         else if (process.platform == 'linux') {
             script = path.join(__dirname, 'release/tridentframe_linux/main');
