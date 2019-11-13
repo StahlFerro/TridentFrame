@@ -28,6 +28,14 @@
             <span>Open Inspector</span>
           </a>
         </td>
+        <td>
+          <a v-on:click="openCWD" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fas fa-folder"></i>
+            </span>
+            <span>Print CWD</span>
+          </a>
+        </td>
       </tr>
     </table>
   </div>
@@ -60,11 +68,23 @@ function openInspector() {
   if (devtools) { devtools.focus(); }
 }
 
+function openCWD() {
+  console.log('openCWD');
+  client.invoke("print_cwd", (error, res) => {
+    if (error) {
+      console.error(error);
+    } else if (res) {
+      console.log(res);
+    }
+  })
+}
+
 export default {
   methods: {
     refreshWindow: refreshWindow,
     purgeCache: purgeCache,
     openInspector: openInspector,
+    openCWD: openCWD,
   }
 };
 </script>

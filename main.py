@@ -3,6 +3,7 @@ import sys
 import random
 import string
 from typing import List
+import os
 
 import zerorpc
 
@@ -92,6 +93,8 @@ class API(object):
         _purge_cache()
         return "Cache evaporated"
 
+    def print_cwd(self):
+        return os.getcwd()
 
 def parse_port():
     return 4242

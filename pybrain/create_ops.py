@@ -110,7 +110,7 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     # pprint(args)
     cmd = ' '.join(args)
     # print(cmd) 
-    # yield {"msg": cmd}
+    yield {"cmd": cmd}
     yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)
     os.chdir(ROOT_PATH)

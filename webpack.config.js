@@ -1,6 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = {
   entry: './app.js',
@@ -50,5 +51,9 @@ module.exports = {
     }),
     new VueLoaderPlugin(),
     // new BundleAnalyzerPlugin(),
-  ]
+  ],
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'release/html'),
+  },
 };
