@@ -16,6 +16,8 @@ from pybrain.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pybrain.modify_ops import modify_aimg
 
 
+IS_FROZEN = getattr(sys, 'frozen', False)
+
 class API(object):
     
     def inspect_one(self, image_path, fitler_on=""):
@@ -94,18 +96,31 @@ class API(object):
         return "Cache evaporated"
 
     def print_cwd(self):
-        return os.getcwd()
+        msg = {
+            "os.getcwd()": os.getcwd(),
+            "sys.executable": sys.executable,
+            "__file__": __file__,
+            "IS_FROZEN": IS_FROZEN
+        }
+        return msg
 
 def parse_port():
     return 4242
 
 
 def main():
+    handle_execpath()
     address = f"tcp://127.0.0.1:{parse_port()}"
     server = zerorpc.Server(API())
     server.bind(address)
     print(f"Start running on {address}")
     print(server.run())
+
+
+def handle_execpath():
+    if IS_FROZEN:
+        frozen_dir = os.path.dirname(sys.executable)
+        os.chdir(frozen_dir)
 
 
 if __name__ == "__main__":

@@ -166,7 +166,7 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
         raise Exception("No output folder selected, please select it first")
     out_dir = os.path.abspath(out_dir)
     if not os.path.exists(out_dir):
-        raise Exception("The specified absolute out_dir does not exist!")
+        raise Exception(f"The specified absolute out_dir does not exist!\n{out_dir}")
     if criteria.extension == 'GIF':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         filename = f"{filename}.gif"

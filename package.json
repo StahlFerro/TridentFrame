@@ -14,20 +14,32 @@
   },
   "main": "main.js",
   "scripts": {
-    "clean": "rimraf dist/",
+    "clean-dist": "rimraf dist/",
+    "clean-cache": "rimraf cache/*",
+    "clean-temp": "rimraf temp/*",
+    "clean-imgcache": "npm run clean-cache && npm run clean-temp",
+    
     "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "npm run css-build -- --watch",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
     "prod": "electron .",
     "prodtest": "electron release/html",
     "dist": "npm run wpbuild && npm run prod",
-    "liverelease": "npm run clean && webpack --watch",
-    "rebuiltron": "./node_modules/.bin/electron-rebuild",
+
+    "liverelease": "npm run clean-dist && webpack --watch",
     "wpserve": "webpack-dev-server --mode development",
-    "wpbuild": "npm run clean && webpack --mode production",
+    "wpbuild": "npm run clean-dist && webpack --mode production",
     "elbuild": "electron-builder",
     "elforge": "electron-forge make",
+    "pybuild": "pyinstaller tripy_linux.spec",
+
     "elpackage": "electron-packager . tridentframe --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
+
+    "dpy-linux": "rimraf ./engine/linux/",
+    "upy-linux": "npm run dpy-linux && npm run pybuild && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
+    "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run dpy-linux && npm run pybuild && npm run elbuild",
+
+    "rebuiltron": "./node_modules/.bin/electron-rebuild",
     "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
     "ultimate-reset": "npm cache clean && rimraf node_modules/ && npm run megafix"
   },
@@ -44,6 +56,7 @@
       ],
       "files": [
         "**/*",
+        "engine/**",
         "!bin/**",
         "!cache/**",
         "!css/**",

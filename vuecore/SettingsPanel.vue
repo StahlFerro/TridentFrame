@@ -74,6 +74,7 @@ function openCWD() {
     if (error) {
       console.error(error);
     } else if (res) {
+      console.log("JS DIRNAME", __dirname)
       console.log(res);
     }
   })
