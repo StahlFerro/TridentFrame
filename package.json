@@ -31,12 +31,13 @@
     "wpbuild": "npm run clean-dist && webpack --mode production",
     "elbuild": "electron-builder",
     "elforge": "electron-forge make",
-    "pybuild": "pyinstaller tripy_linux.spec",
 
     "elpackage": "electron-packager . tridentframe --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
 
     "dpy-linux": "rimraf ./engine/linux/",
+    "bpy-linux": "npm run dpy-linux && pyinstaller tripy_linux.spec",
     "upy-linux": "npm run dpy-linux && npm run pybuild && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
+
     "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run dpy-linux && npm run pybuild && npm run elbuild",
 
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
