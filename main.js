@@ -35,7 +35,7 @@ const createWindow = () => {
         console.log("------ PRODUCTION VERSION ------");
         // Production environment
         mainWindow.loadURL(require('url').format({
-            pathname: path.join(__dirname, './release/html/index.html'),
+            pathname: path.join(__dirname, './dist/index.html'),
             protocol: 'file:',
             slashes: true
         }));
@@ -79,13 +79,18 @@ const createPyProc = () => {
     else {
         let script = "";
         if (process.platform == 'win32') {
-            script = path.join(__dirname, 'tridentframe_win/main.exe');
+            script = path.join(__dirname, 'engine/windows/main.exe');
         }
         else if (process.platform == 'linux') {
-            script = path.join(__dirname, 'release/tridentframe_linux/main');
+            script = path.join(__dirname, 'engine/linux/main');
         }
         console.log(`Obtained python path script: \n${script}`);
+        try {
         pyProc = require('child_process').spawn(script);
+        }
+        catch (error) {
+            console.log(error);
+        }
         if (pyProc != null) {
           console.log('production child process success');
         }
@@ -93,7 +98,7 @@ const createPyProc = () => {
 }
 
 const exitPyProc = () => {
-    pyProc.kill();
+    if (pyProc) { pyProc.kill(); }
     pyProc = null;
     pyPort = null;
 }

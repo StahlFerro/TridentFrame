@@ -1,10 +1,20 @@
 {
   "name": "tridentframe",
   "version": "0.0.1",
-  "description": "GIF/APNG manipulation tool",
+  "description": "Desktop GIF, APNG and Spritesheet swiss-army knife",
+  "author": "StahlFerro <forgewokseven@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://stahlferro.github.io/StahlFerro/TridentFrame",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StahlFerro/TridentFrame.git"
+  },
+  "bugs": {
+    "url": "https://github.com/StahlFerro/TridentFrame/issues"
+  },
   "main": "main.js",
   "scripts": {
-    "clean": "rimraf release/html/",
+    "clean": "rimraf dist/",
     "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "npm run css-build -- --watch",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
@@ -12,34 +22,63 @@
     "prodtest": "electron release/html",
     "dist": "npm run wpbuild && npm run prod",
     "liverelease": "npm run clean && webpack --watch",
-    "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
     "wpserve": "webpack-dev-server --mode development",
     "wpbuild": "npm run clean && webpack --mode production",
     "elbuild": "electron-builder",
-    "package-linux": "electron-packager dist tridentframe-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+    "elforge": "electron-forge make",
+    "elpackage": "electron-packager . tridentframe --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
+    "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
+    "ultimate-reset": "npm cache clean && rimraf node_modules/ && npm run megafix"
   },
   "build": {
     "productName": "TridentFrame",
     "appId": "com.stahlferro.tridentfarme",
     "directories": {
       "output": "release/tridentframe"
+    },
+    "asar": false,
+    "linux": {
+      "target": [
+        "deb"
+      ],
+      "files": [
+        "**/*",
+        "!bin/**",
+        "!cache/**",
+        "!css/**",
+        "!pybrain/**",
+        "!sass/**",
+        "!temp/**",
+        "!venv/**",
+        "!vuecore/**",
+        "!webfonts/**",
+        "!*.py",
+        "!*.spec",
+        "!*.vue",
+        "!webpack.config.js",
+        "!*.txt",
+        "!*.code-workspace",
+        "!*.sh",
+        "!*.md"
+      ]
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/StahlFerro/TridentFrame.git"
+  "make_targets": {
+    "win32": [
+      "squirrel"
+    ],
+    "darwin": [
+      "zip",
+      "dmg"
+    ],
+    "linux": [
+      "deb"
+    ]
   },
-  "author": "StahlFerro",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/StahlFerro/TridentFrame/issues"
-  },
-  "homepage": "https://github.com/StahlFerro/TridentFrame#readme",
   "dependencies": {
     "file-uri-to-path": "^1.0.0",
     "fstream": "^1.0.12",
-    "iv-viewer": "^2.0.1",
     "jsdom": "^15.1.1",
     "tar": "^4.4.10",
     "zeromq": "^5.1.0",
@@ -54,7 +93,6 @@
     "css-loader": "^3.2.0",
     "electron": "^6.0.9",
     "electron-builder": "^22.1.0",
-    "electron-packager": "^9.1.0",
     "electron-rebuild": "^1.8.6",
     "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",

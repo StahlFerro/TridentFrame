@@ -151,7 +151,8 @@
 const remote = require("electron").remote;
 const session = remote.getCurrentWebContents().session;
 
-import { client, ImageViewer } from "./vuecore/Client.vue";
+import { client } from "./vuecore/Client.vue";
+// import { client, ImageViewer } from "./vuecore/Client.vue";
 import CreatePanel from "./vuecore/CreatePanel.vue";
 import SplitPanel from "./vuecore/SplitPanel.vue";
 import ModifyPanel from "./vuecore/ModifyPanel.vue";
