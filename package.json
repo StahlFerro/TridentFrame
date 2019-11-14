@@ -36,9 +36,9 @@
 
     "dpy-linux": "rimraf ./engine/linux/",
     "bpy-linux": "npm run dpy-linux && pyinstaller tripy_linux.spec",
-    "upy-linux": "npm run dpy-linux && npm run pybuild && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
+    "upy-linux": "npm run bpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
 
-    "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run dpy-linux && npm run pybuild && npm run elbuild",
+    "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run bpy-linux && npm run elbuild",
 
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
     "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
