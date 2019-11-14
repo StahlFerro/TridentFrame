@@ -17,6 +17,7 @@
     "clean-dist": "rimraf dist/",
     "clean-cache": "rimraf cache/*",
     "clean-temp": "rimraf temp/*",
+    "clean-release": "rimraf release/*",
     "clean-imgcache": "npm run clean-cache && npm run clean-temp",
     
     "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
@@ -29,15 +30,21 @@
     "liverelease": "npm run clean-dist && webpack --watch",
     "wpserve": "webpack-dev-server --mode development",
     "wpbuild": "npm run clean-dist && webpack --mode production",
-    "elbuild": "electron-builder",
+    "elbuild": "npm run clean-release && electron-builder",
     "elforge": "electron-forge make",
 
     "elpackage": "electron-packager . tridentframe --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
 
+    "dpy-windows": "rimraf ./engine/windows/",
     "dpy-linux": "rimraf ./engine/linux/",
+
+    "bpy-windows": "npm run dpy-windows && pyinstaller tripy_windows.spec",
     "bpy-linux": "npm run dpy-linux && pyinstaller tripy_linux.spec",
+
+    "upy-windows": "npm run bpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
     "upy-linux": "npm run bpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
 
+    "release-windows": "npm run clean-imgcache && npm run wpbuild && npm run bpy-windows && npm run elbuild",
     "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run bpy-linux && npm run elbuild",
 
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
@@ -54,29 +61,34 @@
     "linux": {
       "target": [
         "deb"
-      ],
-      "files": [
-        "**/*",
-        "engine/**",
-        "!bin/**",
-        "!cache/**",
-        "!css/**",
-        "!pybrain/**",
-        "!sass/**",
-        "!temp/**",
-        "!venv/**",
-        "!vuecore/**",
-        "!webfonts/**",
-        "!*.py",
-        "!*.spec",
-        "!*.vue",
-        "!webpack.config.js",
-        "!*.txt",
-        "!*.code-workspace",
-        "!*.sh",
-        "!*.md"
       ]
-    }
+    },
+    "files": [
+      "**/*",
+      "engine/**",
+      "!.github/**",
+      "!.sass-cache/**",
+      "!.vscode/**",
+      "!bin/**",
+      "!cache/**",
+      "!css/**",
+      "!pybrain/**",
+      "!sass/**",
+      "!temp/**",
+      "!test/**",
+      "!venv/**",
+      "!vuecore/**",
+      "!webfonts/**",
+      "!webpack.config.js",
+      "!*.py",
+      "!*.spec",
+      "!*.vue",
+      "!*.txt",
+      "!*.code-workspace",
+      "!*.ps1",
+      "!*.sh",
+      "!*.md"
+    ]
   },
   "make_targets": {
     "win32": [

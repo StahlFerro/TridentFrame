@@ -33,8 +33,8 @@ def _filter_images(image_paths, option="static"):
 
 
 def _purge_cache():
-    for stuff in os.listdir(ABS_CACHE_PATH):
-        stuff_path = os.path.join(ABS_CACHE_PATH, stuff)
+    for stuff in os.listdir(ABS_CACHE_PATH()):
+        stuff_path = os.path.join(ABS_CACHE_PATH(), stuff)
         try:
             if os.path.isfile(stuff_path):
                 os.unlink(stuff_path)
@@ -49,7 +49,8 @@ def _mk_temp_dir(prefix_name: str = ''):
     dirname = time.strftime("%Y%m%d_%H%M%S")
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"
-    temp_dir = os.path.join(ABS_CACHE_PATH, dirname)
+    temp_dir = os.path.join(ABS_CACHE_PATH(), dirname)
+    # raise Exception(temp_dir, os.getcwd())
     os.mkdir(temp_dir)
     return temp_dir
 
