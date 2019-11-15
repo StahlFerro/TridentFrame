@@ -24,26 +24,23 @@
     "css-watch": "npm run css-build -- --watch",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
     "prod": "electron .",
-    "prodtest": "electron release/html",
-    "dist": "npm run wpbuild && npm run prod",
+    "prodtest": "npm run wpbuild && npm run prod",
 
     "liverelease": "npm run clean-dist && webpack --watch",
     "wpserve": "webpack-dev-server --mode development",
     "wpbuild": "npm run clean-dist && webpack --mode production",
     "elbuild": "npm run clean-release && electron-builder",
-    "elforge": "electron-forge make",
-    
-    "dpy-windows": "rimraf ./engine/windows/",
-    "dpy-linux": "rimraf ./engine/linux/",
 
-    "bpy-windows": "npm run dpy-windows && pyinstaller tripy_windows.spec",
-    "bpy-linux": "npm run dpy-linux && pyinstaller tripy_linux.spec",
+    "engine-clean": "rimraf ./engine/*",
 
-    "upy-windows": "npm run bpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
-    "upy-linux": "npm run bpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
+    "buildpy-windows": "npm run engine-clean && pyinstaller tripy_windows.spec",
+    "buildpy-linux": "npm run engine-clean && pyinstaller tripy_linux.spec",
 
-    "release-windows": "npm run clean-imgcache && npm run wpbuild && npm run bpy-windows && npm run elbuild",
-    "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run bpy-linux && npm run elbuild",
+    "updatepy-windows": "npm run buildpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
+    "updatepy-linux": "npm run buildpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
+
+    "release-windows": "npm run clean-imgcache && npm run wpbuild && npm run buildpy-windows && npm run elbuild",
+    "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild",
 
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
     "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
@@ -58,7 +55,7 @@
     "asar": false,
     "linux": {
       "target": [
-        "deb"
+        "deb", "AppImage"
       ]
     },
     "files": [
