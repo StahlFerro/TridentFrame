@@ -32,9 +32,7 @@
     "wpbuild": "npm run clean-dist && webpack --mode production",
     "elbuild": "npm run clean-release && electron-builder",
     "elforge": "electron-forge make",
-
-    "elpackage": "electron-packager . tridentframe --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds",
-
+    
     "dpy-windows": "rimraf ./engine/windows/",
     "dpy-linux": "rimraf ./engine/linux/",
 
@@ -53,7 +51,7 @@
   },
   "build": {
     "productName": "TridentFrame",
-    "appId": "com.stahlferro.tridentfarme",
+    "appId": "com.stahlferro.tridentframe",
     "directories": {
       "output": "release/tridentframe"
     },
@@ -88,18 +86,6 @@
       "!*.ps1",
       "!*.sh",
       "!*.md"
-    ]
-  },
-  "make_targets": {
-    "win32": [
-      "squirrel"
-    ],
-    "darwin": [
-      "zip",
-      "dmg"
-    ],
-    "linux": [
-      "deb"
     ]
   },
   "dependencies": {
