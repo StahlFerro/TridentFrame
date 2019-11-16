@@ -8,7 +8,7 @@ from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
 from apng import APNG
 
-from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH
+from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH, ABS_TEMP_PATH
 from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 # from .create_ops import create_aimg
 # from .split_ops import split_aimg
@@ -33,10 +33,21 @@ def _filter_images(image_paths, option="static"):
 
 
 def _purge_cache():
-    for stuff in os.listdir(ABS_CACHE_PATH()):
-        stuff_path = os.path.join(ABS_CACHE_PATH(), stuff)
+    abs_cache_path = ABS_CACHE_PATH()
+    _purge_directory(abs_cache_path)
+
+
+def _purge_temp():
+    abs_temp_path = ABS_TEMP_PATH()
+    _purge_directory(abs_temp_path)
+
+
+def _purge_directory(target_folder):
+    for stuff in os.listdir(target_folder):
+        stuff_path = os.path.join(target_folder, stuff)
         try:
-            if os.path.isfile(stuff_path):
+            name, ext = os.path.splitext(stuff_path)
+            if os.path.isfile(stuff_path) and ext:
                 os.unlink(stuff_path)
             elif os.path.isdir(stuff_path):
                 shutil.rmtree(stuff_path)

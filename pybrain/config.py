@@ -7,10 +7,14 @@ IMG_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff']
 STATIC_IMG_EXTS = ['png', 'jpg', 'jpeg', 'bmp', 'gif']
 ANIMATED_IMG_EXTS = ['gif', 'png']
 
-CACHE_PATH = 'cache'
+CACHE_DIRNAME = 'cache'
+TEMP_DIRNAME = 'temp'
 
 def ABS_CACHE_PATH():
-    return os.path.abspath(CACHE_PATH)
+    return os.path.abspath(CACHE_DIRNAME)
+
+def ABS_TEMP_PATH():
+    return os.path.abspath(TEMP_DIRNAME)
 
 
 def gifsicle_exec() -> str:

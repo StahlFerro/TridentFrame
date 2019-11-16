@@ -11,7 +11,7 @@
           </a>
         </td>
         <td>
-          <a v-on:click="purgeCache" class="button is-large is-neon-cyan">
+          <a v-on:click="purgeCacheTemp" class="button is-large is-neon-cyan">
             <span class="icon is-large">
               <i class="fas fa-ban"></i>
             </span>
@@ -52,8 +52,8 @@ function refreshWindow() {
   session.clearCache(() => {});
 }
 
-function purgeCache() {
-  client.invoke("purge_cache", (error, res) => {
+function purgeCacheTemp() {
+  client.invoke("purge_cache_temp", (error, res) => {
     if (error) {
       console.error(error);
     } else if (res) {
@@ -83,7 +83,7 @@ function openCWD() {
 export default {
   methods: {
     refreshWindow: refreshWindow,
-    purgeCache: purgeCache,
+    purgeCacheTemp: purgeCacheTemp,
     openInspector: openInspector,
     openCWD: openCWD,
   }
