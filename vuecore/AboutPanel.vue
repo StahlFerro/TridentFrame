@@ -10,7 +10,7 @@
         <tr>
           <td class="has-text-centered is-vcentered">
             <h1 class="title is-1">TridentFrame</h1>
-            <p class="subtitle is-4">v0.0.1</p>
+            <p class="subtitle is-4">v1.0.0-alpha.2</p>
           </td>
         </tr>
         <tr>
@@ -45,7 +45,7 @@
 const { remote, shell } = require('electron');
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const logo = require('../imgs/TridentFrame_Icon_200px.png');
+const logo = require('../imgs/TridentFrame_logo_512x512.png');
 
 function warpGithub() {
   shell.openExternal("https://github.com/StahlFerro/TridentFrame");

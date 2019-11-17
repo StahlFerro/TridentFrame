@@ -20,7 +20,7 @@ const createWindow = () => {
         darkTheme: true,
         fullscreen: false,
         resizable: false,
-        icon: path.join(__dirname, 'imgs/TridentFrame_Icon_200px.png'),
+        icon: path.join(__dirname, 'imgs/TridentFrame_logo_512x512.png'),
         webPreferences: {
             webSecurity: false,
             nodeIntegration: true,
@@ -29,7 +29,7 @@ const createWindow = () => {
     mainWindow.setMenu(null);
     if (deploy_env && deploy_env == "DEV") { // Development environment
         console.log("------ DEVELOPMENT VERSION ------");
-        mainWindow.loadURL("http://localhost:8080/")
+        mainWindow.loadURL("http://localhost:8080/");
     }
     else {
         console.log("------ PRODUCTION VERSION ------");
