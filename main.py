@@ -129,15 +129,18 @@ class GracefullKiller:
         print(f"{signum} Closing server...")
         self.SERVER.close()
 
+
 def main():
+    port = '42069'
+    print(port)
     handle_execpath()
-    port = 4242
+    # port = argv
     address = f"tcp://127.0.0.1:{port}"
     SERVER: zerorpc.Server = zerorpc.Server(API())
     SERVER.debug = True
     SERVER.bind(address)
     print(f"Start running on {address}")
-    killer = GracefullKiller(SERVER)
+    # killer = GracefullKiller(SERVER)
     SERVER.run()
 
 
@@ -148,4 +151,6 @@ def handle_execpath():
 
 
 if __name__ == "__main__":
+    # port = sys.argv[-1]
     main()
+    # main(port)

@@ -63,7 +63,7 @@ app.on('activate', () => {
 })
 
 const selectPort = () => {
-    pyPort = 4242;
+    pyPort = 42069;
     return pyPort;
 }
 
@@ -71,7 +71,7 @@ const createPyProc = () => {
     let port = '' + selectPort();
     if (deploy_env && deploy_env == 'DEV') {
         let script = path.join(__dirname, 'main.py');
-        pyProc = require('child_process').spawn('python', [script, port]);
+        pyProc = require('child_process').spawn('python', [script]);
         if (pyProc != null) {
           console.log('development child process success');
         }
@@ -86,7 +86,7 @@ const createPyProc = () => {
         }
         console.log(`Obtained python path script: \n${script}`);
         try {
-        pyProc = require('child_process').spawn(script);
+            pyProc = require('child_process').spawn(script);
         }
         catch (error) {
             console.log(error);
@@ -97,7 +97,8 @@ const createPyProc = () => {
     }
 }
 
-const exitPyProc = () => {
+const exitPyProc = (event) => {
+    console.log(event);
     if (pyProc) { pyProc.kill(); }
     pyProc = null;
     pyPort = null;
@@ -105,3 +106,7 @@ const exitPyProc = () => {
 
 app.on('ready', createPyProc);
 app.on('will-quit', exitPyProc);
+app.on('window-all-closed', exitPyProc);
+app.on('quit', exitPyProc);
+app.on('session-end', exitPyProc);
+app.on('shutdown', exitPyProc);
