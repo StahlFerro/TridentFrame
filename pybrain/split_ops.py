@@ -115,7 +115,7 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
     yield {"CONTROL": "SPL_FINISH"}
 
 
-def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria) -> bool:
+def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
     """ Umbrella function for splitting animated images into individual frames """
     # print(error)
     image_path = os.path.abspath(image_path)

@@ -29,12 +29,12 @@
           </a>
         </td>
         <td>
-          <a v-on:click="openCWD" class="button is-large is-neon-cyan">
+          <!-- <a v-on:click="openCWD" class="button is-large is-neon-cyan">
             <span class="icon is-large">
               <i class="fas fa-folder"></i>
             </span>
             <span>Print CWD</span>
-          </a>
+          </a> -->
         </td>
       </tr>
     </table>

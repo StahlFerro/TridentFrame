@@ -32,14 +32,14 @@ def _filter_images(image_paths, option="static"):
     return ipath_tuples
 
 
-def _purge_cache():
-    abs_cache_path = ABS_CACHE_PATH()
-    _purge_directory(abs_cache_path)
+# def _purge_cache():
+#     abs_cache_path = ABS_CACHE_PATH()
+#     _purge_directory(abs_cache_path)
 
 
-def _purge_temp():
-    abs_temp_path = ABS_TEMP_PATH()
-    _purge_directory(abs_temp_path)
+# def _purge_temp():
+#     abs_temp_path = ABS_TEMP_PATH()
+#     _purge_directory(abs_temp_path)
 
 
 def _purge_directory(target_folder):

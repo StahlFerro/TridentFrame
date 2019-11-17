@@ -10,8 +10,10 @@ ANIMATED_IMG_EXTS = ['gif', 'png']
 CACHE_DIRNAME = 'cache'
 TEMP_DIRNAME = 'temp'
 
+
 def ABS_CACHE_PATH():
     return os.path.abspath(CACHE_DIRNAME)
+
 
 def ABS_TEMP_PATH():
     return os.path.abspath(TEMP_DIRNAME)
@@ -24,6 +26,7 @@ def gifsicle_exec() -> str:
         return os.path.abspath("./bin/gifsicle-1.92-2+b1_amd64/gifsicle")
     else:
         return False
+
 
 def imagemagick_exec() -> str:
     if platform.system() == 'Windows':
