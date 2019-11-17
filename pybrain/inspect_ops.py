@@ -7,6 +7,7 @@ from typing import List, Dict
 from urllib.parse import urlparse
 
 from PIL import Image, ExifTags, ImageFile
+# from PIL.GifImagePlugin import GifImageFile
 Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
 from hurry.filesize import size, alternative
@@ -137,6 +138,7 @@ def _inspect_agif(abspath: str, gif: Image):
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
     fsize_hr = read_filesize(fsize)
+    loop_count = gif.info.get('loop') or "Infinite"
     delays = []
     comments = []
     for f in range(0, gif.n_frames):
@@ -154,6 +156,7 @@ def _inspect_agif(abspath: str, gif: Image):
     fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
     loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
     fmt = 'GIF'
+    full_format = str(gif.info.get('version') or "")
     transparency = gif.info.get('transparency', "No")
     # alpha = gif.getchannel('A')
     image_info = {
@@ -166,6 +169,7 @@ def _inspect_agif(abspath: str, gif: Image):
             "fsize_hr": {"value": fsize_hr, "label": "File size "},
             "absolute_url": {"value": abspath, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
+            "format_version": {"value": full_format, "label": "Full format"},
             "transparency": {"value": transparency, "label": "Has Transparency"},
             # "alpha": {"value": alpha, "label": "Has Alpha"},
             "comments": {"value": comments, "label": "Comments"},
@@ -175,10 +179,11 @@ def _inspect_agif(abspath: str, gif: Image):
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
             "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
-            "delays": {"value": delays, "label": "Delays (in ms)"},
+            "delays": {"value": delays, "label": "Delays (milliseconds)"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
-            "loop_duration": {"value": loop_duration, "label": "Loop"},
+            "loop_duration": {"value": loop_duration, "label": "Loop duration (seconds)"},
+            "loop_count": {"value": loop_count, "label": "Loop count"},
         }
     }
     gif.close()
@@ -190,6 +195,7 @@ def _inspect_apng(abspath, apng: APNG):
     base_fname, ext = os.path.splitext(filename)      
     frames = apng.frames
     frame_count = len(frames)
+    loop_count = apng.num_plays or "Infinite"
     png_one, controller_one = frames[0]
     fmt = 'PNG'
     fsize = os.stat(abspath).st_size
@@ -224,10 +230,11 @@ def _inspect_apng(abspath, apng: APNG):
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
             "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
-            "delays": {"value": delays, "label": "Delays (in ms)"},
+            "delays": {"value": delays, "label": "Delays (milliseconds)"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
-            "loop_duration": {"value": loop_duration, "label": "Loop"},
+            "loop_duration": {"value": loop_duration, "label": "Loop duration (seconds)"},
+            "loop_count": {"value": loop_count, "label": "Loop count"},
         }
     }
     return image_info

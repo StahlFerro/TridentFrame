@@ -28,7 +28,7 @@
               <tr>
                 <td class="is-cyan force-vcenter">Name</td>
                 <td class="">
-                  <input class="input is-neon-white" type="text" v-model="name" readonly="readonly"/>
+                  <input class="input is-neon-white" type="text" v-model="name"/>
                   <!-- <span v-if="name">{{ name }}</span>
                   <span v-else>-</span> -->
                 </td>
