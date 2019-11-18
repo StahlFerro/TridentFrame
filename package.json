@@ -23,7 +23,7 @@
     "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "npm run css-build -- --watch",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
-    "prod": "electron .",
+    "prod": "cross-env DEPLOY_ENV=PROD electron .",
     "prodtest": "npm run wpbuild && npm run prod",
     "liverelease": "npm run clean-dist && webpack --watch",
     "wpserve": "webpack-dev-server --mode development",
@@ -55,8 +55,9 @@
     },
     "linux": {
       "target": [
-        "deb"
-      ]
+        "7z"
+      ],
+      "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.png"
     },
     "files": [
       "**/*",

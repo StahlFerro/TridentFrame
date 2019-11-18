@@ -98,18 +98,23 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     # raise Exception(delay)
     opti_mode = "--unoptimize"
     disposal = "background"
-    loopcount = "--loopcount"
-    # globstar_path = os.path.join(gifragment_dir, "*.gif")
+    loop_arg = "--loopcount"
+    if (not criteria.loop_count or criteria.loop_count == 0):
+        loop_arg = "--loopcount"
+    elif (criteria.loop_count == 1):
+        loop_arg = '--no-loopcount'
+    elif (criteria.loop_count > 1):
+        loop_arg = f'--loopcount={criteria.loop_count - 1}'
     globstar_path = "*.gif"
     ROOT_PATH = str(os.getcwd())
     if os.getcwd() != gifragment_dir:
         yield {"msg": f"Changing directory from {os.getcwd()} to {gifragment_dir}"}
         os.chdir(gifragment_dir)
     yield {"msg": f"Obtained gifsicle exec path: {executable}"}
-    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loopcount, globstar_path, "--output", f'"{out_full_path}"']
+    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loop_arg, globstar_path, "--output", f'"{out_full_path}"']
     # pprint(args)
     cmd = ' '.join(args)
-    # print(cmd) 
+    # print(cmd)
     yield {"cmd": cmd}
     yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)
@@ -159,6 +164,8 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     # Test if inputted filename has extension, then remove it from the filename
+    if len(img_paths) < 2:
+        raise Exception(f"At least 2 images is needed for an animated {criteria.extension}!")
     fname, ext = os.path.splitext(filename)
     if ext:
         filename = fname

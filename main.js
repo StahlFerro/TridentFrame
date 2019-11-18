@@ -72,7 +72,7 @@ const selectPort = () => {
 
 const createPyProc = () => {
     let port = '' + selectPort();
-    if (deploy_env && deploy_env == 'DEV') {
+    if (deploy_env && (deploy_env == 'DEV' || deploy_env == 'PROD')) {
         let script = path.join(__dirname, 'main.py');
         pyProc = require('child_process').spawn('python', [script]);
         if (pyProc != null) {
@@ -101,7 +101,7 @@ const createPyProc = () => {
 }
 
 const exitPyProc = (event) => {
-    console.log(event);
+    // console.log(event);
     if (pyProc) { pyProc.kill(); }
     pyProc = null;
     pyPort = null;
