@@ -160,7 +160,7 @@
                 <div class="field">
                   <label class="label" title="How many times the GIF/APNG will loop. Zero/blank for infinite loop">Loop count</label>
                   <div class="control">
-                    <input v-model="loop_count" class="input is-neon-white" type="number" min="0" max="999" step="1"/>
+                    <input v-model="loop_count" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" min="0" max="999" step="1"/>
                   </div>
                 </div>
               </td>

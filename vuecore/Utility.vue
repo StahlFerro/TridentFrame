@@ -54,7 +54,7 @@ function gcd(a, b) { // Gets the greatest common divisor between two numbers
 
 function wholeNumberConstrain(event) {
   console.log(event.key, event.key != ".");
-  if (event.key != ".") {
+  if (event.key != "." && event.key != '-') {
     console.log("IS DIGIT!");
     return true;
   }
