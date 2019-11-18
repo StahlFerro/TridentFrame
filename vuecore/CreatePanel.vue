@@ -100,7 +100,7 @@
         <td id="CRT_control_cell" class="is-paddingless" colspan="2">
           <table class="table crt-control-table" width="100%">
             <tr>
-              <td>
+              <td width="20%">
                 <div class="field">
                   <label class="label">Name</label>
                   <div class="control">
@@ -108,6 +108,38 @@
                   </div>
                 </div>
               </td>
+              <td width="20%">
+                <div class="field">
+                  <label class="label">Width</label>
+                  <div class="control">
+                    <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
+                    class="input is-neon-white" type="number" min="1" step="1"/>
+                  </div>
+                </div>
+              </td>
+              <td width="20%">
+                <div class="field">
+                  <label class="label">Height</label>
+                  <div class="control">
+                    <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
+                    class="input is-neon-white" type="number" />
+                  </div>
+                </div>
+              </td>
+              <td width="20%" style="vertical-align: bottom;">
+                <label class="checkbox">
+                  <input v-model="lock_aspect_ratio" type="checkbox"/>
+                  Lock aspect ratio
+                </label>
+                <label class="label">
+                  <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
+                  <span v-else>&nbsp;</span>
+                </label>
+              </td>
+              <td width="20%" style="vertical-align: bottom;">
+              </td>
+            </tr>
+            <tr>
               <td>
                 <div class="field">
                   <label class="label">Delay (seconds)</label>
@@ -124,6 +156,25 @@
                   </div>
                 </div>
               </td>
+              <td>
+                <div class="field">
+                  <label class="label" title="How many times the GIF/APNG will loop. Zero/blank for infinite loop">Loop count</label>
+                  <div class="control">
+                    <input v-model="loop_count" class="input is-neon-white" type="number" min="0" max="999" step="1"/>
+                  </div>
+                </div>
+              </td>
+              <td style="vertical-align: bottom;">
+                <label class="checkbox">
+                  <input v-model="flip_x" type="checkbox" />
+                  Flip Horizontally
+                </label>
+                <br />
+                <label class="checkbox">
+                  <input v-model="flip_y" type="checkbox" />
+                  Flip Vertically
+                </label>
+              </td>
               <td style="vertical-align: bottom;">
                 <label class="checkbox" title="Preserve transparent pixels">
                   <input v-model="is_transparent" type="checkbox" />
@@ -137,49 +188,7 @@
               </td>
             </tr>
             <tr>
-              <td>
-                <div class="field">
-                  <label class="label">Width</label>
-                  <div class="control">
-                    <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
-                    class="input is-neon-white" type="number" min="1" step="1"/>
-                  </div>
-                </div>
-              </td>
-              <td>
-                <div class="field">
-                  <label class="label">Height</label>
-                  <div class="control">
-                    <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
-                    class="input is-neon-white" type="number" />
-                  </div>
-                </div>
-              </td>
-              <td style="vertical-align: bottom;">
-                <label class="checkbox">
-                  <input v-model="lock_aspect_ratio" type="checkbox"/>
-                  Lock aspect ratio
-                </label>
-
-                <label class="label">
-                  <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
-                  <span v-else>&nbsp;</span>
-                </label>
-              </td>
-              <td style="vertical-align: bottom;">
-                <label class="checkbox">
-                  <input v-model="flip_x" type="checkbox" />
-                  Flip Horizontally
-                </label>
-                <br />
-                <label class="checkbox">
-                  <input v-model="flip_y" type="checkbox" />
-                  Flip Vertically
-                </label>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="2" style="padding-top: 25px;">
+              <td colspan="3" style="padding-top: 25px;">
                 <div class="field has-addons">
                   <div class="control">
                     <a class="button is-neon-cyan" v-on:click="CRTChooseOutdir">
@@ -257,6 +266,7 @@ var data = {
   width: "",
   height: "",
   delay: "",
+  loop_count: "",
   is_transparent: false,
   is_reversed: false,
   flip_x: false,
@@ -346,6 +356,7 @@ function CRTClearAIMG() {
   data.name = "";
   data.delay = "";
   data.fps = "";
+  data.loop_count = "";
   data.orig_width = "";
   data.old_width = "";
   data.width = "";

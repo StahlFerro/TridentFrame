@@ -10,6 +10,7 @@ class CreationCriteria():
         self.flip_v: bool = vals['flip_y']
         self.resize_width = int(vals['width'] or 1)
         self.resize_height = int(vals['height'] or 1)
+        self.loop_count = int(vals['loop_count'] or 0)
     
     # def transform(self, resize_width, resize_height, flip_h, flip_v):
     #     try:
