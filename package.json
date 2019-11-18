@@ -55,9 +55,9 @@
     },
     "linux": {
       "target": [
-        "deb"
+        "7z"
       ],
-      "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.icns"
+      "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.png"
     },
     "files": [
       "**/*",

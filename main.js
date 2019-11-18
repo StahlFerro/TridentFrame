@@ -98,7 +98,7 @@ const createPyProc = () => {
 }
 
 const exitPyProc = (event) => {
-    console.log(event);
+    // console.log(event);
     if (pyProc) { pyProc.kill(); }
     pyProc = null;
     pyPort = null;

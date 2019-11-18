@@ -159,6 +159,8 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     # Test if inputted filename has extension, then remove it from the filename
+    if len(img_paths) < 2:
+        raise Exception(f"At least 2 images is needed for an animated {criteria.extension}!")
     fname, ext = os.path.splitext(filename)
     if ext:
         filename = fname
