@@ -11,6 +11,7 @@ console.log("APP PATH", appath);
 
 let mainWindow = null
 const createWindow = () => {
+    console.log("Creating window...");
     mainWindow = new BrowserWindow({
         width: 950, height: 700,
         minWidth: 950, minHeight: 700,
@@ -71,6 +72,7 @@ const selectPort = () => {
 }
 
 const createPyProc = () => {
+    console.log("Starting python engine...");
     let port = '' + selectPort();
     if (deploy_env && (deploy_env == 'DEV' || deploy_env == 'PROD')) {
         let script = path.join(__dirname, 'main.py');
@@ -107,7 +109,6 @@ const exitPyProc = (event) => {
     pyPort = null;
 }
 
-app.on('ready', createPyProc);
 app.on('will-quit', exitPyProc);
 app.on('window-all-closed', exitPyProc);
 app.on('quit', exitPyProc);
