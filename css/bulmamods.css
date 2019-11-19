@@ -7283,6 +7283,16 @@ input.input.is-border-colorless {
   box-shadow: none;
   border: 2px solid #31363b; }
 
+.is-left-paddingless {
+  padding-left: 0 !important; }
+
+.is-bottom-paddingless {
+  padding-bottom: 0 !important; }
+
+.is-bottomleft-paddingless {
+  padding-bottom: 0 !important;
+  padding-left: 0 !important; }
+
 /* Checkerboard background image */
 .has-checkerboard-bg {
   background-image: url("../imgs/Transparency500.png"); }

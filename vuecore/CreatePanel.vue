@@ -132,10 +132,11 @@
                   <input v-model="lock_aspect_ratio" type="checkbox"/>
                   Lock aspect ratio
                 </label>
-                <label class="label">
-                  <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
-                  <span v-else>&nbsp;</span>
-                </label>
+                <br/>
+                <template v-if="aspect_ratio && aspect_ratio.text">
+                  <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                </template>
+                <template v-else>&nbsp;</template>
               </td>
               <td width="20%" style="vertical-align: bottom;">
               </td>
@@ -234,9 +235,7 @@
             </tr>
             <tr>
               <td colspan="4">
-                <div class="create-msgbox">
-                  <span>{{ create_msgbox }}</span>
-                </div>
+                <input v-model="create_msgbox" type="text" class="input is-left-paddingless is-border-colorless" readonly="readonly"/>
               </td>
             </tr>
           </table>
@@ -367,6 +366,12 @@ function CRTClearAIMG() {
   data.CRT_sequence_counter = "";
   data.create_msgbox = "";
   data.sequence_counter = "";
+  let ARData = {
+    "w_ratio": "",
+    "h_ratio": "",
+    "text": "",
+  };
+  data.aspect_ratio = ARData;
   // mboxClear(create_msgbox);
   // deleteTempAIMG();
   // session.clearCache(testcallback);

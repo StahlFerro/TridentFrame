@@ -175,11 +175,11 @@
                   <input v-model="lock_aspect_ratio" type="checkbox"/>
                   Lock aspect ratio
                 </label>
-
-                <label class="label">
-                  <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
-                  <span v-else>&nbsp;</span>
-                </label>
+                <br/>
+                  <template v-if="aspect_ratio && aspect_ratio.text">
+                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                  </template>
+                  <template v-else>&nbsp;</template>
               </td>
 
               <td width="20%">
@@ -257,7 +257,7 @@
 
             </tr>
             <tr>
-              <td colspan="3" style="padding-top: 25px;">
+              <td colspan="3" style="padding-top: 15px;">
                 <div class="field has-addons">
                   <div class="control">
                     <a v-on:click="chooseOutDir" class="button is-neon-cyan">
@@ -278,7 +278,7 @@
                   </div>
                 </div>
               </td>
-              <td colspan="1" style="padding-top: 25px;">
+              <td colspan="1" style="padding-top: 15px;">
                 <div class="field has-text-centered">
                   <div class="control">
                     <a v-on:click="buildSpritesheet" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_BUILDING, 'is-static': isButtonFrozen}">
@@ -287,15 +287,16 @@
                   </div>
                 </div>
               </td>
-              <td style="padding-top: 15px;">
-                <span v-if="sheetDimensions">
-                  Sheet dimensions<br/>{{ sheetDimensions }}
-                </span>
+              <td style="padding-top: 5px; line-height: 20px;">
+                <template v-if="sheetDimensions">
+                  <span>Sheet dimensions</span>
+                  <input v-model="sheetDimensions" class="input is-border-colorless is-paddingless" readonly="readonly"/>
+                </template>
               </td>
             </tr>
             <tr>
               <td colspan="5" class="has-text-left" style="vertical-align: middle;">
-                <span>{{ bspr_msgbox }}</span>
+                <input v-model="bspr_msgbox" type="text" class="input is-paddingless is-border-colorless" readonly="readonly"/>
               </td>
             </tr>
           </table>
@@ -329,6 +330,12 @@ function clearInfo() {
   data.preview_path = "";
   data.preview_path_cb = "";
   data.preview_info = "";
+  let ARData = {
+    "w_ratio": "",
+    "h_ratio": "",
+    "text": "",
+  };
+  data.aspect_ratio = ARData;
 }
 
 var data = {

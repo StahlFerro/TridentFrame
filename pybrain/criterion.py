@@ -43,8 +43,8 @@ class ModificationCriteria():
         self.name = json_vals['name']
         self.orig_width = json_vals['orig_width']
         self.orig_height = json_vals['orig_height']
-        self.width = json_vals['width']
-        self.height = json_vals['height']
+        self.width = int(json_vals.get('width', 0))
+        self.height = int(json_vals.get('height', 0))
         self.orig_delay = json_vals['orig_delay']
         self.delay = json_vals['delay']
         self.fps = json_vals['fps']

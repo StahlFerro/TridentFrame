@@ -305,11 +305,11 @@
                           <input v-model="lock_aspect_ratio" type="checkbox"/>
                           Lock aspect ratio
                         </label>
-
-                        <label class="label">
-                          <span v-if="aspect_ratio && aspect_ratio.text">{{ aspect_ratio.text }}</span>
-                          <span v-else>&nbsp;</span>
-                        </label>
+                        <br/>
+                        <template v-if="aspect_ratio && aspect_ratio.text">
+                          <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                        </template>
+                        <template v-else>&nbsp;</template>
                       </td>
                     </tr>
                     <tr>
@@ -357,8 +357,8 @@
         </td>
       </tr>
       <tr>
-        <td colspan="8" class="has-text-left" style="vertical-align: middle;">
-          {{ modify_msgbox }}
+        <td colspan="8" class="is-paddingless" style="vertical-align: middle;">
+          <input v-model="modify_msgbox" type="text" class="input is-paddingless is-border-colorless" readonly="readonly"/>
         </td>
       </tr>
     </table>
@@ -461,6 +461,12 @@ function clearNewFields() {
   data.loop_count = "";
   data.skip_frame = "";
   data.modify_msgbox = "";
+  let ARData = {
+    "w_ratio": "",
+    "h_ratio": "",
+    "text": "",
+  };
+  data.aspect_ratio = ARData;
 }
 
 function toggleOrigCheckerBG() {

@@ -168,7 +168,7 @@
       </tr>
       <tr>
         <td colspan="2" class="has-text-left" style="vertical-align: middle;">
-          <span>{{ split_msgbox }}</span>
+          <input v-model="split_msgbox" type="text" class="input is-left-paddingless is-border-colorless" readonly="readonly"/>
         </td>
       </tr>
     </table>

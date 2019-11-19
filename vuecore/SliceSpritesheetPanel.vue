@@ -121,7 +121,7 @@
         <td></td>
       </tr>
       <tr>
-        <td class="is-hpaddingless is-toppaddingless">
+        <td class="is-paddingless">
           <div class="field has-addons">
             <div class="control">
               <a v-on:click="chooseOutDir" class="button is-neon-cyan">
@@ -142,14 +142,14 @@
             </div>
           </div>
         </td>
-        <td class="has-text-centered is-toppaddingless">
+        <td class="has-text-centered is-paddingless">
           <a v-on:click="sliceSheet" class="button is-neon-cyan" v-bind:class="{'is-loading': SSPR_IS_SLICING, 'is-static': isButtonFrozen}">
             Slice to Folder</a>
         </td>
       </tr>
       <tr>
-        <td colspan="2" class="has-text-left is-paddingless" style="vertical-align: middle;">
-          <span>{{ sspr_msgbox }}</span>
+        <td colspan="2" class="is-paddingless" style="vertical-align: middle;">
+          <input v-model="sspr_msgbox" type="text" class="input is-paddingless is-border-colorless" readonly="readonly"/>
         </td>
       </tr>
     </table>
@@ -353,6 +353,12 @@ function clearSheet() {
   data.el_width = 0;
   data.el_height = 0;
   data.sspr_msgbox = "";
+  let ARData = {
+    "w_ratio": "",
+    "h_ratio": "",
+    "text": "",
+  };
+  data.aspect_ratio = ARData;
 }
 
 function tileWidthHandler(tile_width, event) {
@@ -455,7 +461,7 @@ function sliceSheet() {
           data.sspr_msgbox = res.msg;
         }
         if (res.CONTROL == "SSPR_FINISH") {
-          data.bspr_msgbox = "Spritesheet built!";
+          data.sspr_msgbox = "Spritesheet built!";
           data.SSPR_IS_SLICING = false;
         }
       }
