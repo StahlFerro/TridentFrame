@@ -170,6 +170,16 @@ def _generate_gifsicle_args(criteria: ModificationCriteria) -> List[Tuple[str, s
         args.append(("--flip-horizontal", "Flipping image horizontally..."))
     if criteria.flip_y:
         args.append((f"--flip-vertical", "Flipping image vertically..."))
+    if criteria.loop_count:
+        loop_count = criteria.loop_count
+        loop_arg = "--loopcount"
+        if (not loop_count or loop_count == 0):
+            loop_arg = "--loopcount"
+        elif (loop_count == 1):
+            loop_arg = '--no-loopcount'
+        elif (loop_count > 1):
+            loop_arg = f'--loopcount={loop_count - 1}'
+        args.append((loop_arg, f"Changing loop count to {loop_count or 'Infinite'}..."))
     return args
 
 

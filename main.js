@@ -76,7 +76,7 @@ const createPyProc = () => {
         let script = path.join(__dirname, 'main.py');
         pyProc = require('child_process').spawn('python', [script]);
         if (pyProc != null) {
-          console.log('development child process success');
+            console.log('development child process success');
         }
     }
     else {
