@@ -87,7 +87,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     # temp_dir = _mk_temp_dir(prefix_name="temp_mods")
     # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = os.path.join(out_dir, full_name)
-    yield {"msg": f"OUT FULL PATH: {out_full_path}"}
+    # yield {"msg": f"OUT FULL PATH: {out_full_path}"}
     sicle_args = _generate_gifsicle_args(criteria)
     magick_args = _generate_imagemagick_args(criteria)
     # yield sicle_args
