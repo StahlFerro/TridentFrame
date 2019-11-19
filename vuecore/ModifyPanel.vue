@@ -27,6 +27,7 @@
             <div v-bind:title="
               `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
               `File size: ${preview_info.general_info.fsize_hr.value}\n` +
+              `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
               `Format: ${preview_info.general_info.format.value}`
             ">
               <span class="aimg-helper"></span>
@@ -94,19 +95,31 @@
               <tbody>
                 <tr>
                   <td class="mod-info-label is-cyan">Name</td>
-                  <td class="mod-info-data">{{ orig_name }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="orig_name">{{ orig_name }}</span>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Dimensions</td>
-                  <td class="mod-info-data">{{ origDimensions }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="origDimensions">{{ origDimensions }}</span>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">File size</td>
-                  <td class="mod-info-data">{{ orig_file_size_hr }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="orig_file_size_hr">{{ orig_file_size_hr }}</span>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Format</td>
-                  <td class="mod-info-data">{{ orig_format }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="orig_file_size_hr">{{ orig_format }}</span>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Total frames</td>
@@ -117,11 +130,17 @@
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Frame rate</td>
-                  <td class="mod-info-data">{{ orig_fps }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="orig_fps">{{ orig_fps }}</span>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Frame delay</td>
-                  <td class="mod-info-data">{{ orig_delay_info }}</td>
+                  <td class="mod-info-data">
+                    <span v-if="orig_fps">{{ orig_delay_info }}</span>
+                    <span v-else>-</span>
+                  </td>
                 </tr>
                 <tr>
                   <td class="mod-info-label is-cyan">Loop duration</td>
@@ -129,6 +148,16 @@
                     <span v-if="orig_loop_duration">{{ orig_loop_duration }} seconds</span>
                     <span v-else>-</span>
                     </td>
+                </tr>
+                <tr>
+                  <td class="mod-info-label is-cyan">Loop count</td>
+                  <td class="mod-info-data">
+                    <template v-if="orig_path">
+                      <span v-if="orig_loop_count == 0">Infinite</span>
+                      <span v-else>{{ orig_loop_count }}</span>
+                    </template>
+                    <template v-else>-</template>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -208,7 +237,7 @@
                         <div class="field">
                           <label class="label">FPS</label>
                           <div class="control">
-                            <input v-model="fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" />
+                            <input v-model="fps" v-on:input="fpsConstrain" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -216,7 +245,15 @@
                         <div class="field">
                           <label class="label">Delay</label>
                           <div class="control">
-                            <input v-model="delay" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
+                            <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" />
+                          </div>
+                        </div>
+                      </td>
+                      <td width="20%">
+                        <div class="field">
+                          <label class="label">Loop count</label>
+                          <div class="control">
+                            <input v-model="loop_count" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" min="0"/>
                           </div>
                         </div>
                       </td>
@@ -228,7 +265,6 @@
                           </div>
                         </div>
                       </td>
-                      <td width="20%"></td>
                       <td width="20%">
                         <div class="field">
                           <label class="label">Format</label>
@@ -342,18 +378,19 @@ import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 
 
 var data = {
-  orig_name: "-",
+  orig_name: "",
   orig_width: "",
   orig_height: "",
   orig_frame_count: "",
   orig_frame_count_ds: "",
-  orig_fps: "-",
+  orig_fps: "",
   orig_delay: "",
-  orig_delay_info: "-",
+  orig_delay_info: "",
   orig_loop_duration: "",
+  orig_loop_count: "",
   orig_file_size: "",
-  orig_file_size_hr: "-",
-  orig_format: "-",
+  orig_file_size_hr: "",
+  orig_format: "",
   orig_path: "",
   name: "",
   old_width: "",
@@ -363,6 +400,7 @@ var data = {
   rotation: "",
   fps: "",
   delay: "",
+  loop_count: "",
   format: "GIF",
   skip_frame: "",
   flip_x: false,
@@ -394,18 +432,19 @@ var data = {
 };
 
 function clearOrigFields() {
-  data.orig_name = "-";
+  data.orig_name = "";
   data.orig_width = "";
   data.orig_height = "";
   data.orig_frame_count = "";
   data.orig_frame_count_ds = "";
-  data.orig_fps = "-";
+  data.orig_fps = "";
   data.orig_delay = "";
-  data.orig_delay_info = "-";
+  data.orig_delay_info = "";
   data.orig_loop_duration = "";
+  data.orig_loop_count = "";
   data.orig_file_size = "";
-  data.orig_file_size_hr = "-";
-  data.orig_format = "-";
+  data.orig_file_size_hr = "";
+  data.orig_format = "";
   data.orig_path = "";
   data.modify_msgbox = "";
 }
@@ -419,6 +458,7 @@ function clearNewFields() {
   data.rotation = "";
   data.fps = "";
   data.delay = "";
+  data.loop_count = "";
   data.skip_frame = "";
   data.modify_msgbox = "";
 }
@@ -484,6 +524,7 @@ function loadOrigInfo(res) {
   data.orig_delay = ainfo.avg_delay.value;
   data.orig_delay_info = delay_info;
   data.orig_loop_duration = ainfo.loop_duration.value;
+  data.orig_loop_count = ainfo.loop_count.value;
   data.orig_path = geninfo.absolute_url.value;
   data.orig_file_size = geninfo.fsize.value;
   data.orig_file_size_hr = geninfo.fsize_hr.value;
@@ -492,14 +533,13 @@ function loadOrigInfo(res) {
 function loadNewInfo(res) {
   var geninfo = res.general_info;
   var ainfo = res.animation_info;
-  console.log(geninfo);
-  console.log(ainfo);
   data.name = geninfo.base_fname.value;
   data.format = geninfo.format.value;
   data.width = geninfo.width.value;
   data.height = geninfo.height.value;
   data.delay = ainfo.avg_delay.value;
   data.fps = ainfo.fps.value;
+  data.loop_count = ainfo.loop_count.value;
   updateAspectRatio(data.width, data.height);
 }
 
@@ -584,10 +624,10 @@ function modifyImage() {
       console.log(res);
       if (res.msg) {
         data.modify_msgbox = res.msg;
-        if (res.CONTROL == "MOD_FINISH") {
-          data.modify_msgbox = "Modified and saved!"
-          data.MOD_IS_MODIFYING = false;
-        }
+      }
+      if (res.CONTROL == "MOD_FINISH") {
+        data.modify_msgbox = "Modified and saved!"
+        data.MOD_IS_MODIFYING = false;
       }
     }
   });

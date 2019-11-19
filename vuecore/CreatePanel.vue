@@ -40,7 +40,7 @@
               `File size: ${preview_info.general_info.fsize_hr.value}\n` +
               `FPS: ${preview_info.animation_info.fps.value}\n` +
               `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
-              `Loop count: ${preview_info.animation_info.loop_count.value}\n` +
+              `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
               `Format: ${preview_info.general_info.format.value}`
             ">
               <span class="aimg-helper"></span>

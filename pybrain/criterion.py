@@ -51,6 +51,7 @@ class ModificationCriteria():
         self.orig_frame_count = json_vals['orig_frame_count']
         self.orig_frame_count_ds = json_vals['orig_frame_count_ds']
         self.orig_loop_duration = json_vals['orig_loop_duration']
+        self.loop_count = int(json_vals['loop_count'] or 0)
         self.rotation = json_vals['rotation']
         self.orig_format = json_vals['orig_format']
         self.format = json_vals['format']
