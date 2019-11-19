@@ -1,6 +1,6 @@
 <template>
   <div id="inspect_panel" class="container" style="padding:10px;">
-    <table class="table is-borderless" style="padding: 5px;" width="100%">
+    <table class="table is-borderless" style="padding: 5px;" width="100%" height="620px;">
       <tr>
         <td class="silver-bordered force-center is-paddingless" 
             style="width: 320px; height: 320px;"
@@ -11,8 +11,8 @@
           </div>
         </td>
         <td class="is-paddingless silver-bordered"
-            style="width: 500px; height: 320px;">
-          <div class="is-paddingless is-marginless" style="height: 320px; overflow: auto;">
+            style="width: 500px; height: 320px;" rowspan="2">
+          <div class="is-paddingless is-marginless" style="height: 620px; overflow: auto;">
             <table class="table ins-info-table is-paddingless" width="100%">
               <template v-for="(item, key) in info_data">
                 <!-- <span v-bind:key="key"/> -->
@@ -63,7 +63,6 @@
             </span>
           </a>
         </td>
-        <td></td>
       </tr>
     </table>
   </div>
