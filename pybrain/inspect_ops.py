@@ -138,7 +138,13 @@ def _inspect_agif(abspath: str, gif: Image):
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
     fsize_hr = read_filesize(fsize)
-    loop_count = gif.info.get('loop') or "Infinite"
+    loop_info = gif.info.get('loop')
+    if loop_info == None:
+        loop_count = 1
+    elif loop_info == 0:
+        loop_count = "Infinite"
+    else:
+        loop_count = loop_info - 1
     delays = []
     comments = []
     for f in range(0, gif.n_frames):

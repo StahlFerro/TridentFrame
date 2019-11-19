@@ -152,7 +152,9 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
         apng.save(out_full_path)
     else:
         yield {"msg": "Saving APNG..."}
-        APNG.from_files(image_paths, delay=int(criteria.delay * 1000)).save(out_full_path)
+        apng = APNG.from_files(image_paths, delay=int(criteria.delay * 1000))
+        apng.num_plays = criteria.loop_count
+        apng.save(out_full_path)
     yield {"preview_path": out_full_path}
     yield {"CONTROL": "CRT_FINISH"}
     return out_full_path
