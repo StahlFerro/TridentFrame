@@ -626,14 +626,16 @@ function modifyImage() {
       data.modify_msgbox = error;
       data.MOD_IS_MODIFYING = false;
     }
-    else if (res) {
-      console.log(res);
-      if (res.msg) {
-        data.modify_msgbox = res.msg;
-      }
-      if (res.CONTROL == "MOD_FINISH") {
-        data.modify_msgbox = "Modified and saved!"
-        data.MOD_IS_MODIFYING = false;
+    else {
+      if (res) {
+        console.log(res);
+        if (res.msg) {
+          data.modify_msgbox = res.msg;
+        }
+        if (res.CONTROL == "MOD_FINISH") {
+          data.modify_msgbox = "Modified and saved!"
+          data.MOD_IS_MODIFYING = false;
+        }
       }
     }
   });
