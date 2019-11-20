@@ -3,13 +3,15 @@ import PyInstaller.config
 PyInstaller.config.CONF['distpath'] = "./engine/"
 block_cipher = None
 
+_bin_dirpath = 'bin/linux'
+python_engine = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
 added_files = [
-    ('bin/gifsicle-1.92-2+b1_amd64/gifsicle', 'bin/gifsicle-1.92-2+b1_amd64'),
-    ('bin/ImageMagick-7.0.8-61-unix/convert', 'bin/ImageMagick-7.0.8-61-unix'),
     ('cache/.include', 'cache/'),
-    ('temp/.include', 'temp/')
+    ('temp/.include', 'temp/'),
+    ('config/config.json', 'config/')
 ]
-
+added_files.extend(python_engine)
+print(python_engine)
 a = Analysis(['main.py'],
              pathex=['.'],
              binaries=[],
