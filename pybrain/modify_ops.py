@@ -28,8 +28,8 @@ def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_fu
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
         cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
-        # yield {"msg": f"cmd: {cmd}"}
         yield {"msg": f"[{index}/{total_ops}] {description}"}
+        yield {"cmd": cmd}
         subprocess.run(cmd, shell=True)
         if target_path != out_full_path:
             target_path = out_full_path
@@ -41,8 +41,8 @@ def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, ou
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
         cmdlist = [imagemagick_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
-        # yield {"msg": f"cmd: {cmd}"}
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
+        yield {"cmd": cmd}
         subprocess.run(cmd, shell=True)
         if target_path != out_full_path:
             target_path = out_full_path
@@ -170,7 +170,7 @@ def _generate_gifsicle_args(criteria: ModificationCriteria) -> List[Tuple[str, s
         args.append(("--flip-horizontal", "Flipping image horizontally..."))
     if criteria.flip_y:
         args.append((f"--flip-vertical", "Flipping image vertically..."))
-    if criteria.loop_count:
+    if criteria.orig_loop_count != criteria.loop_count:
         loop_count = criteria.loop_count
         loop_arg = "--loopcount"
         if (not loop_count or loop_count == 0):
@@ -188,5 +188,5 @@ def _generate_imagemagick_args(criteria: ModificationCriteria) -> List[Tuple[str
     if criteria.is_unoptimized:
         args.append(("-coalesce", "Unoptimizing GIF..."))
     if criteria.rotation:
-        args.append((f"-rotation {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
+        args.append((f"-rotate {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
     return args

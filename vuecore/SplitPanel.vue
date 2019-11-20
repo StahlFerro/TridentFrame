@@ -56,6 +56,16 @@
                 <td class="spl-info-label is-cyan">Loop duration</td>
                 <td class="spl-info-data">{{ loop_duration }}</td>
               </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Loop count</td>
+                <td class="spl-info-data">
+                    <template v-if="aimg_path">
+                      <span v-if="loop_count == 0">Infinite</span>
+                      <span v-else>{{ loop_count }}</span>
+                    </template>
+                    <template v-else>-</template>
+                </td>
+              </tr>
             </tbody>
           </table>
         </td>
@@ -201,6 +211,7 @@ var defaults = {
   fps: "-",
   delay: "-",
   loop_duration: "-",
+  loop_count: "",
   aimg_path: "",
   split_msgbox: ""
 };
@@ -216,6 +227,7 @@ var data = {
   fps: "-",
   delay: "-",
   loop_duration: "-",
+  loop_count: "",
   aimg_path: "",
   checkerbg_active: false,
   pad_count: "",
@@ -265,6 +277,7 @@ function loadImage() {
         }
         data.delay = delay_info;
         data.loop_duration = `${ainfo.loop_duration.value} seconds`;
+        data.loop_count = ainfo.loop_count.value;
         data.aimg_path = geninfo.absolute_url.value;
         data.pad_count = 3;
         if (data.is_reduced_color) {
