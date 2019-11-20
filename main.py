@@ -132,14 +132,14 @@ class GracefullKiller:
 
 def main():
     port = '42069'
-    print(port)
+    # print(port)
     handle_execpath()
     # port = argv
     address = f"tcp://127.0.0.1:{port}"
     SERVER: zerorpc.Server = zerorpc.Server(API())
     SERVER.debug = True
     SERVER.bind(address)
-    print(f"Start running on {address}")
+    print(f"Starting TridentFrame's imaging engine on {address}")
     # killer = GracefullKiller(SERVER)
     SERVER.run()
 
