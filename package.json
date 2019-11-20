@@ -15,7 +15,8 @@
   },
   "main": "main.js",
   "scripts": {
-    "clean-dist": "rimraf dist/",
+    "clean-build": "rimraf build/*",
+    "clean-dist": "rimraf dist/*",
     "clean-cache": "rimraf cache/*",
     "clean-temp": "rimraf temp/*",
     "clean-release": "rimraf release/*",

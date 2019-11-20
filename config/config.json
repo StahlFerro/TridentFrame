@@ -4,7 +4,8 @@
         "imagemagick": "ImageMagick-7.0.8-61-win/convert.exe",
         "apngasm": "apngasm-2.91-bin-win64/apngasm64.exe",
         "apngopt": "apngopt-1.4-bin-win32/apngopt.exe",
-        "apngdis": "apngdis-2.9-bin-win64/apngdis.exe"
+        "apngdis": "apngdis-2.9-bin-win64/apngdis.exe",
+        "pngquant": "pngquant/pngquant.exe"
     },
     "linux": {
         "gifsicle": "gifsicle-1.92-2+b1_amd64/gifsicle",

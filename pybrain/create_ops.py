@@ -125,7 +125,63 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     return out_full_path
 
 
+# def _create_pngfragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
+
+#     fcount = len(image_paths)
+#     perc_skip = 5
+#     shout_nums = shout_indices(fcount, perc_skip)
+
+#     first_width, first_height = Image.open(image_paths[0]).size
+#     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
+#     for index, ipath in enumerate(image_paths):
+#         if shout_nums.get(index):
+#             yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
+#         with Image.open(ipath) as im:
+#             # im = Image.open(ipath)
+#             fragment_name = os.path.splitext(os.path.basename(ipath))[0]
+#             if criteria.reverse:
+#                 reverse_index = len(image_paths) - (index + 1)
+#                 fragment_name = f"rev_{str.zfill(str(reverse_index), 3)}_{fragment_name}"
+#             save_path = f'{os.path.join(out_path, fragment_name)}.png'
+
+#             orig_width, orig_height = im.size
+#             must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
+#             if im.mode != 'RGBA':
+#                 im = im.convert('RGBA')
+#             if must_resize:
+#                 im = im.resize((round(criteria.resize_width), round(criteria.resize_height)))
+#             if criteria.flip_h:
+#                 im = im.transpose(Image.FLIP_LEFT_RIGHT)
+#             if criteria.flip_v:
+#                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
+#             im.save(save_path)
+
+
 def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
+    # APNG Assembler
+    # pngfragment_dir = _mk_temp_dir(prefix_name="tmp_pngfrags")
+    # yield from _create_pngfragments(image_paths, pngfragment_dir, criteria)
+    # apngasm_exec = str(imager_exec_path('apngasm'))
+    
+    # ROOT_PATH = str(os.getcwd())
+    # if os.getcwd() != pngfragment_dir:
+    #     yield {"msg": f"Changing directory from {os.getcwd()} to {pngfragment_dir}"}
+    #     os.chdir(pngfragment_dir)
+    # yield {"msg": f"Obtained gifsicle exec path: {apngasm_exec}"}
+    # args = [apngasm_exec, f'"{out_full_path}"', "*.png", "1", str(criteria.fps), "-kp", "-kc"]
+    # # pprint(args)
+    # cmd = ' '.join(args)
+    # # print(cmd)
+    # yield {"cmd": cmd}
+    # yield {"msg": "Combining frames..."}
+    # subprocess.run(cmd, shell=True)
+    # os.chdir(ROOT_PATH)
+    # # shutil.rmtree(gifragment_dir)
+    # yield {"preview_path": out_full_path}
+    # yield {"CONTROL": "CRT_FINISH"}
+
+    # pyAPNG
+
     if criteria.reverse:
         image_paths.reverse()
     apng = APNG()
@@ -157,6 +213,7 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
         apng.save(out_full_path)
     yield {"preview_path": out_full_path}
     yield {"CONTROL": "CRT_FINISH"}
+
     return out_full_path
 
 
