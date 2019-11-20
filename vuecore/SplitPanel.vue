@@ -26,35 +26,59 @@
             <tbody>
               <tr>
                 <td class="spl-info-label is-cyan">Name</td>
-                <td class="spl-info-data">{{ name }}</td>
+                <td class="spl-info-data">
+                  <span v-if="name">{{ name }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Dimensions</td>
-                <td class="spl-info-data">{{ dimensions }}</td>
+                <td class="spl-info-data">
+                  <span v-if="dimensions">{{ dimensions }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">File Size</td>
-                <td class="spl-info-data">{{ file_size_hr }}</td>
+                <td class="spl-info-data">
+                  <span v-if="file_size">{{ file_size_hr }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Total frames</td>
-                <td class="spl-info-data">{{ frame_count }}</td>
+                <td class="spl-info-data">
+                  <span v-if="frame_count">{{ frame_count }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Total frames (DS)</td>
-                <td class="spl-info-data">{{ frame_count_ds }}</td>
+                <td class="spl-info-data">
+                  <span v-if="frame_count_ds">{{ frame_count_ds }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Frame rate</td>
-                <td class="spl-info-data">{{ fps }}</td>
+                <td class="spl-info-data">
+                  <span v-if="fps">{{ fps }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Frame delay</td>
-                <td class="spl-info-data">{{ delay }}</td>
+                <td class="spl-info-data">                  
+                  <span v-if="delay">{{ delay }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Loop duration</td>
-                <td class="spl-info-data">{{ loop_duration }}</td>
+                <td class="spl-info-data">
+                  <span v-if="loop_duration">{{ loop_duration }}</span>
+                  <span v-else>-</span>
+                </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Loop count</td>
@@ -202,15 +226,15 @@ let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 var defaults = {
   info_header: "Information",
-  name: "-",
-  dimensions: "-",
-  file_size: "-",
-  file_size_hr: "-",
-  frame_count: "-",
-  frame_count_ds: "-",
-  fps: "-",
-  delay: "-",
-  loop_duration: "-",
+  name: "",
+  dimensions: "",
+  file_size: "",
+  file_size_hr: "",
+  frame_count: "",
+  frame_count_ds: "",
+  fps: "",
+  delay: "",
+  loop_duration: "",
   loop_count: "",
   aimg_path: "",
   split_msgbox: ""
@@ -218,15 +242,15 @@ var defaults = {
 
 var data = {
   info_header: "Information",
-  name: "-",
-  dimensions: "-",
-  file_size: "-",
-  file_size_hr: "-",
-  frame_count: "-",
-  frame_count_ds: "-",
-  fps: "-",
-  delay: "-",
-  loop_duration: "-",
+  name: "",
+  dimensions: "",
+  file_size: "",
+  file_size_hr: "",
+  frame_count: "",
+  frame_count_ds: "",
+  fps: "",
+  delay: "",
+  loop_duration: "",
   loop_count: "",
   aimg_path: "",
   checkerbg_active: false,
