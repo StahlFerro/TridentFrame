@@ -8,7 +8,7 @@ from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
 from apng import APNG
 
-from .config import gifsicle_exec, imagemagick_exec, ABS_CACHE_PATH, ABS_TEMP_PATH
+from .config import ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
 from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 # from .create_ops import create_aimg
 # from .split_ops import split_aimg
@@ -70,10 +70,11 @@ def _unoptimize_gif(gif_path, out_dir, decoder: str) -> str:
     """ Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF """
     # raise Exception(gif_path, out_dir)
     unop_gif_save_path = os.path.join(out_dir, os.path.basename(gif_path))
+    imager_path = imager_exec_path(decoder)
     if decoder == 'imagemagick':
-        args = [imagemagick_exec(), "-coalesce", f'"{gif_path}"', f'"{unop_gif_save_path}"']
+        args = [imager_path, "-coalesce", f'"{gif_path}"', f'"{unop_gif_save_path}"']
     elif decoder == 'gifsicle':
-        args = [gifsicle_exec(), "-b", "--unoptimize", f'"{gif_path}"', "--output", f'"{unop_gif_save_path}"']
+        args = [imager_path, "-b", "--unoptimize", f'"{gif_path}"', "--output", f'"{unop_gif_save_path}"']
     cmd = ' '.join(args)
     # print(cmd)
     subprocess.run(cmd, shell=True)
@@ -83,9 +84,9 @@ def _unoptimize_gif(gif_path, out_dir, decoder: str) -> str:
 def _reduce_color(gif_path, out_dir, color: int = 256) -> str:
     " Reduce the color of a gif. Returns the reduxed GIF path"
     print("Performing color reduction...")
-    executable = gifsicle_exec()
+    gifsicle_path = imager_exec_path('gifsicle')
     redux_gif_path = os.path.join(out_dir, os.path.basename(gif_path))
-    args = [executable, f"--colors={color}", gif_path, "--output", redux_gif_path]
+    args = [gifsicle_path, f"--colors={color}", gif_path, "--output", redux_gif_path]
     cmd = ' '.join(args)
     subprocess.run(cmd, shell=True)
     return redux_gif_path

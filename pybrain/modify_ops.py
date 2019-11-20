@@ -16,7 +16,7 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, gifsicle_exec, imagemagick_exec
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames
 from .create_ops import create_aimg
@@ -24,9 +24,10 @@ from .split_ops import split_aimg
 
 
 def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int) -> str:
+    gifsicle_path = imager_exec_path('gifsicle')
     for index, (arg, description) in enumerate(sicle_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-        cmdlist = [gifsicle_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+        cmdlist = [gifsicle_path, arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
         yield {"msg": f"[{index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
@@ -37,9 +38,10 @@ def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_fu
 
 
 def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int) -> str:
+    imagemagick_path = imager_exec_path('imagemagick')
     for index, (arg, description) in enumerate(magick_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-        cmdlist = [imagemagick_exec(), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+        cmdlist = [imagemagick_path, arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}

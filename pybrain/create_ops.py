@@ -17,7 +17,7 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, gifsicle_exec
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .criterion import CreationCriteria
 from .utility import _mk_temp_dir, shout_indices
 
@@ -93,7 +93,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
 def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     yield from _create_gifragments(image_paths, gifragment_dir, criteria)
-    executable = str(gifsicle_exec())
+    executable = str(imager_exec_path('gifsicle'))
     delay = int(criteria.delay * 100)
     # raise Exception(delay)
     opti_mode = "--unoptimize"

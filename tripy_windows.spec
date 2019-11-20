@@ -10,7 +10,8 @@ added_files = [
     ('bin/gifsicle-1.92-win64/gifsicle.exe', 'bin/gifsicle-1.92-win64/'),
     ('bin/ImageMagick-7.0.8-61-win/convert.exe', 'bin/ImageMagick-7.0.8-61-win/'),
     ('cache/.include', 'cache/'),
-    ('temp/.include', 'temp/')
+    ('temp/.include', 'temp/'),
+    ('config/config.json', 'config/')
 ]
 a = Analysis(['main.py'],
              pathex=['.'],

@@ -16,7 +16,7 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, gifsicle_exec, imagemagick_exec
+from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .criterion import SplitCriteria
 from .utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log
 
@@ -63,12 +63,13 @@ def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriter
     total_ratio = sum([ir[1] for ir in indexed_ratios])
     sequence = 0
     gifragment_paths = []
+    gifsicle_path = imager_exec_path('gifsicle')
     for index, ratio in indexed_ratios:
         selector = f'"#{index}"'
         for n in range(0, ratio):
             yield {"msg": f"Splitting GIF... ({sequence + 1}/{total_ratio})"}
             save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), criteria.pad_count)}.png')
-            args = [gifsicle_exec(), f'"{unop_gif_path}"', selector, "--output", f'"{save_path}"']
+            args = [gifsicle_path, f'"{unop_gif_path}"', selector, "--output", f'"{save_path}"']
             cmd = ' '.join(args)
             subprocess.run(cmd, shell=True)
             gifragment_paths.append(save_path)
