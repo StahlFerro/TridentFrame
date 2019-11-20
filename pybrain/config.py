@@ -1,4 +1,5 @@
 import os
+import sys
 import platform
 import json
 from typing import Tuple
@@ -13,7 +14,18 @@ TEMP_DIRNAME = 'temp'
 
 BIN_DIRNAME = 'bin'
 
-def BIN_CONFILE():
+
+def _bin_dirpath():
+    if platform.system() == 'Windows':
+        is_x64 = sys.maxsize > 2**32
+        return os.path.join(BIN_DIRNAME, 'win64')
+    elif platform.system() == 'Linux':
+        return os.path.join(BIN_DIRNAME, 'linux')
+    else:
+        raise Exception(f"TridentFrame does not have the engine for processing images on this platform! {platform.system()}")
+
+
+def _bin_confile():
     with open('config/config.json') as jsonfile:
         return json.load(jsonfile)
 
@@ -32,47 +44,11 @@ def imager_exec_path(binname: str) -> str:
         Supported binname params: ['gifsicle', 'imagemagick', 'apngasm', 'apngopt', 'apngdis']
     """
     if platform.system() == 'Windows':
-        path = BIN_CONFILE()['win'][binname]
+        path = _bin_confile()['win'][binname]
         # return os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
     elif platform.system() == 'Linux':
-        path = BIN_CONFILE()['linux'][binname]
+        path = _bin_confile()['linux'][binname]
         # return os.path.abspath("./bin/gifsicle-1.92-2+b1_amd64/gifsicle")
     else:
         raise Exception(f"TridentFrame does not have the engine for processing images on this platform! {platform.system()}")
-    return os.path.abspath(os.path.join(BIN_DIRNAME, path))
-
-
-def gifsicle_exec() -> str:
-    if platform.system() == 'Windows':
-        path = BIN_CONFILE()['win']['gifsicle']
-        # return os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
-    elif platform.system() == 'Linux':
-        path = BIN_CONFILE()['linux']['gifsicle']
-        # return os.path.abspath("./bin/gifsicle-1.92-2+b1_amd64/gifsicle")
-    else:
-        raise Exception(f"TridentFrame does not have the engine for processing images on this platform! {platform.system()}")
-    return os.path.abspath(os.path.join(BIN_DIRNAME, path))
-
-
-def imagemagick_exec() -> str:
-    if platform.system() == 'Windows':
-        path = BIN_CONFILE()['win']['imagemagick']
-        # return os.path.abspath("./bin/ImageMagick-7.0.8-61-win/convert.exe")
-    elif platform.system() == 'Linux':
-        path = BIN_CONFILE()['linux']['imagemagick']
-        # return os.path.abspath("./bin/ImageMagick-7.0.8-61-unix/convert")
-    else:
-        raise Exception(f"TridentFrame does not have the engine for processing images on this platform! {platform.system()}")
-    return os.path.abspath(os.path.join(BIN_DIRNAME, path))
-
-
-def apngasm_exec() -> str:
-    if platform.system() == 'Windows':
-        path = BIN_CONFILE()['win']['apngasm']
-        # return os.path.abspath("./bin/ImageMagick-7.0.8-61-win/convert.exe")
-    elif platform.system() == 'Linux':
-        path = BIN_CONFILE()['linux']['apngasm']
-        # return os.path.abspath("./bin/ImageMagick-7.0.8-61-unix/convert")
-    else:
-        raise Exception(f"TridentFrame does not have the engine for processing images on this platform! {platform.system()}")
-    return os.path.abspath(os.path.join(BIN_DIRNAME, path))
+    return os.path.abspath(os.path.join(_bin_dirpath(), path))
