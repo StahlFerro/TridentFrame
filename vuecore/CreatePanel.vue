@@ -190,7 +190,7 @@
               </td>
             </tr>
             <tr>
-              <td colspan="3" style="padding-top: 25px;">
+              <td colspan="3" style="padding-top: 15px;">
                 <div class="field has-addons">
                   <div class="control">
                     <a class="button is-neon-cyan" v-on:click="CRTChooseOutdir">
@@ -211,7 +211,7 @@
                   </div>
                 </div>
               </td>
-              <td colspan="1" style="padding-top: 25px;">
+              <td colspan="1" style="padding-top: 15px;">
                 <div class="field">
                   <!-- <label class="label">Format</label> -->
                   <div class="control">
@@ -224,7 +224,7 @@
                   </div>
                 </div>
               </td>
-              <td colspan="1" style="padding-top: 25px;">
+              <td colspan="1" style="padding-top: 15px;">
                 <div class="field has-text-centered">
                   <div class="control">
                     <a v-on:click="CRTCreateAIMG" class="button is-neon-cyan" 
