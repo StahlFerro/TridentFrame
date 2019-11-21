@@ -189,6 +189,15 @@
                           <p class="is-white-d is-large">GIF</p>
                         </a>
                       </li>
+                      <li id="MOD_box_apng" class="mod-menu-item"
+                        v-bind:class="{'is-selected': mod_menuselection == 2}">
+                        <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2">
+                          <span class="icon is-large">
+                            <i class="far fa-images fa-2x fa-inverse"></i>
+                          </span>
+                          <p class="is-white-d is-large">APNG</p>
+                        </a>
+                      </li>
                     </ul>
                   </aside>
                 </div>
@@ -351,6 +360,14 @@
                     :is_unoptimized.sync="is_unoptimized"
                   />
                 </div>
+                <div v-show="mod_menuselection == 2">
+                  <APNGOptimizationTable
+                  :apng_is_optimized.sync="apng_is_optimized"
+                  :apng_optimization_level.sync="apng_optimization_level"
+                  :apng_is_lossy.sync="apng_is_lossy"
+                  :apng_lossy_value.sync="apng_lossy_value"
+                  />  
+                </div>
               </td>
             </tr>
           </table>
@@ -375,6 +392,7 @@ const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
 const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumberConstrain, gcd } = require("./Utility.vue");
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
+import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
 
 
 var data = {
@@ -414,6 +432,10 @@ var data = {
   is_reduced_color: false,
   color_space: "",
   is_unoptimized: false,
+  apng_is_optimized: false,
+  apng_optimization_level: "1",
+  apng_is_lossy: false,
+  apng_lossy_value: "",
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",
@@ -740,6 +762,7 @@ export default {
   },
   components: {
     GIFOptimizationTable,
+    APNGOptimizationTable,
   },
   methods: {
     loadImage: loadImage,

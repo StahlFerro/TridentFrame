@@ -70,6 +70,11 @@ class ModificationCriteria():
         self.is_reduced_color = json_vals['is_reduced_color']
         self.color_space = json_vals['color_space']
 
+        self.apng_is_optimized = json_vals['apng_is_optimized']
+        self.apng_optimization_level = json_vals['apng_optimization_level']
+        self.apng_is_lossy = json_vals['apng_is_lossy']
+        self.apng_lossy_value = json_vals['apng_lossy_value']
+
         self.is_unoptimized = json_vals['is_unoptimized']
 
     def must_resize(self) -> bool:

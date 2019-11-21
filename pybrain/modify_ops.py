@@ -92,6 +92,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     # yield {"msg": f"OUT FULL PATH: {out_full_path}"}
     sicle_args = _generate_gifsicle_args(criteria)
     magick_args = _generate_imagemagick_args(criteria)
+    apngopt_args = _generate_apngopt_args(criteria)
     # yield sicle_args
     target_path = str(img_path)
     total_ops = len(sicle_args) + len(magick_args)
@@ -163,7 +164,7 @@ def _generate_gifsicle_args(criteria: ModificationCriteria) -> List[Tuple[str, s
     if criteria.orig_delay != criteria.delay:
         args.append((f"--delay={criteria.delay * 100}", f"Setting per-frame delay to {criteria.delay}"))
     if criteria.is_optimized and criteria.optimization_level:
-        args.append((f"--optimize={criteria.optimization_level}", f"Optimizing image with level, {criteria.optimization_level}..."))
+        args.append((f"--optimize={criteria.optimization_level}", f"Optimizing image with level {criteria.optimization_level}..."))
     if criteria.is_lossy and criteria.lossy_value:
         args.append((f"--lossy={criteria.lossy_value}", f"Lossy compressing with value: {criteria.lossy_value}..."))
     if criteria.is_reduced_color and criteria.color_space:
@@ -191,4 +192,22 @@ def _generate_imagemagick_args(criteria: ModificationCriteria) -> List[Tuple[str
         args.append(("-coalesce", "Unoptimizing GIF..."))
     if criteria.rotation:
         args.append((f"-rotate {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
+    return args
+
+
+def _generate_apng_dis(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
+    args = []
+    
+
+def _generate_apngopt_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
+    args = []
+    if criteria.apng_is_optimized:
+        args.append((f'-z{criteria.apng_optimization_level}', f'Optimizing image with level {criteria.apng_optimization_level}...'))
+    return args
+
+
+def _generate_pngquant_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
+    args = []
+    # if criteria.apng_is_lossy:
+        # args.append(())
     return args
