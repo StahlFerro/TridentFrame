@@ -30,7 +30,6 @@ def _bin_confile():
         return json.load(jsonfile)
 
 
-
 def ABS_CACHE_PATH():
     return os.path.abspath(CACHE_DIRNAME)
 

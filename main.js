@@ -72,10 +72,12 @@ const selectPort = () => {
 }
 
 const createPyProc = () => {
+    // console.log(deploy_env);
     console.log("Starting python engine...");
     let port = '' + selectPort();
     if (deploy_env && deploy_env == 'DEV') {
         let script = path.join(__dirname, 'main.py');
+        console.log(`Obtained python path script: \n${script}`);
         pyProc = require('child_process').spawn('python', [script]);
         if (pyProc != null) {
             console.log('development child process success');
