@@ -17,9 +17,9 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
-from .criterion import CreationCriteria
-from .utility import _mk_temp_dir, shout_indices
+from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
+from .core_funcs.criterion import CreationCriteria
+from .core_funcs.utility import _mk_temp_dir, shout_indices
 
 
 def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
@@ -158,30 +158,6 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
 
 
 def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
-    # APNG Assembler
-    # pngfragment_dir = _mk_temp_dir(prefix_name="tmp_pngfrags")
-    # yield from _create_pngfragments(image_paths, pngfragment_dir, criteria)
-    # apngasm_exec = str(imager_exec_path('apngasm'))
-    
-    # ROOT_PATH = str(os.getcwd())
-    # if os.getcwd() != pngfragment_dir:
-    #     yield {"msg": f"Changing directory from {os.getcwd()} to {pngfragment_dir}"}
-    #     os.chdir(pngfragment_dir)
-    # yield {"msg": f"Obtained gifsicle exec path: {apngasm_exec}"}
-    # args = [apngasm_exec, f'"{out_full_path}"', "*.png", "1", str(criteria.fps), "-kp", "-kc"]
-    # # pprint(args)
-    # cmd = ' '.join(args)
-    # # print(cmd)
-    # yield {"cmd": cmd}
-    # yield {"msg": "Combining frames..."}
-    # subprocess.run(cmd, shell=True)
-    # os.chdir(ROOT_PATH)
-    # # shutil.rmtree(gifragment_dir)
-    # yield {"preview_path": out_full_path}
-    # yield {"CONTROL": "CRT_FINISH"}
-
-    # pyAPNG
-
     if criteria.reverse:
         image_paths.reverse()
     apng = APNG()
@@ -201,7 +177,7 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
                         im = im.transpose(Image.FLIP_LEFT_RIGHT)
                     if criteria.flip_v:
                         im = im.transpose(Image.FLIP_TOP_BOTTOM)
-                    im.save(bytebox, "PNG", optimize=True)
+                    im.save(bytebox, "PNG")
                 yield {"msg": f"Processing frames... ({index + 1}/{len(image_paths)})"}
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
         yield {"msg": "Saving APNG...."}

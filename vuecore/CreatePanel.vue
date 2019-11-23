@@ -103,7 +103,7 @@
             <tr>
               <td width="20%">
                 <div class="field">
-                  <label class="label">Name</label>
+                  <label class="label" title="The name of the GIF/APNG">Name</label>
                   <div class="control">
                     <input v-model="name" class="input is-neon-white" type="text" />
                   </div>
@@ -111,7 +111,7 @@
               </td>
               <td width="20%">
                 <div class="field">
-                  <label class="label">Width</label>
+                  <label class="label" title="The width of the GIF/APNG">Width</label>
                   <div class="control">
                     <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
                     class="input is-neon-white" type="number" min="1" step="1"/>
@@ -120,7 +120,7 @@
               </td>
               <td width="20%">
                 <div class="field">
-                  <label class="label">Height</label>
+                  <label class="label" title="The height of the GIF/APNG">Height</label>
                   <div class="control">
                     <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
                     class="input is-neon-white" type="number" />
@@ -144,7 +144,7 @@
             <tr>
               <td>
                 <div class="field">
-                  <label class="label">Delay (seconds)</label>
+                  <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
                   <div class="control">
                     <input v-model="delay" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
                   </div>
@@ -152,7 +152,7 @@
               </td>
               <td>
                 <div class="field">
-                  <label class="label">Frame rate</label>
+                  <label class="label" title="How many frames will be consecutively displayed per second.">Frame rate</label>
                   <div class="control">
                     <input v-model="fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
                   </div>

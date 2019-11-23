@@ -52,7 +52,7 @@ class ModificationCriteria():
         self.orig_frame_count_ds = json_vals['orig_frame_count_ds']
         self.orig_loop_duration = json_vals['orig_loop_duration']
         self.orig_loop_count = int(json_vals['orig_loop_count'] or 0)
-        self.loop_count = int(json_vals['loop_count'] or 0)
+        self.loop_count = int(json_vals.get('loop_count') or 0)
         self.rotation = json_vals['rotation']
         self.orig_format = json_vals['orig_format']
         self.format = json_vals['format']
@@ -71,7 +71,7 @@ class ModificationCriteria():
         self.color_space = json_vals['color_space']
 
         self.apng_is_optimized = json_vals['apng_is_optimized']
-        self.apng_optimization_level = json_vals['apng_optimization_level']
+        self.apng_optimization_level = int(json_vals.get('apng_optimization_level') or 0)
         self.apng_is_lossy = json_vals['apng_is_lossy']
         self.apng_lossy_value = json_vals['apng_lossy_value']
 
@@ -79,9 +79,22 @@ class ModificationCriteria():
 
     def must_resize(self) -> bool:
         return self.orig_width != self.width or self.orig_height != self.height
+    
+    def must_rotate(self) -> bool:
+        return bool(self.rotation)
+    
+    def must_redelay(self) -> bool:
+        return self.orig_delay != self.delay
+
+    def must_reloop(self) -> bool:
+        return self.orig_loop_count != self.loop_count
 
     def change_format(self) -> bool:
         return self.orig_format != self.format
+
+    def has_general_alterations(self) -> bool:
+        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop()
+        return altered
 
 
 class SpritesheetBuildCriteria():

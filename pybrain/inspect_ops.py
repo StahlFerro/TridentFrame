@@ -12,8 +12,8 @@ Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
-from .utility import _filter_images, read_filesize, shout_indices
+from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
+from .core_funcs.utility import _filter_images, read_filesize, shout_indices
 
 
 def inspect_general(image_path, filter_on="", skip=False) -> Dict:

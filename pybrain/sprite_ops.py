@@ -12,9 +12,9 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
-from .criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
-from .utility import shout_indices
+from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
+from .core_funcs.criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from .core_funcs.utility import shout_indices
 
 
 def _get_boxes(tile_width, tile_height, sheet_width, sheet_height):
