@@ -138,7 +138,7 @@ def read_filesize(nbytes):
 def shout_indices(frame_count: int, percentage_skip: int) -> Dict[int, str]:
     """ Returns a dictionary of indices for message yielding, with the specified percentage skip. Examples:\n
         shout_incides(24, 50) -> {0: "0%", 12: "50%"}\n
-        shout_indices(40, 25) -> {0: "25%", 10: "25%", 20: "50%", 30: "75%"}
+        shout_indices(40, 25) -> {0: "0%", 10: "25%", 20: "50%", 30: "75%"}
     """
     mults = 100 // percentage_skip
     return {round(frame_count / mults * mult): f"{mult * percentage_skip}%" for mult in range(0, mults)}

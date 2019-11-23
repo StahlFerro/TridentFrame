@@ -18,7 +18,7 @@ from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .core_funcs.criterion import SplitCriteria
-from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log
+from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices
 
 
 def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
@@ -108,10 +108,15 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
     img: APNG = APNG.open(apng_path)
     iframes = img.frames
     pad_count = max(len(str(len(iframes))), 3)
+    fcount = len(iframes)
+    perc_skip = 5
+    shout_nums = shout_indices(fcount, perc_skip)
     # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
     # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
     for index, (png, control) in enumerate(iframes):
-        yield {"msg": f'Splitting APNG... ({index + 1}/{len(iframes)})'}
+        if shout_nums.get(index):
+            yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
+        # yield {"msg": f'Splitting APNG... ({index + 1}/{len(iframes)})'}
         png.save(os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png"))
     yield {"CONTROL": "SPL_FINISH"}
 
