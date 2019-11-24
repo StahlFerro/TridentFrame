@@ -95,7 +95,6 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     yield from _create_gifragments(image_paths, gifragment_dir, criteria)
     executable = str(imager_exec_path('gifsicle'))
     delay = int(criteria.delay * 100)
-    # raise Exception(delay)
     opti_mode = "--unoptimize"
     disposal = "background"
     loop_arg = "--loopcount"
@@ -112,9 +111,7 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
         os.chdir(gifragment_dir)
     yield {"msg": f"Obtained gifsicle exec path: {executable}"}
     args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loop_arg, globstar_path, "--output", f'"{out_full_path}"']
-    # pprint(args)
     cmd = ' '.join(args)
-    # print(cmd)
     yield {"cmd": cmd}
     yield {"msg": "Combining frames..."}
     subprocess.run(cmd, shell=True)

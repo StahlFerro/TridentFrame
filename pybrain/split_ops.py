@@ -60,20 +60,24 @@ def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriter
     """ Split GIF into separate images using Gifsicle based on the specified criteria"""
     orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
     indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
-    total_ratio = sum([ir[1] for ir in indexed_ratios])
-    sequence = 0
+    total_frames = sum([ir[1] for ir in indexed_ratios])
+    cumulative_index = 0
     gifragment_paths = []
     gifsicle_path = imager_exec_path('gifsicle')
+    perc_skip = 5
+    shout_nums = shout_indices(total_frames, perc_skip)
     for index, ratio in indexed_ratios:
+        if shout_nums.get(cumulative_index):
+            yield {"msg": f'Splitting frames... ({shout_nums.get(index)})'}
         selector = f'"#{index}"'
         for n in range(0, ratio):
-            yield {"msg": f"Splitting GIF... ({sequence + 1}/{total_ratio})"}
-            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(sequence), criteria.pad_count)}.png')
+            # yield {"msg": f"Splitting GIF... ({cumulative_index + 1}/{total_frames})"}
+            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png')
             args = [gifsicle_path, f'"{unop_gif_path}"', selector, "--output", f'"{save_path}"']
             cmd = ' '.join(args)
             subprocess.run(cmd, shell=True)
             gifragment_paths.append(save_path)
-            sequence += 1
+            cumulative_index += 1
             with Image.open(save_path).convert("RGBA") as gif:
             # if gif.info.get('transparency'):
             #     yield {"msg": "Palette has transparency"}

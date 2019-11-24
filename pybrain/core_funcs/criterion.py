@@ -58,8 +58,8 @@ class ModificationCriteria():
         self.format = json_vals['format']
         self.skip_frame = json_vals['skip_frame']
 
-        self.flip_x = json_vals['flip_x']
-        self.flip_y = json_vals['flip_y']
+        self.flip_x: bool = json_vals.get('flip_x')
+        self.flip_y: bool = json_vals.get('flip_y')
         self.is_reversed = json_vals['is_reversed']
         self.preserve_alpha = json_vals['preserve_alpha']
 
@@ -89,12 +89,21 @@ class ModificationCriteria():
     def must_reloop(self) -> bool:
         return self.orig_loop_count != self.loop_count
 
+    def must_flip(self) -> bool:
+        return self.flip_x or self.flip_y
+
     def change_format(self) -> bool:
         return self.orig_format != self.format
 
     def has_general_alterations(self) -> bool:
-        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop()
+        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop() or self.must_flip() or self.is_reversed
         return altered
+
+    def orig_dimensions(self) -> str:
+        return f"{self.orig_width}x{self.orig_height}"
+        
+    def dimensions(self) -> str:
+        return f"{self.width}x{self.height}"
 
 
 class SpritesheetBuildCriteria():

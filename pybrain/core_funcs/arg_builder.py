@@ -7,7 +7,7 @@ def gifsicle_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     if criteria.must_resize():
         args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
     if criteria.orig_delay != criteria.delay:
-        args.append((f"--delay={criteria.delay * 100}", f"Setting per-frame delay to {criteria.delay}"))
+        args.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
     if criteria.is_optimized and criteria.optimization_level:
         args.append((f"--optimize={criteria.optimization_level}", f"Optimizing image with level {criteria.optimization_level}..."))
     if criteria.is_lossy and criteria.lossy_value:

@@ -25,6 +25,7 @@ from .split_ops import split_aimg
 
 
 def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int) -> str:
+    yield {"sicle_args": sicle_args}
     gifsicle_path = imager_exec_path('gifsicle')
     for index, (arg, description) in enumerate(sicle_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
@@ -39,6 +40,7 @@ def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_fu
 
 
 def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int) -> str:
+    yield {"magick_args": magick_args}
     imagemagick_path = imager_exec_path('imagemagick')
     for index, (arg, description) in enumerate(magick_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
@@ -53,6 +55,7 @@ def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, ou
 
 
 def _apnopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int):
+    yield {"aopt_args": aopt_args}
     apngopt_path = imager_exec_path('apngopt')
     for index, (arg, description) in enumerate(aopt_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
@@ -67,13 +70,33 @@ def _apnopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_
     return target_path
 
 
-def _internal_apng_modify(target_path: str, out_full_path: str, criteria: ModificationCriteria, total_ops: int, shift_index: int, ):
+def _internal_gif_reverse(target_path: str, out_full_path: str, mod_criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):
+    frames_dir = _mk_temp_dir(prefix_name="formod_frames")
+    split_criteria = SplitCriteria({
+        'pad_count': 6,
+        'color_space': "",
+        'is_duration_sensitive': True,
+        'is_unoptimized': mod_criteria.is_unoptimized,
+    })
+    # yield {"msg": split_criteria.__dict__}
+    yield from split_aimg(target_path, frames_dir, split_criteria)
+
+
+def _internal_apng_modify(target_path: str, out_full_path: str, criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):
     apng = APNG.open(target_path)
     new_apng = APNG()
+    yield {"log": "Internal APNG Modification"}
+    frames = apng.frames
+    if criteria.is_reversed:
+        frames.reverse()
     for png, controller in apng.frames:
         with io.BytesIO() as bytebox:
             png.save(bytebox)
             with Image.open(bytebox) as im:
+                if criteria.flip_x:
+                    im = im.transpose(Image.FLIP_LEFT_RIGHT)
+                if criteria.flip_y:
+                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
                 if criteria.must_resize():
                     im = im.resize((criteria.width, criteria.height))
                 newbox = io.BytesIO()
@@ -83,7 +106,9 @@ def _internal_apng_modify(target_path: str, out_full_path: str, criteria: Modifi
     return out_full_path
 
 
-def _change_aimg_format(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
+def _rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
+    yield {"DEBUG": [img_path, out_dir]}
+    """ Splits a GIF/APNG into frames, and then recompile them back into an AIMG. Used to change their format, or reverse the animation"""
     frames_dir = _mk_temp_dir(prefix_name="formod_frames")
     split_criteria = SplitCriteria({
         'pad_count': 6,
@@ -103,8 +128,8 @@ def _change_aimg_format(img_path: str, out_dir: str, mod_criteria: ModificationC
         'format': mod_criteria.format,
         'is_reversed': mod_criteria.is_reversed,
         'is_transparent': True,
-        'flip_x': mod_criteria.flip_x,
-        'flip_y': mod_criteria.flip_y,
+        'flip_x': False, # Flipping horizontally is handled by gifsicle
+        'flip_y': False, # Flipping vertically is handled by gifsicle
         'width': mod_criteria.width,
         'height': mod_criteria.height,
         'loop_count': mod_criteria.loop_count
@@ -123,7 +148,6 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = os.path.join(out_dir, full_name)
     yield {"msg": f"OUT FULL PATH: {out_full_path}"}
-    altered_general = criteria
     sicle_args = gifsicle_args(criteria)
     magick_args = imagemagick_args(criteria)
     aopt_args = apngopt_args(criteria)
@@ -139,10 +163,10 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
                 target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))
             yield {"preview_path": target_path}
             yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
-            target_path = yield from _change_aimg_format(target_path, out_dir, criteria)
+            target_path = yield from _rebuild_aimg(target_path, out_dir, criteria)
         elif criteria.orig_format == "PNG":
             yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
-            target_path = yield from _change_aimg_format(target_path, out_dir, criteria)
+            target_path = yield from _rebuild_aimg(target_path, out_dir, criteria)
             out_full_path = str(target_path)
             if sicle_args:
                 target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
@@ -151,12 +175,16 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             yield {"preview_path": target_path}
     else:
         if criteria.orig_format == "GIF":
+            if criteria.is_reversed:
+                target_path = yield from _rebuild_aimg(target_path, out_dir, criteria)
             if sicle_args:
                 target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
             if magick_args:
                 target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))
             yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
+            if criteria.has_general_alterations():
+                target_path = yield from _internal_apng_modify(target_path, out_full_path, criteria, total_ops)
             if aopt_args:
                 target_path = yield from _apnopt_modify(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
             yield {"preview_path": target_path}
