@@ -118,8 +118,9 @@ def _rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteri
     })
     # yield {"msg": split_criteria.__dict__}
     yield from split_aimg(img_path, frames_dir, split_criteria)
-    frames = [str(os.path.join(frames_dir, f)) for f in os.listdir(frames_dir)]
-    yield {"msg": frames}
+    frames = [str(os.path.join(frames_dir, f)) for f in sorted(os.listdir(frames_dir))]
+    yield {"frames_dir": frames_dir}
+    yield {"frames": frames}
     ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
     ds_delay = 1 / ds_fps
     create_criteria = CreationCriteria({
