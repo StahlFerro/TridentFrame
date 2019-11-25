@@ -141,13 +141,16 @@ def _rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteri
 
 def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     img_path = os.path.abspath(img_path)
+    # raise Exception(img_path, out_dir, criteria)
     if not os.path.isfile(img_path):
         raise Exception("Cannot Preview/Modify the image. The original file in the system may been removed.")
     out_dir = os.path.abspath(out_dir)
     full_name = f"{criteria.name}.{criteria.format.lower()}"
+    orig_full_name = f"{criteria.name}.{criteria.orig_format.lower()}"
     # temp_dir = _mk_temp_dir(prefix_name="temp_mods")
     # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = os.path.join(out_dir, full_name)
+    orig_out_full_path = os.path.join(out_dir, orig_full_name)
     yield {"msg": f"OUT FULL PATH: {out_full_path}"}
     sicle_args = gifsicle_args(criteria)
     magick_args = imagemagick_args(criteria)
@@ -159,10 +162,10 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     if criteria.change_format():
         if criteria.orig_format == "GIF":
             if sicle_args:
-                target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
+                target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
             if magick_args:
-                target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))
-            yield {"preview_path": target_path}
+                target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
+            # yield {"preview_path": target_path}
             yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
             target_path = yield from _rebuild_aimg(target_path, out_dir, criteria)
         elif criteria.orig_format == "PNG":
@@ -173,22 +176,22 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
                 target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
             if magick_args:
                 target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))             
-            yield {"preview_path": target_path}
+            # yield {"preview_path": target_path}
     else:
         if criteria.orig_format == "GIF":
             if criteria.is_reversed:
                 target_path = yield from _rebuild_aimg(target_path, out_dir, criteria)
             if sicle_args:
-                target_path = yield from _gifsicle_modify(sicle_args, target_path, out_full_path, total_ops)
+                target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
             if magick_args:
-                target_path = yield from _imagemagick_modify(magick_args, target_path, out_full_path, total_ops, len(sicle_args))
-            yield {"preview_path": target_path}
+                target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
+            # yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
             if criteria.has_general_alterations():
                 target_path = yield from _internal_apng_modify(target_path, out_full_path, criteria, total_ops)
             if aopt_args:
                 target_path = yield from _apnopt_modify(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
-            yield {"preview_path": target_path}
+    yield {"preview_path": target_path}
 
     yield {"CONTROL": "MOD_FINISH"}
 

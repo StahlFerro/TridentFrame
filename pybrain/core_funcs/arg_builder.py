@@ -35,14 +35,14 @@ def imagemagick_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []
     if criteria.is_unoptimized:
         args.append(("-coalesce", "Unoptimizing GIF..."))
-    if criteria.rotation:
+    if criteria.rotation and criteria.rotation != 0:
         args.append((f"-rotate {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
     return args
 
 
 def apngdis_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []
-    
+    return args
 
 def apngopt_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []

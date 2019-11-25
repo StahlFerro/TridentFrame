@@ -113,7 +113,7 @@
                 <div class="field">
                   <label class="label" title="The width of the GIF/APNG">Width</label>
                   <div class="control">
-                    <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
+                    <input v-bind:value="width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(width, $event)" 
                     class="input is-neon-white" type="number" min="1" step="1"/>
                   </div>
                 </div>
@@ -122,7 +122,7 @@
                 <div class="field">
                   <label class="label" title="The height of the GIF/APNG">Height</label>
                   <div class="control">
-                    <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
+                    <input v-bind:value="height" v-on:keydown="wholeNumConstrain($event)" v-on:input="heightHandler(height, $event)"
                     class="input is-neon-white" type="number" />
                   </div>
                 </div>
@@ -162,7 +162,7 @@
                 <div class="field">
                   <label class="label" title="How many times the GIF/APNG will loop. Zero/blank for infinite loop">Loop count</label>
                   <div class="control">
-                    <input v-model="loop_count" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" min="0" max="999" step="1"/>
+                    <input v-model="loop_count" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" min="0" max="999" step="1"/>
                   </div>
                 </div>
               </td>
@@ -252,7 +252,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION,
-  randString, gcd, wholeNumberConstrain } from "./Utility.vue";
+  randString, gcd, wholeNumConstrain, posWholeNumConstrain } from "./Utility.vue";
 
 var data = {
   image_paths: [],
@@ -563,7 +563,7 @@ export default {
     previewAIMG: previewAIMG,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
-    wholeNumberConstrain: wholeNumberConstrain,
+    wholeNumConstrain: wholeNumConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     delayConstrain: delayConstrain,

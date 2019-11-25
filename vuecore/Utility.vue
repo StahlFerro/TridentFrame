@@ -52,8 +52,20 @@ function gcd(a, b) { // Gets the greatest common divisor between two numbers
     return gcd(b, (a % b));
 }
 
-function wholeNumberConstrain(event) {
-  console.log(event.key, event.key != ".");
+function wholeNumConstrain(event) {
+  console.log(event.key);
+  if (event.key != ".") {
+    console.log("IS DIGIT!");
+    return true;
+  }
+  else {
+    console.log("IS NOT DIGIT!");
+    event.preventDefault();
+  }
+}
+
+function posWholeNumConstrain(event) {
+  console.log(event.key);
   if (event.key != "." && event.key != '-') {
     console.log("IS DIGIT!");
     return true;
@@ -63,6 +75,7 @@ function wholeNumberConstrain(event) {
     event.preventDefault();
   }
 }
+
 
 const GIF_DELAY_DECIMAL_PRECISION = 2;
 const APNG_DELAY_DECIMAL_PRECISION = 3;
@@ -74,7 +87,8 @@ module.exports = {
   validateFilename: validateFilename,
   randString: randString,
   gcd: gcd,
-  wholeNumberConstrain: wholeNumberConstrain,
+  wholeNumConstrain: wholeNumConstrain,
+  posWholeNumConstrain: posWholeNumConstrain,
 }
 
 </script>

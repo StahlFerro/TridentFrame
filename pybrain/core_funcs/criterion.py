@@ -43,8 +43,8 @@ class ModificationCriteria():
         self.name = json_vals['name']
         self.orig_width = json_vals['orig_width']
         self.orig_height = json_vals['orig_height']
-        self.width = int(json_vals.get('width', 0))
-        self.height = int(json_vals.get('height', 0))
+        self.width = int(json_vals.get('width') or 0)
+        self.height = int(json_vals.get('height') or 0)
         self.orig_delay = json_vals['orig_delay']
         self.delay = json_vals['delay']
         self.fps = json_vals['fps']
@@ -53,7 +53,7 @@ class ModificationCriteria():
         self.orig_loop_duration = json_vals['orig_loop_duration']
         self.orig_loop_count = int(json_vals['orig_loop_count'] or 0)
         self.loop_count = int(json_vals.get('loop_count') or 0)
-        self.rotation = json_vals['rotation']
+        self.rotation = int(json_vals.get('rotation') or 0)
         self.orig_format = json_vals['orig_format']
         self.format = json_vals['format']
         self.skip_frame = json_vals['skip_frame']

@@ -18,6 +18,7 @@
     "clean-build": "rimraf build/*",
     "clean-dist": "rimraf dist/*",
     "clean-cache": "rimraf cache/*",
+    "clean-engine": "rimraf engine/*",
     "clean-temp": "rimraf temp/*",
     "clean-release": "rimraf release/*",
     "clean-imgcache": "npm run clean-cache && npm run clean-temp",

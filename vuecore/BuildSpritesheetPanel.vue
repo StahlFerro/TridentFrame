@@ -149,7 +149,7 @@
                   <label class="label">Tile Width</label>
                   <div class="control">
                     <input
-                      v-bind:value="tile_width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(tile_width, $event)"
+                      v-bind:value="tile_width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(tile_width, $event)"
                       class="input is-neon-white"
                       type="number" 
                       min="1" step="1"/>
@@ -161,7 +161,7 @@
                   <label class="label">Tile Height</label>
                   <div class="control">
                     <input
-                      v-bind:value="tile_height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(tile_width, $event)"
+                      v-bind:value="tile_height" v-on:keydown="wholeNumConstrain($event)" v-on:input="heightHandler(tile_width, $event)"
                       class="input is-neon-white"
                       type="number"
                       min="1" step="1"
@@ -312,7 +312,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumberConstrain } from './Utility.vue';
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain } from './Utility.vue';
 
 function clearInfo() {
   data.image_paths = [],
@@ -595,7 +595,7 @@ export default {
     chooseOutDir: chooseOutDir,
     clearInfo: clearInfo,
     previewSheet, previewSheet,
-    wholeNumberConstrain: wholeNumberConstrain,
+    wholeNumConstrain: wholeNumConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     buildSpritesheet: buildSpritesheet,

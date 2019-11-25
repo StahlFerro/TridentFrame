@@ -144,8 +144,6 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
         raise Exception('Only supported extensions are gif and apng. Sry lad')
 
     out_dir = os.path.abspath(out_dir)
-    print(out_dir)
-    # Image processing
     if ext == 'gif':
         return _split_gif(image_path, out_dir, criteria)
 

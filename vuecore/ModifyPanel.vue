@@ -218,7 +218,7 @@
                         <div class="field">
                           <label class="label">Width</label>
                           <div class="control">
-                            <input v-bind:value="width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="widthHandler(width, $event)" 
+                            <input v-bind:value="width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(width, $event)" 
                               class="input is-neon-white" type="number" min="1" step="1"/>
                           </div>
                         </div>
@@ -227,7 +227,7 @@
                         <div class="field">
                           <label class="label">Height</label>
                           <div class="control">
-                            <input v-bind:value="height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="heightHandler(height, $event)"
+                            <input v-bind:value="height" v-on:keydown="posWholeNumConstrain($event)" v-on:input="heightHandler(height, $event)"
                              class="input is-neon-white" type="number" min="1" step="1"/>
                           </div>
                         </div>
@@ -236,7 +236,7 @@
                         <div class="field">
                           <label class="label">Rotation</label>
                           <div class="control">
-                            <input v-model="rotation" class="input is-neon-white" type="number" />
+                            <input v-model="rotation" v-on:keydown="posWholeNumConstrain($event)" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -246,7 +246,7 @@
                         <div class="field">
                           <label class="label">FPS</label>
                           <div class="control">
-                            <input v-model="fps" v-on:input="fpsConstrain" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" />
+                            <input v-model="fps" v-on:input="fpsConstrain" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -254,7 +254,7 @@
                         <div class="field">
                           <label class="label">Delay</label>
                           <div class="control">
-                            <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" />
+                            <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -262,7 +262,7 @@
                         <div class="field">
                           <label class="label">Loop count</label>
                           <div class="control">
-                            <input v-model="loop_count" v-on:keydown="wholeNumberConstrain($event)" class="input is-neon-white" type="number" min="0"/>
+                            <input v-model="loop_count" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" min="0"/>
                           </div>
                         </div>
                       </td>
@@ -390,7 +390,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumberConstrain, gcd } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./Utility.vue");
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
 
@@ -771,7 +771,8 @@ export default {
     chooseOutDir: chooseOutDir,
     previewModImg: previewModImg,
     modifyImage: modifyImage,
-    wholeNumberConstrain: wholeNumberConstrain,
+    wholeNumConstrain: wholeNumConstrain,
+    posWholeNumConstrain: posWholeNumConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     toggleOrigCheckerBG: toggleOrigCheckerBG,

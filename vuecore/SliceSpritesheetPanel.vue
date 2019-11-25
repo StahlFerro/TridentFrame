@@ -55,7 +55,7 @@
                   <label class="label">Tile Width</label>
                   <div class="control">
                     <input
-                      v-bind:value="tile_width" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileWidthHandler(tile_width, $event)"
+                      v-bind:value="tile_width" v-on:keydown="wholeNumConstrain($event)" v-on:input="tileWidthHandler(tile_width, $event)"
                       class="input is-neon-white"
                       type="number" 
                       min="1" step="1"/>
@@ -67,7 +67,7 @@
                   <label class="label">Tile Height</label>
                   <div class="control">
                     <input
-                      v-bind:value="tile_height" v-on:keydown="wholeNumberConstrain($event)" v-on:input="tileHeightHandler(tile_height, $event)"
+                      v-bind:value="tile_height" v-on:keydown="wholeNumConstrain($event)" v-on:input="tileHeightHandler(tile_height, $event)"
                       class="input is-neon-white"
                       type="number" 
                       min="1" step="1"/>
@@ -164,7 +164,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-const { randString, wholeNumberConstrain, gcd } = require("./Utility.vue");
+const { randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./Utility.vue");
 
 let extension_filters = [{ name: "Spritesheet image", extensions: ["png", "jpg"] }];
 let file_dialog_props = ["openfile"];
@@ -488,7 +488,7 @@ export default {
     toggleCheckerBG: toggleCheckerBG,
     sheetHandler: sheetHandler,
     sliceSheet: sliceSheet,
-    wholeNumberConstrain: wholeNumberConstrain,
+    wholeNumConstrain: wholeNumConstrain,
     tileWidthHandler: tileWidthHandler,
     tileHeightHandler: tileHeightHandler,
   },
