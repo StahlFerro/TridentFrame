@@ -47,7 +47,7 @@ def apngdis_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
 def apngopt_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []
     if criteria.apng_is_optimized:
-        args.append((f'-z{criteria.apng_optimization_level}', f'Optimizing APNG with level {criteria.apng_optimization_level + 1} compression...'))
+        args.append((f'-z{criteria.apng_optimization_level - 1}', f'Optimizing APNG with level {criteria.apng_optimization_level} compression...'))
     return args
 
 

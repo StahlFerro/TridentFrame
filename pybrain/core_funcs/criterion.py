@@ -1,4 +1,4 @@
-class CreationCriteria():
+class CreationCriteria:
     """ Contains all of the criterias for Creating an animated image """
     def __init__(self, vals):
         self.fps: float = float(vals['fps'] or 0)
@@ -25,7 +25,7 @@ class CreationCriteria():
     #     return self
 
 
-class SplitCriteria():
+class SplitCriteria:
     """ Contains all of the criterias for Splitting an animated image """
 
     def __init__(self, json_vals):
@@ -35,7 +35,7 @@ class SplitCriteria():
         self.is_unoptimized: bool = json_vals['is_unoptimized']
 
 
-class ModificationCriteria():
+class ModificationCriteria:
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
     def __init__(self, json_vals):
@@ -106,7 +106,7 @@ class ModificationCriteria():
         return f"{self.width}x{self.height}"
 
 
-class SpritesheetBuildCriteria():
+class SpritesheetBuildCriteria:
     """ Contains all of the criterias to build a spritesheet """
 
     def __init__(self, vals: dict):
@@ -121,7 +121,7 @@ class SpritesheetBuildCriteria():
         self.preserve_alpha: bool = vals['preserve_alpha']
 
 
-class SpritesheetSliceCriteria():
+class SpritesheetSliceCriteria:
     """ Contains all of the criterias to slice a spritesheet """
 
     def __init__(self, vals):

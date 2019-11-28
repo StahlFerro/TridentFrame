@@ -214,4 +214,3 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     elif criteria.extension == 'PNG':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
         return _build_apng(img_paths, out_full_path, criteria)
-

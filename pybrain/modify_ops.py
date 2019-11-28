@@ -16,7 +16,7 @@ from PIL import Image
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
-from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
+from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
 from .core_funcs.criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames
 from .core_funcs.arg_builder import gifsicle_args, imagemagick_args, apngopt_args, pngquant_args
@@ -56,10 +56,14 @@ def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, ou
 
 def _apnopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int):
     yield {"aopt_args": aopt_args}
-    apngopt_path = imager_exec_path('apngopt')
+    opt_dir = _mk_temp_dir(prefix_name='apngopt_dir')
+    apng_name = os.path.basename(target_path)
+    apngopt_path = shutil.copyfile(imager_exec_path('apngopt'), os.path.join(opt_dir, 'apngopt'))
+    apng_copied = shutil.copyfile(target_path, os.path.join(opt_dir, apng_name))
     for index, (arg, description) in enumerate(aopt_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-        cmdlist = [apngopt_path, arg, f'"{target_path}"', f'"{out_full_path}"']
+        cmdlist = [apng_copied, arg, f'"{apng_copied}"', f'"{apng_copied}"']
+        raise Exception(cmdlist, out_full_path)
         cmd = ' '.join(cmdlist)
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
@@ -194,4 +198,3 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     yield {"preview_path": target_path}
 
     yield {"CONTROL": "MOD_FINISH"}
-

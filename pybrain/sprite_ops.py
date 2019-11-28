@@ -141,4 +141,3 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     yield {"preview_path": final_path}
     yield {"CONTROL": "BSPR_FINISH"}
     # raise Exception('yo')
-    
