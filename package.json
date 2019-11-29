@@ -22,6 +22,7 @@
     "clean-temp": "rimraf temp/*",
     "clean-release": "rimraf release/*",
     "clean-imgcache": "npm run clean-cache && npm run clean-temp",
+    "clean-all": "npm run clean-build && npm run clean-dist && npm run clean-engine && npm run clean-engine && npm run clean-imgcache",
     "css-build": "node-sass --omit-source-map-url sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "npm run css-build -- --watch",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
@@ -37,8 +38,8 @@
     "buildpy-linux": "npm run engine-clean && pyinstaller tripy_linux.spec",
     "updatepy-windows": "npm run buildpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
     "updatepy-linux": "npm run buildpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
-    "release-windows": "npm run clean-imgcache && npm run wpbuild && npm run buildpy-windows && npm run elbuild",
-    "release-linux": "npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild",
+    "release-windows": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-windows && npm run elbuild",
+    "release-linux": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild",
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
     "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
     "ultimate-reset": "npm cache clean --force && rimraf node_modules/ && npm run megafix"

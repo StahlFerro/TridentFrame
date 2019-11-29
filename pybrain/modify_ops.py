@@ -54,16 +54,20 @@ def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, ou
     return target_path
 
 
-def _apnopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int):
+def _apngopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int):
     yield {"aopt_args": aopt_args}
-    opt_dir = _mk_temp_dir(prefix_name='apngopt_dir')
-    apng_name = os.path.basename(target_path)
-    apngopt_path = shutil.copyfile(imager_exec_path('apngopt'), os.path.join(opt_dir, 'apngopt'))
-    apng_copied = shutil.copyfile(target_path, os.path.join(opt_dir, apng_name))
+    apngopt_path = imager_exec_path('apngopt')
+    cwd = subprocess.check_output('pwd', shell=True).decode('utf-8')
+    common_path = os.path.commonpath([target_path, out_full_path, apngopt_path])
+    target_rel_path = os.path.relpath(target_path, cwd)
+    out_rel_path = os.path.relpath(out_full_path, cwd)
+    # raise Exception(apngopt_path, common_path, target_rel_path, out_rel_path)
+    result = subprocess.check_output('pwd', shell=True).decode('utf-8')
+    yield {"cwd": cwd}
+    # yield {"pcwd": os.getcwd()}
     for index, (arg, description) in enumerate(aopt_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-        cmdlist = [apng_copied, arg, f'"{apng_copied}"', f'"{apng_copied}"']
-        raise Exception(cmdlist, out_full_path)
+        cmdlist = [apngopt_path, arg, f'"{target_rel_path}"', f'"{out_rel_path}"']
         cmd = ' '.join(cmdlist)
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
@@ -72,6 +76,23 @@ def _apnopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_
         if target_path != out_full_path:
             target_path = out_full_path
     return target_path
+    # yield {"aopt_args": aopt_args}
+    # opt_dir = _mk_temp_dir(prefix_name='apngopt_dir')
+    # apng_name = os.path.basename(target_path)
+    # apngopt_path = shutil.copyfile(imager_exec_path('apngopt'), os.path.join(opt_dir, 'apngopt'))
+    # apng_copied = os.path.basename(shutil.copyfile(target_path, os.path.join(opt_dir, apng_name)))
+    # for index, (arg, description) in enumerate(aopt_args, start=1):
+    #     yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+    #     cmdlist = [apngopt_path, arg, f'"{apng_copied}"', f'"{apng_copied}"']
+    #     # raise Exception(cmdlist, out_full_path)
+    #     cmd = ' '.join(cmdlist)
+    #     yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
+    #     yield {"cmd": cmd}
+    #     result = subprocess.check_output(cmd, shell=True)
+    #     yield {"out": result}
+    #     if target_path != out_full_path:
+    #         target_path = out_full_path
+    # return target_path
 
 
 def _internal_gif_reverse(target_path: str, out_full_path: str, mod_criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):
@@ -194,7 +215,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             if criteria.has_general_alterations():
                 target_path = yield from _internal_apng_modify(target_path, out_full_path, criteria, total_ops)
             if aopt_args:
-                target_path = yield from _apnopt_modify(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
+                target_path = yield from _apngopt_modify(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
     yield {"preview_path": target_path}
 
     yield {"CONTROL": "MOD_FINISH"}
