@@ -57,12 +57,13 @@ def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, ou
 def _apngopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int):
     yield {"aopt_args": aopt_args}
     apngopt_path = imager_exec_path('apngopt')
-    cwd = subprocess.check_output('pwd', shell=True).decode('utf-8')
+    # cwd = subprocess.check_output('pwd', shell=True).decode('utf-8')
+    cwd = str(os.getcwd())
     common_path = os.path.commonpath([target_path, out_full_path, apngopt_path])
     target_rel_path = os.path.relpath(target_path, cwd)
     out_rel_path = os.path.relpath(out_full_path, cwd)
     # raise Exception(apngopt_path, common_path, target_rel_path, out_rel_path)
-    result = subprocess.check_output('pwd', shell=True).decode('utf-8')
+    # result = subprocess.check_output('pwd', shell=True).decode('utf-8')
     yield {"cwd": cwd}
     # yield {"pcwd": os.getcwd()}
     for index, (arg, description) in enumerate(aopt_args, start=1):
