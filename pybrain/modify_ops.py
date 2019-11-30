@@ -96,16 +96,16 @@ def _apngopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full
     # return target_path
 
 
-def _internal_gif_reverse(target_path: str, out_full_path: str, mod_criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):
-    frames_dir = _mk_temp_dir(prefix_name="formod_frames")
-    split_criteria = SplitCriteria({
-        'pad_count': 6,
-        'color_space': "",
-        'is_duration_sensitive': True,
-        'is_unoptimized': mod_criteria.is_unoptimized,
-    })
-    # yield {"msg": split_criteria.__dict__}
-    yield from split_aimg(target_path, frames_dir, split_criteria)
+# def _internal_gif_reverse(target_path: str, out_full_path: str, mod_criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):
+#     frames_dir = _mk_temp_dir(prefix_name="formod_frames")
+#     split_criteria = SplitCriteria({
+#         'pad_count': 6,
+#         'color_space': "",
+#         'is_duration_sensitive': True,
+#         'is_unoptimized': mod_criteria.is_unoptimized,
+#     })
+#     # yield {"msg": split_criteria.__dict__}
+#     yield from split_aimg(target_path, frames_dir, split_criteria)
 
 
 def _internal_apng_modify(target_path: str, out_full_path: str, criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):

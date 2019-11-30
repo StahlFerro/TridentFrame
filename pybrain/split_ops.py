@@ -12,7 +12,7 @@ from urllib.parse import urlparse
 from typing import List, Dict, Tuple
 from datetime import datetime
 
-from PIL import Image
+from PIL import Image, ImageChops
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
@@ -117,11 +117,39 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
     shout_nums = shout_indices(fcount, perc_skip)
     # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
     # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
+    first_png = iframes[0][0]
+    first_image = None
+    with io.BytesIO() as firstbox:
+        first_png.save(firstbox)
+        with Image.open(firstbox) as im:
+            first_image: Image = im.copy()
+    yield {"MODE FIRST": first_image.mode}
+    first_image = first_image.convert("RGBA")
+    base_stack_image: Image = first_image.copy()
+    first_size = (first_png.width, first_png.height)
     for index, (png, control) in enumerate(iframes):
+        save_path = os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png")
         if shout_nums.get(index):
             yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
-        # yield {"msg": f'Splitting APNG... ({index + 1}/{len(iframes)})'}
-        png.save(os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png"))
+        # if index > 0 and criteria.is_unoptimized:
+        with io.BytesIO() as bytebox:
+            png.save(bytebox)
+            with Image.open(bytebox) as im:
+                yield {"MSG": control.__dict__}
+                if criteria.is_unoptimized:
+                    im = im.convert("RGBA")
+                    if control.depose_op == 2:
+                        separate_stack = base_stack_image.copy()
+                        separate_stack.paste(im, (control.x_offset, control.y_offset), im)
+                        separate_stack.save(save_path)
+                    else:
+                        base_stack_image.paste(im, (control.x_offset, control.y_offset), im)
+                        base_stack_image.save(save_path)
+                else:
+                    im.save(save_path)
+        # else:
+        #     png = png.convert("RGBA")
+        #     png.save(save_path)
     yield {"CONTROL": "SPL_FINISH"}
 
 
