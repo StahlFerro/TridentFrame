@@ -18,10 +18,10 @@ from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
 from .core_funcs.criterion import CreationCriteria, SplitCriteria, ModificationCriteria
-from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames
+from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames, shout_indices
 from .core_funcs.arg_builder import gifsicle_args, imagemagick_args, apngopt_args, pngquant_args
 from .create_ops import create_aimg
-from .split_ops import split_aimg
+from .split_ops import split_aimg, _fragment_apng_frames
 
 
 def _gifsicle_modify(sicle_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int) -> str:
@@ -73,7 +73,7 @@ def _apngopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
         result = subprocess.check_output(cmd, shell=True)
-        yield {"out": result}
+        # yield {"out": result}
         if target_path != out_full_path:
             target_path = out_full_path
     return target_path
@@ -108,29 +108,64 @@ def _apngopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full
 #     yield from split_aimg(target_path, frames_dir, split_criteria)
 
 
-def _internal_apng_modify(target_path: str, out_full_path: str, criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):
+def _internal_apng_modify(target_path: str, out_full_path: str, mod_criteria: ModificationCriteria, total_ops: int, shift_index: int = 0):
+    """ Splits the APNG apart into frames, apply modification to each frames, and then compile them back """
     apng = APNG.open(target_path)
     new_apng = APNG()
     yield {"log": "Internal APNG Modification"}
-    frames = apng.frames
-    if criteria.is_reversed:
+    split_criteria = SplitCriteria({
+        'pad_count': 6,
+        'color_space': "",
+        'is_duration_sensitive': True,
+        'is_unoptimized': True,
+    })
+    frames = yield from _fragment_apng_frames(apng, split_criteria)
+    if mod_criteria.is_reversed:
         frames.reverse()
-    for png, controller in apng.frames:
-        with io.BytesIO() as bytebox:
-            png.save(bytebox)
-            with Image.open(bytebox) as im:
-                if criteria.flip_x:
-                    im = im.transpose(Image.FLIP_LEFT_RIGHT)
-                if criteria.flip_y:
-                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
-                if criteria.must_resize():
-                    im = im.resize((criteria.width, criteria.height))
-                newbox = io.BytesIO()
-                im.save(newbox, format="PNG")
-                new_apng.append(PNG.from_bytes(newbox.getvalue()), delay=int(criteria.delay * 1000))
+    if mod_criteria.apng_is_lossy:
+        frames = yield from _batch_quantize(frames, mod_criteria)
+    for im in frames:
+        # im.show()
+        # with io.BytesIO() as bytebox:
+        #     png.save(bytebox)
+        #     with Image.open(bytebox) as im:
+        if mod_criteria.flip_x:
+            im = im.transpose(Image.FLIP_LEFT_RIGHT)
+        if mod_criteria.flip_y:
+            im = im.transpose(Image.FLIP_TOP_BOTTOM)
+        if mod_criteria.is_reversed or mod_criteria.must_resize():
+            im = im.resize((mod_criteria.width, mod_criteria.height))
+        newbox = io.BytesIO()
+        im.save(newbox, format="PNG")
+        new_apng.append(PNG.from_bytes(newbox.getvalue()), delay=int(mod_criteria.delay * 1000))
     new_apng.save(out_full_path)
     return out_full_path
 
+def _batch_quantize(frames: List[Image.Image], criteria: ModificationCriteria):
+    """ Perform PNG quantization on a list of PIL.Image.Images using PNGQuant """
+    quantized_frames = []
+    pngquant_exec = imager_exec_path("pngquant")
+    q_ops = pngquant_args(criteria)
+    quant_dir = _mk_temp_dir(prefix_name="quant_dir")
+    shout_nums = shout_indices(len(frames), 5)
+    for index, fr in enumerate(frames):
+        if shout_nums.get(index):
+            yield {"msg": f'Quantizing PNG... ({shout_nums.get(index)})'}
+        save_path = os.path.join(quant_dir, f"{index}.png")
+        out_path = os.path.join(quant_dir, f"{index}_quantized.png")
+        yield {"FMODE": fr.mode}
+        fr.save(save_path, "PNG")
+        args = [pngquant_exec, ' '.join([q[0] for q in q_ops]), save_path, "--output", out_path]
+        cmd = ' '.join(args)
+        yield {"cmd": cmd}
+        result = subprocess.check_output(cmd, shell=True)
+        # yield {"out": result}
+        quantized_img = Image.open(out_path)
+        yield {"QMODE": quantized_img.mode}
+        quantized_img = quantized_img.convert("RGBA")
+        quantized_frames.append(quantized_img)
+    # yield {"ssdsdsssdsd": quantized_frames}
+    return quantized_frames
 
 def _rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
     yield {"DEBUG": [img_path, out_dir]}

@@ -53,6 +53,7 @@ def apngopt_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
 
 def pngquant_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []
+    args.append((f"--quality={criteria.apng_lossy_value}", f"Quantizing PNG with quality value: {criteria.apng_lossy_value}"))
     # if criteria.apng_is_lossy:
         # args.append(())
     return args

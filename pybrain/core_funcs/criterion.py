@@ -73,7 +73,7 @@ class ModificationCriteria:
         self.apng_is_optimized = json_vals['apng_is_optimized']
         self.apng_optimization_level = int(json_vals.get('apng_optimization_level') or 0)
         self.apng_is_lossy = json_vals['apng_is_lossy']
-        self.apng_lossy_value = json_vals['apng_lossy_value']
+        self.apng_lossy_value = int(json_vals.get('apng_lossy_value') or 0)
 
         self.is_unoptimized = json_vals['is_unoptimized']
 
@@ -96,7 +96,7 @@ class ModificationCriteria:
         return self.orig_format != self.format
 
     def has_general_alterations(self) -> bool:
-        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop() or self.must_flip() or self.is_reversed
+        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop() or self.must_flip() or self.is_reversed or (self.apng_is_lossy and self.apng_lossy_value)
         return altered
 
     def orig_dimensions(self) -> str:

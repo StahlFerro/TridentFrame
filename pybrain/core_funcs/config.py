@@ -40,7 +40,7 @@ def ABS_TEMP_PATH():
 
 def imager_exec_path(binname: str) -> str:
     """ Get the path to the internal image processing binaries\n
-        Supported binname params: ['gifsicle', 'imagemagick', 'apngasm', 'apngopt', 'apngdis']
+        Supported binname params: ['gifsicle', 'imagemagick', 'apngasm', 'apngopt', 'apngdis', 'pngquant']
     """
     if platform.system() == 'Windows':
         path = _bin_confile()['win'][binname]

@@ -56,40 +56,41 @@ def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> Li
 #             sequence += 1
 
 
-def _fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
-    """ Split GIF into separate images using Gifsicle based on the specified criteria"""
-    orig_name = os.path.splitext(os.path.basename(unop_gif_path))[0]
+def _fragment_gif_frames(unop_gif_path: str, name: str, criteria: SplitCriteria) -> List[Image.Image]:
+    fragment_dir = _mk_temp_dir(prefix_name="fragment_dir")
+    """ Split GIF frames and return them as a list of PIL.Image.Images using Gifsicle based on the specified criteria"""
+    frames = []
     indexed_ratios = _get_gif_delay_ratios(unop_gif_path, criteria.is_duration_sensitive)
     total_frames = sum([ir[1] for ir in indexed_ratios])
     cumulative_index = 0
-    gifragment_paths = []
     gifsicle_path = imager_exec_path('gifsicle')
-    perc_skip = 5
-    shout_nums = shout_indices(total_frames, perc_skip)
+    shout_nums = shout_indices(total_frames, 5)
     for index, ratio in indexed_ratios:
         if shout_nums.get(cumulative_index):
             yield {"msg": f'Splitting frames... ({shout_nums.get(index)})'}
         selector = f'"#{index}"'
         for n in range(0, ratio):
             # yield {"msg": f"Splitting GIF... ({cumulative_index + 1}/{total_frames})"}
-            save_path = os.path.join(out_dir, f'{orig_name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png')
-            args = [gifsicle_path, f'"{unop_gif_path}"', selector, "--output", f'"{save_path}"']
+            dir_path = os.path.join(fragment_dir, f'{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png')
+            args = [gifsicle_path, f'"{unop_gif_path}"', selector, "--output", f'"{dir_path}"']
             cmd = ' '.join(args)
             subprocess.run(cmd, shell=True)
-            gifragment_paths.append(save_path)
             cumulative_index += 1
-            with Image.open(save_path).convert("RGBA") as gif:
+            with Image.open(dir_path).convert("RGBA") as im:
             # if gif.info.get('transparency'):
             #     yield {"msg": "Palette has transparency"}
             #     gif = gif.convert('RGBA')
             # else:
             #     yield {"msg": "Palette has no transparency"}
             #     gif = gif.convert('RGB')
-                gif.save(save_path, "PNG")
+                frames.append(im)
+    shutil.rmtree(fragment_dir)
+    return frames
 
 
 def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
     """ Unoptimizes GIF, and then splits the frames into separate images """
+    name = os.path.splitext(os.path.basename(gif_path))[0]
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
     target_path = gif_path
@@ -102,54 +103,71 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
     if criteria.is_unoptimized:
         yield {"msg": f"Unoptimizing GIF..."}
         target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
-    yield from _fragment_gif_frames(target_path, out_dir, criteria)
-    # yield from _pillow_fragment_gif_frames(unop_gif_path, out_dir, criteria)
+    frames = yield from _fragment_gif_frames(target_path, name, criteria)
+    shout_nums = shout_indices(len(frames), 5)
+    for index, fr in enumerate(frames):
+        if shout_nums.get(index):
+            yield {"msg": f'Saving frames... ({shout_nums.get(index)})'}
+        save_path = os.path.join(out_dir, f'{name}_{str.zfill(str(index), criteria.pad_count)}.png')
+        fr.save(save_path, "PNG")
     yield {"CONTROL": "SPL_FINISH"}
 
 
-def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria):
-    """ Extracts all of the frames of an animated PNG """
-    img: APNG = APNG.open(apng_path)
-    iframes = img.frames
-    pad_count = max(len(str(len(iframes))), 3)
+def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
+    """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
+    frames = []
+    iframes = apng.frames
     fcount = len(iframes)
-    perc_skip = 5
-    shout_nums = shout_indices(fcount, perc_skip)
-    # print('frames', [(png, control.__dict__) for (png, control) in img.frames][0])
-    # with click.progressbar(iframes, empty_char=" ", fill_char="█", show_percent=True, show_pos=True) as frames:
+    pad_count = max(len(str(fcount)), 3)
+    shout_nums = shout_indices(fcount, 5)
     first_png = iframes[0][0]
-    first_image = None
+    base_stack_image: Image.Image
     with io.BytesIO() as firstbox:
         first_png.save(firstbox)
         with Image.open(firstbox) as im:
-            first_image: Image = im.copy()
-    yield {"MODE FIRST": first_image.mode}
-    first_image = first_image.convert("RGBA")
-    base_stack_image: Image = first_image.copy()
-    first_size = (first_png.width, first_png.height)
+            im = im.convert("RGBA")
+            base_stack_image: Image = im.copy()
+    # yield {"MODE FIRST": base_stack_image.mode}
     for index, (png, control) in enumerate(iframes):
-        save_path = os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png")
         if shout_nums.get(index):
             yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
-        # if index > 0 and criteria.is_unoptimized:
         with io.BytesIO() as bytebox:
             png.save(bytebox)
-            with Image.open(bytebox) as im:
-                yield {"MSG": control.__dict__}
+            with Image.open(bytebox).convert("RGBA") as im:
+                # yield {"MSG": control.__dict__}
                 if criteria.is_unoptimized:
-                    im = im.convert("RGBA")
+                    # im = im.convert("RGBA")
+                    yield {"CONTROL": control.depose_op}
                     if control.depose_op == 2:
                         separate_stack = base_stack_image.copy()
                         separate_stack.paste(im, (control.x_offset, control.y_offset), im)
-                        separate_stack.save(save_path)
-                    else:
+                        frames.append(separate_stack.copy())
+                        # separate_stack.show()
+                    elif control.depose_op == 1:
+                        frames.append(im.copy())
+                    elif control.depose_op == 0:
                         base_stack_image.paste(im, (control.x_offset, control.y_offset), im)
-                        base_stack_image.save(save_path)
+                        frames.append(base_stack_image.copy())
+                        # base_stack_image.show()
                 else:
-                    im.save(save_path)
-        # else:
-        #     png = png.convert("RGBA")
-        #     png.save(save_path)
+                    frames.append(im)
+    # for fr in frames:
+    #     fr.show()
+    return frames
+
+
+
+def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria):
+    """ Extracts all of the frames of an animated PNG into a folder """
+    apng: APNG = APNG.open(apng_path)
+    frames = yield from _fragment_apng_frames(apng, criteria)
+    pad_count = criteria.pad_count
+    shout_nums = shout_indices(len(frames), 5)
+    for index, fr in enumerate(frames):
+        if shout_nums.get(index):
+            yield {"msg": f'Saving frames... ({shout_nums.get(index)})'}
+        save_path = os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png")
+        fr.save(save_path)
     yield {"CONTROL": "SPL_FINISH"}
 
 

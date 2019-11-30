@@ -143,6 +143,8 @@ def shout_indices(frame_count: int, percentage_skip: int) -> Dict[int, str]:
     mults = 100 // percentage_skip
     return {round(frame_count / mults * mult): f"{mult * percentage_skip}%" for mult in range(0, mults)}
 
+        
+
 # def gs_build():
 #     gifsicle_exec = os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
 #     orig_path = os.path.abspath('./test/orig2/')
