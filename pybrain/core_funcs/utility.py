@@ -56,7 +56,7 @@ def _purge_directory(target_folder):
 
 
 def _mk_temp_dir(prefix_name: str = ''):
-    """ Creates a temporary directory for AIMG manipulation purposes. Returns the absolute path """
+    """ Creates a directory for temporary storage, and then returns its absolute path """
     dirname = time.strftime("%Y%m%d_%H%M%S")
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"
@@ -104,21 +104,21 @@ def _delete_temp_images():
     return True
 
 
-def _restore_disposed_frames(frame_paths: List[str]):
-    """ Pastes the target_frame over the first_frame (applied when restoring GIF frames). Overrides every single frames on disk """
-    im = Image.open(frame_paths[0])
-    # im.transparency = 0
-    im = im.convert("RGBA")
-    fm = []
-    for index, f in enumerate(frame_paths):
-        frame = Image.open(f)
-        # frame.transparency = 0
-        frame = frame.convert("RGBA")
-        # frame.show()
-        fm.append((frame.mode, im.info))
-        # im.paste(frame)
-        frame.save(f, "PNG")
-        yield f"Coalescing frames... ({index + 1}/{len(frame_paths)})"
+# def _restore_disposed_frames(frame_paths: List[str]):
+#     """ Pastes the target_frame over the first_frame (applied when restoring GIF frames). Overrides every single frames on disk """
+#     im = Image.open(frame_paths[0])
+#     # im.transparency = 0
+#     im = im.convert("RGBA")
+#     fm = []
+#     for index, f in enumerate(frame_paths):
+#         frame = Image.open(f)
+#         # frame.transparency = 0
+#         frame = frame.convert("RGBA")
+#         # frame.show()
+#         fm.append((frame.mode, im.info))
+#         # im.paste(frame)
+#         frame.save(f, "PNG")
+#         yield f"Coalescing frames... ({index + 1}/{len(frame_paths)})"
     # yield '\n'.join(fm)
     
 

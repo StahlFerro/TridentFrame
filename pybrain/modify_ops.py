@@ -18,7 +18,7 @@ from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
 from .core_funcs.criterion import CreationCriteria, SplitCriteria, ModificationCriteria
-from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, _restore_disposed_frames, shout_indices
+from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices
 from .core_funcs.arg_builder import gifsicle_args, imagemagick_args, apngopt_args, pngquant_args
 from .create_ops import create_aimg
 from .split_ops import split_aimg, _fragment_apng_frames
@@ -55,28 +55,51 @@ def _imagemagick_modify(magick_args: List[Tuple[str, str]], target_path: str, ou
 
 
 def _apngopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int, shift_index: int):
-    yield {"aopt_args": aopt_args}
-    apngopt_path = imager_exec_path('apngopt')
-    # cwd = subprocess.check_output('pwd', shell=True).decode('utf-8')
-    cwd = str(os.getcwd())
-    common_path = os.path.commonpath([target_path, out_full_path, apngopt_path])
+    # yield {"aopt_args": aopt_args}
+    # apngopt_path = imager_exec_path('apngopt')
+    # # cwd = subprocess.check_output('pwd', shell=True).decode('utf-8')
+    # cwd = str(os.getcwd())
+    # common_path = os.path.commonpath([target_path, out_full_path, apngopt_path])
+    # target_rel_path = os.path.relpath(target_path, cwd)
+    # out_rel_path = os.path.relpath(out_full_path, cwd)
+    # # raise Exception(apngopt_path, common_path, target_rel_path, out_rel_path)
+    # # result = subprocess.check_output('pwd', shell=True).decode('utf-8')
+    # yield {"cwd": cwd}
+    # # yield {"pcwd": os.getcwd()}
+    # for index, (arg, description) in enumerate(aopt_args, start=1):
+    #     yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+    #     cmdlist = [apngopt_path, arg, f'"{target_rel_path}"', f'"{out_rel_path}"']
+    #     cmd = ' '.join(cmdlist)
+    #     yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
+    #     yield {"cmd": cmd}
+    #     result = subprocess.check_output(cmd, shell=True)
+    #     # yield {"out": result}
+    #     if target_path != out_full_path:
+    #         target_path = out_full_path
+    # return target_path
+    aopt_dir = _mk_temp_dir(prefix_name='apngopt_dir')
+    opt_exec_path = imager_exec_path('apngopt')
+    filename = os.path.basename(target_path)
+    target_path = shutil.copyfile(target_path, os.path.join(aopt_dir, filename))
+    cwd = os.getcwd()
+    # common_path = os.path.commonpath([opt_exec_path, target_path])
     target_rel_path = os.path.relpath(target_path, cwd)
-    out_rel_path = os.path.relpath(out_full_path, cwd)
-    # raise Exception(apngopt_path, common_path, target_rel_path, out_rel_path)
-    # result = subprocess.check_output('pwd', shell=True).decode('utf-8')
-    yield {"cwd": cwd}
-    # yield {"pcwd": os.getcwd()}
     for index, (arg, description) in enumerate(aopt_args, start=1):
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-        cmdlist = [apngopt_path, arg, f'"{target_rel_path}"', f'"{out_rel_path}"']
+        cmdlist = [opt_exec_path, arg, f'"{target_rel_path}"', f'"{target_rel_path}"']
+        # raise Exception(cmdlist, out_full_path)
         cmd = ' '.join(cmdlist)
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
         result = subprocess.check_output(cmd, shell=True)
-        # yield {"out": result}
-        if target_path != out_full_path:
-            target_path = out_full_path
-    return target_path
+        yield {"out": result}
+        # if target_path != out_full_path:
+            # target_path = out_full_path
+    x = shutil.move(target_path, out_full_path)
+    yield {"X": x}
+    shutil.rmtree(aopt_dir)
+    return out_full_path
+
     # yield {"aopt_args": aopt_args}
     # opt_dir = _mk_temp_dir(prefix_name='apngopt_dir')
     # apng_name = os.path.basename(target_path)

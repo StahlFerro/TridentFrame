@@ -53,7 +53,7 @@
     "asar": false,
     "win": {
       "target": [
-        "zip"
+        "7z"
       ],
       "icon": "release/tridentframe/win-unpacked/resources/app/imgs/TridentFrame_logo_256x256.ico"
     },
