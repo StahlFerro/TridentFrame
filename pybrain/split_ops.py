@@ -137,7 +137,7 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
                 # yield {"MSG": control.__dict__}
                 if criteria.is_unoptimized:
                     # im = im.convert("RGBA")
-                    yield {"CONTROL": control.depose_op}
+                    # yield {"CONTROL": control.depose_op}
                     if control.depose_op == 2:
                         separate_stack = base_stack_image.copy()
                         separate_stack.paste(im, (control.x_offset, control.y_offset), im)
