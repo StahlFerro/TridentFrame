@@ -366,6 +366,7 @@
                   :apng_optimization_level.sync="apng_optimization_level"
                   :apng_is_lossy.sync="apng_is_lossy"
                   :apng_lossy_value.sync="apng_lossy_value"
+                  :apng_is_unoptimized.sync="apng_is_unoptimized"
                   />  
                 </div>
               </td>
@@ -436,6 +437,7 @@ var data = {
   apng_optimization_level: "1",
   apng_is_lossy: false,
   apng_lossy_value: "",
+  apng_is_unoptimized: false,
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",

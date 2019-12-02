@@ -130,6 +130,7 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
             im = im.convert("RGBA")
             base_stack_image: Image = im.copy()
     # yield {"MODE FIRST": base_stack_image.mode}
+    depose_ops = []
     for index, (png, control) in enumerate(iframes):
         if shout_nums.get(index):
             yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
@@ -140,21 +141,23 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
                 if criteria.is_unoptimized:
                     # im = im.convert("RGBA")
                     # yield {"CONTROL": control.depose_op}
-                    if control.depose_op == 2:
+                    if control.depose_op == 2 or control.depose_op == 1:
                         separate_stack = base_stack_image.copy()
                         separate_stack.paste(im, (control.x_offset, control.y_offset), im)
                         frames.append(separate_stack.copy())
                         # separate_stack.show()
-                    elif control.depose_op == 1:
-                        frames.append(im.copy())
+                    # elif control.depose_op == 1:
+                    #     frames.append(im.copy())
                     elif control.depose_op == 0:
                         base_stack_image.paste(im, (control.x_offset, control.y_offset), im)
                         frames.append(base_stack_image.copy())
                         # base_stack_image.show()
                 else:
                     frames.append(im)
+                depose_ops.append(control.depose_op)
     # for fr in frames:
     #     fr.show()
+    yield {"DEPOSE_OPS": depose_ops}
     return frames
 
 

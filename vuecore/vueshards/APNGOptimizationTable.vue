@@ -29,7 +29,7 @@
           title="Performs significant file size reduction at a slight cost of quality (artifacts and noise).\n
           The smaller the value, the stronger the compression will be and the lower the quality will be."
         >
-          <input v-model="apng_is_lossy" type="checkbox"
+          <input v-model="apng_is_lossy" type="checkbox" v-bind:disabled="apng_is_unoptimized"
             @change="$emit('update:apng_is_lossy', apng_is_lossy)" />
           Lossy-compression
         </label>
@@ -50,6 +50,16 @@
             />
           </div>
         </div>
+      </td>
+    </tr>
+    
+    <tr>
+      <td class="force-vcenter">
+        <label class="checkbox" title="Unoptimizes the APNG">
+          <input v-model="apng_is_unoptimized" type="checkbox" v-bind:disabled="apng_is_optimized || apng_is_lossy"
+            @change="$emit('update:apng_is_unoptimized', apng_is_unoptimized)" />
+          Unoptimize
+        </label>
       </td>
     </tr>
   </table>

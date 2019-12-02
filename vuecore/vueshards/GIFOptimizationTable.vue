@@ -29,7 +29,7 @@
           class="checkbox"
           title="Performs significant file size reduction at the cost of quality (artifacts and noise)"
         >
-          <input v-model="is_lossy" type="checkbox"
+          <input v-model="is_lossy" type="checkbox" v-bind:disabled="is_unoptimized"
             @change="$emit('update:is_lossy', is_lossy)" />
           Lossy-compression
         </label>
@@ -57,7 +57,7 @@
         <label
           class="checkbox"
           title="Sets the number of colors for the GIF. Ranging from 2 colors (monochrome) to 256 (maximum for GIFs). Warning: this will also eliminate local/per-frame color tables, setting just one global color table for every frame.">
-          <input  type="checkbox" v-model="is_reduced_color"
+          <input type="checkbox" v-model="is_reduced_color" v-bind:disabled="is_unoptimized"
             @change="$emit('update:is_reduced_color', is_reduced_color)" />
           Color space
         </label>
@@ -85,7 +85,7 @@
         <label
           class="checkbox"
           title="Unoptimize each frame of the GIF to fully define their original look. Allows editing of each frame on any other application at the cost of increased file size.">
-          <input type="checkbox" v-model="is_unoptimized" v-bind:disabled="is_optimized"
+          <input type="checkbox" v-model="is_unoptimized" v-bind:disabled="is_optimized || is_lossy || is_reduced_color"
           @change="$emit('update:is_unoptimized', is_unoptimized)" />
           Unoptimize
         </label>

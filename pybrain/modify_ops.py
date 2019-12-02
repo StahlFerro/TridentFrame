@@ -240,11 +240,12 @@ def _batch_quantize(image_paths: List[str], criteria: ModificationCriteria):
 
 def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
     frames_dir = _mk_temp_dir(prefix_name="rebuild_aimg")
+    is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
     split_criteria = SplitCriteria({
         'pad_count': 6,
         'color_space': "",
         'is_duration_sensitive': True,
-        'is_unoptimized': mod_criteria.is_unoptimized,
+        'is_unoptimized': is_unoptimized,
     })
     frames = yield from split_aimg(img_path, frames_dir, split_criteria)
     yield {"frames before": frames}
@@ -262,8 +263,8 @@ def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria
         'format': mod_criteria.format,
         'is_reversed': mod_criteria.is_reversed,
         'is_transparent': True,
-        'flip_x': False, # Flipping horizontally is handled by gifsicle
-        'flip_y': False, # Flipping vertically is handled by gifsicle
+        'flip_x': mod_criteria.flip_x, # Flipping horizontally is handled by gifsicle
+        'flip_y': mod_criteria.flip_y, # Flipping vertically is handled by gifsicle
         'width': mod_criteria.width,
         'height': mod_criteria.height,
         'loop_count': mod_criteria.loop_count,
@@ -328,10 +329,10 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     yield {"CHANGE FORMAT???": criteria.change_format()}
     if criteria.change_format():
         if criteria.format == "PNG":
-            if sicle_args:
-                target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
-            if magick_args:
-                target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
+            # if sicle_args:
+            #     target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
+            # if magick_args:
+            #     target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
             # yield {"preview_path": target_path}
             yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
             target_path = yield from rebuild_aimg(target_path, out_dir, criteria)
@@ -348,7 +349,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             # yield {"preview_path": target_path}
     else:
         if criteria.orig_format == "GIF":
-            if criteria.is_reversed:
+            if criteria.is_reversed or criteria.must_flip():
                 target_path = yield from rebuild_aimg(target_path, out_dir, criteria)
             if sicle_args:
                 target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
@@ -357,7 +358,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             # yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
             if criteria.has_general_alterations():
-                target_path = yield from rebuild_aimg(target_path, out_full_path, criteria)
+                target_path = yield from rebuild_aimg(target_path, out_dir, criteria)
             if aopt_args:
                 target_path = yield from _apngopt_modify(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
     yield {"preview_path": target_path}
