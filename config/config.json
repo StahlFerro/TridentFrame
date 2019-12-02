@@ -12,6 +12,7 @@
         "imagemagick": "ImageMagick-7.0.8-61-unix/convert",
         "apngasm": "apngasm-2.91-bin-linux/apngasm",
         "apngopt": "apngopt-1.4-bin-linux/apngopt",
-        "apngdis": "apngdis-2.9-bin-linux/apngdis"
+        "apngdis": "apngdis-2.9-bin-linux/apngdis",
+        "pngquant": "pngquant/pngquant"
     }
 }

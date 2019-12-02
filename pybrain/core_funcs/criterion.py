@@ -1,6 +1,7 @@
 class CreationCriteria:
     """ Contains all of the criterias for Creating an animated image """
     def __init__(self, vals):
+        self.name: str = vals['name']
         self.fps: float = float(vals['fps'] or 0)
         self.delay: float = float(vals['delay'] or 0)
         self.extension: str = vals['format']
@@ -69,13 +70,13 @@ class ModificationCriteria:
         self.lossy_value = json_vals['lossy_value']
         self.is_reduced_color = json_vals['is_reduced_color']
         self.color_space = json_vals['color_space']
+        self.is_unoptimized = json_vals['is_unoptimized']
 
         self.apng_is_optimized = json_vals['apng_is_optimized']
         self.apng_optimization_level = int(json_vals.get('apng_optimization_level') or 0)
         self.apng_is_lossy = json_vals['apng_is_lossy']
         self.apng_lossy_value = int(json_vals.get('apng_lossy_value') or 0)
-
-        self.is_unoptimized = json_vals['is_unoptimized']
+        self.apng_is_unoptimized = json_vals['apng_is_unoptimized']
 
     def must_resize(self) -> bool:
         return self.orig_width != self.width or self.orig_height != self.height
@@ -96,7 +97,8 @@ class ModificationCriteria:
         return self.orig_format != self.format
 
     def has_general_alterations(self) -> bool:
-        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop() or self.must_flip() or self.is_reversed or (self.apng_is_lossy and self.apng_lossy_value)
+        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop() or self.must_flip() or self.is_reversed \
+            or (self.apng_is_lossy and self.apng_lossy_value) or self.apng_is_unoptimized
         return altered
 
     def orig_dimensions(self) -> str:

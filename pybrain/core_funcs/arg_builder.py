@@ -14,10 +14,10 @@ def gifsicle_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
         args.append((f"--lossy={criteria.lossy_value}", f"Lossy compressing with value: {criteria.lossy_value}..."))
     if criteria.is_reduced_color and criteria.color_space:
         args.append((f"--colors={criteria.color_space}", f"Reducing colors to: {criteria.color_space}..."))
-    if criteria.flip_x:
-        args.append(("--flip-horizontal", "Flipping image horizontally..."))
-    if criteria.flip_y:
-        args.append((f"--flip-vertical", "Flipping image vertically..."))
+    # if criteria.flip_x:
+    #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
+    # if criteria.flip_y:
+    #     args.append((f"--flip-vertical", "Flipping image vertically..."))
     if criteria.orig_loop_count != criteria.loop_count:
         loop_count = criteria.loop_count
         loop_arg = "--loopcount"

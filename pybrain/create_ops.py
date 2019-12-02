@@ -160,9 +160,11 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
     apng = APNG()
     first_width, first_height = Image.open(image_paths[0]).size
     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
+    shout_nums = shout_indices(len(image_paths), 5)
     if criteria.flip_h or criteria.flip_v or first_must_resize:
         for index, ipath in enumerate(image_paths):
-            # bytebox = io.BytesIO()
+            if shout_nums.get(index):
+                yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
             with io.BytesIO() as bytebox:
                 with Image.open(ipath) as im:
                     # im = Image.open(ipath)
@@ -175,9 +177,9 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
                     if criteria.flip_v:
                         im = im.transpose(Image.FLIP_TOP_BOTTOM)
                     im.save(bytebox, "PNG")
-                yield {"msg": f"Processing frames... ({index + 1}/{len(image_paths)})"}
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
         yield {"msg": "Saving APNG...."}
+        apng.num_plays = criteria.loop_count
         apng.save(out_full_path)
     else:
         yield {"msg": "Saving APNG..."}
