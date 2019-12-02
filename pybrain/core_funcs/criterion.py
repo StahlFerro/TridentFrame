@@ -1,6 +1,7 @@
 class CreationCriteria:
     """ Contains all of the criterias for Creating an animated image """
     def __init__(self, vals):
+        self.name: str = vals['name']
         self.fps: float = float(vals['fps'] or 0)
         self.delay: float = float(vals['delay'] or 0)
         self.extension: str = vals['format']

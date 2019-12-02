@@ -90,6 +90,7 @@ def _fragment_gif_frames(unop_gif_path: str, name: str, criteria: SplitCriteria)
 
 def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
     """ Unoptimizes GIF, and then splits the frames into separate images """
+    frame_paths = []
     name = os.path.splitext(os.path.basename(gif_path))[0]
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
@@ -110,7 +111,8 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
             yield {"msg": f'Saving frames... ({shout_nums.get(index)})'}
         save_path = os.path.join(out_dir, f'{name}_{str.zfill(str(index), criteria.pad_count)}.png')
         fr.save(save_path, "PNG")
-    yield {"CONTROL": "SPL_FINISH"}
+        frame_paths.append(save_path)
+    return frame_paths
 
 
 def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
@@ -158,7 +160,8 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
 
 
 def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria):
-    """ Extracts all of the frames of an animated PNG into a folder """
+    """ Extracts all of the frames of an animated PNG into a folder and return a list of each of the frames' absolute paths """
+    frame_paths = []
     apng: APNG = APNG.open(apng_path)
     frames = yield from _fragment_apng_frames(apng, criteria)
     pad_count = criteria.pad_count
@@ -168,12 +171,14 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
             yield {"msg": f'Saving frames... ({shout_nums.get(index)})'}
         save_path = os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
-    yield {"CONTROL": "SPL_FINISH"}
+        frame_paths.append(save_path)
+    return frame_paths
 
 
 def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
     """ Umbrella function for splitting animated images into individual frames """
     # print(error)
+    frame_paths = []
     image_path = os.path.abspath(image_path)
     if not os.path.isfile(image_path):
         raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file", image_path)
@@ -191,11 +196,12 @@ def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
 
     out_dir = os.path.abspath(out_dir)
     if ext == 'gif':
-        return _split_gif(image_path, out_dir, criteria)
+        frame_paths = yield from _split_gif(image_path, out_dir, criteria)
 
     elif ext == 'png':
-        return _split_apng(image_path, out_dir, name, criteria)
-
+        frame_paths = yield from _split_apng(image_path, out_dir, name, criteria)
+    yield {"CONTROL": "SPL_FINISH"}
+    return frame_paths
 
 # if __name__ == "__main__":
 #     pprint(inspect_sequence(""))
