@@ -325,7 +325,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     aopt_args = apngopt_args(criteria)
     # yield sicle_args
     target_path = str(img_path)
-    total_ops = len(sicle_args) + len(magick_args) + len(aopt_args)
+    total_ops = 0
     yield {"CHANGE FORMAT???": criteria.change_format()}
     if criteria.change_format():
         if criteria.format == "PNG":
