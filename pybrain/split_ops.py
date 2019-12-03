@@ -13,6 +13,7 @@ from typing import List, Dict, Tuple
 from datetime import datetime
 
 from PIL import Image, ImageChops
+from PIL.GifImagePlugin import GifImageFile
 from apng import APNG, PNG
 from hurry.filesize import size, alternative
 
@@ -101,6 +102,22 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
         else:
             yield {"msg": f"Reducing colors to {color_space}..."}
             target_path = _reduce_color(gif_path, unop_dir, color=color_space)
+
+    # ===== Start test splitting code =====
+    # gif: GifImageFile = GifImageFile(gif_path)
+    # for index in range(0, gif.n_frames):
+    #     gif.seek(index)
+    #     gif.show()
+    #     new = gif.convert("RGBA")
+    #     new.show()
+
+        # with io.BytesIO() as bytebox:
+        #     gif.save(bytebox, "GIF")
+        #     yield {"bytebox": bytebox.getvalue()}
+        # yield {"GIFINFO": [f"{d} {getattr(gif, d, '')}" for d in gif.__dir__()]}
+    # ===== End test splitting code =====
+
+
     if criteria.is_unoptimized:
         yield {"msg": f"Unoptimizing GIF..."}
         target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
