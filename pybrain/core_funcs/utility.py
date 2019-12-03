@@ -92,6 +92,10 @@ def _reduce_color(gif_path, out_dir, color: int = 256) -> str:
     return redux_gif_path
 
 
+def _convert_to_rgba(image_paths: List[str]):
+    pass
+
+
 def _delete_temp_images():
     # raise Exception(os.getcwd())
     temp_dir = os.path.abspath('temp')

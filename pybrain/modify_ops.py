@@ -206,12 +206,16 @@ def _apngopt_modify(aopt_args: List[Tuple[str, str]], target_path: str, out_full
 #     new_apng.save(out_full_path)
 #     return out_full_path
 
-# def _batch_quantize_overwrite(image_paths: List[str], criteria: ModificationCriteria):
+# def _batch_quantize_images(images: List[Image.Image], criteria: ModificationCriteria):
 #     """ Wrapper function to quantize images through their paths """
-#     frames = [Image.open(ipath) for ipath in image_paths]
-#     images = yield from _batch_quantize(frames, criteria)
+#     quant_dir = _mk_temp_dir(prefix_name="quant_dir")
+#     image_paths = []
+#     for index, im in enumerate(images):
+#         save_path = os.path.join(quant_dir, f"{str(index).zfill(4)}.png")
+#         image_paths = im.save()
+#     images = yield from _batch_quantize_paths(image_paths, criteria)
 
-def _batch_quantize(image_paths: List[str], criteria: ModificationCriteria):
+def _batch_quantize_paths(image_paths: List[str], criteria: ModificationCriteria):
     """ Perform PNG quantization on a list of PIL.Image.Images using PNGQuant """
     quantized_frames = []
     pngquant_exec = imager_exec_path("pngquant")
@@ -225,35 +229,39 @@ def _batch_quantize(image_paths: List[str], criteria: ModificationCriteria):
         # out_path = os.path.join(quant_dir, f"{index}_quantized.png")
         # yield {"FMODE": fr.mode}
         # fr.save(save_path, "PNG")
-        args = [pngquant_exec, ' '.join([q[0] for q in q_ops]), ipath, "--output", ipath]
+        args = [pngquant_exec, ' '.join([q[0] for q in q_ops]), ipath, "--force", "--output", ipath]
         cmd = ' '.join(args)
         # yield {"cmd": cmd}
         result = subprocess.check_output(cmd, shell=True)
         # yield {"out": result}
-        # quantized_img = Image.open(out_path)
+        # quantized_img = Image.open(ipath)
         # yield {"QMODE": quantized_img.mode}
         # quantized_img = quantized_img.convert("RGBA")
         # quantized_frames.append(quantized_img)
+        with Image.open(ipath).convert("RGBA") as rgba_im:
+            rgba_im.save(ipath)
         quantized_frames.append(ipath)
     # yield {"ssdsdsssdsd": quantized_frames}
     return quantized_frames
 
 def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria):
     frames_dir = _mk_temp_dir(prefix_name="rebuild_aimg")
-    is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
+    # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
     split_criteria = SplitCriteria({
         'pad_count': 6,
         'color_space': "",
         'is_duration_sensitive': True,
-        'is_unoptimized': is_unoptimized,
+        'is_unoptimized': True,
     })
-    frames = yield from split_aimg(img_path, frames_dir, split_criteria)
-    yield {"frames before": frames}
+    frame_paths = yield from split_aimg(img_path, frames_dir, split_criteria)
+    yield {"frames before": frame_paths}
     # if mod_criteria.is_reversed:
     #     frames.reverse()
-    yield {"frames after": frames}
+    yield {"frames after": frame_paths}
     if mod_criteria.format == 'PNG' and mod_criteria.apng_is_lossy and mod_criteria.apng_lossy_value:
-        frames = _batch_quantize(frames, mod_criteria)
+        yield {"DEBUG": "PNG QUANTIZATION SELECTED"}
+        frame_paths = yield from _batch_quantize_paths(frame_paths, mod_criteria)
+        yield {"QUANTPATHS": frame_paths}
     ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
     ds_delay = 1 / ds_fps
     create_criteria = CreationCriteria({
@@ -270,7 +278,7 @@ def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria
         'loop_count': mod_criteria.loop_count,
         'reverse': mod_criteria.is_reversed,
     })
-    new_image_path = yield from create_aimg(frames, out_dir, os.path.basename(img_path), create_criteria)
+    new_image_path = yield from create_aimg(frame_paths, out_dir, os.path.basename(img_path), create_criteria)
     return new_image_path
 
 
