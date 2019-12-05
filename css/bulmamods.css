@@ -7481,11 +7481,19 @@ table.spr-control-table label {
 
 /* Animated image (GIF/PNG) previewing elements in Split panel */
 .spl-aimg-container {
-  max-height: 370px;
-  max-width: 370px;
-  overflow: auto;
-  text-align: center;
-  display: inline-block; }
+  height: 370px;
+  width: 370px;
+  overflow: hidden;
+  display: block; }
+
+.spl-aimg-container img {
+  max-height: 310px !important;
+  max-width: 310px !important;
+  display: block;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); }
 
 .ins-img-container {
   max-height: 310px;

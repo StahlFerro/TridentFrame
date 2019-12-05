@@ -17,22 +17,26 @@ from .core_funcs.criterion import SpritesheetBuildCriteria, SpritesheetSliceCrit
 from .core_funcs.utility import shout_indices
 
 
-def _get_boxes(tile_width, tile_height, sheet_width, sheet_height):
-    hbox_count = math.ceil(sheet_width / tile_width)
-    vbox_count = math.ceil(sheet_height / tile_height)
+def _get_boxes(tile_width, tile_height, hbox_count, vbox_count, offset_x=0, offset_y=0, padding_x=0, padding_y=0):
+    # hbox_count = math.ceil(sheet_width / tile_width)
+    # vbox_count = math.ceil(sheet_height / tile_height)
     for v in range(0, vbox_count):
         for h in range(0, hbox_count):
-            top = tile_height * v
-            left = tile_width * h
-            bottom = min(top + tile_height, sheet_height)
-            right = min(left + tile_width, sheet_width)
+            top = tile_height * v + offset_y + (padding_y * v)
+            left = tile_width * h + offset_x + (padding_x * h)
+            # bottom = min(top + tile_height, sheet_height)
+            # right = min(left + tile_width, sheet_width)
+            bottom = top + tile_height
+            right = left + tile_width
             box = (left, top, right, bottom)
             yield box
 
 
 def _slice_spritesheet(image_path: str, out_dir:str, filename: str, criteria: SpritesheetSliceCriteria):
     sheet = Image.open(os.path.abspath(image_path))
-    boxes = _get_boxes(criteria.tile_width, criteria.tile_height, criteria.sheet_width, criteria.sheet_height)
+    hbox_count = criteria.sheet_width / criteria.tile_width
+    vbox_count = criteria.sheet_height / criteria.tile_height
+    boxes = _get_boxes(criteria.tile_width, criteria.tile_height, hbox_count, vbox_count)
     alpha_layer = Image.new("RGBA", (criteria.tile_width, criteria.tile_height))
     for index, box in enumerate(boxes):
         cut_frame = sheet.crop(box).convert("RGBA")
@@ -88,13 +92,19 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     fcount = len(frames)
     max_frames_row = criteria.tiles_per_row
     if fcount > max_frames_row:
-        spritesheet_width = tile_width * max_frames_row + criteria.offset_x
+        spritesheet_width = tile_width * max_frames_row
         required_rows = math.ceil(fcount/max_frames_row)
         # print('required rows', required_rows)
-        spritesheet_height = tile_height * required_rows + criteria.offset_y
+        spritesheet_height = tile_height * required_rows
     else:
         spritesheet_width = tile_width * fcount
         spritesheet_height = tile_height
+
+    hbox_count = int(spritesheet_width / tile_width)
+    vbox_count = int(spritesheet_height / tile_height)
+
+    spritesheet_width += criteria.offset_x
+    spritesheet_height += criteria.offset_y
 
     spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
     # spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")
@@ -105,7 +115,7 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     yield {"msg": shout_nums}
     # yield {"msg": shout_indices}
     # raise Exception(shout_indices)
-    boxes = list(_get_boxes(tile_width, tile_height, spritesheet_width, spritesheet_height))
+    boxes = list(_get_boxes(tile_width, tile_height, hbox_count, vbox_count, criteria.offset_x, criteria.offset_y, criteria.padding_x, criteria.padding_y))
     yield {"msg": boxes}
     for index, fr in enumerate(frames):
 

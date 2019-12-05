@@ -10,7 +10,6 @@
           style="height: 380px;"
         >
           <div class="spl-aimg-container">
-            <span class="aimg-helper"></span>
             <img v-bind:src="aimg_path" />
           </div>
         </td>
