@@ -10,7 +10,6 @@
           v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active}"
           style="height: 250px;">
           <div class="mod-aimg-container">
-            <span class="aimg-helper"></span>
             <img v-bind:src="orig_path" />
           </div>
           <!-- <input id="MOD_orig_path" name="MOD_orig_path_field" type="hidden" value /> -->
@@ -30,7 +29,6 @@
               `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
               `Format: ${preview_info.general_info.format.value}`
             ">
-              <span class="aimg-helper"></span>
               <img v-bind:src="preview_path_cb" />
             </div>
           </div>

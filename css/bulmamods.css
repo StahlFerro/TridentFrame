@@ -7409,12 +7409,6 @@ input.input.is-border-colorless {
 .spl-aimg-info-table td.spl-info-data {
   max-width: 300px; }
 
-.mod-aimg-container {
-  max-height: 240px;
-  overflow: auto;
-  text-align: center;
-  display: inline-block; }
-
 .mod-orig-info-container {
   width: 285px;
   height: 275px;
@@ -7432,6 +7426,21 @@ input.input.is-border-colorless {
 .mod-orig-info-table td.mod-info-label {
   max-width: 120px;
   min-width: 120px; }
+
+.mod-aimg-container {
+  width: 289px;
+  height: 250px;
+  overflow: hidden;
+  display: block; }
+
+.mod-aimg-container img {
+  max-height: 289px !important;
+  max-width: 250px !important;
+  display: block;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); }
 
 .ins-info-table table {
   table-layout: fixed !important; }
