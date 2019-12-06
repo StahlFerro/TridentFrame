@@ -106,8 +106,8 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     spritesheet_width += criteria.offset_x
     spritesheet_height += criteria.offset_y
 
-    spritesheet_width += (hbox_count * criteria.padding_x * 2 - ((hbox_count + 1) * criteria.padding_x))
-    spritesheet_height += (vbox_count * criteria.padding_y * 2 - ((vbox_count + 1) * criteria.padding_y))
+    spritesheet_width += hbox_count * criteria.padding_x * 2 - ((hbox_count + 1) * criteria.padding_x)
+    spritesheet_height += vbox_count * criteria.padding_y * 2 - ((vbox_count + 1) * criteria.padding_y)
 
     spritesheet = Image.new("RGBA", (int(spritesheet_width), int(spritesheet_height)))
     # spritesheet.save(os.path.join(out_dir,"Ok.png"), "PNG")

@@ -46,16 +46,13 @@
           style="width: 320px; height: 320px;"
           v-bind:class="{'has-checkerboard-bg': checkerbg_active}"
         >
-          <div v-if="preview_info" class="prev-spritesheet-container">
-            <div v-bind:title="
-              `Dimensions: ${preview_info.width.value} x ${preview_info.height.value}\n` +
-              `File size: ${preview_info.fsize_hr.value}\n` +
-              `Format: ${preview_info.format.value}\n` +
-              `Mode: ${preview_info.color_mode.value}`
-            ">
-              <span class="spritesheet-helper"></span>
-              <img v-bind:src="preview_path_cb" />
-            </div>
+          <div v-if="preview_info" v-bind:title="
+            `Dimensions: ${preview_info.width.value} x ${preview_info.height.value}\n` +
+            `File size: ${preview_info.fsize_hr.value}\n` +
+            `Format: ${preview_info.format.value}\n` +
+            `Mode: ${preview_info.color_mode.value}`
+          " class="prev-spritesheet-container">
+            <img v-bind:src="preview_path_cb" />
           </div>
         </td>
       </tr>
@@ -473,8 +470,8 @@ function sheetDimensions() {
   let offset_y = data.offset_y? parseInt(data.offset_y) : 0;
   console.log('xcount', x_count);
   console.log('ycount', y_count);
-  let total_pad_x = x_count * 2 * padding_x;
-  let total_pad_y = y_count * 2 * padding_y;
+  let total_pad_x = x_count * 2 * padding_x - ((x_count + 1) * padding_x);
+  let total_pad_y = y_count * 2 * padding_y - ((y_count + 1) * padding_y);
   console.log(data.tile_width, data.tile_height);
   console.log(total_pad_x, total_pad_y);
   let sheet_width = data.tile_width * x_count + offset_x + total_pad_x;

@@ -280,11 +280,21 @@ input.input.is-border-colorless {
 //     display:block; width:100%; height:auto;
 // }
 .prev-spritesheet-container {
-    max-width: 310px;
-    max-height: 310px;
-    overflow: auto;
-    text-align: center;
-    display: inline-block;
+    width: 310px;
+    height: 310px;
+    overflow: hidden;
+    // text-align: center;
+    display: block;
+}
+.prev-spritesheet-container img {
+    max-width: 310px !important;
+    max-height: 310px !important;
+    display: block;
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    // display: inline-block;
 }
 
 
