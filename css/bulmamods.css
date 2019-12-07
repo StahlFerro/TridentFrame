@@ -7378,11 +7378,19 @@ input.input.is-border-colorless {
   transform: translate(-50%, -50%); }
 
 .prev-spritesheet-container {
-  max-width: 310px;
-  max-height: 310px;
-  overflow: auto;
-  text-align: center;
-  display: inline-block; }
+  width: 310px;
+  height: 310px;
+  overflow: hidden;
+  display: block; }
+
+.prev-spritesheet-container img {
+  max-width: 310px !important;
+  max-height: 310px !important;
+  display: block;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); }
 
 .spl-aimg-info-table td {
   padding-top: 4px !important;
