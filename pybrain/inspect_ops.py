@@ -208,7 +208,8 @@ def _inspect_apng(abspath, apng: APNG):
     fsize_hr = read_filesize(fsize)
     width = png_one.width
     height = png_one.height
-    delays = [f[1].delay for f in frames]
+    # raise Exception(frames)
+    delays = [f[1].delay if f[1] else 0 for f in frames]
     min_duration = min(delays)
     if min_duration == 0:
         frame_count_ds = frame_count

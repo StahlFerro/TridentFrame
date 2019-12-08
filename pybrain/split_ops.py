@@ -147,7 +147,8 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
             im = im.convert("RGBA")
             base_stack_image: Image = im.copy()
     # yield {"MODE FIRST": base_stack_image.mode}
-    depose_ops = []
+    depose_blend_ops = []
+    rerender = False
     for index, (png, control) in enumerate(iframes):
         if shout_nums.get(index):
             yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
@@ -158,24 +159,90 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
                 if criteria.is_unoptimized:
                     # im = im.convert("RGBA")
                     # yield {"CONTROL": control.depose_op}
-                    if control.depose_op == 2 or control.depose_op == 1:
-                        separate_stack = base_stack_image.copy()
-                        separate_stack.paste(im, (control.x_offset, control.y_offset), im)
-                        frames.append(separate_stack.copy())
-                        # separate_stack.show()
-                    # elif control.depose_op == 1:
-                    #     frames.append(im.copy())
-                    elif control.depose_op == 0:
-                        base_stack_image.paste(im, (control.x_offset, control.y_offset), im)
-                        frames.append(base_stack_image.copy())
+                    if rerender:
+                        newplain = Image.new("RGBA", base_stack_image.size)
+                        newplain.paste(im, (control.x_offset, control.y_offset), im)
+                        frames.append(newplain.copy())
+                        rerender = False
+                    else:
+                        if control and (control.depose_op == 2 or control.depose_op == 1):
+                            separate_stack = base_stack_image.copy()
+                            separate_stack.paste(im, (control.x_offset, control.y_offset), im)
+                            frames.append(separate_stack.copy())
+                            if index == 0 and control.depose_op == 1:
+                                rerender = True
+                            # separate_stack.show()
+                        # elif control.depose_op == 1:
+                        #     frames.append(im.copy())
+                        elif not control or control.depose_op == 0:
+                            base_stack_image.paste(im, (control.x_offset if control else 0, control.y_offset if control else 0), im)
+                            frames.append(base_stack_image.copy())
                         # base_stack_image.show()
                 else:
                     frames.append(im)
-                depose_ops.append(control.depose_op)
+                if control:
+                    depose_blend_ops.append((control.depose_op, control.blend_op))
+                else:
+                    depose_blend_ops.append(("", ""))
     # for fr in frames:
     #     fr.show()
-    yield {"DEPOSE_OPS": depose_ops}
+    yield {"DEPOSE_BLEND_OPS": depose_blend_ops}
     return frames
+
+
+# def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
+#     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
+#     frames = []
+#     iframes = apng.frames
+#     fcount = len(iframes)
+#     pad_count = max(len(str(fcount)), 3)
+#     shout_nums = shout_indices(fcount, 5)
+#     first_png = iframes[0][0]
+#     base_stack_image: Image.Image
+#     with io.BytesIO() as firstbox:
+#         first_png.save(firstbox)
+#         with Image.open(firstbox) as im:
+#             im = im.convert("RGBA")
+#             base_stack_image: Image = im.copy()
+#     # yield {"MODE FIRST": base_stack_image.mode}
+#     depose_blend_ops = [{}]
+#     # rerender = False
+#     for index, (png, control) in enumerate(iframes):
+#         if shout_nums.get(index):
+#             yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
+#         with io.BytesIO() as bytebox:
+#             png.save(bytebox)
+#             with Image.open(bytebox).convert("RGBA") as im:
+#                 # yield {"MSG": control.__dict__}
+#                 if criteria.is_unoptimized:
+#                     # im = im.convert("RGBA")
+#                     # yield {"CONTROL": control.depose_op}
+#                     # if rerender:
+#                     # else:
+#                     if control.depose_op == 2:
+#                         separate_stack = base_stack_image.copy()
+#                         separate_stack.paste(im, (control.x_offset, control.y_offset), im)
+#                         frames.append(separate_stack.copy())
+#                         # if index == 0 and control.depose_op == 1:
+#                             # rerender = True
+#                         # separate_stack.show()
+#                     elif control.depose_op == 1 or control.blend_op == 0:
+#                         newplain = Image.new("RGBA", base_stack_image.size)
+#                         newplain.paste(im, (control.x_offset, control.y_offset), im)
+#                         frames.append(newplain.copy())
+#                         # rerender = False
+#                     elif control.depose_op == 0:
+#                         base_stack_image.paste(im, (control.x_offset, control.y_offset), im)
+#                         frames.append(base_stack_image.copy())
+#                     # base_stack_image.show()
+#                 else:
+#                     frames.append(im)
+#                 depose_blend_ops.append((control.depose_op, control.blend_op))
+#     # for fr in frames:
+#     #     fr.show()
+#     yield {"DEPOSE_BLEND_OPS": depose_blend_ops}
+#     return frames
+
 
 
 
