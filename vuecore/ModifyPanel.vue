@@ -22,8 +22,7 @@
           class="silver-bordered force-center is-paddingless"
           v-bind:class="{'has-checkerboard-bg': new_checkerbg_active}"
           style="height: 250px;">
-          <div v-if="preview_info" class="mod-aimg-container">
-            <div v-bind:title="
+            <div v-if="preview_info" class="mod-aimg-container" v-bind:title="
               `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
               `File size: ${preview_info.general_info.fsize_hr.value}\n` +
               `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
@@ -31,7 +30,6 @@
             ">
               <img v-bind:src="preview_path_cb" />
             </div>
-          </div>
         </td>
         <td colspan="2" width="15%">
           <span v-if="preview_size">
