@@ -10,7 +10,7 @@
           style="height: 380px;"
         >
           <div class="spl-aimg-container">
-            <img v-bind:src="aimg_path" />
+            <img v-bind:src="preview_path_cb" />
           </div>
         </td>
         <td width="55%" class="is-paddingless silver-bordered">
@@ -82,7 +82,7 @@
               <tr>
                 <td class="spl-info-label is-cyan">Loop count</td>
                 <td class="spl-info-data">
-                    <template v-if="aimg_path">
+                    <template v-if="preview_path">
                       <span v-if="loop_count == 0">Infinite</span>
                       <span v-else>{{ loop_count }}</span>
                     </template>
@@ -218,6 +218,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
+const { randString } = require('./Utility.vue');
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
@@ -235,7 +236,8 @@ var defaults = {
   delay: "",
   loop_duration: "",
   loop_count: "",
-  aimg_path: "",
+  preview_path: "",
+  preview_path_cb: "",
   split_msgbox: ""
 };
 
@@ -251,7 +253,8 @@ var data = {
   delay: "",
   loop_duration: "",
   loop_count: "",
-  aimg_path: "",
+  preview_path: "",
+  preview_path_cb: "",
   checkerbg_active: false,
   pad_count: "",
   is_duration_sensitive: false,
@@ -301,13 +304,14 @@ function loadImage() {
         data.delay = delay_info;
         data.loop_duration = `${ainfo.loop_duration.value} seconds`;
         data.loop_count = ainfo.loop_count.value;
-        data.aimg_path = geninfo.absolute_url.value;
+        data.preview_path = geninfo.absolute_url.value;
         data.pad_count = 3;
         if (data.is_reduced_color) {
           data.color_space - 256;
         }
         data.split_msgbox = "";
         data.SPL_IS_LOADING = false;
+        previewPathCacheBreaker();
         // loadAIMG(res);
         // SPL_pad_count.value = 3;
         // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
@@ -322,6 +326,14 @@ function loadImage() {
 function clearImage() {
   Object.assign(data, defaults);
 }
+
+
+function previewPathCacheBreaker() {
+  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  console.log("Cache breaker url", cb_url);
+  data.preview_path_cb = cb_url;
+}
+
 
 function toggleCheckerBG() {
   data.checkerbg_active = !data.checkerbg_active;
@@ -350,7 +362,7 @@ function splitImage() {
   }
   console.log(data);
   client.invoke(
-    "split_image", data.aimg_path, data.outdir, data, (error, res) => {
+    "split_image", data.preview_path, data.outdir, data, (error, res) => {
       if (error) {
         console.log(error);
         data.split_msgbox = error;

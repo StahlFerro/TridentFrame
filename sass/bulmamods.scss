@@ -322,8 +322,8 @@ input.input.is-border-colorless {
 
 
 .mod-orig-info-container {
-    width: 285px;
-    height: 275px;
+    width: 288px;
+    height: 277px;
     overflow: auto;
 }
 .mod-orig-info-container::-webkit-scrollbar {
@@ -361,6 +361,11 @@ input.input.is-border-colorless {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+.mod-aimg-control-container {
+    width: 532px;
+    height: 277px;
 }
 
 
