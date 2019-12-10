@@ -59,7 +59,7 @@
     },
     "linux": {
       "target": [
-        "7z"
+        "7z", "deb"
       ],
       "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.png"
     },
@@ -72,6 +72,7 @@
       "!bin/**",
       "!cache/**",
       "!css/**",
+      "!imgs/**",
       "!pybrain/**",
       "!sass/**",
       "!temp/**",
