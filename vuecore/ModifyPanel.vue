@@ -85,7 +85,7 @@
         </td>
       </tr>
       <tr>
-        <td style="width: 285px; height: 275px;" colspan="3" class="is-paddingless silver-bordered">
+        <td style="width: 288px; height: 275px;" colspan="3" class="is-paddingless silver-bordered">
           <div class="mod-orig-info-container">
             <table class="table mod-orig-info-table is-hpaddingless">
               <tbody>
@@ -159,8 +159,8 @@
             </table>
           </div>
         </td>
-        <td style="width: 581px; height: 275px;" colspan="5"
-          class="has-text-centered is-right-padding-only silver-bordered-left-thicc">
+        <td style="width: 532px; height: 275px;" colspan="5"
+          class="has-text-centered is-paddingless silver-bordered-left-thicc">
           <div class="mod-aimg-control-container">
             <table class="table is-paddingless is-marginless" width="100%">
               <tr>

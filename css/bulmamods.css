@@ -7266,7 +7266,7 @@ div.left-menu::-webkit-scrollbar {
   width: 0px; }
 
 div.mod-left-menu {
-  height: 270px;
+  height: 277px;
   overflow: auto; }
 
 div.mod-left-menu::-webkit-scrollbar {
@@ -7419,8 +7419,9 @@ input.input.is-border-colorless {
 
 .mod-orig-info-container {
   width: 288px;
-  height: 277px;
-  overflow: auto; }
+  height: 275px;
+  overflow: auto;
+  margin: 0 !important; }
 
 .mod-orig-info-container::-webkit-scrollbar {
   width: 7px;
@@ -7451,8 +7452,9 @@ input.input.is-border-colorless {
   transform: translate(-50%, -50%); }
 
 .mod-aimg-control-container {
-  width: 532px;
-  height: 277px; }
+  width: 528px;
+  height: 277px;
+  padding-right: 7px; }
 
 .ins-info-table table {
   table-layout: fixed !important; }
