@@ -7,13 +7,13 @@ PyInstaller.config.CONF['distpath'] = "./engine/"
 block_cipher = None
 
 _bin_dirpath = 'bin/win64'
-python_engine = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
+imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
 added_files = [
     ('cache/.include', 'cache/'),
     ('temp/.include', 'temp/'),
     ('config/config.json', 'config/')
 ]
-added_files.extend(python_engine)
+added_files.extend(imaging_engines)
 print(python_engine)
 # added_files.extend(python_engine)
 a = Analysis(['main.py'],
