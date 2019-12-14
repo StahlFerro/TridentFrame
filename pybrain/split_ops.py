@@ -255,7 +255,7 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
     shout_nums = shout_indices(len(frames), 5)
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
-            yield {"msg": f'Saving frames... ({shout_nums.get(index)})'}
+            yield {"msg": f'Saving split frames... ({shout_nums.get(index)})'}
         save_path = os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
         frame_paths.append(save_path)

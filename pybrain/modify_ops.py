@@ -277,6 +277,7 @@ def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria
         'height': mod_criteria.height,
         'loop_count': mod_criteria.loop_count,
         'reverse': mod_criteria.is_reversed,
+        'rotation': mod_criteria.rotation,
     })
     new_image_path = yield from create_aimg(frame_paths, out_dir, os.path.basename(img_path), create_criteria)
     return new_image_path
@@ -357,7 +358,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             # yield {"preview_path": target_path}
     else:
         if criteria.orig_format == "GIF":
-            if criteria.is_reversed or criteria.must_flip():
+            if criteria.is_reversed or criteria.must_flip() or criteria.rotation:
                 target_path = yield from rebuild_aimg(target_path, out_dir, criteria)
             if sicle_args:
                 target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
@@ -365,7 +366,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
                 target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
             # yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
-            if criteria.has_general_alterations():
+            if criteria.has_general_alterations() or criteria.rotation:
                 target_path = yield from rebuild_aimg(target_path, out_dir, criteria)
             if aopt_args:
                 target_path = yield from _apngopt_modify(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))

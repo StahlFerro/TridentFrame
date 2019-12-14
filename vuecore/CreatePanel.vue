@@ -270,6 +270,7 @@ var data = {
   is_reversed: false,
   flip_x: false,
   flip_y: false,
+  rotation: 0,
   format: "GIF",
   outdir: "",
   preview_path: "",

@@ -35,6 +35,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
         if shout_nums.get(index):
             yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
         with Image.open(ipath) as im:
+            im: Image.Image
             transparency = im.info.get("transparency", False)
             orig_width, orig_height = im.size
             must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
@@ -46,6 +47,8 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
             if must_resize:
                 im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
+            if criteria.rotation:
+                im = im.rotate(criteria.rotation, expand=True)
             fragment_name = os.path.splitext(os.path.basename(ipath))[0]
             if criteria.reverse:
                 reverse_index = len(image_paths) - (index + 1)
@@ -161,13 +164,15 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
     first_width, first_height = Image.open(image_paths[0]).size
     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
     shout_nums = shout_indices(len(image_paths), 5)
-    if criteria.flip_h or criteria.flip_v or first_must_resize:
+    yield criteria.__dict__
+    if criteria.flip_h or criteria.flip_v or first_must_resize or criteria.rotation:
         for index, ipath in enumerate(image_paths):
             if shout_nums.get(index):
                 yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
             with io.BytesIO() as bytebox:
                 with Image.open(ipath) as im:
                     # im = Image.open(ipath)
+                    im: Image.Image
                     orig_width, orig_height = im.size
                     must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
                     if must_resize:
@@ -176,6 +181,8 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
                         im = im.transpose(Image.FLIP_LEFT_RIGHT)
                     if criteria.flip_v:
                         im = im.transpose(Image.FLIP_TOP_BOTTOM)
+                    if criteria.rotation:
+                        im = im.rotate(criteria.rotation, expand=True)
                     im.save(bytebox, "PNG")
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
         yield {"msg": "Saving APNG...."}
