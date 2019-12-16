@@ -7519,11 +7519,19 @@ table.spr-control-table label {
   transform: translate(-50%, -50%); }
 
 .ins-img-container {
-  max-height: 310px;
-  max-width: 320px;
-  overflow: auto;
-  text-align: center;
-  display: inline-block; }
+  height: 320px;
+  width: 320px;
+  overflow: hidden;
+  display: block; }
+
+.ins-img-container img {
+  max-height: 320px !important;
+  max-width: 320px !important;
+  display: block;
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%); }
 
 .aimg-helper {
   display: inline-block;

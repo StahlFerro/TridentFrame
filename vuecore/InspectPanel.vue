@@ -6,7 +6,6 @@
             style="width: 320px; height: 320px;"
             v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
           <div class="ins-img-container is-paddingless is-marginless">
-            <span class="aimg-helper"></span>
             <img v-bind:src="img_path"/>
           </div>
         </td>
