@@ -1,3 +1,9 @@
+<div align="center">
+  <a href="https://stahlferro.github.io/softwares/tridentframe">
+    <img width="200" height="200" src="https://stahlferro.github.io/logos/TridentFrame_cyan_200px_opt.png">
+  </a>
+</div>
+
 # TridentFrame
 
 The cross-platform desktop swiss-army knife for GIFs, APNGs and spritesheets. Create, split, convert or alter GIFs and animated PNGs as well as quickly making spritesheets, all with easy-to-use-but-powerful-when-needed controls.
