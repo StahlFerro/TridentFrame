@@ -75,7 +75,6 @@
       "!bin/**",
       "!cache/**",
       "!css/**",
-      "!imgs/**",
       "!launcher/**",
       "!pybrain/**",
       "!sass/**",

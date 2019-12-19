@@ -93,7 +93,7 @@ const createPyProc = () => {
         }
         console.log(`Obtained python path script: \n${script}`);
         try {
-            pyProc = require('child_process').spawn(script);
+            pyProc = require('child_process').spawn(script, {detached: true, windowsHide: true});
         }
         catch (error) {
             console.log(error);
