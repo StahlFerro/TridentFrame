@@ -328,7 +328,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
     # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = os.path.join(out_dir, full_name)
     orig_out_full_path = os.path.join(out_dir, orig_full_name)
-    yield {"msg": f"OUT FULL PATH: {out_full_path}"}
+    yield {"OUTFULLPATH": f"{out_full_path}"}
     sicle_args = gifsicle_args(criteria)
     magick_args = imagemagick_args(criteria)
     aopt_args = apngopt_args(criteria)
