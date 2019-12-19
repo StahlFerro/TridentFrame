@@ -14,8 +14,6 @@ added_files = [
     ('config/config.json', 'config/')
 ]
 added_files.extend(imaging_engines)
-print(python_engine)
-# added_files.extend(python_engine)
 a = Analysis(['main.py'],
              pathex=['.'],
              binaries=[],
