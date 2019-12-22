@@ -19,22 +19,22 @@ from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .core_funcs.criterion import SplitCriteria
-from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices
+from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices, generate_delay_file
 
 
 def _get_gif_delay_ratios(gif_path: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
     """ Returns a list of dual-valued tuples, first value being the frame numbers of the GIF, second being the ratio of the frame's delay to the lowest delay"""
     with Image.open(gif_path) as gif:
         indices = list(range(0, gif.n_frames))
-        durations = []
+        delays = []
         for i in indices:
             gif.seek(i)
-            durations.append(gif.info['duration'])
-        min_duration = min(durations)
+            delays.append(gif.info['duration'])
+        min_delays = min(delays)
         if duration_sensitive:
-            ratios = [dur//min_duration for dur in durations]
+            ratios = [d//min_delays for d in delays]
         else:
-            ratios = [1 for dur in durations]
+            ratios = [1 for d in delays]
         indexed_ratios = list(zip(indices, ratios))
     return indexed_ratios
 
@@ -121,6 +121,7 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
     if criteria.is_unoptimized:
         yield {"msg": f"Unoptimizing GIF..."}
         target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
+
     frames = yield from _fragment_gif_frames(target_path, name, criteria)
     shout_nums = shout_indices(len(frames), 5)
     for index, fr in enumerate(frames):
@@ -129,6 +130,9 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
         save_path = os.path.join(out_dir, f'{name}_{str.zfill(str(index), criteria.pad_count)}.png')
         fr.save(save_path, "PNG")
         frame_paths.append(save_path)
+    if criteria.will_generate_delay_info:
+        yield {"msg": "Generating delay information file..."}
+        generate_delay_file(gif_path, "GIF", out_dir)
     return frame_paths
 
 
@@ -155,7 +159,10 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
         with io.BytesIO() as bytebox:
             png.save(bytebox)
             with Image.open(bytebox).convert("RGBA") as im:
-                # yield {"MSG": control.__dict__}
+                if control:
+                    yield {"MSG": control.__dict__}
+                else:
+                    yield {"MSG": "no control"}
                 if criteria.is_unoptimized:
                     # im = im.convert("RGBA")
                     # yield {"CONTROL": control.depose_op}
@@ -188,7 +195,9 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
     #     fr.show()
     yield {"DEPOSE_BLEND_OPS": depose_blend_ops}
     return frames
+    
 
+# def generate_delay_file()
 
 # def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
 #     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
@@ -259,6 +268,9 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
         save_path = os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
         frame_paths.append(save_path)
+    if criteria.will_generate_delay_info:
+        yield {"msg": "Generating delay information file..."}
+        generate_delay_file(apng_path, "PNG", out_dir)
     return frame_paths
 
 

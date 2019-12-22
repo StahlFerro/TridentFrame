@@ -280,6 +280,7 @@ def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria
         'rotation': mod_criteria.rotation,
     })
     new_image_path = yield from create_aimg(frame_paths, out_dir, os.path.basename(img_path), create_criteria)
+    yield {"new_image_path": new_image_path}
     return new_image_path
 
 

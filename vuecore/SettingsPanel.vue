@@ -29,12 +29,12 @@
           </a>
         </td>
         <td>
-          <!-- <a v-on:click="openCWD" class="button is-large is-neon-cyan">
+          <a v-on:click="testGenerator" class="button is-large is-neon-cyan">
             <span class="icon is-large">
-              <i class="fas fa-folder"></i>
+              <i class="fas fa-bug"></i>
             </span>
-            <span>Print CWD</span>
-          </a> -->
+            <span>Test Generator</span>
+          </a>
         </td>
       </tr>
     </table>
@@ -80,12 +80,23 @@ function openCWD() {
   })
 }
 
+function testGenerator() {
+  client.invoke("test_generator", (error, res) => {
+    if (error) {
+      console.error(error);
+    } else if (res) {
+      console.log(res);
+    }
+  })
+}
+
 export default {
   methods: {
     refreshWindow: refreshWindow,
     purgeCacheTemp: purgeCacheTemp,
     openInspector: openInspector,
     openCWD: openCWD,
+    testGenerator: testGenerator,
   }
 };
 </script>

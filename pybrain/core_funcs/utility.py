@@ -2,6 +2,7 @@ import os
 import shutil
 import time
 import subprocess
+import json
 from typing import List, Tuple, Dict
 
 from PIL import Image
@@ -15,6 +16,31 @@ from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
 
 
 size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+
+
+def _create_num_fragments():
+    for i in range(0, 10):
+        yield {"num": i}
+    return 120
+
+
+def _spit_numbers():
+    yield 'a'
+    yield 'b'
+    x = yield from _create_num_fragments()
+    print(f"x is {x}")
+    yield {"x": x}
+    # return x
+
+
+def util_generator():
+    yield from _spit_numbers()
+
+
+def util_generator_shallow():
+    x = yield from _create_num_fragments()
+    print(f"x is {x}")
+    return x
 
 
 def _filter_images(image_paths, option="static"):
@@ -57,7 +83,7 @@ def _purge_directory(target_folder):
 
 def _mk_temp_dir(prefix_name: str = ''):
     """ Creates a directory for temporary storage, and then returns its absolute path """
-    dirname = time.strftime("%Y%m%d_%H%M%S")
+    dirname = str(int(round(time.time() * 1000)))
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"
     temp_dir = os.path.join(ABS_CACHE_PATH(), dirname)
@@ -106,6 +132,32 @@ def _delete_temp_images():
     for ta in temp_aimgs:
         os.remove(ta)
     return True
+
+
+def get_image_delays(image_path, extension: str):
+    if extension == 'GIF':
+        with Image.open(image_path) as gif:
+            for i in range(0, gif.n_frames):
+                gif.seek(i)
+                yield gif.info['duration']
+    elif extension == 'PNG':
+        apng = APNG.open(image_path)
+        for png, control in apng.frames:
+            if control:
+                yield control.delay
+            else:
+                yield ""
+
+
+def generate_delay_file(image_path, extension: str, out_folder: str):
+    delays = get_image_delays(image_path, extension)
+    delay_info = {
+        "delays": {index: d for index, d in enumerate(delays)}
+    }
+    filename = "_delays.json"
+    save_path = os.path.join(out_folder, filename)
+    with open(save_path, "w") as outfile:
+        json.dump(delay_info, outfile, indent=4, sort_keys=True)
 
 
 # def _restore_disposed_frames(frame_paths: List[str]):

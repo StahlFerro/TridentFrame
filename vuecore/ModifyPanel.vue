@@ -263,14 +263,14 @@
                             </div>
                           </div>
                         </td>
-                        <td width="20%">
+                        <!-- <td width="20%">
                           <div class="field">
                             <label class="label">Skip Frames</label>
                             <div class="control">
                               <input v-model="skip_frame" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
-                        </td>
+                        </td> -->
                         <td width="20%">
                           <div class="field">
                             <label class="label">Format</label>

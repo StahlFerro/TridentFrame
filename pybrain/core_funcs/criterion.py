@@ -35,6 +35,7 @@ class SplitCriteria:
         self.color_space: int = int(json_vals['color_space'] or 0)
         self.is_duration_sensitive: bool = json_vals['is_duration_sensitive']
         self.is_unoptimized: bool = json_vals['is_unoptimized']
+        self.will_generate_delay_info: bool = json_vals['will_generate_delay_info']
 
 
 class ModificationCriteria:

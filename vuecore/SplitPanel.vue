@@ -125,6 +125,17 @@
             <tr>
               <td width="25%">
                 <div class="field">
+                  <label class="label">Rename sequence</label>
+                  <div class="control">
+                    <input
+                      v-model="new_name"
+                      class="input is-neon-white"
+                    />
+                  </div>
+                </div>
+              </td>
+              <td width="25%">
+                <div class="field">
                   <label class="label">Pad count</label>
                   <div class="control">
                     <input
@@ -137,36 +148,26 @@
                   </div>
                 </div>
               </td>
-              <td width="25%">
-                <div class="field">
-                  <label class="label">Color space</label>
-                  <div class="control">
-                    <input
-                      v-model="color_space"
-                      class="input is-neon-white"
-                      type="number"
-                      min="2"
-                      max="256"
-                      v-bind:disabled="!is_reduced_color"
-                    />
-                  </div>
-                </div>
-              </td>
               <td width="25%" style="vertical-align: middle;">
-                <label class="checkbox">
+                <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
                   <input v-model="is_duration_sensitive" type="checkbox" />
                   Duration-sensitive
                 </label>
-                <label class="checkbox">
-                  <input v-model="is_reduced_color" type="checkbox" />
-                  Reduce Colors
-                </label>
-              </td>
-              <td width="25%" style="vertical-align: middle;">
-                <label class="checkbox">
+                <label class="checkbox" title="Reconstructs the original image of each frame. Use on optimized GIFs">
                   <input v-model="is_unoptimized" type="checkbox" />
                   Unoptimize
                 </label>
+                <!-- <label class="checkbox">
+                  <input v-model="is_reduced_color" type="checkbox" />
+                  Reduce Colors
+                </label> -->
+              </td>
+              <td width="25%" style="vertical-align: middle;">
+                <label class="checkbox" title="Generate a file containing the delay information of each frame">
+                  <input v-model="will_generate_delay_info" type="checkbox" />
+                  Generate delay info
+                </label>
+                <br/>
               </td>
             </tr>
             <tr>
@@ -227,6 +228,7 @@ let dir_dialog_props = ["openDirectory", "createDirectory"];
 var defaults = {
   info_header: "Information",
   name: "",
+  new_name: "",
   dimensions: "",
   file_size: "",
   file_size_hr: "",
@@ -244,6 +246,7 @@ var defaults = {
 var data = {
   info_header: "Information",
   name: "",
+  new_name: "",
   dimensions: "",
   file_size: "",
   file_size_hr: "",
@@ -261,6 +264,7 @@ var data = {
   is_reduced_color: false,
   color_space: "",
   is_unoptimized: false,
+  will_generate_delay_info: false,
   outdir: "",
   split_msgbox: "",
   SPL_IS_LOADING: false,
