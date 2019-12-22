@@ -124,10 +124,11 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
 
     frames = yield from _fragment_gif_frames(target_path, name, criteria)
     shout_nums = shout_indices(len(frames), 5)
+    save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
             yield {"msg": f'Saving frames... ({shout_nums.get(index)})'}
-        save_path = os.path.join(out_dir, f'{name}_{str.zfill(str(index), criteria.pad_count)}.png')
+        save_path = os.path.join(out_dir, f'{save_name}_{str.zfill(str(index), criteria.pad_count)}.png')
         fr.save(save_path, "PNG")
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
@@ -262,10 +263,11 @@ def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria
     frames = yield from _fragment_apng_frames(apng, criteria)
     pad_count = criteria.pad_count
     shout_nums = shout_indices(len(frames), 5)
+    save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
             yield {"msg": f'Saving split frames... ({shout_nums.get(index)})'}
-        save_path = os.path.join(out_dir, f"{name}_{str.zfill(str(index), pad_count)}.png")
+        save_path = os.path.join(out_dir, f"{save_name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:

@@ -31,6 +31,7 @@ class SplitCriteria:
     """ Contains all of the criterias for Splitting an animated image """
 
     def __init__(self, json_vals):
+        self.new_name: str = json_vals['new_name']
         self.pad_count: int = int(json_vals['pad_count'] or 0)
         self.color_space: int = int(json_vals['color_space'] or 0)
         self.is_duration_sensitive: bool = json_vals['is_duration_sensitive']
