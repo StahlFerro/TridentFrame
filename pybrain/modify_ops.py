@@ -359,7 +359,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
             # yield {"preview_path": target_path}
     else:
         if criteria.orig_format == "GIF":
-            if criteria.is_reversed or criteria.must_flip() or criteria.rotation:
+            if criteria.gif_mustsplit_alteration():
                 target_path = yield from rebuild_aimg(target_path, out_dir, criteria)
             if sicle_args:
                 target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
@@ -367,7 +367,7 @@ def modify_aimg(img_path: str, out_dir: str, criteria: ModificationCriteria):
                 target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
             # yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
-            if criteria.has_general_alterations() or criteria.rotation:
+            if criteria.apng_mustsplit_alteration():
                 target_path = yield from rebuild_aimg(target_path, out_dir, criteria)
             if aopt_args:
                 target_path = yield from _apngopt_modify(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
