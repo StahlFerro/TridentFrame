@@ -87,8 +87,10 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
             raise Exception('Unknown image format!')
     else:
         raise Exception('Unknown input image mode!')
-    tile_width = frames[0].size[0]
-    tile_height = frames[0].size[1]
+    # tile_width = frames[0].size[0]
+    # tile_height = frames[0].size[1]
+    tile_width = criteria.tile_width
+    tile_height = criteria.tile_height
     fcount = len(frames)
     max_frames_row = criteria.tiles_per_row
     if fcount > max_frames_row:
