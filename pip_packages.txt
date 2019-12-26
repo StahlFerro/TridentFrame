@@ -1,0 +1,4 @@
+apng
+Pillow
+Pyinstaller
+zerorpc
