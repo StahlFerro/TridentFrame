@@ -14,7 +14,6 @@ from datetime import datetime
 
 from PIL import Image
 from apng import APNG, PNG
-from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
 from .core_funcs.criterion import CreationCriteria, SplitCriteria, ModificationCriteria

@@ -15,7 +15,6 @@ from datetime import datetime
 from PIL import Image, ImageChops
 from PIL.GifImagePlugin import GifImageFile
 from apng import APNG, PNG
-from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .core_funcs.criterion import SplitCriteria

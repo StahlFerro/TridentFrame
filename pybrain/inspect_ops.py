@@ -10,7 +10,6 @@ from PIL import Image, ExifTags, ImageFile
 # from PIL.GifImagePlugin import GifImageFile
 Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
-from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices
@@ -108,7 +107,6 @@ def _inspect_simg(image):
     transparency = im.info.get('transparency', "No")
     # alpha = im.getchannel('A')
     comment = im.info.get('comment')
-    # fsize = size(os.stat(path).st_size, system=alternative)
     img_metadata = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},

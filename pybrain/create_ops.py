@@ -9,13 +9,11 @@ import subprocess
 import tempfile
 from random import choices
 from pprint import pprint
-from urllib.parse import urlparse
 from typing import List, Dict, Tuple
 from datetime import datetime
 
 from PIL import Image
 from apng import APNG, PNG
-from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .core_funcs.criterion import CreationCriteria

@@ -10,7 +10,6 @@ from typing import List
 
 from PIL import Image
 from apng import APNG, PNG
-from hurry.filesize import size, alternative
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 from .core_funcs.criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
