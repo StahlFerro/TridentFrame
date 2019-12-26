@@ -1,7 +1,7 @@
 {
   "name": "tridentframe",
   "productName": "TridentFrame",
-  "version": "1.0.0-alpha.7",
+  "version": "1.0.0-beta",
   "description": "Desktop GIF, APNG and Spritesheet swiss-army knife",
   "author": "StahlFerro <forgewokseven@gmail.com>",
   "license": "MIT",
@@ -62,7 +62,8 @@
     },
     "linux": {
       "target": [
-        "7z", "deb"
+        "7z",
+        "deb"
       ],
       "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.png"
     },
@@ -95,10 +96,6 @@
     ]
   },
   "dependencies": {
-    "file-uri-to-path": "^1.0.0",
-    "fstream": "^1.0.12",
-    "jsdom": "^15.1.1",
-    "tar": "^4.4.10",
     "zeromq": "^5.1.0",
     "zerorpc": "^0.9.8"
   },
