@@ -12,7 +12,7 @@ Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
 
 from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
-from .core_funcs.utility import _filter_images, read_filesize, shout_indices
+from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
 
 
 def inspect_general(image_path, filter_on="", skip=False) -> Dict:
@@ -101,6 +101,7 @@ def _inspect_simg(image):
     path = im.filename
     filename = str(os.path.basename(path))
     base_fname, ext = os.path.splitext(filename)
+    base_fname = sequence_nameget(base_fname)
     fsize = os.stat(path).st_size
     fsize_hr = read_filesize(fsize)
     color_mode = im.mode
@@ -132,6 +133,7 @@ def _inspect_simg(image):
 def _inspect_agif(abspath: str, gif: Image):
     filename = str(os.path.basename(abspath))
     base_fname, ext = os.path.splitext(filename)
+    base_fname = sequence_nameget(base_fname)
     width, height = gif.size
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
@@ -196,7 +198,8 @@ def _inspect_agif(abspath: str, gif: Image):
 
 def _inspect_apng(abspath, apng: APNG):  
     filename = str(os.path.basename(abspath))
-    base_fname, ext = os.path.splitext(filename)      
+    base_fname, ext = os.path.splitext(filename)
+    base_fname = sequence_nameget(base_fname)
     frames = apng.frames
     frame_count = len(frames)
     loop_count = apng.num_plays

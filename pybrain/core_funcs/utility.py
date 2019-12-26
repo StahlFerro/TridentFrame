@@ -43,6 +43,15 @@ def util_generator_shallow():
     return x
 
 
+def sequence_nameget(name: str):
+    """ Cuts of sequence number suffixes from a filename. Filenames only, extensions must be excluded """
+    n_shards = name.split("_")
+    if str.isnumeric(n_shards[-1]):
+        return "".join(n_shards[:-1])
+    else:
+        return name
+
+
 def _filter_images(image_paths, option="static"):
     """ Filter out image whether they are static images or animated images """
     ipath_tuples = []
