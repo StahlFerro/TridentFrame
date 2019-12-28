@@ -251,6 +251,8 @@ def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria
         'color_space': "",
         'is_duration_sensitive': True,
         'is_unoptimized': True,
+        "new_name": "",
+        "will_generate_delay_info": False,
     })
     frame_paths = yield from split_aimg(img_path, frames_dir, split_criteria)
     yield {"frames before": frame_paths}
@@ -261,8 +263,11 @@ def rebuild_aimg(img_path: str, out_dir: str, mod_criteria: ModificationCriteria
         yield {"DEBUG": "PNG QUANTIZATION SELECTED"}
         frame_paths = yield from _batch_quantize_paths(frame_paths, mod_criteria)
         yield {"QUANTPATHS": frame_paths}
-    ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
-    ds_delay = 1 / ds_fps
+    # ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
+    # ds_delay = 1 / ds_fps
+    ds_delay = mod_criteria.delay
+    ds_fps = mod_criteria.fps
+    yield {"NEW DELAY": ds_delay}
     create_criteria = CreationCriteria({
         'name': mod_criteria.name,
         'fps': ds_fps,
