@@ -7170,6 +7170,9 @@ table.root-table {
   table-layout: fixed;
   margin: 0px !important; }
 
+a.is-disabled {
+  pointer-events: none; }
+
 /* Color helpers */
 .is-dark-2 {
   color: #232629; }
@@ -7178,7 +7181,7 @@ table.root-table {
   color: #31363b; }
 
 .is-cyan {
-  color: #34caf8; }
+  color: #34caf8 !important; }
 
 .is-white-d {
   color: #cccccc !important; }
@@ -7251,8 +7254,11 @@ a.exit-button:hover {
 .mod-menu-item a {
   padding: 0.3em 0em; }
 
-.mod-menu-item:hover {
-  border: 2px solid #444851; }
+.mod-menu-item a.is-disabled i {
+  color: #616877 !important; }
+
+.mod-menu-item a.is-disabled p {
+  color: #616877 !important; }
 
 .mod-menu-item.is-selected p, .mod-menu-item.is-selected i {
   color: #34caf8 !important; }

@@ -177,10 +177,10 @@
                             <p class="is-white-d">General</p>
                           </a>
                         </li>
-                        <li id="MOD_box_gif" class="mod-menu-item"
+                        <li id="MOD_box_gif" class="mod-menu-item is-cyan"
                           v-bind:class="{'is-selected': mod_menuselection == 1}">
-                          <a id="MOD_menu_gif"
-                          v-bind:disabled="format == 'PNG'" v-on:click="mod_menuselection = 1">
+                          <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
+                            v-bind:class="{'is-disabled': format == 'PNG'}">
                             <span class="icon is-large">
                               <i class="far fa-images fa-2x fa-inverse"></i>
                             </span>
@@ -189,8 +189,8 @@
                         </li>
                         <li id="MOD_box_apng" class="mod-menu-item"
                           v-bind:class="{'is-selected': mod_menuselection == 2}">
-                          <a id="MOD_menu_apng" 
-                          v-bind:disabled="format == 'GIF'" v-on:click="mod_menuselection = 2">
+                          <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
+                            v-bind:class="{'is-disabled': format == 'GIF'}">
                             <span class="icon is-large">
                               <i class="far fa-images fa-2x fa-inverse"></i>
                             </span>
