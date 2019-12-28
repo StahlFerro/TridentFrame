@@ -303,16 +303,20 @@
                             <input v-model="is_reversed" type="checkbox" />
                             Reversed
                           </label>
-                          <label class="checkbox" title="Preserve transparent pixels">
+                          <!-- <label class="checkbox" title="Preserve transparent pixels">
                             <input v-model="preserve_alpha" type="checkbox" />
                             Preserve Alpha
-                          </label>
-                        </td>
-                        <td width="40%" class="force-vcenter" colspan="2">
+                          </label> -->
                           <label class="checkbox">
                             <input v-model="lock_aspect_ratio" type="checkbox"/>
                             Lock aspect ratio
                           </label>
+                        </td>
+                        <td width="40%" class="force-vcenter" colspan="2">
+                          <!-- <label class="checkbox">
+                            <input v-model="lock_aspect_ratio" type="checkbox"/>
+                            Lock aspect ratio
+                          </label> -->
                           <br/>
                           <template v-if="aspect_ratio && aspect_ratio.text">
                             <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
