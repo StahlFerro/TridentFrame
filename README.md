@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://stahlferro.github.io/softwares/tridentframe">
-    <img width="200" height="200" src="https://stahlferro.github.io/logos/TridentFrame_cyan_200px_opt.png">
+    <img width="200" height="200" src="https://stahlferro.github.io/logos/TridentFrame_logo.svg">
   </a>
   <h1>TridentFrame</h1>
 </div>
