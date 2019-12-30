@@ -245,7 +245,7 @@
                           <div class="field">
                             <label class="label">FPS</label>
                             <div class="control">
-                              <input v-model="fps" v-on:input="fpsConstrain" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" />
+                              <input v-model="fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
                         </td>
@@ -253,7 +253,7 @@
                           <div class="field">
                             <label class="label">Delay</label>
                             <div class="control">
-                              <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" />
+                              <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="floatConstrain($event)" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
                         </td>
@@ -395,7 +395,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, gcd } = require("./Utility.vue");
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
 
@@ -785,6 +785,7 @@ export default {
     toggleNewCheckerBG: toggleNewCheckerBG,
     delayConstrain: delayConstrain,
     fpsConstrain: fpsConstrain,
+    floatConstrain: floatConstrain,
   },
   computed: {
     origDimensions: origDimensions,

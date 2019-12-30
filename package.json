@@ -73,6 +73,7 @@
       "!.github/**",
       "!.sass-cache/**",
       "!.vscode/**",
+      "!app.js",
       "!bin/**",
       "!cache/**",
       "!css/**",

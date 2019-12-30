@@ -64,6 +64,13 @@ function wholeNumConstrain(event) {
   }
 }
 
+function floatConstrain(event) {
+  console.log('float constrain', event);
+  let float_regex = new RegExp('(^[0-9]+(\\.[0-9]+)?$)');
+  let target_value = event.target.value + event.data;
+  console.log("target value", target_value);
+}
+
 function posWholeNumConstrain(event) {
   console.log(event.key);
   if (event.key != "." && event.key != '-') {
@@ -89,6 +96,7 @@ module.exports = {
   gcd: gcd,
   wholeNumConstrain: wholeNumConstrain,
   posWholeNumConstrain: posWholeNumConstrain,
+  floatConstrain: floatConstrain,
 }
 
 </script>
