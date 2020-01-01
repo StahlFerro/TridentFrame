@@ -261,7 +261,7 @@
                           <div class="field">
                             <label class="label">Loop count</label>
                             <div class="control">
-                              <input v-model="loop_count" v-on:keydown="floatConstrain($event)" class="input is-neon-white" type="number" min="0"/>
+                              <input v-model="loop_count" v-on:keydown="posWholeNumConstrain($event)" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
                         </td>
@@ -395,7 +395,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, gcd } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, gcd } = require("./Utility.vue");
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
 
@@ -787,6 +787,7 @@ export default {
     delayConstrain: delayConstrain,
     fpsConstrain: fpsConstrain,
     floatConstrain: floatConstrain,
+    numConstrain: numConstrain,
   },
   computed: {
     origDimensions: origDimensions,

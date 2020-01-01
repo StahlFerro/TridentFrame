@@ -85,6 +85,11 @@ function floatConstrain(event) {
   // }
 }
 
+function numConstrain(event, vals) {
+  vals = JSON.parse(vals);
+  console.log(vals.dd);
+}
+
 function posWholeNumConstrain(event) {
   console.log(event.key);
   if (event.key != "." && event.key != '-') {
@@ -110,6 +115,7 @@ module.exports = {
   gcd: gcd,
   wholeNumConstrain: wholeNumConstrain,
   posWholeNumConstrain: posWholeNumConstrain,
+  numConstrain: numConstrain,
   floatConstrain: floatConstrain,
 }
 
