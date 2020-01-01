@@ -50,8 +50,8 @@ class ModificationCriteria:
         self.width = int(json_vals.get('width') or 0)
         self.height = int(json_vals.get('height') or 0)
         self.orig_delay = json_vals['orig_delay']
-        self.delay = json_vals['delay']
-        self.fps = json_vals['fps']
+        self.delay = float(json_vals['delay'] or 0)
+        self.fps = float(json_vals['fps'] or 0)
         self.orig_frame_count = json_vals['orig_frame_count']
         self.orig_frame_count_ds = json_vals['orig_frame_count_ds']
         self.orig_loop_duration = json_vals['orig_loop_duration']

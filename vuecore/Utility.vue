@@ -66,9 +66,23 @@ function wholeNumConstrain(event) {
 
 function floatConstrain(event) {
   console.log('float constrain', event);
-  let float_regex = new RegExp('(^[0-9]+(\\.[0-9]+)?$)');
-  let target_value = event.target.value + event.data;
-  console.log("target value", target_value);
+  let current_value = event.target.value;
+  let key = event.key;
+  if (current_value.includes(".") && key == ".") {
+    event.preventDefault();
+  }
+  else {
+    return true;
+  }
+  // let float_regex = new RegExp('(^[0-9]*\\.?[0-9]*$)');
+  // if (float_regex.test(event.target.value)) {
+  //   console.log("IS FLOAT!");
+  //   return true;
+  // }
+  // else {
+  //   console.log("NOT FLOAT!");
+  //   event.preventDefault();
+  // }
 }
 
 function posWholeNumConstrain(event) {

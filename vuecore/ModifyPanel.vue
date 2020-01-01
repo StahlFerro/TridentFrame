@@ -261,7 +261,7 @@
                           <div class="field">
                             <label class="label">Loop count</label>
                             <div class="control">
-                              <input v-model="loop_count" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" min="0"/>
+                              <input v-model="loop_count" v-on:keydown="floatConstrain($event)" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
                         </td>
@@ -715,14 +715,15 @@ function buttonIsFrozen() {
 }
 
 function delayConstrain (event) {
-  console.log("delay event", event);
+  // console.log("delay event", event);
   var value = event.target.value;
+  console.log(value);
   if (value && value.includes(".")) {
     var numdec = value.split(".");
     console.log("numdec", numdec);
     if (numdec[1].length > GIF_DELAY_DECIMAL_PRECISION) {
       var twodecs = numdec[1].substring(0, GIF_DELAY_DECIMAL_PRECISION);
-      console.log("twodecs limit triggered", twodecs);
+      // console.log("twodecs limit triggered", twodecs);
       data.delay = `${numdec[0]}.${twodecs}`;
     }
   }
