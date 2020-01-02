@@ -42,9 +42,9 @@ const createWindow = () => {
         }));
     }
 
-    if (deploy_env && deploy_env == 'DEV') {
+    // if (deploy_env && deploy_env == 'DEV') {
         mainWindow.webContents.openDevTools({mode: 'detach'});
-    }
+    // }
     mainWindow.focus();
     mainWindow.on('closed', () => {
         mainWindow = null;
