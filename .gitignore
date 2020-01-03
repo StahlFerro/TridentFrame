@@ -268,3 +268,4 @@ cache/*
 release/*
 engine/*
 package_json_spitter.py
+writer/markdown/*

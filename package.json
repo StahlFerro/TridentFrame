@@ -30,22 +30,23 @@
     "prod-windows": "npm run wpbuild && npm run buildpy-windows && npm run prod",
     "prod-linux": "npm run wpbuild && npm run buildpy-linux && npm run prod",
     "liverelease": "npm run clean-dist && webpack --watch",
-    "wpserve": "webpack-dev-server --mode development",
-    "wpbuild": "npm run clean-dist && webpack --mode production",
+    "wpserve": "webpack-dev-server --mode development --env.NODE_ENV=DEV",
+    "wpbuild": "npm run clean-dist && webpack --mode production --env.NODE_ENV=PROD",
     "elbuild": "npm run clean-release && electron-builder",
     "engine-clean": "rimraf ./engine/*",
     "buildpy-windows": "npm run engine-clean && pyinstaller tripy_windows64.spec",
     "buildpy-linux": "npm run engine-clean && pyinstaller tripy_linux.spec",
     "updatepy-windows": "npm run buildpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
     "updatepy-linux": "npm run buildpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
-    "release-windows": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-windows && npm run elbuild",
-    "release-linux": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild",
+    "release-windows": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-windows && npm run elbuild && npm run scribe-version",
+    "release-linux": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild && npm run scribe-version",
     "rebuiltron": "./node_modules/.bin/electron-rebuild",
     "megafix": "npm install && npm install zeromq@5.1.0 && npm install electron@6.0.9 && npm install zerorpc && npm rebuild zeromq --runtime=electron && npm run rebuiltron",
     "ultimate-reset": "npm cache clean --force && rimraf node_modules/ && npm run megafix",
     "genlauncher-linux": "",
     "build-launcher": "pyinstaller --onefile launcher/tridentframe.py --workpath launcher/build/ --distpath launcher/dist/ --specpath launcher/",
-    "copy-launcher-linux": "cp launcher/dist release/tridentframe/linux-unpacked"
+    "copy-launcher-linux": "cp launcher/dist release/tridentframe/linux-unpacked",
+    "scribe-version": "python writer/version_scribe.py"
   },
   "build": {
     "productName": "TridentFrame",
@@ -55,11 +56,18 @@
     },
     "asar": false,
     "win": {
-      "target": ["7z"],
+      "target": [
+        "7z",
+        "zip"
+      ],
       "icon": "release/tridentframe/win-unpacked/resources/app/imgs/TridentFrame_logo_256x256.ico"
     },
     "linux": {
-      "target": ["7z", "deb", "zip"],
+      "target": [
+        "7z",
+        "deb",
+        "zip"
+      ],
       "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.png",
       "category": "Graphics"
     },
