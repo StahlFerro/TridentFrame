@@ -35,7 +35,8 @@ module.exports = {
           // publicPath: '../',
         }
       }]},
-      { test: /\.node$/, use: 'node-loader' },
+      { test: /\.node$/, loader: "native-ext-loader", }
+      // { test: /\.node$/, use: 'node-loader' },
     ]
   },
   devServer: {
