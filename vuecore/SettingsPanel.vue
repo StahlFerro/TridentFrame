@@ -63,7 +63,7 @@ function purgeCacheTemp() {
 }
 
 function openInspector() {
-  remote.getCurrentWebContents().openDevTools();
+  remote.getCurrentWebContents().openDevTools({mode: 'detach'});
   var devtools = remote.getCurrentWindow().devToolsWebContents;
   if (devtools) { devtools.focus(); }
 }

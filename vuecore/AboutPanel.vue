@@ -10,7 +10,7 @@
         <tr>
           <td class="has-text-centered is-vcentered">
             <h1 class="title is-1">TridentFrame</h1>
-            <p class="subtitle is-4">v1.0.0-beta.1</p>
+            <p class="subtitle is-4">v1.0.0-beta.2</p>
           </td>
         </tr>
         <tr>

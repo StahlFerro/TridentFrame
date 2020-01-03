@@ -50,4 +50,7 @@ def imager_exec_path(binname: str) -> str:
         # return os.path.abspath("./bin/gifsicle-1.92-2+b1_amd64/gifsicle")
     else:
         raise Exception(f"TridentFrame does not have the engine for processing images on this platform! {platform.system()}")
-    return os.path.abspath(os.path.join(_bin_dirpath(), path))
+    path = os.path.abspath(os.path.join(_bin_dirpath(), path))
+    # Escape apostrophes
+    path = path.replace("'", "''")
+    return path
