@@ -97,7 +97,6 @@ def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     criteria = crbundle.create_aimg
     gif_criteria = crbundle.gif_opt
-    yield {"GIF CRITERIA": gif_criteria.__dict__}
     yield from _create_gifragments(image_paths, gifragment_dir, criteria)
     executable = str(imager_exec_path('gifsicle'))
     delay = int(criteria.delay * 100)
@@ -137,42 +136,6 @@ def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
     yield {"preview_path": out_full_path}
     yield {"CONTROL": "CRT_FINISH"}
     return out_full_path
-
-
-# def _create_pngfragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
-
-#     fcount = len(image_paths)
-#     perc_skip = 5
-#     shout_nums = shout_indices(fcount, perc_skip)
-
-#     first_width, first_height = Image.open(image_paths[0]).size
-#     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
-#     for index, ipath in enumerate(image_paths):
-#         if shout_nums.get(index):
-#             yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
-#         with Image.open(ipath) as im:
-#             # im = Image.open(ipath)
-#             fragment_name = os.path.splitext(os.path.basename(ipath))[0]
-#             if criteria.reverse:
-#                 reverse_index = len(image_paths) - (index + 1)
-#                 fragment_name = f"rev_{str.zfill(str(reverse_index), 3)}_{fragment_name}"
-#             save_path = f'{os.path.join(out_path, fragment_name)}.png'
-
-#             orig_width, orig_height = im.size
-#             must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
-#             if im.mode != 'RGBA':
-#                 im = im.convert('RGBA')
-#             if must_resize:
-#                 im = im.resize((round(criteria.resize_width), round(criteria.resize_height)))
-#             if criteria.flip_h:
-#                 im = im.transpose(Image.FLIP_LEFT_RIGHT)
-#             if criteria.flip_v:
-#                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
-#             im.save(save_path)
-
-def _post_create_apng_mod(target_path, aopt_criteria: APNGOptimizationCriteria):
-    if aopt_criteria.is_optimized and aopt_criteria.optimization_level:
-        return apngopt_render(aopt_criteria, target_path, target_path, 2, 2)
 
 
 def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:

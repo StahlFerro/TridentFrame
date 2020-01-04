@@ -43,7 +43,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     #     frames.reverse()
     yield {"frames after": frame_paths}
     pq_args = pngquant_args(apngopt_criteria)
-    if mod_criteria.format == 'PNG' and pqarg:
+    if mod_criteria.format == 'PNG' and pq_args:
         yield {"DEBUG": "PNG QUANTIZATION SELECTED"}
         frame_paths = yield from pngquant_render(pq_args, frame_paths)
         yield {"QUANTPATHS": frame_paths}
@@ -94,6 +94,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     sicle_args = gifsicle_args(criteria, gifopt_criteria)
     magick_args = imagemagick_args(gifopt_criteria)
     aopt_args = apngopt_args(apngopt_criteria)
+    pq_args = pngquant_args(apngopt_criteria)
     # yield sicle_args
     target_path = str(img_path)
     total_ops = 0
@@ -128,7 +129,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
                 target_path = yield from imagemagick_render(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
             # yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
-            if criteria.apng_mustsplit_alteration():
+            if criteria.apng_mustsplit_alteration() or pq_args:
                 target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
             if aopt_args:
                 target_path = yield from apngopt_render(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))

@@ -104,8 +104,7 @@ class ModificationCriteria:
         return altered
 
     def apng_mustsplit_alteration(self) -> bool:
-        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop() or self.must_flip() or self.is_reversed \
-            or (self.apng_is_lossy and self.apng_lossy_value) or self.apng_is_unoptimized
+        altered = self.must_resize() or self.must_rotate() or self.must_redelay() or self.must_reloop() or self.must_flip() or self.is_reversed
         return altered
 
     def orig_dimensions(self) -> str:
