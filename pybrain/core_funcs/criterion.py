@@ -67,19 +67,19 @@ class ModificationCriteria:
         self.is_reversed = json_vals['is_reversed']
         self.preserve_alpha = json_vals['preserve_alpha']
 
-        self.is_optimized = json_vals['is_optimized']
-        self.optimization_level = json_vals['optimization_level']
-        self.is_lossy = json_vals['is_lossy']
-        self.lossy_value = json_vals['lossy_value']
-        self.is_reduced_color = json_vals['is_reduced_color']
-        self.color_space = json_vals['color_space']
-        self.is_unoptimized = json_vals['is_unoptimized']
+        # self.is_optimized = json_vals['is_optimized']
+        # self.optimization_level = json_vals['optimization_level']
+        # self.is_lossy = json_vals['is_lossy']
+        # self.lossy_value = json_vals['lossy_value']
+        # self.is_reduced_color = json_vals['is_reduced_color']
+        # self.color_space = json_vals['color_space']
+        # self.is_unoptimized = json_vals['is_unoptimized']
 
-        self.apng_is_optimized = json_vals['apng_is_optimized']
-        self.apng_optimization_level = int(json_vals.get('apng_optimization_level') or 0)
-        self.apng_is_lossy = json_vals['apng_is_lossy']
-        self.apng_lossy_value = int(json_vals.get('apng_lossy_value') or 0)
-        self.apng_is_unoptimized = json_vals['apng_is_unoptimized']
+        # self.apng_is_optimized = json_vals['apng_is_optimized']
+        # self.apng_optimization_level = int(json_vals.get('apng_optimization_level') or 0)
+        # self.apng_is_lossy = json_vals['apng_is_lossy']
+        # self.apng_lossy_value = int(json_vals.get('apng_lossy_value') or 0)
+        # self.apng_is_unoptimized = json_vals['apng_is_unoptimized']
 
     def must_resize(self) -> bool:
         return self.orig_width != self.width or self.orig_height != self.height
@@ -143,3 +143,42 @@ class SpritesheetSliceCriteria:
         self.padding_x: int = int(vals.get('padding_x') or 0)
         self.padding_y: int = int(vals.get('padding_y') or 0)
         self.is_edge_alpha: bool = vals.get('is_edge_alpha')
+
+
+class GIFOptimizationCriteria:
+    """ Criteria for GIF-related optimization/unoptimization """
+
+    def __init__(self, vals):
+        self.is_optimized = vals['is_optimized']
+        self.optimization_level = vals['optimization_level']
+        self.is_lossy = vals['is_lossy']
+        self.lossy_value = int(vals['lossy_value'] or 0)
+        self.is_reduced_color = vals['is_reduced_color']
+        self.color_space = int(vals['color_space'] or 0)
+        self.is_unoptimized = vals['is_unoptimized']
+
+
+class APNGOptimizationCriteria:
+    """ Criteria for APNG-related optimization/unoptimization """
+
+    def __init__(self, vals):
+        self.is_optimized = vals['apng_is_optimized']
+        self.optimization_level = int(vals.get('apng_optimization_level') or 0)
+        self.is_lossy = vals['apng_is_lossy']
+        self.lossy_value = int(vals.get('apng_lossy_value') or 0)
+        self.is_unoptimized = vals['apng_is_unoptimized']
+    
+    def must_opt(self) -> bool:
+        return (self.is_optimized and self.optimization_level) or (self.is_lossy and self.lossy_value)
+
+class CriteriaBundle:
+    """ Packs multiple criterias into one"""
+
+    def __init__(self, vals):
+        self.create_aimg: CreationCriteria = vals.get('create_aimg')
+        self.split_aimg: SplitCriteria = vals.get('split_aimg')
+        self.modify_aimg: ModificationCriteria = vals.get('modify_aimg')
+        self.build_spr: SpritesheetBuildCriteria = vals.get('build_spr')
+        self.slice_spr: SpritesheetSliceCriteria = vals.get('slice_spr')
+        self.gif_opt: GIFOptimizationCriteria = vals.get('gif_opt')
+        self.apng_opt: APNGOptimizationCriteria = vals.get('apng_opt')

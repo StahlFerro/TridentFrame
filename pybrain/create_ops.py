@@ -16,8 +16,10 @@ from PIL import Image
 from apng import APNG, PNG
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
-from .core_funcs.criterion import CreationCriteria
+from .core_funcs.criterion import CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria, CriteriaBundle
 from .core_funcs.utility import _mk_temp_dir, shout_indices
+from .bin_funcs.arg_builder import apngopt_args, pngquant_args
+from .bin_funcs.imager_api import apngopt_render, pngquant_render
 
 
 def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
@@ -91,14 +93,19 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 # temp_gifs.append(os.path.relpath(save_path, os.getcwd()))
 
 
-def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria):
+def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
+    criteria = crbundle.create_aimg
+    gif_criteria = crbundle.gif_opt
+    yield {"GIF CRITERIA": gif_criteria.__dict__}
     yield from _create_gifragments(image_paths, gifragment_dir, criteria)
     executable = str(imager_exec_path('gifsicle'))
     delay = int(criteria.delay * 100)
-    opti_mode = "--unoptimize"
     disposal = "background"
     loop_arg = "--loopcount"
+    opti_mode = "--unoptimize"
+    colorspace_arg = ""
+    lossy_arg = ""
     if (not criteria.loop_count or criteria.loop_count == 0):
         loop_arg = "--loopcount"
     elif (criteria.loop_count == 1):
@@ -106,12 +113,21 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
     elif (criteria.loop_count > 1):
         loop_arg = f'--loopcount={criteria.loop_count - 1}'
     globstar_path = "*.gif"
+
+    if gif_criteria:
+        if gif_criteria.is_optimized and gif_criteria.optimization_level:
+            opti_mode = f"--optimize={gif_criteria.optimization_level}"
+        if gif_criteria.is_lossy and gif_criteria.lossy_value:
+            lossy_arg = f"--lossy={gif_criteria.lossy_value}"
+        if gif_criteria.is_reduced_color and gif_criteria.color_space:
+            colorspace_arg = f"--colors={gif_criteria.color_space}"
+
     ROOT_PATH = str(os.getcwd())
     if os.getcwd() != gifragment_dir:
         yield {"msg": f"Changing directory from {os.getcwd()} to {gifragment_dir}"}
         os.chdir(gifragment_dir)
     yield {"msg": f"Obtained gifsicle exec path: {executable}"}
-    args = [executable, opti_mode, f"--delay={delay}", f"--disposal={disposal}", loop_arg, globstar_path, "--output", f'"{out_full_path}"']
+    args = [executable, opti_mode, lossy_arg, colorspace_arg, f"--delay={delay}", f"--disposal={disposal}", loop_arg, globstar_path, "--output", f'"{out_full_path}"']
     cmd = ' '.join(args)
     yield {"cmd": cmd}
     yield {"msg": "Combining frames..."}
@@ -154,10 +170,26 @@ def _build_gif(image_paths: List, out_full_path: str, criteria: CreationCriteria
 #                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
 #             im.save(save_path)
 
+def _post_create_apng_mod(target_path, aopt_criteria: APNGOptimizationCriteria):
+    if aopt_criteria.is_optimized and aopt_criteria.optimization_level:
+        return apngopt_render(aopt_criteria, target_path, target_path, 2, 2)
 
-def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
+
+def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
+    criteria = crbundle.create_aimg
+    aopt_criteria = crbundle.apng_opt
+    temp_dirs = []
+    aopt_args = apngopt_args(aopt_criteria) if aopt_criteria else []
+    pq_args = pngquant_args(aopt_criteria) if aopt_criteria else []
+
+    if pq_args:
+        qtemp_dir = _mk_temp_dir(prefix_name="quant_temp")
+        temp_dirs.append(qtemp_dir)
+        image_paths = yield from pngquant_render(pq_args, image_paths, optional_out_path=qtemp_dir)
+
     if criteria.reverse:
         image_paths.reverse()
+    
     apng = APNG()
     first_width, first_height = Image.open(image_paths[0]).size
     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
@@ -191,20 +223,27 @@ def _build_apng(image_paths, out_full_path, criteria: CreationCriteria) -> APNG:
         apng = APNG.from_files(image_paths, delay=int(criteria.delay * 1000))
         apng.num_plays = criteria.loop_count
         apng.save(out_full_path)
+    
+    if aopt_args:
+        out_full_path = yield from apngopt_render(aopt_args, out_full_path, out_full_path)
+
+    # for td in temp_dirs:
+    #     shutil.rmtree(td)
     yield {"preview_path": out_full_path}
     yield {"CONTROL": "CRT_FINISH"}
 
     return out_full_path
 
 
-def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: CreationCriteria) -> bool:
+def create_aimg(image_paths: List[str], out_dir: str, filename: str, crbundle: CriteriaBundle) -> bool:
     """ Umbrella generator for creating animated images from a sequence of images """
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     # Test if inputted filename has extension, then remove it from the filename
+    img_format = crbundle.create_aimg.extension
     if len(img_paths) < 2:
-        raise Exception(f"At least 2 images is needed for an animated {criteria.extension}!")
+        raise Exception(f"At least 2 images is needed for an animated {img_format}!")
     fname, ext = os.path.splitext(filename)
     if ext:
         filename = fname
@@ -213,11 +252,11 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, criteria: C
     out_dir = os.path.abspath(out_dir)
     if not os.path.exists(out_dir):
         raise Exception(f"The specified absolute out_dir does not exist!\n{out_dir}")
-    if criteria.extension == 'GIF':
+    if img_format == 'GIF':
         out_full_path = os.path.join(out_dir, f"{filename}.gif")
         filename = f"{filename}.gif"
-        return _build_gif(image_paths, out_full_path, criteria)
+        return _build_gif(image_paths, out_full_path, crbundle)
     
-    elif criteria.extension == 'PNG':
+    elif img_format == 'PNG':
         out_full_path = os.path.join(out_dir, f"{filename}.png")
-        return _build_apng(img_paths, out_full_path, criteria)
+        return _build_apng(img_paths, out_full_path, crbundle)

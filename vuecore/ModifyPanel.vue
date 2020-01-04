@@ -164,11 +164,11 @@
           <div class="mod-aimg-control-container">
             <table class="table is-paddingless is-marginless" width="100%">
               <tr>
-                <td width="10%" class="mod-menu-cell is-paddingless">
+                <td width="10%" class="mod-menu-subtab is-paddingless">
                   <div class="mod-left-menu">
                     <aside class="menu has-text-centered" style="margin: 0;">
-                      <ul class="menu-list mod-left-menu">
-                        <li id="MOD_box_general" class="mod-menu-item"
+                      <ul class="menu-list">
+                        <li id="MOD_box_general" class="subtab-menu-item"
                           v-bind:class="{'is-selected': mod_menuselection == 0}">
                           <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
                             <span class="icon is-large">
@@ -177,7 +177,7 @@
                             <p class="is-white-d">General</p>
                           </a>
                         </li>
-                        <li id="MOD_box_gif" class="mod-menu-item is-cyan"
+                        <li id="MOD_box_gif" class="subtab-menu-item is-cyan"
                           v-bind:class="{'is-selected': mod_menuselection == 1}">
                           <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
                             v-bind:class="{'is-disabled': format == 'PNG'}">
@@ -187,7 +187,7 @@
                             <p class="is-white-d is-large">GIF</p>
                           </a>
                         </li>
-                        <li id="MOD_box_apng" class="mod-menu-item"
+                        <li id="MOD_box_apng" class="subtab-menu-item"
                           v-bind:class="{'is-selected': mod_menuselection == 2}">
                           <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
                             v-bind:class="{'is-disabled': format == 'GIF'}">

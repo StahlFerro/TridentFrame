@@ -14,7 +14,7 @@ from pybrain.create_ops import create_aimg
 from pybrain.split_ops import split_aimg
 from pybrain.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pybrain.modify_ops import modify_aimg
-from pybrain.core_funcs.criterion import CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria
+from pybrain.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 from pybrain.core_funcs.utility import _purge_directory, util_generator
 from pybrain.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
 
@@ -46,8 +46,12 @@ class API(object):
             raise Exception("Please load the images!")
         elif not out_dir:
             raise Exception("Please choose the output folder!")
-        criteria = CreationCriteria(vals)
-        return create_aimg(image_paths, out_dir, filename, criteria)
+        crbundle = CriteriaBundle({
+            "create_aimg": CreationCriteria(vals),
+            "gif_opt": GIFOptimizationCriteria(vals),
+            "apng_opt": APNGOptimizationCriteria(vals)
+        })
+        return create_aimg(image_paths, out_dir, filename, crbundle)
 
     @zerorpc.stream
     def split_image(self, image_path, out_dir, vals):
@@ -71,7 +75,12 @@ class API(object):
         elif not out_dir:
             raise Exception("Please choose an output folder!")
         criteria = ModificationCriteria(vals)
-        return modify_aimg(image_path, out_dir, criteria)
+        crbundle = CriteriaBundle({
+            'modify_aimg': ModificationCriteria(vals),
+            'gif_opt': GIFOptimizationCriteria(vals),
+            'apng_opt': APNGOptimizationCriteria(vals),
+        })
+        return modify_aimg(image_path, out_dir, crbundle)
         
 
     @zerorpc.stream

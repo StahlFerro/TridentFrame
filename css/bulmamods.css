@@ -7244,23 +7244,26 @@ a.exit-button:hover {
 .menu-item.is-selected p, .menu-item.is-selected i {
   color: #34caf8 !important; }
 
-.mod-menu-cell {
+.crt-menu-subtab {
+  border-right: 2px solid #616877 !important; }
+
+.mod-menu-subtab {
   border-right: 2px solid #616877 !important; }
 
 /* Menu-item on Modify UI */
-.mod-menu-item {
+.subtab-menu-item {
   border: 2px solid #31363b; }
 
-.mod-menu-item a {
+.subtab-menu-item a {
   padding: 0.3em 0em; }
 
-.mod-menu-item a.is-disabled i {
+.subtab-menu-item a.is-disabled i {
   color: #616877 !important; }
 
-.mod-menu-item a.is-disabled p {
+.subtab-menu-item a.is-disabled p {
   color: #616877 !important; }
 
-.mod-menu-item.is-selected p, .mod-menu-item.is-selected i {
+.subtab-menu-item.is-selected p, .subtab-menu-item.is-selected i {
   color: #34caf8 !important; }
 
 /* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
@@ -7269,6 +7272,12 @@ div.left-menu {
   overflow: auto; }
 
 div.left-menu::-webkit-scrollbar {
+  width: 0px; }
+
+div.crt-left-menu {
+  overflow: auto; }
+
+div.crt-left-menu::-webkit-scrollbar {
   width: 0px; }
 
 div.mod-left-menu {
@@ -7382,6 +7391,9 @@ input.input.is-border-colorless {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%); }
+
+.crt-aimg-control-container {
+  padding-right: 7px; }
 
 .prev-spritesheet-container {
   width: 310px;
