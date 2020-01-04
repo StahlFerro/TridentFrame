@@ -53,4 +53,5 @@ def imager_exec_path(binname: str) -> str:
     path = os.path.abspath(os.path.join(_bin_dirpath(), path))
     # Escape apostrophes
     path = path.replace("'", "''")
+    path = f".'{path}'"
     return path

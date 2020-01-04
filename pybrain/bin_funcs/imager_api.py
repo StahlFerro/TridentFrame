@@ -61,7 +61,7 @@ def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0,
             # target_path = out_full_path
     x = shutil.move(target_path, out_full_path)
     yield {"X": x}
-    shutil.rmtree(aopt_dir)
+    # shutil.rmtree(aopt_dir)
     return out_full_path
 
 
@@ -84,11 +84,6 @@ def pngquant_render(pq_args, image_paths: List[str], optional_out_path=""):
         cmd = ' '.join(args)
         # yield {"cmd": cmd}
         result = subprocess.check_output(cmd, shell=True)
-        # yield {"out": result}
-        # quantized_img = Image.open(ipath)
-        # yield {"QMODE": quantized_img.mode}
-        # quantized_img = quantized_img.convert("RGBA")
-        # quantized_frames.append(quantized_img)
         # Convert back to RGBA image
         with Image.open(target_path).convert("RGBA") as rgba_im:
             rgba_im.save(target_path)

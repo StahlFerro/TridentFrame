@@ -130,7 +130,9 @@ def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
     cmd = ' '.join(args)
     yield {"cmd": cmd}
     yield {"msg": "Combining frames..."}
-    subprocess.run(cmd, shell=True)
+    result = subprocess.run(cmd, shell=True, capture_output=True)
+    if result.stderr:
+        raise Exception(result.stderr)
     os.chdir(ROOT_PATH)
     # shutil.rmtree(gifragment_dir)
     yield {"preview_path": out_full_path}

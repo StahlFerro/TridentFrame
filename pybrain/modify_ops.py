@@ -19,7 +19,7 @@ from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS
 from .core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, APNGOptimizationCriteria
 from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices
 from .bin_funcs.imager_api import gifsicle_render, imagemagick_render, apngopt_render, pngquant_render
-from .bin_funcs.arg_builder import gifsicle_args, imagemagick_args, apngopt_args, pngquant_args, pngquant_args_direct
+from .bin_funcs.arg_builder import gifsicle_args, imagemagick_args, apngopt_args, pngquant_args
 from .create_ops import create_aimg
 from .split_ops import split_aimg, _fragment_gif_frames, _fragment_apng_frames
 

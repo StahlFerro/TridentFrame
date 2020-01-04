@@ -84,7 +84,7 @@ def _fragment_gif_frames(unop_gif_path: str, name: str, criteria: SplitCriteria)
             #     yield {"msg": "Palette has no transparency"}
             #     gif = gif.convert('RGB')
                 frames.append(im)
-    shutil.rmtree(fragment_dir)
+    # shutil.rmtree(fragment_dir)
     return frames
 
 
