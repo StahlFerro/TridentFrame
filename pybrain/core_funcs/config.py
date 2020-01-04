@@ -52,6 +52,6 @@ def imager_exec_path(binname: str) -> str:
         raise Exception(f"TridentFrame does not have the engine for processing images on this platform! {platform.system()}")
     path = os.path.abspath(os.path.join(_bin_dirpath(), path))
     # Escape apostrophes
-    path = path.replace("'", "''")
-    path = f".'{path}'"
+    # path = path.replace("'", "''")
+    # path = f".'{path}'"
     return path
