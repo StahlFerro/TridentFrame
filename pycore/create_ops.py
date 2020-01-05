@@ -175,7 +175,9 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
                     orig_width, orig_height = im.size
                     must_resize = criteria.resize_width != orig_width or criteria.resize_height != orig_height
                     if must_resize:
-                        im = im.resize((round(criteria.resize_width), round(criteria.resize_height)))
+                        resize_method_enum = getattr(Image, criteria.resize_method)
+                        yield {"resize_method_enum": resize_method_enum}
+                        im = im.resize((round(criteria.resize_width), round(criteria.resize_height)), resize_method_enum)
                     if criteria.flip_h:
                         im = im.transpose(Image.FLIP_LEFT_RIGHT)
                     if criteria.flip_v:

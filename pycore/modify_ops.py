@@ -67,6 +67,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
         'reverse': mod_criteria.is_reversed,
         'rotation': mod_criteria.rotation,
     })
+    yield {"e": create_criteria.resize_method}
     crbundle = CriteriaBundle({
         "create_aimg": create_criteria
     })
