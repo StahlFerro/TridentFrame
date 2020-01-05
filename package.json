@@ -82,7 +82,7 @@
       "!cache/**",
       "!css/**",
       "!launcher/**",
-      "!pybrain/**",
+      "!pycore/**",
       "!sass/**",
       "!temp/**",
       "!test/**",

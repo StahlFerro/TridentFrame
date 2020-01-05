@@ -9,14 +9,14 @@ import time
 
 import zerorpc
 
-from pybrain.inspect_ops import inspect_sequence, inspect_general
-from pybrain.create_ops import create_aimg
-from pybrain.split_ops import split_aimg
-from pybrain.sprite_ops import _build_spritesheet, _slice_spritesheet
-from pybrain.modify_ops import modify_aimg
-from pybrain.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
-from pybrain.core_funcs.utility import _purge_directory, util_generator
-from pybrain.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
+from pycore.inspect_ops import inspect_sequence, inspect_general
+from pycore.create_ops import create_aimg
+from pycore.split_ops import split_aimg
+from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
+from pycore.modify_ops import modify_aimg
+from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
+from pycore.core_funcs.utility import _purge_directory, util_generator
+from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
 
 
 IS_FROZEN = getattr(sys, 'frozen', False)

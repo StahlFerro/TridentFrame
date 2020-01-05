@@ -131,6 +131,8 @@ def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
     yield {"cmd": cmd}
     yield {"msg": "Combining frames..."}
     result = subprocess.run(cmd, shell=True, capture_output=True)
+    yield {"gifsicle STDOUT": result.stdout.decode('utf-8')}
+    yield {"gifsicle STDERR": result.stderr.decode('utf-8')}
     # if result.stderr:
     #     raise Exception(result.stderr)
     os.chdir(ROOT_PATH)

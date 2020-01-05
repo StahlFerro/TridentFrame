@@ -1,1 +1,1 @@
-from . import pybrain
+from . import pycore
