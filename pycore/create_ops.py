@@ -46,7 +46,9 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
             if criteria.flip_v:
                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
             if must_resize:
-                im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)))
+                resize_method_enum = getattr(Image, criteria.resize_method)
+                yield {"resize_method_enum": resize_method_enum}
+                im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)), resample=resize_method_enum)
             if criteria.rotation:
                 im = im.rotate(criteria.rotation, expand=True)
             fragment_name = os.path.splitext(os.path.basename(ipath))[0]

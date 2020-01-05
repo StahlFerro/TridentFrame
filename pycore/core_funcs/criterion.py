@@ -11,6 +11,7 @@ class CreationCriteria:
         self.flip_v: bool = vals['flip_y']
         self.resize_width = int(vals['width'] or 1)
         self.resize_height = int(vals['height'] or 1)
+        self.resize_method = vals.get('resize_method', "BICUBIC")
         self.loop_count = int(vals['loop_count'] or 0)
         self.rotation = int(vals['rotation'] or 0)
     

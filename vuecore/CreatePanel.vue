@@ -169,6 +169,24 @@
                         </div>
                       </td>
                       <td width="20%" style="vertical-align: bottom;">
+                      
+                        <div class="field">
+                          <label class="label" title="Which algorithm to use when resizing the image. Default is Bicubic">Resize Method</label>
+                          <div class="control">
+                            <div class="select is-neon-cyan">
+                              <select v-model="resize_method">
+                                <option value="BICUBIC" title="General-use resizing algorithm for most images">Bicubic</option>
+                                <option value="NEAREST" title="Preserve sharp edges. Ideal for pixel art">Nearest</option>
+                                <option value="BILINEAR" title="Similar to Bicubic, but not as smooth">Bilinear</option>
+                                <option value="BOX">Box</option>
+                                <option value="HAMMING">Hamming</option>
+                                <option value="LANCZOS">Lanczos</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td width="20%" style="vertical-align: bottom;">
                         <label class="checkbox">
                           <input v-model="lock_aspect_ratio" type="checkbox"/>
                           Lock aspect ratio
@@ -178,8 +196,6 @@
                           <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
                         </template>
                         <template v-else>&nbsp;</template>
-                      </td>
-                      <td width="20%" style="vertical-align: bottom;">
                       </td>
                     </tr>
                     <tr>
@@ -335,6 +351,7 @@ var data = {
   old_height: "",
   width: "",
   height: "",
+  resize_method: "BICUBIC",
   delay: "",
   loop_count: "",
   is_transparent: false,
