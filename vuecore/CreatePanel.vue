@@ -169,7 +169,6 @@
                         </div>
                       </td>
                       <td width="20%" style="vertical-align: bottom;">
-                      
                         <div class="field">
                           <label class="label" title="Which algorithm to use when resizing the image. Default is Bicubic">Resize Method</label>
                           <div class="control">
