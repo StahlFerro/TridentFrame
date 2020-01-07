@@ -51,7 +51,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 im = im.resize((round(criteria.resize_width) , round(criteria.resize_height)), resample=resize_method_enum)
             if criteria.rotation:
                 im = im.rotate(criteria.rotation, expand=True)
-            fragment_name = os.path.splitext(os.path.basename(ipath))[0]
+            fragment_name = os.path.splitext(f"{str.zfill(str(index), 6)}_{os.path.basename(ipath)}")[0]
             if criteria.reverse:
                 reverse_index = len(image_paths) - (index + 1)
                 fragment_name = f"rev_{str.zfill(str(reverse_index), 3)}_{fragment_name}"
