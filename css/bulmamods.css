@@ -7173,6 +7173,9 @@ table.root-table {
 a.is-disabled {
   pointer-events: none; }
 
+label.checkbox {
+  font-size: 15px !important; }
+
 /* Color helpers */
 .is-dark-2 {
   color: #232629; }
@@ -7393,7 +7396,8 @@ input.input.is-border-colorless {
   transform: translate(-50%, -50%); }
 
 .crt-aimg-control-container {
-  padding-right: 7px; }
+  padding-right: 7px;
+  height: 248px; }
 
 .prev-spritesheet-container {
   width: 310px;

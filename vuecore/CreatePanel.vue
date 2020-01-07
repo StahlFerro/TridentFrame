@@ -21,7 +21,7 @@
                     <!-- <span>{{ i }}</span><br/> -->
                     <img v-bind:src="item.absolute_url.value"/>
                     <a class="del-anchor">
-                      <span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
+                      <span v-on:click="removeFrame(i)" class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
                     </a>
                   </div>
                 </td>
@@ -99,7 +99,7 @@
       <tr>
         <td id="CRT_control_cell" class=" silver-bordered is-paddingless" colspan="2">
           <div class="crt-aimg-control-container">
-          <table class="table is-paddingless is-marginless" width="100%">
+          <table class="table is-paddingless is-marginless" width="100%" height="100%">
             <tr>
               <td width="5%" class="crt-menu-subtab is-paddingless">
                 <div class="crt-left-menu">
@@ -142,7 +142,7 @@
                 <div v-show="crt_menuselection == 0">
                   <table class="table crt-control-table" width="100%">
                     <tr>
-                      <td width="20%">
+                      <td width="16.7%">
                         <div class="field">
                           <label class="label" title="The name of the GIF/APNG">Name</label>
                           <div class="control">
@@ -150,7 +150,7 @@
                           </div>
                         </div>
                       </td>
-                      <td width="20%">
+                      <td width="16.7%">
                         <div class="field">
                           <label class="label" title="The width of the GIF/APNG">Width</label>
                           <div class="control">
@@ -159,7 +159,7 @@
                           </div>
                         </div>
                       </td>
-                      <td width="20%">
+                      <td width="16.7%">
                         <div class="field">
                           <label class="label" title="The height of the GIF/APNG">Height</label>
                           <div class="control">
@@ -168,7 +168,7 @@
                           </div>
                         </div>
                       </td>
-                      <td width="20%" style="vertical-align: bottom;">
+                      <td width="16.7%">
                         <div class="field">
                           <label class="label" title="Which algorithm to use when resizing the image. Default is Bicubic">Resize Method</label>
                           <div class="control">
@@ -185,7 +185,7 @@
                           </div>
                         </div>
                       </td>
-                      <td width="20%" style="vertical-align: bottom;">
+                      <td width="16.7%" style="vertical-align: bottom;">
                         <label class="checkbox">
                           <input v-model="lock_aspect_ratio" type="checkbox"/>
                           Lock aspect ratio
@@ -195,6 +195,8 @@
                           <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
                         </template>
                         <template v-else>&nbsp;</template>
+                      </td>
+                      <td width="16.7%">
                       </td>
                     </tr>
                     <tr>
@@ -222,6 +224,14 @@
                           </div>
                         </div>
                       </td>
+                      <td>
+                        <div class="field">
+                          <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
+                          <div class="control">
+                            <input v-model="start_frame" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" step="1"/>
+                          </div>
+                        </div>
+                      </td>
                       <td style="vertical-align: bottom;">
                         <label class="checkbox">
                           <input v-model="flip_x" type="checkbox" />
@@ -246,7 +256,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td colspan="3" style="padding-top: 15px;">
+                      <td colspan="4" style="padding-top: 15px;">
                         <div class="field has-addons">
                           <div class="control">
                             <a class="button is-neon-cyan" v-on:click="CRTChooseOutdir">
@@ -353,6 +363,7 @@ var data = {
   resize_method: "BICUBIC",
   delay: "",
   loop_count: "",
+  start_frame: "",
   is_transparent: false,
   is_reversed: false,
   flip_x: false,
@@ -433,6 +444,10 @@ function loadImages() {
       }
     });
   });
+}
+
+function removeFrame(index){
+  console.log('index to delete', index)
 }
 
 function CRTChooseOutdir() {
@@ -663,6 +678,7 @@ export default {
   },
   methods: {
     loadImages: loadImages,
+    removeFrame: removeFrame,
     CRTClearAIMG: CRTClearAIMG,
     CRTChooseOutdir: CRTChooseOutdir,
     previewAIMG: previewAIMG,
@@ -673,6 +689,7 @@ export default {
     heightHandler: heightHandler,
     delayConstrain: delayConstrain,
     fpsConstrain: fpsConstrain,
+    removeFrame: removeFrame,
   },
   computed: {
     CRTQuintcellLister: CRTQuintcellLister,
