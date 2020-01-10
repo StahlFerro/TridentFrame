@@ -7162,7 +7162,12 @@ body {
   font-family: 'Share Tech', 'sans-serif';
   font-size: 18px;
   width: 950px !important;
-  height: 700px !important; }
+  height: 700px !important;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -o-user-select: none; }
 
 table.root-table {
   width: 950px;

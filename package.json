@@ -89,6 +89,7 @@
       "!venv/**",
       "!vuecore/**",
       "!webfonts/**",
+      "!writer/**",
       "!webpack.config.js",
       "!*.py",
       "!*.spec",
