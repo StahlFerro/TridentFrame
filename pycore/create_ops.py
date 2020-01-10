@@ -3,10 +3,12 @@ import platform
 import io
 import string
 import shutil
+import shlex
 import math
 import time
 import subprocess
 import tempfile
+from collections import deque
 from random import choices
 from pprint import pprint
 from typing import List, Dict, Tuple
@@ -29,6 +31,10 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
     #     image_paths.reverse()
     # temp_gifs = []
     fcount = len(image_paths)
+    if criteria.start_frame:
+        shift_items = deque(image_paths)
+        shift_items.rotate(-criteria.start_frame)
+        image_paths = list(shift_items)
     perc_skip = 5
     shout_nums = shout_indices(fcount, perc_skip)
     for index, ipath in enumerate(image_paths):
@@ -131,6 +137,7 @@ def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
     args = [executable, opti_mode, lossy_arg, colorspace_arg, f"--delay={delay}", f"--disposal={disposal}", loop_arg, globstar_path, "--output", f'"{out_full_path}"']
     cmd = ' '.join(args)
     yield {"cmd": cmd}
+    # yield {"shlexed cmd": cmd}
     yield {"msg": "Combining frames..."}
     result = subprocess.run(cmd, shell=True, capture_output=True)
     yield {"gifsicle STDOUT": result.stdout.decode('utf-8')}
