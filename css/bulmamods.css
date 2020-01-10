@@ -4113,7 +4113,7 @@ a.list-item {
     display: block;
     padding: 0.5em 0.75em; }
     .menu-list a:hover {
-      background-color: #444851;
+      background-color: whitesmoke;
       color: #363636; }
     .menu-list a.is-active {
       background-color: #3273dc;
@@ -7265,6 +7265,14 @@ a.exit-button:hover {
 
 .subtab-menu-item a.is-disabled p {
   color: #616877 !important; }
+
+/* Overrides */
+.menu-list a:hover {
+  background-color: #444851 !important; }
+
+.menu-list a:active {
+  background-color: #616877 !important;
+  border-color: #616877 !important; }
 
 .subtab-menu-item.is-selected p, .subtab-menu-item.is-selected i {
   color: #34caf8 !important; }

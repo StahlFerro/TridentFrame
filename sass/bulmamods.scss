@@ -21,7 +21,7 @@ $table-color: $white-d;
 $table-background-color: $dark-3;
 $table-cell-padding: 0.5em 0.3em;
 
-$menu-item-hover-background-color: $dark-4;
+// $menu-item-hover-background-color: $dark-4;
 $menu-item-radius: 0px;
 
 $input-radius: 0px;
@@ -155,7 +155,9 @@ a.exit-button:hover {
 .subtab-menu-item a { padding: 0.3em 0em; }
 .subtab-menu-item a.is-disabled i { color: $dark-6 !important; }
 .subtab-menu-item a.is-disabled p { color: $dark-6 !important; }
-// .subtab-menu-item:hover { border: 2px solid $dark-4; }
+/* Overrides */
+.menu-list a:hover { background-color: $dark-4 !important; }
+.menu-list a:active { background-color: $dark-6 !important; border-color: $dark-6 !important; }
 .subtab-menu-item.is-selected p, .subtab-menu-item.is-selected i { color: $cyan !important; }
 
 /* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
