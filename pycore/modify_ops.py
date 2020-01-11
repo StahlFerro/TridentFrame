@@ -64,6 +64,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
         'width': mod_criteria.width,
         'height': mod_criteria.height,
         'loop_count': mod_criteria.loop_count,
+        'start_frame': 1,
         'reverse': mod_criteria.is_reversed,
         'rotation': mod_criteria.rotation,
     })
