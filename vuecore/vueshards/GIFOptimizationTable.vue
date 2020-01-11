@@ -1,5 +1,5 @@
 <template>
-  <table class="table mod-new-control-table is-hpaddingless" width="100%">
+  <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
     <tr>
       <td class="force-vcenter" width="35%">
         <label class="checkbox" title="Optimize GIFs to reduce output filesize">

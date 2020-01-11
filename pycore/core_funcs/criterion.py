@@ -13,7 +13,8 @@ class CreationCriteria:
         self.resize_height = int(vals['height'] or 1)
         self.resize_method = vals.get('resize_method', "BICUBIC")
         self.loop_count = int(vals['loop_count'] or 0)
-        self.start_frame = int(vals['start_frame'] or 1)
+        self.start_frame = (int(vals['start_frame'] or 0) or 1)
+        self.start_frame = self.start_frame - 1 if self.start_frame >= 0 else self.start_frame
         self.rotation = int(vals['rotation'] or 0)
     
     # def transform(self, resize_width, resize_height, flip_h, flip_v):

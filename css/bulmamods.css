@@ -7181,6 +7181,9 @@ a.is-disabled {
 label.checkbox {
   font-size: 15px !important; }
 
+.medium-size-label label.checkbox {
+  font-size: 18px !important; }
+
 /* Color helpers */
 .is-dark-2 {
   color: #232629; }
@@ -7271,13 +7274,16 @@ a.exit-button:hover {
 .subtab-menu-item a.is-disabled p {
   color: #616877 !important; }
 
+.subtab-menu-item a:active {
+  border-color: #565b69 !important; }
+
 /* Overrides */
 .menu-list a:hover {
   background-color: #444851 !important; }
 
 .menu-list a:active {
-  background-color: #616877 !important;
-  border-color: #616877 !important; }
+  background-color: #565b69 !important;
+  border-color: #565b69 !important; }
 
 .subtab-menu-item.is-selected p, .subtab-menu-item.is-selected i {
   color: #34caf8 !important; }

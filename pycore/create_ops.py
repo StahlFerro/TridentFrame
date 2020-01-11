@@ -31,8 +31,11 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
     #     image_paths.reverse()
     # temp_gifs = []
     fcount = len(image_paths)
+    yield {"msg": f"Criteria start frame {criteria.start_frame}"}
     if criteria.start_frame:
         shift_items = deque(image_paths)
+        shift = -criteria.start_frame
+        yield {"SHIFT!": shift}
         shift_items.rotate(-criteria.start_frame)
         image_paths = list(shift_items)
     perc_skip = 5
