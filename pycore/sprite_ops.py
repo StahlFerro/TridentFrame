@@ -57,9 +57,9 @@ def _build_spritesheet(image_paths: List, out_dir: str, filename: str, criteria:
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in set(STATIC_IMG_EXTS + ANIMATED_IMG_EXTS)]
     # workpath = os.path.dirname(img_paths[0])
     # Test if inputted filename has extension, then remove it from the filename
-    fname, ext = os.path.splitext(filename)
-    if ext:
-        filename = fname
+    # fname, ext = os.path.splitext(filename)
+    # if ext:
+    #     filename = fname
     if not out_dir:
         raise Exception("No output folder selected, please select it first")
     out_dir = os.path.abspath(out_dir)

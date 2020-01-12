@@ -395,7 +395,8 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, gcd } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, gcd, validateFilename,
+        fileExists } = require("./Utility.vue");
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
 
@@ -647,26 +648,48 @@ function updateAspectRatio(width, height) {
 
 
 function modifyImage() {
-  data.MOD_IS_MODIFYING = true;
-  client.invoke("modify_image", data.orig_path, data.outdir, data, (error, res) => {
-    if (error) {
-      console.error(error);
-      data.modify_msgbox = error;
-      data.MOD_IS_MODIFYING = false;
-    }
-    else {
-      if (res) {
-        console.log(res);
-        if (res.msg) {
-          data.modify_msgbox = res.msg;
-        }
-        if (res.CONTROL == "MOD_FINISH") {
-          data.modify_msgbox = "Modified and saved!"
-          data.MOD_IS_MODIFYING = false;
+  let proceed_modify = true;
+
+  data.modify_msgbox = "";
+  var validator = validateFilename(data.name);
+  if (!validator.valid) {
+    console.error(validator.msg);
+    data.modify_msgbox = validator.msg;
+    return;
+  }
+
+  if (fileExists(data.outdir, `${data.name}.${data.format.toLowerCase()}`)) {
+    let WINDOW = remote.getCurrentWindow();
+    let options = {
+      buttons: ["Yes", "Cancel"],
+      message: "A file with the same name exists in the output folder. Do you want to override it?"
+    };
+    let response = dialog.showMessageBoxSync(WINDOW, options);
+    if (response == 1) proceed_modify = false;
+  }
+  
+  if (proceed_modify) {
+    data.MOD_IS_MODIFYING = true;
+    client.invoke("modify_image", data.orig_path, data.outdir, data, (error, res) => {
+      if (error) {
+        console.error(error);
+        data.modify_msgbox = error;
+        data.MOD_IS_MODIFYING = false;
+      }
+      else {
+        if (res) {
+          console.log(res);
+          if (res.msg) {
+            data.modify_msgbox = res.msg;
+          }
+          if (res.CONTROL == "MOD_FINISH") {
+            data.modify_msgbox = "Modified and saved!"
+            data.MOD_IS_MODIFYING = false;
+          }
         }
       }
-    }
-  });
+    });
+  }
 }
 
 function previewModImg() {

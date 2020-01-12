@@ -1,4 +1,9 @@
 <script>
+const path = require('path');
+const fs = require('fs');
+const remote = require("electron").remote;
+const app = remote.app;
+
 function quintcellLister(sequence_infos, from_where="") {
   // console.log(sequence_infos);
   var quintrows = {};
@@ -102,6 +107,12 @@ function posWholeNumConstrain(event) {
   }
 }
 
+function fileExists(out_dir, name) {
+  let full_path = path.join(out_dir, name);
+  console.log("full path", full_path);
+  return fs.existsSync(full_path);
+}
+
 
 const GIF_DELAY_DECIMAL_PRECISION = 2;
 const APNG_DELAY_DECIMAL_PRECISION = 3;
@@ -117,6 +128,7 @@ module.exports = {
   posWholeNumConstrain: posWholeNumConstrain,
   numConstrain: numConstrain,
   floatConstrain: floatConstrain,
+  fileExists: fileExists,
 }
 
 </script>

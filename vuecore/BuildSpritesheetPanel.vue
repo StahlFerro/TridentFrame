@@ -168,18 +168,6 @@
               </td>
 
               <td width="20%" style="vertical-align: bottom;">
-                <label class="checkbox">
-                  <input v-model="lock_aspect_ratio" type="checkbox"/>
-                  Lock aspect ratio
-                </label>
-                <br/>
-                  <template v-if="aspect_ratio && aspect_ratio.text">
-                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
-                  </template>
-                  <template v-else>&nbsp;</template>
-              </td>
-
-              <td width="20%">
                 <div class="field">
                   <label class="label">Max tiles per row</label>
                   <div class="control">
@@ -192,6 +180,18 @@
                     />
                   </div>
                 </div>
+              </td>
+
+              <td width="20%">
+                <label class="checkbox">
+                  <input v-model="lock_aspect_ratio" type="checkbox"/>
+                  Lock aspect ratio
+                </label>
+                <br/>
+                  <template v-if="aspect_ratio && aspect_ratio.text">
+                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                  </template>
+                  <template v-else>&nbsp;</template>
               </td>
             </tr>
             <tr>
@@ -309,7 +309,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain } from './Utility.vue';
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain, validateFilename, fileExists } from './Utility.vue';
 
 function clearInfo() {
   data.image_paths = [],
@@ -547,29 +547,51 @@ function previewSheet() {
 }
 
 function buildSpritesheet() {
-  data.BSPR_IS_BUILDING = true;
-  let paths = null;
-  if (data.input_format == 'sequence') { paths = data.image_paths; }
-  // else if (data.input_format == 'aimg') { paths = bspr_aimg_path_list; }
-  client.invoke("build_spritesheet", paths, data.outdir, data.name, data, (error, res) => {
-    if (error) {
-      console.error(error);
-      data.bspr_msgbox = error;
-      data.BSPR_IS_BUILDING = false;
-      // mboxError(bspr_msgbox, error);
-    } else {
-      if (res) {
-        console.log(res);
-        if (res.msg) {
-          data.bspr_msgbox = res.msg;
-        }
-        if (res.CONTROL == "BSPR_FINISH") {
-          data.bspr_msgbox = "Spritesheet built!";
-          data.BSPR_IS_BUILDING = false;
+  let proceed_build = true;
+
+  data.bspr_msgbox = "";
+  var validator = validateFilename(data.name);
+  if (!validator.valid) {
+    console.error(validator.msg);
+    data.bspr_msgbox = validator.msg;
+    return;
+  }
+
+  if (fileExists(data.outdir, `${data.name}.png`)) {
+    let WINDOW = remote.getCurrentWindow();
+    let options = {
+      buttons: ["Yes", "Cancel"],
+      message: "A file with the same name already exists in the output folder. Do you want to override it?"
+    };
+    let response = dialog.showMessageBoxSync(WINDOW, options);
+    if (response == 1) proceed_build = false;
+  }
+
+  if (proceed_build) {
+    data.BSPR_IS_BUILDING = true;
+    let paths = null;
+    if (data.input_format == 'sequence') { paths = data.image_paths; }
+    // else if (data.input_format == 'aimg') { paths = bspr_aimg_path_list; }
+    client.invoke("build_spritesheet", paths, data.outdir, data.name, data, (error, res) => {
+      if (error) {
+        console.error(error);
+        data.bspr_msgbox = error;
+        data.BSPR_IS_BUILDING = false;
+        // mboxError(bspr_msgbox, error);
+      } else {
+        if (res) {
+          console.log(res);
+          if (res.msg) {
+            data.bspr_msgbox = res.msg;
+          }
+          if (res.CONTROL == "BSPR_FINISH") {
+            data.bspr_msgbox = "Spritesheet built!";
+            data.BSPR_IS_BUILDING = false;
+          }
         }
       }
-    }
-  });
+    });
+  }
 }
 
 function BSPRToggleCheckerBG() {

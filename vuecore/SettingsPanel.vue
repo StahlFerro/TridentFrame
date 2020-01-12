@@ -37,6 +37,18 @@
           </a>
         </td>
       </tr>
+      <tr>
+        <td>
+          <a v-on:click="openConfirm" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fas fa-bug"></i>
+            </span>
+            <span>Confirm tester</span>
+          </a>
+        </td>
+        <td>
+        </td>
+      </tr>
     </table>
   </div>
 </template>
@@ -90,6 +102,16 @@ function testGenerator() {
   })
 }
 
+function openConfirm() {
+  let WINDOW = remote.getCurrentWindow();
+  let options  = {
+    buttons: ["Yes", "Cancel"],
+    message: "A file with the same name exists in the output folder. Do you want to override it?"
+  };
+  let response = dialog.showMessageBoxSync(WINDOW, options);
+  console.log(`response: ${response}`)
+}
+
 export default {
   methods: {
     refreshWindow: refreshWindow,
@@ -97,6 +119,7 @@ export default {
     openInspector: openInspector,
     openCWD: openCWD,
     testGenerator: testGenerator,
+    openConfirm: openConfirm,
   }
 };
 </script>

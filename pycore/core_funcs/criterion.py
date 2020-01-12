@@ -1,3 +1,5 @@
+from os import path
+
 class CreationCriteria:
     """ Contains all of the criterias for Creating an animated image """
     def __init__(self, vals):
@@ -47,6 +49,7 @@ class ModificationCriteria:
 
     def __init__(self, json_vals):
         self.orig_name = json_vals['orig_name']
+        self.orig_base_name = path.splitext(self.orig_name)[0]
         self.name = json_vals['name']
         self.orig_width = json_vals['orig_width']
         self.orig_height = json_vals['orig_height']
@@ -83,6 +86,9 @@ class ModificationCriteria:
         # self.apng_is_lossy = json_vals['apng_is_lossy']
         # self.apng_lossy_value = int(json_vals.get('apng_lossy_value') or 0)
         # self.apng_is_unoptimized = json_vals['apng_is_unoptimized']
+
+    def renamed(self) -> bool:
+        return self.orig_base_name != self.name
 
     def must_resize(self) -> bool:
         return self.orig_width != self.width or self.orig_height != self.height

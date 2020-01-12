@@ -31,7 +31,7 @@ if os_name == 'Windows':
     scribe_texts.append(f"- Windows 7 SP1, 10 (64bit)")
 elif os_name == 'Linux':
     targets = build_info['linux']['target']
-    scribe_texts.append(f"- Ubuntu 18.04LTS (64bit)")
+    scribe_texts.append(f"- Ubuntu 18.04 LTS (64bit)")
 
 releases_content = (os.path.join(RELEASES_DIR, diritem) for diritem in os.listdir(RELEASES_DIR))
 release_files = [r for r in releases_content if os.path.isfile(r)]

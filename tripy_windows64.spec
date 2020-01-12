@@ -11,7 +11,8 @@ imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch
 added_files = [
     ('cache/.include', 'cache/'),
     ('temp/.include', 'temp/'),
-    ('config/config.json', 'config/')
+    ('config/imagers.json', 'config/'),
+    ('config/settings.json', 'config/'),
 ]
 added_files.extend(imaging_engines)
 a = Analysis(['main.py'],

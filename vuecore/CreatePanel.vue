@@ -233,14 +233,14 @@
                         </div>
                       </td>
                       <td style="vertical-align: bottom;">
-                        <label class="checkbox">
+                        <label class="checkbox" title="Flip the image horizontally">
                           <input v-model="flip_x" type="checkbox" />
-                          Flip Horizontally
+                          Flip X
                         </label>
                         <br />
-                        <label class="checkbox">
+                        <label class="checkbox" title="Flip the image vertically">
                           <input v-model="flip_y" type="checkbox" />
-                          Flip Vertically
+                          Flip Y
                         </label>
                       </td>
                       <td style="vertical-align: bottom;">
@@ -300,7 +300,7 @@
                       </td>
                     </tr>
                     <tr>
-                      <td colspan="4">
+                      <td colspan="6">
                         <input v-model="create_msgbox" type="text" class="input is-left-paddingless is-border-colorless" readonly="readonly"/>
                       </td>
                     </tr>
@@ -344,7 +344,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION,
-  randString, gcd, wholeNumConstrain, posWholeNumConstrain } from "./Utility.vue";
+  randString, gcd, wholeNumConstrain, posWholeNumConstrain, fileExists } from "./Utility.vue";
 import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
 import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
 
@@ -538,6 +538,7 @@ function previewAIMG() {
 }
 
 function CRTCreateAIMG() {
+  let proceed_create = true;
   data.create_msgbox = "";
   var validator = validateFilename(data.name);
   if (!validator.valid) {
@@ -545,25 +546,38 @@ function CRTCreateAIMG() {
     data.create_msgbox = validator.msg;
     return;
   }
-  data.CRT_IS_CREATING = true;
-  client.invoke("combine_image", data.image_paths, data.outdir, data.name, data, (error, res) => {
-    if (error) {
-      console.error(error);
-      data.create_msgbox = error;
-      data.CRT_IS_CREATING = false;
-    } else {
-      if (res) {
-        console.log(res);
-        if (res.msg) {
-          data.create_msgbox = res.msg;
-        }
-        if (res.CONTROL == "CRT_FINISH") {
-          data.create_msgbox = `${data.format.toUpperCase()} created!`;
-          data.CRT_IS_CREATING = false;
+
+  if (fileExists(data.outdir, `${data.name}.${data.format.toLowerCase()}`)) {
+    let WINDOW = remote.getCurrentWindow();
+    let options = {
+      buttons: ["Yes", "Cancel"],
+      message: "A file with the same name already exists in the output folder. Do you want to override it?"
+    };
+    let response = dialog.showMessageBoxSync(WINDOW, options);
+    if (response == 1) proceed_create = false;
+  }
+
+  if (proceed_create) {
+    data.CRT_IS_CREATING = true;
+    client.invoke("combine_image", data.image_paths, data.outdir, data.name, data, (error, res) => {
+      if (error) {
+        console.error(error);
+        data.create_msgbox = error;
+        data.CRT_IS_CREATING = false;
+      } else {
+        if (res) {
+          console.log(res);
+          if (res.msg) {
+            data.create_msgbox = res.msg;
+          }
+          if (res.CONTROL == "CRT_FINISH") {
+            data.create_msgbox = `${data.format.toUpperCase()} created!`;
+            data.CRT_IS_CREATING = false;
+          }
         }
       }
-    }
-  });
+    });
+  }
 }
 
 function CRTToggleCheckerBG() {

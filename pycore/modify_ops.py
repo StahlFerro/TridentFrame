@@ -68,11 +68,11 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
         'reverse': mod_criteria.is_reversed,
         'rotation': mod_criteria.rotation,
     })
-    yield {"e": create_criteria.resize_method}
+    yield {"e": create_criteria.name}
     crbundle = CriteriaBundle({
         "create_aimg": create_criteria
     })
-    new_image_path = yield from create_aimg(frame_paths, out_dir, os.path.basename(img_path), crbundle)
+    new_image_path = yield from create_aimg(frame_paths, out_dir, create_criteria.name, crbundle)
     yield {"new_image_path": new_image_path}
     return new_image_path
 
@@ -125,7 +125,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
         if criteria.orig_format == "GIF":
             if criteria.gif_mustsplit_alteration():
                 target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
-            if sicle_args:
+            if sicle_args or criteria.renamed():
                 target_path = yield from gifsicle_render(sicle_args, target_path, orig_out_full_path, total_ops)
             if magick_args:
                 target_path = yield from imagemagick_render(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
@@ -134,7 +134,11 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
             if criteria.apng_mustsplit_alteration() or pq_args:
                 target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
             if aopt_args:
+                yield {"MSGGGGGGGGGGGGG": "AOPT ARGS"}
                 target_path = yield from apngopt_render(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
+            elif criteria.renamed():
+                yield {"MSGGGGGGGGGGGGG": "RENAME"}
+                shutil.copy(target_path, out_full_path)
     yield {"preview_path": target_path}
 
     yield {"CONTROL": "MOD_FINISH"}
