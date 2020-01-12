@@ -23,9 +23,11 @@
                     <span class="index-anchor">
                       {{ parseInt(row) * 5 + parseInt(i) + 1 }}
                     </span>
-                    <!-- <a class="del-anchor">
-                      <span v-on:click="removeFrame(i)" class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
-                    </a> -->
+                    <a class="del-anchor">
+                      <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                        <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
+                      </span>
+                    </a>
                   </div>
                 </td>
               </tr>
@@ -73,7 +75,7 @@
               </div>
               <div class="level-item has-text-right">
                 <div>
-                  <p>{{ sequence_counter }}</p>
+                  <p>{{ sequenceCounter }}</p>
                 </div>
               </div>
             </div>
@@ -394,7 +396,7 @@ var data = {
   apng_is_unoptimized: false,
 
   create_msgbox: "",
-  sequence_counter: "",
+  // sequence_counter: "",
   checkerbg_active: false,
   CRT_IS_LOADING: false,
   CRT_IS_PREVIEWING: false,
@@ -433,7 +435,7 @@ function loadImages() {
           data.image_paths = info.sequence;
           data.sequence_info = info.sequence_info;
           data.name = info.name;
-          data.sequence_counter = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
+          // data.sequence_counter = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
           data.orig_width = info.width;
           data.width = info.width;
           data.orig_height = info.height;
@@ -450,7 +452,8 @@ function loadImages() {
 }
 
 function removeFrame(index){
-  console.log('index to delete', index)
+ data.image_paths.splice(index, 1);
+ data.sequence_info.splice(index, 1);
 }
 
 function CRTChooseOutdir() {
@@ -482,9 +485,9 @@ function CRTClearAIMG() {
   data.orig_height = "";
   data.old_height = "";
   data.height = "";
-  data.CRT_sequence_counter = "";
+  // data.CRT_sequence_counter = "";
   data.create_msgbox = "";
-  data.sequence_counter = "";
+  // data.sequence_counter = "";
   let ARData = {
     "w_ratio": "",
     "h_ratio": "",
@@ -679,6 +682,13 @@ function CRTQuintcellLister() {
   return quintcellLister(data.sequence_info);
 }
 
+function sequenceCounter() {
+  if (data.sequence_info.length > 0) {
+    return `${data.sequence_info.length} images`;
+  }
+  else return "";
+}
+
 function previewPathCacheBreaker() {
   let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
   console.log("Cache breaker url", cb_url);
@@ -711,6 +721,7 @@ export default {
   computed: {
     CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
+    sequenceCounter: sequenceCounter,
   },
 };
 </script>

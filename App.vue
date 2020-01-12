@@ -1,5 +1,5 @@
 <template>
-  <table class="table root-table is-borderless">
+  <table class="table root-table is-borderless" v-on:click="whatClicked($event)">
     <thead>
       <tr class="has-background-dark-2 frame-title-bar" style="height: 30px;">
         <td width="10%" class="is-paddingless" style="vertical-align: middle;">
@@ -166,6 +166,11 @@ var data = {
   menuselection: "create_panel",
 };
 
+function whatClicked(event) {
+  console.log(`CLICK!!!`);
+  console.log(event);
+}
+
 export default {
   name: "app",
   data: function() {
@@ -189,7 +194,8 @@ export default {
     exitApp: function() {
       var window = remote.getCurrentWindow();
       window.close();
-    }
+    },
+    whatClicked: whatClicked,
   }
 };
 </script>
