@@ -21,8 +21,13 @@
                     <div class="seqdiv">
                       <!-- <span>{{ i }}</span><br/> -->
                       <img v-bind:src="item.absolute_url.value"/>
+                      <span class="index-anchor">
+                        {{ parseInt(row) * 5 + parseInt(i) + 1 }}
+                      </span>
                       <a class="del-anchor">
-                        <span class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
+                        <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                          <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
+                        </span>
                       </a>
                     </div>
                   </td>
@@ -92,7 +97,7 @@
               </div>
               <div class="level-item has-text-centered">
                 <span class="force-vcenter">
-                  {{ sequence_size }}
+                  {{ sequenceCounter }}
                 </span>
               </div>
             </div>
@@ -315,7 +320,7 @@ function clearInfo() {
   data.image_paths = [],
   data.sequence_info = [];
   data.sequence_count = 0;
-  data.sequence_size = "";
+  // data.sequence_size = "";
   data.name = "";
   data.old_tile_width = "";
   data.tile_width = "";
@@ -339,7 +344,7 @@ var data = {
   image_paths: [],
   sequence_info: [],
   sequence_count: 0,
-  sequence_size: "",
+  // sequence_size: "",
   input_format: "sequence",
   name: "",
   old_tile_width: "",
@@ -400,7 +405,7 @@ function loadSequence(img_paths) {
         let info = res.data;
         data.image_paths = info.sequence;
         data.sequence_info = info.sequence_info;
-        data.sequence_size = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
+        // data.sequence_size = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
         data.name = info.name;
         data.tile_width = info.width;
         data.tile_height = info.height;
@@ -412,6 +417,18 @@ function loadSequence(img_paths) {
       }
     }
   });
+}
+
+function removeFrame(index){
+ data.image_paths.splice(index, 1);
+ data.sequence_info.splice(index, 1);
+}
+
+function sequenceCounter() {
+  if (data.sequence_info.length > 0) {
+    return `${data.sequence_info.length} images`;
+  }
+  else return "";
 }
 
 function widthHandler(tile_width, event) {
@@ -612,6 +629,7 @@ export default {
   methods: {
     loadInput: loadInput,
     chooseOutDir: chooseOutDir,
+    removeFrame: removeFrame,
     clearInfo: clearInfo,
     previewSheet, previewSheet,
     wholeNumConstrain: wholeNumConstrain,
@@ -621,6 +639,7 @@ export default {
     BSPRToggleCheckerBG: BSPRToggleCheckerBG,
   },
   computed: {
+    sequenceCounter: sequenceCounter,
     BSPRQuintcellLister: BSPRQuintcellLister,
     sheetDimensions: sheetDimensions,
     isButtonFrozen: isButtonFrozen,

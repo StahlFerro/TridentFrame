@@ -29,6 +29,7 @@ def imager_confile():
     with open('config/imagers.json') as jsonfile:
         return json.load(jsonfile)
 
+
 def ABS_CACHE_PATH():
     return os.path.abspath(CACHE_DIRNAME)
 
