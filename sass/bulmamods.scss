@@ -275,6 +275,12 @@ input.input.is-border-colorless {
     max-width: 90px;
     max-height: 90px;
 }
+.index-anchor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.5;
+}
 .del-anchor {
     position: absolute;
     top: 0;

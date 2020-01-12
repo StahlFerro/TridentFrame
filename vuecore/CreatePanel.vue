@@ -20,9 +20,12 @@
                   <div class="seqdiv">
                     <!-- <span>{{ i }}</span><br/> -->
                     <img v-bind:src="item.absolute_url.value"/>
-                    <a class="del-anchor">
+                    <span class="index-anchor">
+                      {{ parseInt(row) * 5 + parseInt(i) + 1 }}
+                    </span>
+                    <!-- <a class="del-anchor">
                       <span v-on:click="removeFrame(i)" class="icon"><i class="fas fa-minus-circle del-icon"></i></span>
-                    </a>
+                    </a> -->
                   </div>
                 </td>
               </tr>
