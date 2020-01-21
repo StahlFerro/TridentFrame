@@ -1,5 +1,6 @@
 <template>
-  <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+  <!-- <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%"> -->
+    <Fragment>
     <tr>
       <td class="force-vcenter" width="35%">
         <label class="checkbox" title="Optimize GIFs to reduce output filesize">
@@ -80,7 +81,7 @@
         </div>
       </td>
     </tr>
-    <tr>
+    <!-- <tr>
       <td colspan="2" class="force-vcenter" width="100%">
         <label
           class="checkbox"
@@ -90,11 +91,16 @@
           Unoptimize
         </label>
       </td>
-    </tr>
-  </table>
+    </tr> -->
+    </Fragment>
+  <!-- </table> -->
 </template>
 
 <script>
+// import Vue from 'vue';
+// import { Plugin } from 'vue'
+import { Fragment }  from 'vue-fragment';
+
 var data = {
   preserve_alpha: false,
   is_optimized: false,
@@ -103,11 +109,14 @@ var data = {
   lossy_value: "",
   is_reduced_color: false,
   color_space: "",
-  is_unoptimized: false,
 };
 
+let props = ['is_unoptimized']
+
 export default {
-  name: "GIFOptimizationTable",
+  components: { Fragment },
+  props: props,
+  name: "GIFOptimizationRow",
   data: function() {
     return data;
   }

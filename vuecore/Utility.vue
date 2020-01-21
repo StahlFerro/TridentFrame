@@ -90,9 +90,16 @@ function floatConstrain(event) {
   // }
 }
 
-function numConstrain(event, vals) {
-  vals = JSON.parse(vals);
-  console.log(vals.dd);
+function numConstrain(event, must_unsigned=false, must_whole=false) {
+  let current_value = event.target.value;
+  let key = event.key;
+  if (current_value.includes(".") && key == ".") {
+    event.preventDefault();
+  }
+  else {
+
+    return true;
+  }
 }
 
 function posWholeNumConstrain(event) {

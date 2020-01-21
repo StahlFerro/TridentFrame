@@ -209,7 +209,7 @@
                         <div class="field">
                           <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
                           <div class="control">
-                            <input v-model="delay" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
+                            <input v-model="delay" v-on:keydown="posWholeNumConstrain($event)" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -217,7 +217,7 @@
                         <div class="field">
                           <label class="label" title="How many frames will be consecutively displayed per second.">Frame rate</label>
                           <div class="control">
-                            <input v-model="fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
+                            <input v-model="fps" v-on:keydown="posWholeNumConstrain($event)" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
                           </div>
                         </div>
                       </td>
@@ -313,24 +313,39 @@
 
                 </div>
                 <div v-show="crt_menuselection == 1">
-                  <GIFOptimizationTable 
-                    :is_optimized.sync="is_optimized"
-                    :optimization_level.sync="optimization_level"
-                    :is_lossy.sync="is_lossy"
-                    :lossy_value.sync="lossy_value"
-                    :is_reduced_color.sync="is_reduced_color"
-                    :color_space.sync="color_space"
-                    :is_unoptimized.sync="is_unoptimized"
-                  />
+                  <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+                    <GIFOptimizationRow 
+                      :is_optimized.sync="is_optimized"
+                      :optimization_level.sync="optimization_level"
+                      :is_lossy.sync="is_lossy"
+                      :lossy_value.sync="lossy_value"
+                      :is_reduced_color.sync="is_reduced_color"
+                      :color_space.sync="color_space"
+                      :is_unoptimized.sync="is_unoptimized"
+                    />
+                    <!-- <GIFUnoptimizationRow
+                      :is_optimized.sync="is_optimized"
+                      :is_lossy.sync="is_lossy"
+                      :is_reduced_color.sync="is_reduced_color"
+                      :is_unoptimized.sync="is_unoptimized"
+                    /> -->
+                  </table>
                 </div>
                 <div v-show="crt_menuselection == 2">
-                  <APNGOptimizationTable
-                    :apng_is_optimized.sync="apng_is_optimized"
-                    :apng_optimization_level.sync="apng_optimization_level"
-                    :apng_is_lossy.sync="apng_is_lossy"
-                    :apng_lossy_value.sync="apng_lossy_value"
-                    :apng_is_unoptimized.sync="apng_is_unoptimized"
-                  />  
+                  <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+                    <APNGOptimizationRow
+                      :apng_is_optimized.sync="apng_is_optimized"
+                      :apng_optimization_level.sync="apng_optimization_level"
+                      :apng_is_lossy.sync="apng_is_lossy"
+                      :apng_lossy_value.sync="apng_lossy_value"
+                      :apng_is_unoptimized.sync="apng_is_unoptimized"
+                    />
+                    <!-- <APNGUnoptimizationRow
+                      :apng_is_optimized.sync="apng_is_optimized"
+                      :apng_is_lossy.sync="apng_is_lossy"
+                      :apng_is_unoptimized.sync="apng_is_unoptimized"
+                    /> -->
+                  </table>
                 </div>
               </td>
             </tr>
@@ -350,8 +365,10 @@ const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION,
   randString, gcd, wholeNumConstrain, posWholeNumConstrain, fileExists } from "./Utility.vue";
-import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
-import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
+import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
+import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
+import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
+import APNGUnoptimizationRow from "./vueshards/APNGUnoptimizationRow.vue";
 
 var data = {
   crt_menuselection: 0,
@@ -700,8 +717,10 @@ export default {
     return data;
   },
   components: {
-    GIFOptimizationTable,
-    APNGOptimizationTable,
+    GIFOptimizationRow,
+    GIFUnoptimizationRow,
+    APNGOptimizationRow,
+    APNGUnoptimizationRow,
   },
   methods: {
     loadImages: loadImages,
@@ -712,6 +731,7 @@ export default {
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
     wholeNumConstrain: wholeNumConstrain,
+    posWholeNumConstrain: posWholeNumConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     delayConstrain: delayConstrain,

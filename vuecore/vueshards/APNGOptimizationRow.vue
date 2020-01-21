@@ -1,5 +1,5 @@
 <template>
-  <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+  <Fragment>
     <tr>
       <td class="force-vcenter" width="35%">
         <label class="checkbox" title="Optimize APNG to decrease file size without affecting quality">
@@ -53,7 +53,7 @@
       </td>
     </tr>
     
-    <tr>
+    <!-- <tr>
       <td class="force-vcenter">
         <label class="checkbox" title="Unoptimizes the APNG">
           <input v-model="apng_is_unoptimized" type="checkbox" v-bind:disabled="apng_is_optimized || apng_is_lossy"
@@ -61,21 +61,28 @@
           Unoptimize
         </label>
       </td>
-    </tr>
-  </table>
+    </tr> -->
+  <!-- </table> -->
+  </Fragment>
 </template>
 
 <script>
+import { Fragment } from 'vue-fragment';
+
 var data = {
   apng_is_optimized: false,
   apng_optimization_level: "1",
   apng_is_lossy: false,
   apng_lossy_value: "",
-  apng_is_unoptimized: false,
+  // apng_is_unoptimized: false,
 };
 
+let props = ['apng_is_unoptimized'];
+
 export default {
-  name: "APNGOptimizationTable",
+  name: "APNGOptimizationRow",
+  props: props,
+  components: { Fragment },
   data: function() {
     return data;
   }

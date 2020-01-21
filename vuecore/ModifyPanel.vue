@@ -353,24 +353,39 @@
                     </table>
                   </div>
                   <div v-show="mod_menuselection == 1">
-                    <GIFOptimizationTable 
+                    <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+                      <GIFOptimizationRow
+                        :is_optimized.sync="is_optimized"
+                        :optimization_level.sync="optimization_level"
+                        :is_lossy.sync="is_lossy"
+                        :lossy_value.sync="lossy_value"
+                        :is_reduced_color.sync="is_reduced_color"
+                        :color_space.sync="color_space"
+                        :is_unoptimized.sync="is_unoptimized"
+                      />
+                      <GIFUnoptimizationRow
                       :is_optimized.sync="is_optimized"
-                      :optimization_level.sync="optimization_level"
                       :is_lossy.sync="is_lossy"
-                      :lossy_value.sync="lossy_value"
                       :is_reduced_color.sync="is_reduced_color"
-                      :color_space.sync="color_space"
                       :is_unoptimized.sync="is_unoptimized"
-                    />
+                      />
+                    </table>
                   </div>
                   <div v-show="mod_menuselection == 2">
-                    <APNGOptimizationTable
-                    :apng_is_optimized.sync="apng_is_optimized"
-                    :apng_optimization_level.sync="apng_optimization_level"
-                    :apng_is_lossy.sync="apng_is_lossy"
-                    :apng_lossy_value.sync="apng_lossy_value"
-                    :apng_is_unoptimized.sync="apng_is_unoptimized"
-                    />  
+                    <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+                      <APNGOptimizationRow
+                        :apng_is_optimized.sync="apng_is_optimized"
+                        :apng_optimization_level.sync="apng_optimization_level"
+                        :apng_is_lossy.sync="apng_is_lossy"
+                        :apng_lossy_value.sync="apng_lossy_value"
+                        :apng_is_unoptimized.sync="apng_is_unoptimized"
+                      />
+                      <APNGUnoptimizationRow
+                        :apng_is_optimized.sync="apng_is_optimized"
+                        :apng_is_lossy.sync="apng_is_lossy"
+                        :apng_is_unoptimized.sync="apng_is_unoptimized"
+                      />
+                    </table>
                   </div>
                 </td>
               </tr>
@@ -397,8 +412,10 @@ const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
 const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, gcd, validateFilename,
         fileExists } = require("./Utility.vue");
-import GIFOptimizationTable from "./vueshards/GIFOptimizationTable.vue";
-import APNGOptimizationTable from "./vueshards/APNGOptimizationTable.vue";
+import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
+import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
+import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
+import APNGUnoptimizationRow from "./vueshards/APNGUnoptimizationRow.vue";
 
 
 var data = {
@@ -791,8 +808,10 @@ export default {
     return data;
   },
   components: {
-    GIFOptimizationTable,
-    APNGOptimizationTable,
+    GIFOptimizationRow,
+    GIFUnoptimizationRow,
+    APNGOptimizationRow,
+    APNGUnoptimizationRow,
   },
   methods: {
     loadImage: loadImage,
