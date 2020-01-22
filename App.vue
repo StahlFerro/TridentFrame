@@ -68,7 +68,7 @@
                     <p class="is-white-d">Modify AIMG</p>
                   </a>
                 </li>
-                <li
+                <!-- <li
                   id="buildsprite_box"
                   class="menu-item"
                   v-bind:class="{'is-selected': menuselection == 'buildspritesheet_panel'}"
@@ -115,7 +115,7 @@
                     </span>
                     <p class="is-white-d">Settings</p>
                   </a>
-                </li>
+                </li> -->
                 <li
                   id="about_box"
                   class="menu-item"

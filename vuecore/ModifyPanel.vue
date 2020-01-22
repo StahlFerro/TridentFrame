@@ -205,7 +205,7 @@
                   <div v-show="mod_menuselection == 0">
                     <table class="table mod-new-control-table is-hpaddingless" width="100%">
                       <tr>
-                        <td width="40%" colspan="2">
+                        <td width="50%" colspan="2">
                           <div class="field">
                             <label class="label">Name</label>
                             <div class="control">
@@ -213,7 +213,7 @@
                             </div>
                           </div>
                         </td>
-                        <td width="20%">
+                        <td width="25%">
                           <div class="field">
                             <label class="label">Width</label>
                             <div class="control">
@@ -222,7 +222,7 @@
                             </div>
                           </div>
                         </td>
-                        <td width="20%">
+                        <td width="25%">
                           <div class="field">
                             <label class="label">Height</label>
                             <div class="control">
@@ -231,17 +231,17 @@
                             </div>
                           </div>
                         </td>
-                        <td width="20%">
+                        <!-- <td width="20%">
                           <div class="field">
                             <label class="label">Rotation</label>
                             <div class="control">
                               <input v-model="rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
                             </div>
                           </div>
-                        </td>
+                        </td> -->
                       </tr>
                       <tr>
-                        <td width="20%">
+                        <td width="25%">
                           <div class="field">
                             <label class="label">FPS</label>
                             <div class="control">
@@ -249,7 +249,7 @@
                             </div>
                           </div>
                         </td>
-                        <td width="20%">
+                        <td width="25%">
                           <div class="field">
                             <label class="label">Delay</label>
                             <div class="control">
@@ -257,7 +257,7 @@
                             </div>
                           </div>
                         </td>
-                        <td width="20%">
+                        <td width="25%">
                           <div class="field">
                             <label class="label">Loop count</label>
                             <div class="control">
@@ -273,7 +273,7 @@
                             </div>
                           </div>
                         </td> -->
-                        <td width="20%">
+                        <td width="25%">
                           <div class="field">
                             <label class="label">Format</label>
                             <div class="control">
@@ -288,17 +288,18 @@
                         </td>
                       </tr>
                       <tr>
-                        <td width="20%" class="force-vcenter">
+                        <td width="25%" class="force-vcenter">
                           <label class="checkbox" title="Flip the image horizontally">
                             <input v-model="flip_x" type="checkbox" />
                             Flip X
                           </label>
+                          <br/>
                           <label class="checkbox" title="Flip the image vertically">
                             <input v-model="flip_y" type="checkbox" />
                             Flip Y
                           </label>
                         </td>
-                        <td width="40%" class="force-vcenter" colspan="2">
+                        <td width="50%" class="force-vcenter" colspan="2">
                           <label class="checkbox" title="Reverse the animation">
                             <input v-model="is_reversed" type="checkbox" />
                             Reversed
@@ -307,12 +308,13 @@
                             <input v-model="preserve_alpha" type="checkbox" />
                             Preserve Alpha
                           </label> -->
+                          <br/>
                           <label class="checkbox">
                             <input v-model="lock_aspect_ratio" type="checkbox"/>
                             Lock aspect ratio
                           </label>
                         </td>
-                        <td width="40%" class="force-vcenter" colspan="2">
+                        <td width="25%" class="force-vcenter" colspan="1">
                           <!-- <label class="checkbox">
                             <input v-model="lock_aspect_ratio" type="checkbox"/>
                             Lock aspect ratio
@@ -325,7 +327,7 @@
                         </td>
                       </tr>
                       <tr>
-                        <td colspan="4">
+                        <td colspan="3">
                           <div class="field has-addons">
                             <div class="control">
                               <a v-on:click="chooseOutDir" class="button is-neon-cyan">

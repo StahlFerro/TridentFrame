@@ -10,13 +10,13 @@
         <tr>
           <td class="has-text-centered is-vcentered">
             <h1 class="title is-1">TridentFrame</h1>
-            <p class="subtitle is-4">v1.0.0-beta.3</p>
+            <p class="subtitle is-4">v1.0.0</p>
           </td>
         </tr>
         <tr>
           <td class="has-text-centered is-vcentered">
-            <p>Developed by StahlFerro</p>
-            <div class="field is-grouped is-grouped-centered">
+            <p>Developed by Andreas Pangestu</p>
+            <!-- <div class="field is-grouped is-grouped-centered">
               <p class="control">
                 <a v-on:click="warpGithub" class="button is-neon-cyan is-medium">
                   <span class="icon">
@@ -33,7 +33,7 @@
                   <span>Donate</span>
                 </a>
               </p>
-            </div>
+            </div> -->
           </td>
         </tr>
       </table>
