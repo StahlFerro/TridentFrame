@@ -159,8 +159,8 @@
                         <div class="field">
                           <label class="label" title="The width of the GIF/APNG">Width</label>
                           <div class="control">
-                            <input v-bind:value="width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(width, $event)" 
-                            class="input is-neon-white" type="number" min="1" step="1"/>
+                            <input v-bind:value="width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(width, $event)" 
+                            class="input is-neon-white" type="number" min="1"/>
                           </div>
                         </div>
                       </td>
@@ -168,7 +168,7 @@
                         <div class="field">
                           <label class="label" title="The height of the GIF/APNG">Height</label>
                           <div class="control">
-                            <input v-bind:value="height" v-on:keydown="wholeNumConstrain($event)" v-on:input="heightHandler(height, $event)"
+                            <input v-bind:value="height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(height, $event)"
                             class="input is-neon-white" type="number" />
                           </div>
                         </div>
@@ -209,7 +209,7 @@
                         <div class="field">
                           <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
                           <div class="control">
-                            <input v-model="delay" v-on:keydown="posWholeNumConstrain($event)" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
+                            <input v-model="delay" v-on:keydown="numConstrain($event, true, false)" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
                           </div>
                         </div>
                       </td>
@@ -217,7 +217,7 @@
                         <div class="field">
                           <label class="label" title="How many frames will be consecutively displayed per second.">Frame rate</label>
                           <div class="control">
-                            <input v-model="fps" v-on:keydown="posWholeNumConstrain($event)" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
+                            <input v-model="fps" v-on:keydown="numConstrain($event, true, false)" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
                           </div>
                         </div>
                       </td>
@@ -225,7 +225,7 @@
                         <div class="field">
                           <label class="label" title="How many times the GIF/APNG will loop. Zero/blank for infinite loop">Loop count</label>
                           <div class="control">
-                            <input v-model="loop_count" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" min="0" max="999" step="1"/>
+                            <input v-model="loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" max="999" step="1"/>
                           </div>
                         </div>
                       </td>
@@ -233,7 +233,7 @@
                         <div class="field">
                           <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
                           <div class="control">
-                            <input v-model="start_frame" v-on:keydown="wholeNumConstrain($event)" class="input is-neon-white" type="number" step="1"/>
+                            <input v-model="start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" step="1"/>
                           </div>
                         </div>
                       </td>
@@ -364,7 +364,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 import { quintcellLister, validateFilename, GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION,
-  randString, gcd, wholeNumConstrain, posWholeNumConstrain, fileExists } from "./Utility.vue";
+  randString, gcd, numConstrain, fileExists } from "./Utility.vue";
 import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
@@ -519,7 +519,7 @@ function CRTClearAIMG() {
 function previewAIMG() {
   console.log("preview called");
   data.create_msgbox = "";
-  var validator = validateFilename(data.name);
+  let validator = validateFilename(data.name);
   if (!validator.valid) {
     console.error(validator.msg);
     data.create_msgbox = validator.msg;
@@ -730,8 +730,7 @@ export default {
     previewAIMG: previewAIMG,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,
-    wholeNumConstrain: wholeNumConstrain,
-    posWholeNumConstrain: posWholeNumConstrain,
+    numConstrain: numConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     delayConstrain: delayConstrain,

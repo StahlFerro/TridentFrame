@@ -48,6 +48,7 @@
               max="200"
               placeholder="30 - 200"
               v-bind:disabled="!is_lossy"
+              v-on:keydown="numConstrain($event, true, true)"
             />
           </div>
         </div>
@@ -76,6 +77,7 @@
               min="2"
               max="256"
               placeholder="2 - 256"
+              v-on:keydown="numConstrain($event, true, true)"
             />
           </div>
         </div>
@@ -100,6 +102,7 @@
 // import Vue from 'vue';
 // import { Plugin } from 'vue'
 import { Fragment }  from 'vue-fragment';
+const { numConstrain } = require("../Utility.vue");
 
 var data = {
   preserve_alpha: false,
@@ -119,6 +122,9 @@ export default {
   name: "GIFOptimizationRow",
   data: function() {
     return data;
+  },
+  methods: {
+    numConstrain: numConstrain,
   }
 };
 </script>

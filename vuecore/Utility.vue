@@ -58,8 +58,8 @@ function gcd(a, b) { // Gets the greatest common divisor between two numbers
 }
 
 function wholeNumConstrain(event) {
-  console.log(event.key);
-  if (event.key != ".") {
+  console.log('wholeNumConstrain', event.key);
+  if (event.key != "." && event.key != 'e') {
     console.log("IS DIGIT!");
     return true;
   }
@@ -91,14 +91,28 @@ function floatConstrain(event) {
 }
 
 function numConstrain(event, must_unsigned=false, must_whole=false) {
+  console.log(event);
+  console.log("num constrain args", must_unsigned, must_whole);
   let current_value = event.target.value;
+  console.log("current value", current_value);
   let key = event.key;
-  if (current_value.includes(".") && key == ".") {
+  let is_unsigned = false;
+  let is_whole = false;
+  let is_violating = false;
+  if ((current_value.includes(".") && key == ".") || key == 'e') {
     event.preventDefault();
   }
   else {
-
-    return true;
+    if (must_unsigned) {
+      is_violating = event.key == '-'? true : is_violating;
+      console.log("is violating must_unsigned", event.key == '-');
+    }
+    if (must_whole) {
+      is_violating = event.key == '.'? true : is_violating;
+      console.log("is violating must_whole", event.key == '.');
+    }
+    if (is_violating) { event.preventDefault(); }
+    else { return true; }
   }
 }
 

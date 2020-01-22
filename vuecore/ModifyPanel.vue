@@ -217,7 +217,7 @@
                           <div class="field">
                             <label class="label">Width</label>
                             <div class="control">
-                              <input v-bind:value="width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(width, $event)" 
+                              <input v-bind:value="width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(width, $event)" 
                                 class="input is-neon-white" type="number" min="1" step="1"/>
                             </div>
                           </div>
@@ -226,7 +226,7 @@
                           <div class="field">
                             <label class="label">Height</label>
                             <div class="control">
-                              <input v-bind:value="height" v-on:keydown="posWholeNumConstrain($event)" v-on:input="heightHandler(height, $event)"
+                              <input v-bind:value="height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(height, $event)"
                               class="input is-neon-white" type="number" min="1" step="1"/>
                             </div>
                           </div>
@@ -235,7 +235,7 @@
                           <div class="field">
                             <label class="label">Rotation</label>
                             <div class="control">
-                              <input v-model="rotation" v-on:keydown="posWholeNumConstrain($event)" class="input is-neon-white" type="number" />
+                              <input v-model="rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
                             </div>
                           </div>
                         </td>
@@ -245,7 +245,7 @@
                           <div class="field">
                             <label class="label">FPS</label>
                             <div class="control">
-                              <input v-model="fps" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="0"/>
+                              <input v-model="fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
                         </td>
@@ -253,7 +253,7 @@
                           <div class="field">
                             <label class="label">Delay</label>
                             <div class="control">
-                              <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="floatConstrain($event)" class="input is-neon-white" type="number" min="0"/>
+                              <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
                         </td>
@@ -261,7 +261,7 @@
                           <div class="field">
                             <label class="label">Loop count</label>
                             <div class="control">
-                              <input v-model="loop_count" v-on:keydown="posWholeNumConstrain($event)" class="input is-neon-white" type="number" min="0"/>
+                              <input v-model="loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0"/>
                             </div>
                           </div>
                         </td>
@@ -820,8 +820,6 @@ export default {
     chooseOutDir: chooseOutDir,
     previewModImg: previewModImg,
     modifyImage: modifyImage,
-    wholeNumConstrain: wholeNumConstrain,
-    posWholeNumConstrain: posWholeNumConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     toggleOrigCheckerBG: toggleOrigCheckerBG,

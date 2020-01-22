@@ -144,6 +144,7 @@
                       type="number"
                       min="1"
                       max="6"
+                      v-on:keydown="numConstrain($event, true, true)"
                     />
                   </div>
                 </div>
@@ -219,7 +220,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-const { randString } = require('./Utility.vue');
+const { randString, validateFilename, numConstrain } = require('./Utility.vue');
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
@@ -357,6 +358,13 @@ function chooseOutDir() {
 
 function splitImage() {
   // mboxClear(split_msgbox);
+  
+  let validator = validateFilename(data.new_name);
+  if (!validator.valid) {
+    console.error(validator.msg);
+    data.split_msgbox = validator.msg;
+    return;
+  }
   data.SPL_IS_SPLITTING = true;
   // freezeButtons();
   // console.log(`in path: ${in_path} out path: ${out_path}`);
@@ -405,7 +413,8 @@ export default {
     clearImage: clearImage,
     toggleCheckerBG: toggleCheckerBG,
     chooseOutDir: chooseOutDir,
-    splitImage: splitImage
+    splitImage: splitImage,
+    numConstrain: numConstrain,
   }
 };
 </script>

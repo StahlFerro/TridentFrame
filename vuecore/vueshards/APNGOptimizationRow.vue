@@ -47,6 +47,7 @@
               max="100"
               placeholder="10 - 100"
               v-bind:disabled="!apng_is_lossy"
+              v-on:keydown="numConstrain($event, true, true)"
             />
           </div>
         </div>
@@ -68,6 +69,7 @@
 
 <script>
 import { Fragment } from 'vue-fragment';
+const { numConstrain } = require("../Utility.vue");
 
 var data = {
   apng_is_optimized: false,
@@ -85,6 +87,9 @@ export default {
   components: { Fragment },
   data: function() {
     return data;
+  },
+  methods: {
+    numConstrain: numConstrain,
   }
 };
 </script>
