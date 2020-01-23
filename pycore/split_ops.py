@@ -147,50 +147,66 @@ def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Ima
     base_stack_image: Image.Image
     with io.BytesIO() as firstbox:
         first_png.save(firstbox)
-        with Image.open(firstbox) as im:
-            im = im.convert("RGBA")
-            base_stack_image: Image = im.copy()
+        with Image.open(firstbox) as first_im:
+            first_im = first_im.convert("RGBA")
+            base_stack_image: Image = first_im.copy()
     # yield {"MODE FIRST": base_stack_image.mode}
+    separate_stack_image: Image.Image = Image.new("RGBA", base_stack_image.size)
     depose_blend_ops = []
     rerender = False
+    output_buffer = Image.new('RGBA', base_stack_image.size)
     for index, (png, control) in enumerate(iframes):
         if shout_nums.get(index):
             yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
         with io.BytesIO() as bytebox:
             png.save(bytebox)
             with Image.open(bytebox).convert("RGBA") as im:
-                if control:
-                    yield {"MSG": control.__dict__}
-                else:
-                    yield {"MSG": "no control"}
                 if criteria.is_unoptimized:
-                    # im = im.convert("RGBA")
-                    # yield {"CONTROL": control.depose_op}
-                    if rerender:
-                        newplain = Image.new("RGBA", base_stack_image.size)
-                        newplain.paste(im, (control.x_offset, control.y_offset), im)
-                        frames.append(newplain.copy())
-                        rerender = False
-                    else:
-                        if control and (control.depose_op == 2 or control.depose_op == 1):
-                            separate_stack = base_stack_image.copy()
-                            separate_stack.paste(im, (control.x_offset, control.y_offset), im)
-                            frames.append(separate_stack.copy())
-                            if index == 0 and control.depose_op == 1:
-                                rerender = True
-                            # separate_stack.show()
-                        # elif control.depose_op == 1:
-                        #     frames.append(im.copy())
-                        elif not control or control.depose_op == 0:
+                    if not control or (control and control.blend_op == 0 and control.depose_op != 1):
+                        yield {"MSG": "control blend 0, full overwrite"}
+                        if im.size != base_stack_image.size:
+                            alpha_pad = Image.new("RGBA", base_stack_image.size)
+                            alpha_pad.alpha_composite(im, (control.x_offset if control else 0, control.y_offset if control else 0))
+                            frames.append(alpha_pad.copy())
+                        else:
+                            frames.append(im)
+                    if control and (control.blend_op == 1 or control.depose_op == 1):
+                        yield {"MSG": "control blend 1, managing..."}
+                        if control.depose_op in [0, 1]:
                             base_stack_image.paste(im, (control.x_offset if control else 0, control.y_offset if control else 0), im)
                             frames.append(base_stack_image.copy())
-                        # base_stack_image.show()
+                        elif control.depose_op == 2:
+                            temp_stack = base_stack_image.copy()
+                            temp_stack.paste(im, (control.x_offset if control else 0, control.y_offset if control else 0), im)
+                            frames.append(temp_stack.copy())
+                    # OLD Algorithm
+                    # # im = im.convert("RGBA")
+                    # # yield {"CONTROL": control.depose_op}
+                    # if rerender:
+                    #     newplain = Image.new("RGBA", base_stack_image.size)
+                    #     newplain.paste(im, (control.x_offset, control.y_offset), im)
+                    #     frames.append(newplain.copy())
+                    #     rerender = False
+                    # else:
+                    #     if control and (control.depose_op == 2 or control.depose_op == 1):
+                    #         separate_stack = base_stack_image.copy()
+                    #         separate_stack.paste(im, (control.x_offset, control.y_offset), im)
+                    #         frames.append(separate_stack.copy())
+                    #         if index == 0 and control.depose_op == 1:
+                    #             rerender = True
+                    #         # separate_stack.show()
+                    #     # elif control.depose_op == 1:
+                    #     #     frames.append(im.copy())
+                    #     elif not control or control.depose_op == 0:
+                    #         base_stack_image.paste(im, (control.x_offset if control else 0, control.y_offset if control else 0), im)
+                    #         frames.append(base_stack_image.copy())
+                    #     # base_stack_image.show()
                 else:
                     frames.append(im)
                 if control:
-                    depose_blend_ops.append((control.depose_op, control.blend_op))
+                    depose_blend_ops.append(f"blend: {control.blend_op}, depose: {control.depose_op}, x_off: {control.x_offset}, y_off: {control.y_offset}")
                 else:
-                    depose_blend_ops.append(("", ""))
+                    depose_blend_ops.append("NO CONTROL")
     # for fr in frames:
     #     fr.show()
     yield {"DEPOSE_BLEND_OPS": depose_blend_ops}
