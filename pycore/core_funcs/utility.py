@@ -47,7 +47,7 @@ def sequence_nameget(name: str):
     """ Cuts of sequence number suffixes from a filename. Filenames only, extensions must be excluded """
     n_shards = name.split("_")
     if str.isnumeric(n_shards[-1]):
-        return "".join(n_shards[:-1])
+        return "_".join(n_shards[:-1])
     else:
         return name
 
@@ -91,7 +91,7 @@ def _purge_directory(target_folder):
 
 
 def _mk_temp_dir(prefix_name: str = ''):
-    """ Creates a directory for temporary storage, and then returns its absolute path """
+    """ Creates a directory for temporary storage inside cache/, and then returns its absolute path """
     dirname = str(int(round(time.time() * 1000)))
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"

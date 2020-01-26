@@ -1,6 +1,7 @@
 import os
 import shutil
 import subprocess
+from subprocess import PIPE
 from typing import List, Tuple
 
 from PIL import Image
@@ -63,6 +64,35 @@ def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0,
     yield {"X": x}
     # shutil.rmtree(aopt_dir)
     return out_full_path
+
+
+def apngdis_split(target_path: str, seq_rename="", out_dir=""):
+    """ Takes an APNG by path, and returns a generator of the split PNG paths """
+    split_dir = _mk_temp_dir(prefix_name='apngdis_dir')
+    dis_exec_path = imager_exec_path('apngdis')
+    filename = os.path.basename(target_path)
+    target_path = shutil.copyfile(target_path, os.path.join(split_dir, filename))
+    cwd = os.getcwd()
+    # target_rel_path = os.path.relpath(target_path, cwd)
+    args = [dis_exec_path, target_path]
+    if seq_rename:
+        args.append(seq_rename)
+    cmd = ' '.join(args)
+    yield {"ARGS": cmd}
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    while True:
+        output = process.stdout.readline()
+        if process.poll() is not None:
+            break
+        if output:
+            yield {"msg": output.decode('utf-8')}
+    # for line in iter(process.stdout.readline(), b''):
+    #     yield {"msg": line.decode('utf-8')}
+    fragment_paths = (os.path.abspath(os.path.join(split_dir, f)) for f in os.listdir(split_dir) 
+                        if f != filename and os.path.splitext(f)[1] == '.png')
+    return fragment_paths
+    # Remove generated text file and copied APNG file
+
 
 
 def pngquant_render(pq_args, image_paths: List[str], optional_out_path=""):
