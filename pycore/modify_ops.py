@@ -136,9 +136,10 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
             if aopt_args:
                 yield {"MSGGGGGGGGGGGGG": "AOPT ARGS"}
                 target_path = yield from apngopt_render(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
-            elif criteria.renamed():
-                yield {"MSGGGGGGGGGGGGG": "RENAME"}
-                shutil.copy(target_path, out_full_path)
+            # elif criteria.renamed():
+            #     yield {"MSGGGGGGGGGGGGG": "RENAME"}
+                if target_path != out_full_path:
+                    shutil.copy(target_path, out_full_path)
     yield {"preview_path": target_path}
 
     yield {"CONTROL": "MOD_FINISH"}
