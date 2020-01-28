@@ -38,10 +38,9 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
         "will_generate_delay_info": False,
     })
     frame_paths = yield from split_aimg(img_path, frames_dir, split_criteria)
-    yield {"frames before": frame_paths}
+    yield {"MOD split frames": frame_paths}
     # if mod_criteria.is_reversed:
     #     frames.reverse()
-    yield {"frames after": frame_paths}
     pq_args = pngquant_args(apngopt_criteria)
     if mod_criteria.format == 'PNG' and pq_args:
         yield {"DEBUG": "PNG QUANTIZATION SELECTED"}

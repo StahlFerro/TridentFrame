@@ -105,6 +105,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
 
 
 def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
+    yield {"CRT IMAGE PATHS": image_paths}
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     criteria = crbundle.create_aimg
     gif_criteria = crbundle.gif_opt
