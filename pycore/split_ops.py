@@ -170,6 +170,8 @@ def _fragment_apng_frames(apng_path: str, criteria: SplitCriteria) -> List[Image
     if criteria.is_unoptimized:
         yield {"msg": "Unoptimizing and splitting APNG..."}
         fragment_paths = yield from apngdis_split(apng_path, criteria.new_name)
+        fragment_paths = sorted(list(fragment_paths), key=lambda fragment: fragment)
+        yield {"APNGDIS SPLIT PATHS": fragment_paths}
         for fp in fragment_paths:
             frames.append(Image.open(fp))
     else:
