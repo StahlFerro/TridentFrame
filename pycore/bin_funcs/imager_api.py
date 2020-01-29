@@ -57,8 +57,16 @@ def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0,
         cmd = ' '.join(cmdlist)
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
-        result = subprocess.check_output(cmd, shell=True)
-        yield {"out": result}
+        # result = subprocess.check_output(cmd, shell=True)
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        index = 0
+        while True:
+            output = process.stdout.readline()
+            if process.poll() is not None:
+                break
+            if output:
+                yield {"STDOUT": output.decode('utf-8')}
+            index += 1
         # if target_path != out_full_path:
             # target_path = out_full_path
     x = shutil.move(target_path, out_full_path)
@@ -84,14 +92,18 @@ def apngdis_split(target_path: str, seq_rename="", out_dir=""):
     yield {"fcount": fcount}
     shout_nums = shout_indices(fcount, 5)
     yield {"shout_nums": shout_nums}
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     index = 0
     while True:
         output = process.stdout.readline()
+        yield {"STDOUT": output.decode('utf-8')}
+        # err = process.stderr.readline()
         if process.poll() is not None:
             break
         if output and shout_nums.get(index):
             yield {"msg": f'Extracting frames... ({shout_nums.get(index)})'}
+        # if err:
+        #     yield {"apngdis stderr": err.decode('utf-8')}
         index += 1
             # yield {"msg": output.decode('utf-8')}
     # for line in iter(process.stdout.readline(), b''):
@@ -100,7 +112,6 @@ def apngdis_split(target_path: str, seq_rename="", out_dir=""):
                         if f != filename and os.path.splitext(f)[1] == '.png')
     return fragment_paths
     # Remove generated text file and copied APNG file
-
 
 
 def pngquant_render(pq_args, image_paths: List[str], optional_out_path=""):
