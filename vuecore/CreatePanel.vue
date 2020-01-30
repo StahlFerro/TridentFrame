@@ -10,26 +10,36 @@
           <table class="sequence-grid is-paddingless" width="100%">
             <tbody>
               <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
-                <td v-for="(item, i) in quintjson" v-bind:key="i" v-bind:title="
-                      `Name: ${item.name.value}\n` + 
-                      `Dimensions: ${item.width.value} x ${item.height.value}\n` +
-                      `Format: ${item.format.value}\n` +
-                      `Mode: ${item.color_mode.value}\n` +
-                      `Comment: ${item.comments.value || 'None'}`
-                    ">
-                  <div class="seqdiv">
-                    <!-- <span>{{ i }}</span><br/> -->
-                    <img v-bind:src="item.absolute_url.value"/>
-                    <span class="index-anchor">
-                      {{ parseInt(row) * 5 + parseInt(i) + 1 }}
-                    </span>
-                    <a class="del-anchor">
-                      <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
-                        <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
-                      </span>
-                    </a>
-                  </div>
-                </td>
+                <template v-for="(item, i) in quintjson">
+                  <template v-if="item == '_CONTROL_CELL'">
+                    <td v-bind:key="i">
+                      control lmao
+                    </td>
+                  </template>
+                  <template v-else>
+                    <td v-bind:key="i" v-bind:title="
+                          `Name: ${item.name.value}\n` + 
+                          `Dimensions: ${item.width.value} x ${item.height.value}\n` +
+                          `Format: ${item.format.value}\n` +
+                          `Mode: ${item.color_mode.value}\n` +
+                          `Comment: ${item.comments.value || 'None'}`
+                        ">
+                      <div class="seqdiv">
+                        <!-- <span>{{ i }}</span><br/> -->
+                        <img v-bind:src="item.absolute_url.value"/>
+                        <span class="index-anchor">
+                          {{ parseInt(row) * 5 + parseInt(i) + 1 }}
+                        </span>
+                        <a class="del-anchor">
+                          <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                            <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
+                          </span>
+                        </a>
+                      </div>
+                    </td>
+                  </template>
+                </template>
+
               </tr>
             </tbody>
           </table>

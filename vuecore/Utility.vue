@@ -5,8 +5,9 @@ const remote = require("electron").remote;
 const app = remote.app;
 
 function quintcellLister(sequence_infos, from_where="") {
-  // console.log(sequence_infos);
   var quintrows = {};
+  sequence_infos.push("_CONTROL_CELL");
+  console.log(sequence_infos);
   for (var row = 0; row < Math.ceil(sequence_infos.length / 5); row++) {
     var quintcells = {}
     for (var c = 0; c < 5; c++) {
