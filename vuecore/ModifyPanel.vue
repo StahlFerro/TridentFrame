@@ -412,8 +412,8 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require('./Client.vue');
-const { GIF_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, gcd, validateFilename,
-        fileExists } = require("./Utility.vue");
+const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
+        gcd, validateFilename, fileExists } = require("./Utility.vue");
 import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
@@ -757,26 +757,34 @@ function buttonIsFrozen() {
 }
 
 function delayConstrain (event) {
-  // console.log("delay event", event);
-  var value = event.target.value;
-  console.log(value);
+  console.log("delay event", event);
+  let value = event.target.value;
   if (value && value.includes(".")) {
-    var numdec = value.split(".");
+    let numdec = value.split(".");
     console.log("numdec", numdec);
-    if (numdec[1].length > GIF_DELAY_DECIMAL_PRECISION) {
-      var twodecs = numdec[1].substring(0, GIF_DELAY_DECIMAL_PRECISION);
-      // console.log("twodecs limit triggered", twodecs);
-      data.delay = `${numdec[0]}.${twodecs}`;
+    let precision = 2;
+    if (data.format == 'GIF') {
+      precision = GIF_DELAY_DECIMAL_PRECISION;
+    }
+    else if (data.format == 'PNG') {
+      precision = APNG_DELAY_DECIMAL_PRECISION;
+    }
+    if (numdec[1].length > precision) {
+      let decs = numdec[1].substring(0, precision);
+      console.log("decs limit triggered", decs);
+      data.delay = `${numdec[0]}.${decs}`;
     }
   }
   data.fps = Math.round(1000 / data.delay) / 1000;
 }
-
 function fpsConstrain (event) {
   console.log("fps event", event);
-  var value = event.target.value;
+  let value = event.target.value;
   if (value) {
-    data.delay = Math.round(100 / data.fps) / 100;
+    let mult = 100
+    if (data.format == 'GIF') { mult = 100; }
+    else if (data.format == 'PNG') { mult = 1000; }
+    data.delay = Math.round(mult / data.fps) / mult;
   }
 }
 
