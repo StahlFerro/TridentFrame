@@ -12,8 +12,25 @@
               <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
                 <template v-for="(item, i) in quintjson">
                   <template v-if="item == '_CONTROL_CELL'">
-                    <td v-bind:key="i">
-                      control lmao
+                    <td v-bind:key="i" class="force-center">
+                      <table class="intracell-table" width="100%">
+                        <tr><td width="100%" class="">
+                          <a v-on:click="alert('ok')" class="button is-medium flex-expand is-neon-cyan neon-borderless">
+                            <span class="icon is-small">
+                              <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Add</span>
+                          </a>
+                        </td></tr>
+                        <tr><td width="100%" class="">
+                          <a v-on:click="alert('ok')" class="button flex-expand is-neon-cyan neon-borderless">
+                            <span class="icon">
+                              <i class="fas fa-plus"></i>
+                            </span>
+                            <span>Smart Add</span>
+                          </a>
+                        </td></tr>
+                      </table>
                     </td>
                   </template>
                   <template v-else>
@@ -69,7 +86,8 @@
             <div class="level-left">
               <div class="level-item has-text-centered">
                 <div>
-                  <a v-on:click="loadImages" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}">
+                  <a v-on:click="loadImages" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}"
+                    title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                     <span class="icon is-small">
                       <i class="fas fa-plus"></i>
                     </span>

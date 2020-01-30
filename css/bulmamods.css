@@ -7159,7 +7159,7 @@ html {
   overflow-y: auto !important; }
 
 body {
-  font-family: 'Share Tech', 'sans-serif';
+  font-family: 'Share Tech', 'sans-serif' !important;
   font-size: 18px;
   width: 950px !important;
   height: 700px !important;
@@ -7309,6 +7309,11 @@ div.mod-left-menu {
 div.mod-left-menu::-webkit-scrollbar {
   width: 0px; }
 
+.button.flex-expand {
+  display: flex;
+  width: 100%;
+  height: 100%; }
+
 /* Borderless table helper css */
 .table.is-borderless td, th {
   border: 0; }
@@ -7319,6 +7324,12 @@ input.input.is-border-colorless {
   color: #cccccc;
   box-shadow: none;
   border: 2px solid #31363b; }
+
+.silver-border-top {
+  border-top: 1px solid #cccccc !important; }
+
+.silver-border-bottom {
+  border-bottom: 1px solid #cccccc !important; }
 
 .is-left-paddingless {
   padding-left: 0 !important; }
@@ -7373,11 +7384,28 @@ input.input.is-border-colorless {
   display: block; }
 
 .sequence-grid td {
-  border: 2px solid #cccccc !important;
+  border-right: 2px solid #cccccc !important;
+  border-bottom: 2px solid #cccccc !important;
   border-collapse: collapse;
-  padding: 3px !important;
-  width: 98px;
-  height: 98px; }
+  padding: 0 !important;
+  width: 98px !important;
+  height: 98px !important; }
+
+table.intracell-table {
+  width: 96px !important;
+  height: 96px !important;
+  table-layout: fixed; }
+
+table.intracell-table td {
+  width: 96px !important;
+  max-width: 96px !important;
+  height: 48px !important;
+  max-height: 48px !important;
+  padding: 0 !important;
+  border-top: 1px solid #cccccc !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: none !important; }
 
 .seqdiv {
   position: relative; }
@@ -7648,6 +7676,9 @@ canvas.slicegrid-canvas {
   background-color: #34caf8;
   border-color: #34caf8;
   color: #31363b; }
+
+.button.neon-borderless {
+  border: none; }
 
 /* Neon-white buttons. */
 .button.is-neon-white {

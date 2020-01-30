@@ -6,13 +6,17 @@ const app = remote.app;
 
 function quintcellLister(sequence_infos, from_where="") {
   var quintrows = {};
-  sequence_infos.push("_CONTROL_CELL");
+  let sq_infos = Array.from(sequence_infos);
+  sq_infos.push("_CONTROL_CELL");
+  console.log('sequence infos');
   console.log(sequence_infos);
-  for (var row = 0; row < Math.ceil(sequence_infos.length / 5); row++) {
+  console.log('sq_infos');
+  console.log(sq_infos);
+  for (var row = 0; row < Math.ceil(sq_infos.length / 5); row++) {
     var quintcells = {}
     for (var c = 0; c < 5; c++) {
       const index = row * 5 + c;
-      const img_info = sequence_infos[index];
+      const img_info = sq_infos[index];
       // console.log(img_info)
       if (img_info === undefined) {continue;}
       quintcells[c] = img_info;

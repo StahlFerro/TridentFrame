@@ -251,7 +251,7 @@ def _inspect_apng(abspath, apng: APNG):
 def inspect_sequence(image_paths):
     """Returns information of a selected sequence of static images"""
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip) and os.path.isfile(ip)]
-    raise Exception(abs_image_paths)
+    # raise Exception(abs_image_paths)
     sequence_info = []
     perc_skip = 5
     shout_nums = shout_indices(len(abs_image_paths), perc_skip)
