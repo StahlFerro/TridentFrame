@@ -15,7 +15,7 @@
                     <td v-bind:key="i" class="force-center">
                       <table class="intracell-table" width="100%">
                         <tr><td width="100%" class="">
-                          <a v-on:click="alert('ok')" class="button is-medium flex-expand is-neon-cyan neon-borderless">
+                          <a v-on:click="alert('ok')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless">
                             <span class="icon is-small">
                               <i class="fas fa-plus"></i>
                             </span>
@@ -23,7 +23,7 @@
                           </a>
                         </td></tr>
                         <tr><td width="100%" class="">
-                          <a v-on:click="alert('ok')" class="button flex-expand is-neon-cyan neon-borderless">
+                          <a v-on:click="alert('ok')" class="button square-button flex-expand is-neon-emerald neon-borderless">
                             <span class="icon">
                               <i class="fas fa-plus"></i>
                             </span>

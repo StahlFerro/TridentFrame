@@ -1,3 +1,4 @@
+@use 'colors' as chromas;
 @keyframes spinAround {
   from {
     transform: rotate(0deg); }
@@ -7255,6 +7256,9 @@ a.exit-button:hover {
 .menu-item.is-selected p, .menu-item.is-selected i {
   color: #34caf8 !important; }
 
+.button.square-button {
+  border-radius: 0; }
+
 .crt-menu-subtab {
   border-right: 2px solid #616877 !important; }
 
@@ -7675,6 +7679,21 @@ canvas.slicegrid-canvas {
 .button.is-neon-cyan:active, .button.is-neon-cyan.is-active {
   background-color: #34caf8;
   border-color: #34caf8;
+  color: #31363b; }
+
+/* Neon-cyan buttons. $emerald outlines with $dark-3 BG to match the global $dark-3 BG color */
+.button.is-neon-emerald {
+  background-color: #31363b;
+  color: #29b629;
+  border: 2px solid #29b629; }
+
+.button.is-neon-emerald:hover, .button.is-neon-emerald.is-hovered {
+  border-color: #68dd68;
+  color: #68dd68; }
+
+.button.is-neon-emerald:active, .button.is-neon-emerald.is-active {
+  background-color: #29b629;
+  border-color: #29b629;
   color: #31363b; }
 
 .button.neon-borderless {
