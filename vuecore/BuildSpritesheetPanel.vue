@@ -13,8 +13,33 @@
                 <tr v-for="(quintjson, row) in BSPRQuintcellLister" v-bind:key="row">
                   <template v-for="(item, i) in quintjson">
                     <template v-if="item == '_CONTROL_CELL'">
-                      <td v-bind:key="i">
-                        control lmao
+                      <td v-bind:key="i" class="force-center">
+                        <table class="intracell-table" width="100%">
+                          <tr>
+                            <td width="50%" class="">
+                              <a v-on:click="alert('ok')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless">
+                                <span class="icon is-small">
+                                  <i class="fas fa-image"></i>
+                                </span>
+                              </a>
+                            </td>
+                            <td class="">
+                              <a v-on:click="alert('ok')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless">
+                                <span class="icon is-small">
+                                  <i class="fas fa-images"></i>
+                                </span>
+                              </a>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td width="100%" colspan="2" class="">
+                              <label class="label" title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)">
+                                Insert on</label>
+                              <input class="input is-block-grey" title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)"
+                              type="text" placeholder="Type frame number"/>
+                            </td>
+                          </tr>
+                        </table>
                       </td>
                     </template>
                     <template v-else>
@@ -29,11 +54,11 @@
                           <!-- <span>{{ i }}</span><br/> -->
                           <img v-bind:src="item.absolute_url.value"/>
                           <span class="index-anchor">
-                            {{ parseInt(row) * 5 + parseInt(i) + 1 }}
+                            {{ parseInt(row) * 5 + parseInt(i) }}
                           </span>
                           <a class="del-anchor">
-                            <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
-                              <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
+                            <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)">
+                              <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)"></i>
                             </span>
                           </a>
                         </div>

@@ -15,6 +15,7 @@ $dark-4: #444851;
 $dark-5: #565b69;
 $dark-6: #616877;
 $dark-9: #93a0ad;
+$white-a: #aaaaaa;
 
 
 /* Sass variable overrides */
@@ -306,6 +307,27 @@ table.intracell-table td {
     border-left: none !important;
     border-right: none !important;
     border-bottom: none !important;
+    font-size: 12px;
+    label {
+        margin-bottom: 0 !important;
+        padding-left: 3px !important;
+    }
+    input {
+        height: 24px !important;
+        padding: 0 !important;
+        padding-left: 3px !important;
+        font-size: 14px;
+    }
+}   
+
+
+// label.label .is-tight {
+//     padding-bottom: 0 !important;
+//     margin-bottom: 0 !important;
+// }
+label.label.is-tight:not(:last-child) {
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
 }
 
 .seqdiv {
@@ -665,7 +687,16 @@ canvas.slicegrid-canvas {
 }
 
 
-
+/* Grey-block inputs. */
+.input.is-block-grey {
+    background-color: $dark-4;
+    color: $white-d;
+    box-shadow: none;
+    border: 0 !important;
+}
+.input.is-block-grey::placeholder {
+    color: $dark-9;
+}
 
 /* Neon-white inputs. */
 .input.is-neon-white {

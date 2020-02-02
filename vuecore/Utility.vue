@@ -7,7 +7,7 @@ const app = remote.app;
 function quintcellLister(sequence_infos, from_where="") {
   var quintrows = {};
   let sq_infos = Array.from(sequence_infos);
-  sq_infos.push("_CONTROL_CELL");
+  sq_infos.unshift("_CONTROL_CELL");
   console.log('sequence infos');
   console.log(sequence_infos);
   console.log('sq_infos');

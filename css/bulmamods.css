@@ -1,4 +1,3 @@
-@use 'colors' as chromas;
 @keyframes spinAround {
   from {
     transform: rotate(0deg); }
@@ -7409,7 +7408,20 @@ table.intracell-table td {
   border-top: 1px solid #cccccc !important;
   border-left: none !important;
   border-right: none !important;
-  border-bottom: none !important; }
+  border-bottom: none !important;
+  font-size: 12px; }
+  table.intracell-table td label {
+    margin-bottom: 0 !important;
+    padding-left: 3px !important; }
+  table.intracell-table td input {
+    height: 24px !important;
+    padding: 0 !important;
+    padding-left: 3px !important;
+    font-size: 14px; }
+
+label.label.is-tight:not(:last-child) {
+  padding-bottom: 0 !important;
+  margin-bottom: 0 !important; }
 
 .seqdiv {
   position: relative; }
@@ -7713,6 +7725,16 @@ canvas.slicegrid-canvas {
   background-color: #cccccc;
   border-color: #cccccc;
   color: #31363b; }
+
+/* Grey-block inputs. */
+.input.is-block-grey {
+  background-color: #444851;
+  color: #cccccc;
+  box-shadow: none;
+  border: 0 !important; }
+
+.input.is-block-grey::placeholder {
+  color: #93a0ad; }
 
 /* Neon-white inputs. */
 .input.is-neon-white {

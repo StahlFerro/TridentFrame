@@ -14,22 +14,32 @@
                   <template v-if="item == '_CONTROL_CELL'">
                     <td v-bind:key="i" class="force-center">
                       <table class="intracell-table" width="100%">
-                        <tr><td width="100%" class="">
-                          <a v-on:click="alert('ok')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless">
-                            <span class="icon is-small">
-                              <i class="fas fa-plus"></i>
-                            </span>
-                            <span>Add</span>
-                          </a>
-                        </td></tr>
-                        <tr><td width="100%" class="">
-                          <a v-on:click="alert('ok')" class="button square-button flex-expand is-neon-emerald neon-borderless">
-                            <span class="icon">
-                              <i class="fas fa-plus"></i>
-                            </span>
-                            <span>Smart Add</span>
-                          </a>
-                        </td></tr>
+                        <tr>
+                          <td width="50%" class="">
+                            <a v-on:click="loadImages('insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
+                               title="Add Images. Select one or more images to be added into this sequence">
+                              <span class="icon is-small">
+                                <i class="fas fa-image"></i>
+                              </span>
+                            </a>
+                          </td>
+                          <td class="">
+                            <a v-on:click="loadImages('smart_insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
+                              title="Smart Add Image. Select one images and then let TridentFrame add the rest of the sequence by looking at images with the same name">
+                              <span class="icon is-small">
+                                <i class="fas fa-images"></i>
+                              </span>
+                            </a>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td width="100%" colspan="2" class="">
+                            <label class="label" title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)">
+                              Insert after</label>
+                            <input v-model="insert_index" class="input is-block-grey" type="number" v-on:keydown="numConstrain($event, true, true)" placeholder="Frame no." min="0"
+                             title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)"/>
+                          </td>
+                        </tr>
                       </table>
                     </td>
                   </template>
@@ -45,11 +55,11 @@
                         <!-- <span>{{ i }}</span><br/> -->
                         <img v-bind:src="item.absolute_url.value"/>
                         <span class="index-anchor">
-                          {{ parseInt(row) * 5 + parseInt(i) + 1 }}
+                          {{ parseInt(row) * 5 + parseInt(i) }}
                         </span>
                         <a class="del-anchor">
-                          <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
-                            <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
+                          <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)">
+                            <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)"></i>
                           </span>
                         </a>
                       </div>
@@ -86,7 +96,7 @@
             <div class="level-left">
               <div class="level-item has-text-centered">
                 <div>
-                  <a v-on:click="loadImages" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}"
+                  <a v-on:click="loadImages('replace')" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}"
                     title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                     <span class="icon is-small">
                       <i class="fas fa-plus"></i>
@@ -197,7 +207,7 @@
                           <label class="label" title="The height of the GIF/APNG">Height</label>
                           <div class="control">
                             <input v-bind:value="height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(height, $event)"
-                            class="input is-neon-white" type="number" />
+                            class="input is-neon-white" type="number" min="1"/>
                           </div>
                         </div>
                       </td>
@@ -402,6 +412,7 @@ var data = {
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
+  insert_index: "",
   name: "",
   fps: "",
   orig_width: "",
@@ -449,19 +460,31 @@ var data = {
 }
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
+let img_dialog_props = ["openfile"];
 let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
-function loadImages() {
-  console.log("crt load image")
+
+function smartGrabSequence(img_path) {
+
+}
+
+
+function loadImages(ops) {
+  // ops are between 'replace', 'insert' or 'smart_insert'
+  console.log("crt load image with ops:", ops);
+  let props = ops == 'smart_insert'? img_dialog_props : imgs_dialog_props;
+  console.log('obtained props', props);
   var options = {
     filters: extension_filters,
-    properties: imgs_dialog_props
+    properties: props,
   }
   dialog.showOpenDialog(mainWindow, options, (img_paths) => {
-    // console.log(img_paths);
+    console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;
+
+
     client.invoke("inspect_many", img_paths, (error, res) => {
       if (error) {
         console.error(error);
@@ -477,8 +500,9 @@ function loadImages() {
           let info = res.data
           console.log('sequence info');
           console.log(info.sequence_info);
-          data.image_paths = info.sequence;
-          data.sequence_info = info.sequence_info;
+          // data.image_paths = info.sequence;
+          // data.sequence_info = info.sequence_info;
+          renderSequence(info, {operation: ops})
           data.name = info.name;
           // data.sequence_counter = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
           data.orig_width = info.width;
@@ -495,6 +519,30 @@ function loadImages() {
     });
   });
 }
+
+
+function renderSequence(pyinfo, options) {
+  let operation = options.operation;
+
+  if (operation == 'replace') {
+    data.image = pyinfo.sequence;
+    data.sequence = pyinfo.sequence_info;
+    console.log("AA");
+  }
+  else if (['insert', 'smart_insert'].includes(operation)) {
+    
+    console.log("BB");
+    if (data.insert_index) {
+      data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
+      data.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
+    }
+    else {
+      data.image_paths.push(...pyinfo.sequence);
+      data.sequence_info.push(...pyinfo.sequence_info);
+    }
+  }
+}
+
 
 function removeFrame(index){
  data.image_paths.splice(index, 1);
