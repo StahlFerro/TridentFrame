@@ -57,9 +57,9 @@
                         <span class="index-anchor">
                           {{ parseInt(row) * 5 + parseInt(i) }}
                         </span>
-                        <a class="del-anchor">
+                        <a class="del-anchor" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)">
                           <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)">
-                            <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)"></i>
+                            <i class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)"></i>
                           </span>
                         </a>
                       </div>
@@ -96,14 +96,30 @@
             <div class="level-left">
               <div class="level-item has-text-centered">
                 <div>
-                  <a v-on:click="loadImages('replace')" class="button is-neon-cyan" v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen}"
-                    title="Loads multiple static images to create an animated image. This replaces the current sequence above">
+                  <a v-on:click="loadImages('insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_INSERT_LOAD, 'is-static': isButtonFrozen}">
                     <span class="icon is-small">
                       <i class="fas fa-plus"></i>
                     </span>
-                    <span>Load Images</span>
+                    <span>Add</span>
                   </a>
-                  <a v-on:click="CRTClearAIMG" class="button is-neon-white" v-bind:class="{'is-static': isButtonFrozen}">
+                  <a v-on:click="loadImages('smart_insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_SMARTINSERT_LOAD, 'is-static': isButtonFrozen}">
+                    <span class="icon is-small">
+                      <i class="fas fa-plus-circle"></i>
+                    </span>
+                    <span>Smart</span>
+                  </a>
+                  <div class="dualine-label">
+                    <span>Insert<br/>after</span>
+                  </div>
+                  <input class="input is-neon-white" type="text" style="width: 60px;"/>
+                  <a v-on:click="loadImages('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_REPLACE_LOAD, 'is-static': isButtonFrozen}"
+                    title="Loads multiple static images to create an animated image. This replaces the current sequence above">
+                    <span class="icon is-small">
+                      <i class="fas fa-plus-square"></i>
+                    </span>
+                    <span>Load</span>
+                  </a>
+                  <a v-on:click="CRTClearAIMG" class="button is-neon-crimson" v-bind:class="{'is-static': isButtonFrozen}">
                     <span class="icon is-small">
                       <i class="fas fa-trash-alt"></i>
                     </span>
@@ -111,11 +127,15 @@
                   </a>
                 </div>
               </div>
-              <div class="level-item has-text-right">
+              <div class="level-item has-text-centered">
+                <div>
+                </div>
+              </div>
+              <!-- <div class="level-item has-text-right">
                 <div>
                   <p>{{ sequenceCounter }}</p>
                 </div>
-              </div>
+              </div> -->
             </div>
           </nav>
         </td>
@@ -140,7 +160,7 @@
         </td>
       </tr>
       <tr>
-        <td id="CRT_control_cell" class=" silver-bordered is-paddingless" colspan="2">
+        <td id="CRT_control_cell" class="silver-bordered is-paddingless" colspan="2">
           <div class="crt-aimg-control-container">
           <table class="table is-paddingless is-marginless" width="100%" height="100%">
             <tr>
@@ -454,6 +474,9 @@ var data = {
   create_msgbox: "",
   // sequence_counter: "",
   checkerbg_active: false,
+  CRT_INSERT_LOAD: false,
+  CRT_SMARTINSERT_LOAD: false,
+  CRT_REPLACE_LOAD: false,
   CRT_IS_LOADING: false,
   CRT_IS_PREVIEWING: false,
   CRT_IS_CREATING: false,
@@ -465,9 +488,19 @@ let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 
-function smartGrabSequence(img_path) {
 
+function toggleLoadButtonAnim(ops, state=false) {
+  if (ops == 'insert') {
+    data.CRT_INSERT_LOAD = state;
+  }
+  else if (ops == 'smart_insert') {
+    data.CRT_SMARTINSERT_LOAD = state;
+  }
+  else if (ops == 'replace') {
+    data.CRT_REPLACE_LOAD = state;
+  }
 }
+
 
 
 function loadImages(ops) {
@@ -479,11 +512,12 @@ function loadImages(ops) {
     filters: extension_filters,
     properties: props,
   }
+
   dialog.showOpenDialog(mainWindow, options, (img_paths) => {
     console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;
-
+    toggleLoadButtonAnim(ops, true);
 
     client.invoke("inspect_many", img_paths, (error, res) => {
       if (error) {
@@ -497,7 +531,7 @@ function loadImages(ops) {
           data.create_msgbox = res.msg;
         }
         else if (res && res.data) {
-          let info = res.data
+          let info = res.data;
           console.log('sequence info');
           console.log(info.sequence_info);
           // data.image_paths = info.sequence;
@@ -514,6 +548,7 @@ function loadImages(ops) {
           data.create_msgbox = "";
           updateAspectRatio(data.width, data.height);
           data.CRT_IS_LOADING = false;
+          toggleLoadButtonAnim(ops, false);
         }
       }
     });
@@ -523,14 +558,12 @@ function loadImages(ops) {
 
 function renderSequence(pyinfo, options) {
   let operation = options.operation;
-
   if (operation == 'replace') {
-    data.image = pyinfo.sequence;
-    data.sequence = pyinfo.sequence_info;
     console.log("AA");
+    data.image = pyinfo.sequence;
+    data.sequence_info = pyinfo.sequence_info;
   }
   else if (['insert', 'smart_insert'].includes(operation)) {
-    
     console.log("BB");
     if (data.insert_index) {
       data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);

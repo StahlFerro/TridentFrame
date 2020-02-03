@@ -113,13 +113,29 @@
                       </div>
                     </div>
                     <div class="field force-vcenter">
-                      <a v-on:click="loadInput" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_LOADING, 'is-static': isButtonFrozen}">
+                      <a v-on:click="loadInput" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_IS_LOADING, 'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-plus"></i>
                         </span>
                         <span>Add</span>
                       </a>
-                      <a v-on:click="clearInfo" class="button is-neon-white" v-bind:class="{'is-static': isButtonFrozen}">
+                      <a class="button is-neon-emerald" v-bind:class="{'is-static': isButtonFrozen}">
+                        <span class="icon is-small">
+                          <i class="fas fa-plus-circle"></i>
+                        </span>
+                        <span>Smart</span>
+                      </a>
+                      <div class="dualine-label">
+                        <span>Insert<br/>after</span>
+                      </div>
+                      <input class="input is-neon-white" type="text" style="width: 60px;"/>
+                      <a v-on:click="clearInfo" class="button is-neon-emerald" v-bind:class="{'is-static': isButtonFrozen}">
+                        <span class="icon is-small">
+                          <i class="fas fa-trash-alt"></i>
+                        </span>
+                        <span>Load</span>
+                      </a>
+                      <a v-on:click="clearInfo" class="button is-neon-crimson" v-bind:class="{'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-trash-alt"></i>
                         </span>
@@ -169,173 +185,175 @@
         </td>
       </tr>
       <tr>
-        <td id="BSPR_create_control_table" class="is-paddingless" colspan="2">
-          <table class="table spr-control-table" width="100%">
-            <tr>
-              <td width="20%">
-                <div class="field">
-                  <label class="label">Name</label>
-                  <div class="control">
-                    <input v-model="name" class="input is-neon-white" type="text" />
+        <td id="BSPR_create_control_table" class="silver-bordered is-paddingless" colspan="2">
+          <div class="bspr-control-container">
+            <table class="table spr-control-table" width="100%">
+              <tr>
+                <td width="20%">
+                  <div class="field">
+                    <label class="label">Name</label>
+                    <div class="control">
+                      <input v-model="name" class="input is-neon-white" type="text" />
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td width="20%">
-                <div class="field">
-                  <label class="label">Tile Width</label>
-                  <div class="control">
-                    <input
-                      v-bind:value="tile_width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(tile_width, $event)"
-                      class="input is-neon-white"
-                      type="number" 
-                      min="1" step="1"/>
+                </td>
+                <td width="20%">
+                  <div class="field">
+                    <label class="label">Tile Width</label>
+                    <div class="control">
+                      <input
+                        v-bind:value="tile_width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(tile_width, $event)"
+                        class="input is-neon-white"
+                        type="number" 
+                        min="1" step="1"/>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td width="20%">
-                <div class="field">
-                  <label class="label">Tile Height</label>
-                  <div class="control">
-                    <input
-                      v-bind:value="tile_height" v-on:keydown="wholeNumConstrain($event)" v-on:input="heightHandler(tile_width, $event)"
-                      class="input is-neon-white"
-                      type="number"
-                      min="1" step="1"
-                    />
+                </td>
+                <td width="20%">
+                  <div class="field">
+                    <label class="label">Tile Height</label>
+                    <div class="control">
+                      <input
+                        v-bind:value="tile_height" v-on:keydown="wholeNumConstrain($event)" v-on:input="heightHandler(tile_width, $event)"
+                        class="input is-neon-white"
+                        type="number"
+                        min="1" step="1"
+                      />
+                    </div>
                   </div>
-                </div>
-              </td>
+                </td>
 
-              <td width="20%" style="vertical-align: bottom;">
-                <div class="field">
-                  <label class="label">Max tiles per row</label>
-                  <div class="control">
-                    <input
-                      v-model="tile_row"
-                      class="input is-neon-white"
-                      type="number"
-                      min="1"
-                      step="1"
-                    />
+                <td width="20%" style="vertical-align: bottom;">
+                  <div class="field">
+                    <label class="label">Max tiles per row</label>
+                    <div class="control">
+                      <input
+                        v-model="tile_row"
+                        class="input is-neon-white"
+                        type="number"
+                        min="1"
+                        step="1"
+                      />
+                    </div>
                   </div>
-                </div>
-              </td>
+                </td>
 
-              <td width="20%">
-                <label class="checkbox">
-                  <input v-model="lock_aspect_ratio" type="checkbox"/>
-                  Lock aspect ratio
-                </label>
-                <br/>
-                  <template v-if="aspect_ratio && aspect_ratio.text">
-                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                <td width="20%">
+                  <label class="checkbox">
+                    <input v-model="lock_aspect_ratio" type="checkbox"/>
+                    Lock aspect ratio
+                  </label>
+                  <br/>
+                    <template v-if="aspect_ratio && aspect_ratio.text">
+                      <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                    </template>
+                    <template v-else>&nbsp;</template>
+                </td>
+              </tr>
+              <tr>
+                
+                <td>
+                  <div class="field">
+                    <label class="label">Offset X</label>
+                    <div class="control">
+                      <input
+                        v-model="offset_x"
+                        class="input is-neon-white"
+                        type="number"
+                        step="1"
+                      />
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="field">
+                    <label class="label">Offset Y</label>
+                    <div class="control">
+                      <input
+                        v-model="offset_y"
+                        class="input is-neon-white"
+                        type="number"
+                        step="1"
+                      />
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="field">
+                    <label class="label">Padding X</label>
+                    <div class="control">
+                      <input
+                        v-model="padding_x"
+                        class="input is-neon-white"
+                        type="number"
+                        step="1"
+                      />
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <div class="field">
+                    <label class="label">Padding Y</label>
+                    <div class="control">
+                      <input
+                        v-model="padding_y"
+                        class="input is-neon-white"
+                        type="number"
+                        step="1"
+                      />
+                    </div>
+                  </div>
+                </td>
+
+              </tr>
+              <tr>
+                <td colspan="3" style="padding-top: 15px;">
+                  <div class="field has-addons">
+                    <div class="control">
+                      <a v-on:click="chooseOutDir" class="button is-neon-cyan">
+                        <span class="icon is-small">
+                          <i class="fas fa-folder-open"></i>
+                        </span>
+                        <span>Save to</span>
+                      </a>
+                    </div>
+                    <div class="control is-expanded">
+                      <input
+                        v-model="outdir"
+                        class="input is-neon-white"
+                        type="text"
+                        placeholder="Output folder"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </td>
+                <td colspan="1" style="padding-top: 15px;">
+                  <div class="field has-text-centered">
+                    <div class="control">
+                      <a v-on:click="buildSpritesheet" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_BUILDING, 'is-static': isButtonFrozen}">
+                        Build Spritesheet
+                      </a>
+                    </div>
+                  </div>
+                </td>
+                <td style="padding-top: 5px; line-height: 20px;">
+                  <template v-if="sheetDimensions">
+                    <span>Sheet dimensions</span>
+                    <input v-model="sheetDimensions" class="input is-border-colorless is-paddingless" readonly="readonly"/>
                   </template>
-                  <template v-else>&nbsp;</template>
-              </td>
-            </tr>
-            <tr>
-              
-              <td>
-                <div class="field">
-                  <label class="label">Offset X</label>
-                  <div class="control">
-                    <input
-                      v-model="offset_x"
-                      class="input is-neon-white"
-                      type="number"
-                      step="1"
-                    />
-                  </div>
-                </div>
-              </td>
-
-              <td>
-                <div class="field">
-                  <label class="label">Offset Y</label>
-                  <div class="control">
-                    <input
-                      v-model="offset_y"
-                      class="input is-neon-white"
-                      type="number"
-                      step="1"
-                    />
-                  </div>
-                </div>
-              </td>
-
-              <td>
-                <div class="field">
-                  <label class="label">Padding X</label>
-                  <div class="control">
-                    <input
-                      v-model="padding_x"
-                      class="input is-neon-white"
-                      type="number"
-                      step="1"
-                    />
-                  </div>
-                </div>
-              </td>
-
-              <td>
-                <div class="field">
-                  <label class="label">Padding Y</label>
-                  <div class="control">
-                    <input
-                      v-model="padding_y"
-                      class="input is-neon-white"
-                      type="number"
-                      step="1"
-                    />
-                  </div>
-                </div>
-              </td>
-
-            </tr>
-            <tr>
-              <td colspan="3" style="padding-top: 15px;">
-                <div class="field has-addons">
-                  <div class="control">
-                    <a v-on:click="chooseOutDir" class="button is-neon-cyan">
-                      <span class="icon is-small">
-                        <i class="fas fa-folder-open"></i>
-                      </span>
-                      <span>Save to</span>
-                    </a>
-                  </div>
-                  <div class="control is-expanded">
-                    <input
-                      v-model="outdir"
-                      class="input is-neon-white"
-                      type="text"
-                      placeholder="Output folder"
-                      readonly
-                    />
-                  </div>
-                </div>
-              </td>
-              <td colspan="1" style="padding-top: 15px;">
-                <div class="field has-text-centered">
-                  <div class="control">
-                    <a v-on:click="buildSpritesheet" class="button is-neon-cyan" v-bind:class="{'is-loading': BSPR_IS_BUILDING, 'is-static': isButtonFrozen}">
-                      Build Spritesheet
-                    </a>
-                  </div>
-                </div>
-              </td>
-              <td style="padding-top: 5px; line-height: 20px;">
-                <template v-if="sheetDimensions">
-                  <span>Sheet dimensions</span>
-                  <input v-model="sheetDimensions" class="input is-border-colorless is-paddingless" readonly="readonly"/>
-                </template>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="5" class="has-text-left" style="vertical-align: middle;">
-                <input v-model="bspr_msgbox" type="text" class="input is-paddingless is-border-colorless" readonly="readonly"/>
-              </td>
-            </tr>
-          </table>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="5" class="has-text-left" style="vertical-align: middle;">
+                  <input v-model="bspr_msgbox" type="text" class="input is-paddingless is-border-colorless" readonly="readonly"/>
+                </td>
+              </tr>
+            </table>
+          </div>
         </td>
       </tr>
     </table>
@@ -399,6 +417,9 @@ var data = {
   lock_aspect_ratio: false,
   checkerbg_active: false,
   bspr_msgbox: "",
+  BSPR_INSERT_LOAD: false,
+  BSPR_SMARTINSERT_LOAD: false,
+  BSPR_REPLACE_LOAD: false,
   BSPR_IS_LOADING: false,
   BSPR_IS_PREVIEWING: false,
   BSPR_IS_BUILDING: false,
@@ -408,7 +429,21 @@ let sequence_dialog_props = ['openfile', 'multiSelections', 'createDirectory'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
 let extension_filters = [{ name: 'Images', extensions: ['png', 'gif'] }];
 
-function loadInput() {
+
+function toggleLoadButtonAnim(ops, state=false) {
+  if (ops == 'insert') {
+    data.BSPR_INSERT_LOAD = state;
+  }
+  else if (ops == 'smart_insert') {
+    data.BSPR_SMARTINSERT_LOAD = state;
+  }
+  else if (ops == 'replace') {
+    data.BSPR_REPLACE_LOAD = state;
+  }
+}
+
+
+function loadInput(ops) {
   var options = {
     filters: extension_filters,
     properties: sequence_dialog_props
@@ -421,7 +456,7 @@ function loadInput() {
   });
 }
 
-function loadSequence(img_paths) {
+function loadSequence(img_paths, ops) {
   console.log('loading sequences...');
   data.BSPR_IS_LOADING = true;
   client.invoke("inspect_many", img_paths, (error, res) => {
@@ -453,9 +488,29 @@ function loadSequence(img_paths) {
   });
 }
 
-function removeFrame(index){
- data.image_paths.splice(index, 1);
- data.sequence_info.splice(index, 1);
+function renderSequence(pyinfo, options) {
+  let operation = options.operation;
+  if (operation == 'replace') {
+    data.image = pyinfo.sequence;
+    data.sequence_info = pyinfo.sequence_info;
+    console.log("AA");
+  }
+  else if (['insert', 'smart_insert'].includes(operation)) {
+    console.log("BB");
+    if (data.insert_index) {
+      data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
+      data.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
+    }
+    else {
+      data.image_paths.push(...pyinfo.sequence);
+      data.sequence_info.push(...pyinfo.sequence_info);
+    }
+  }
+}
+
+function removeFrame(index) {
+  data.image_paths.splice(index, 1);
+  data.sequence_info.splice(index, 1);
 }
 
 function sequenceCounter() {
