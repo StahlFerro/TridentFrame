@@ -10,9 +10,9 @@
           <table class="sequence-grid is-paddingless" width="100%">
             <tbody>
               <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
-                <template v-for="(item, i) in quintjson">
-                  <template v-if="item == '_CONTROL_CELL'">
-                    <td v-bind:key="i" class="force-center">
+                <!-- <template v-for="(item, i) in quintjson">
+                  <template v-if="item == '_CONTROL_CELL'"> -->
+                    <!-- <td v-bind:key="i" class="force-center">
                       <table class="intracell-table" width="100%">
                         <tr>
                           <td width="50%" class="">
@@ -43,8 +43,8 @@
                       </table>
                     </td>
                   </template>
-                  <template v-else>
-                    <td v-bind:key="i" v-bind:title="
+                  <template v-else> -->
+                    <td v-for="(item, i) in quintjson" v-bind:key="i" v-bind:title="
                           `Name: ${item.name.value}\n` + 
                           `Dimensions: ${item.width.value} x ${item.height.value}\n` +
                           `Format: ${item.format.value}\n` +
@@ -55,17 +55,17 @@
                         <!-- <span>{{ i }}</span><br/> -->
                         <img v-bind:src="item.absolute_url.value"/>
                         <span class="index-anchor">
-                          {{ parseInt(row) * 5 + parseInt(i) }}
+                          {{ parseInt(row) * 5 + parseInt(i) + 1 }}
                         </span>
-                        <a class="del-anchor" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)">
-                          <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)">
-                            <i class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)"></i>
+                        <a class="del-anchor" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                          <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                            <i class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
                           </span>
                         </a>
                       </div>
                     </td>
-                  </template>
-                </template>
+                  <!-- </template>
+                </template> -->
 
               </tr>
             </tbody>
@@ -111,7 +111,7 @@
                   <div class="dualine-label">
                     <span>Insert<br/>after</span>
                   </div>
-                  <input class="input is-neon-white" type="text" style="width: 60px;"/>
+                  <input v-model="insert_index" class="input is-neon-white" type="text" style="width: 60px;"/>
                   <a v-on:click="loadImages('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_REPLACE_LOAD, 'is-static': isButtonFrozen}"
                     title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                     <span class="icon is-small">
@@ -560,7 +560,7 @@ function renderSequence(pyinfo, options) {
   let operation = options.operation;
   if (operation == 'replace') {
     console.log("AA");
-    data.image = pyinfo.sequence;
+    data.image_paths = pyinfo.sequence;
     data.sequence_info = pyinfo.sequence_info;
   }
   else if (['insert', 'smart_insert'].includes(operation)) {

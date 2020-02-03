@@ -11,8 +11,8 @@
             <table class="sequence-grid is-paddingless" width="100%">
               <tbody>
                 <tr v-for="(quintjson, row) in BSPRQuintcellLister" v-bind:key="row">
-                  <template v-for="(item, i) in quintjson">
-                    <template v-if="item == '_CONTROL_CELL'">
+                  <!-- <template v-for="(item, i) in quintjson"> -->
+                    <!-- <template v-if="item == '_CONTROL_CELL'">
                       <td v-bind:key="i" class="force-center">
                         <table class="intracell-table" width="100%">
                           <tr>
@@ -42,8 +42,8 @@
                         </table>
                       </td>
                     </template>
-                    <template v-else>
-                      <td v-bind:key="i" v-bind:title="
+                    <template v-else> -->
+                      <td v-for="(item, i) in quintjson" v-bind:key="i" v-bind:title="
                             `Name: ${item.name.value}\n` + 
                             `Dimensions: ${item.width.value} x ${item.height.value}\n` +
                             `Format: ${item.format.value}\n` +
@@ -54,17 +54,17 @@
                           <!-- <span>{{ i }}</span><br/> -->
                           <img v-bind:src="item.absolute_url.value"/>
                           <span class="index-anchor">
-                            {{ parseInt(row) * 5 + parseInt(i) }}
+                            {{ parseInt(row) * 5 + parseInt(i) + 1 }}
                           </span>
                           <a class="del-anchor">
-                            <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)">
-                              <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i) - 1)"></i>
+                            <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                              <i class="fas fa-minus-circle del-icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
                             </span>
                           </a>
                         </div>
                       </td>
-                    </template>
-                  </template>
+                    <!-- </template> -->
+                  <!-- </template> -->
                 </tr>
               </tbody>
             </table>
@@ -113,13 +113,13 @@
                       </div>
                     </div>
                     <div class="field force-vcenter">
-                      <a v-on:click="loadInput" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_IS_LOADING, 'is-static': isButtonFrozen}">
+                      <a v-on:click="loadInput('insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_INSERT_LOAD, 'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-plus"></i>
                         </span>
                         <span>Add</span>
                       </a>
-                      <a class="button is-neon-emerald" v-bind:class="{'is-static': isButtonFrozen}">
+                      <a v-on:click="loadInput('smart_insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_INSERT_LOAD, 'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-plus-circle"></i>
                         </span>
@@ -128,8 +128,8 @@
                       <div class="dualine-label">
                         <span>Insert<br/>after</span>
                       </div>
-                      <input class="input is-neon-white" type="text" style="width: 60px;"/>
-                      <a v-on:click="clearInfo" class="button is-neon-emerald" v-bind:class="{'is-static': isButtonFrozen}">
+                      <input v-model="insert_index" class="input is-neon-white" type="text" style="width: 60px;"/>
+                      <a v-on:click="loadInput('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_REPLACE_LOAD, 'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-trash-alt"></i>
                         </span>
@@ -145,11 +145,11 @@
                   </div>
                 </div>
               </div>
-              <div class="level-item has-text-centered">
+              <!-- <div class="level-item has-text-centered">
                 <span class="force-vcenter">
                   {{ sequenceCounter }}
                 </span>
-              </div>
+              </div> -->
             </div>
           </nav>
         </td>
@@ -396,6 +396,7 @@ var data = {
   image_paths: [],
   sequence_info: [],
   sequence_count: 0,
+  insert_index: "",
   // sequence_size: "",
   input_format: "sequence",
   name: "",
@@ -425,6 +426,7 @@ var data = {
   BSPR_IS_BUILDING: false,
 };
 
+let img_dialog_props = ["openfile"];
 let sequence_dialog_props = ['openfile', 'multiSelections', 'createDirectory'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
 let extension_filters = [{ name: 'Images', extensions: ['png', 'gif'] }];
@@ -444,14 +446,16 @@ function toggleLoadButtonAnim(ops, state=false) {
 
 
 function loadInput(ops) {
-  var options = {
+  console.log("bspr load image with ops:", ops);
+  let props = ops == 'smart_insert'? img_dialog_props : sequence_dialog_props;
+  let options = {
     filters: extension_filters,
-    properties: sequence_dialog_props
+    properties: props,
   }
   dialog.showOpenDialog(mainWindow, options, (img_paths) => {
     if (img_paths === undefined || img_paths.length == 0) { return; }
     if (data.input_format == "sequence") {
-      loadSequence(img_paths);
+      loadSequence(img_paths, ops);
     }
   });
 }
@@ -459,6 +463,7 @@ function loadInput(ops) {
 function loadSequence(img_paths, ops) {
   console.log('loading sequences...');
   data.BSPR_IS_LOADING = true;
+  toggleLoadButtonAnim(ops, true);
   client.invoke("inspect_many", img_paths, (error, res) => {
     if (error) {
       console.error(error);
@@ -472,8 +477,9 @@ function loadSequence(img_paths, ops) {
       }
       else if (res && res.data) { 
         let info = res.data;
-        data.image_paths = info.sequence;
-        data.sequence_info = info.sequence_info;
+        renderSequence(info, {operation: ops});
+        // data.image_paths = info.sequence;
+        // data.sequence_info = info.sequence_info;
         // data.sequence_size = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
         data.name = info.name;
         data.tile_width = info.width;
@@ -483,6 +489,7 @@ function loadSequence(img_paths, ops) {
         updateAspectRatio(data.tile_width, data.tile_height);
         data.bspr_msgbox = "";
         data.BSPR_IS_LOADING = false;
+        toggleLoadButtonAnim(ops, false);
       }
     }
   });
