@@ -130,7 +130,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
                 target_path = yield from imagemagick_render(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
             # yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
-            if criteria.apng_mustsplit_alteration() or pq_args:
+            if criteria.apng_mustsplit_alteration() or pq_args or apngopt_criteria.is_unoptimized:
                 target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
             if aopt_args:
                 yield {"MSGGGGGGGGGGGGG": "AOPT ARGS"}
