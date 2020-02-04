@@ -128,7 +128,7 @@
                       <div class="dualine-label">
                         <span>Insert<br/>after</span>
                       </div>
-                      <input v-model="insert_index" class="input is-neon-white" type="text" style="width: 60px;"/>
+                      <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px;"/>
                       <a v-on:click="loadInput('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_REPLACE_LOAD, 'is-static': isButtonFrozen}">
                         <span class="icon is-small">
                           <i class="fas fa-trash-alt"></i>
@@ -202,7 +202,7 @@
                     <label class="label">Tile Width</label>
                     <div class="control">
                       <input
-                        v-bind:value="tile_width" v-on:keydown="wholeNumConstrain($event)" v-on:input="widthHandler(tile_width, $event)"
+                        v-bind:value="tile_width" v-on:keydown="wholeNumConstrain($event, true, true)" v-on:input="widthHandler(tile_width, $event)"
                         class="input is-neon-white"
                         type="number" 
                         min="1" step="1"/>
@@ -214,7 +214,7 @@
                     <label class="label">Tile Height</label>
                     <div class="control">
                       <input
-                        v-bind:value="tile_height" v-on:keydown="wholeNumConstrain($event)" v-on:input="heightHandler(tile_width, $event)"
+                        v-bind:value="tile_height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(tile_width, $event)"
                         class="input is-neon-white"
                         type="number"
                         min="1" step="1"
@@ -366,7 +366,8 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
-import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain, validateFilename, fileExists } from './Utility.vue';
+import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain,
+  numConstrain, validateFilename, fileExists } from './Utility.vue';
 
 function clearInfo() {
   data.image_paths = [],
@@ -729,6 +730,7 @@ export default {
     clearInfo: clearInfo,
     previewSheet, previewSheet,
     wholeNumConstrain: wholeNumConstrain,
+    numConstrain: numConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     buildSpritesheet: buildSpritesheet,

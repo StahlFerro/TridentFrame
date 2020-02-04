@@ -89,13 +89,13 @@
       </tr>
       <tr>
         <td colspan="2" class="is-hpaddingless">
-          <a v-on:click="loadSheet" class="button is-neon-cyan" v-bind:class="{'is-loading': SSPR_IS_LOADING, 'is-static': isButtonFrozen}">
+          <a v-on:click="loadSheet" class="button is-neon-emerald" v-bind:class="{'is-loading': SSPR_IS_LOADING, 'is-static': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
             <span>Load Spritesheet</span>
           </a>
-          <a v-on:click="clearSheet" class="button is-neon-white">
+          <a v-on:click="clearSheet" class="button is-neon-crimson">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>

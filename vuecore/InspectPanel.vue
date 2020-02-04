@@ -15,10 +15,10 @@
             <table class="table ins-info-table is-paddingless" width="100%">
               <template v-for="(item, key) in info_data">
                 <!-- <span v-bind:key="key"/> -->
-                <tr v-if="key == 'general_info'">
+                <tr v-if="key == 'general_info'" v-bind:key="key">
                   <td colspan="2" class="is-cyan">GENERAL INFO</td>
                 </tr>
-                <tr v-if="key == 'animation_info'">
+                <tr v-if="key == 'animation_info'" v-bind:key="key">
                   <td colspan="2" class="is-cyan">ANIMATION INFO</td>
                 </tr>
                 <tr v-for="(item, key, index) in item" v-bind:key="key">
@@ -37,7 +37,7 @@
         <td class="is-hpaddingless">
           <a
             v-on:click="loadImage"
-            class="button is-neon-cyan"
+            class="button is-neon-emerald"
             v-bind:class="{'is-loading': INS_IS_INSPECTING, 'is-static': isButtonFrozen}"
           >
             <span class="icon is-small">
@@ -45,7 +45,7 @@
             </span>
             <span>Load Any Image</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-white"
+          <a v-on:click="clearImage" class="button is-neon-crimson"
             v-bind:class="{'is-static': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>

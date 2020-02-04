@@ -95,13 +95,13 @@
       </tr>
       <tr>
         <td class="is-hpaddingless">
-          <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_LOADING, 'is-static': isButtonFrozen}">
+          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': SPL_IS_LOADING, 'is-static': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
             <span>Load GIF/APNG</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-white">
+          <a v-on:click="clearImage" class="button is-neon-crimson">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>
@@ -142,7 +142,7 @@
                       v-model="pad_count"
                       class="input is-neon-white"
                       type="number"
-                      min="1"
+                      min="0"
                       max="6"
                       v-on:keydown="numConstrain($event, true, true)"
                     />

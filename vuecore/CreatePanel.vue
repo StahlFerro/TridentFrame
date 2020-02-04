@@ -111,7 +111,7 @@
                   <div class="dualine-label">
                     <span>Insert<br/>after</span>
                   </div>
-                  <input v-model="insert_index" class="input is-neon-white" type="text" style="width: 60px;"/>
+                  <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px;"/>
                   <a v-on:click="loadImages('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_REPLACE_LOAD, 'is-static': isButtonFrozen}"
                     title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                     <span class="icon is-small">
@@ -267,7 +267,7 @@
                         <div class="field">
                           <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
                           <div class="control">
-                            <input v-model="delay" v-on:keydown="numConstrain($event, true, false)" v-on:input="delayConstrain" class="input is-neon-white" type="number" />
+                            <input v-model="delay" v-on:keydown="numConstrain($event, true, false)" v-on:input="delayConstrain" class="input is-neon-white" type="number" min="0" />
                           </div>
                         </div>
                       </td>
@@ -275,7 +275,7 @@
                         <div class="field">
                           <label class="label" title="How many frames will be consecutively displayed per second.">Frame rate</label>
                           <div class="control">
-                            <input v-model="fps" v-on:keydown="numConstrain($event, true, false)" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="1" max="50" step="0.01"/>
+                            <input v-model="fps" v-on:keydown="numConstrain($event, true, false)" v-on:input="fpsConstrain" class="input is-neon-white" type="number" min="0" max="50" step="0.01"/>
                           </div>
                         </div>
                       </td>
@@ -291,7 +291,7 @@
                         <div class="field">
                           <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
                           <div class="control">
-                            <input v-model="start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" step="1"/>
+                            <input v-model="start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" step="1"/>
                           </div>
                         </div>
                       </td>

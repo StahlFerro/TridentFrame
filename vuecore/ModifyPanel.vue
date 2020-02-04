@@ -40,13 +40,13 @@
       </tr>
       <tr>
         <td colspan="3" class="has-text-centered is-hpaddingless">
-          <a v-on:click="loadImage" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_LOADING, 'is-static': buttonIsFrozen}">
+          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'is-static': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
             <span>Load GIF/APNG</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-white">
+          <a v-on:click="clearImage" class="button is-neon-crimson">
             <span class="icon is-small">
               <i class="fas fa-trash-alt"></i>
             </span>
