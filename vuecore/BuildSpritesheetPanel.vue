@@ -113,13 +113,15 @@
                       </div>
                     </div>
                     <div class="field force-vcenter">
-                      <a v-on:click="loadInput('insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_INSERT_LOAD, 'is-static': isButtonFrozen}">
+                      <a v-on:click="loadInput('insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_INSERT_LOAD, 'is-static': isButtonFrozen}"
+                        title="Adds a new sequence of images">
                         <span class="icon is-small">
                           <i class="fas fa-plus"></i>
                         </span>
                         <span>Add</span>
                       </a>
-                      <a v-on:click="loadInput('smart_insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_INSERT_LOAD, 'is-static': isButtonFrozen}">
+                      <a v-on:click="loadInput('smart_insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_SMARTINSERT_LOAD, 'is-static': isButtonFrozen}"
+                        title="Adds a new sequence of images from selecting a single image">
                         <span class="icon is-small">
                           <i class="fas fa-plus-circle"></i>
                         </span>
@@ -128,14 +130,18 @@
                       <div class="dualine-label">
                         <span>Insert<br/>after</span>
                       </div>
-                      <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px;"/>
-                      <a v-on:click="loadInput('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_REPLACE_LOAD, 'is-static': isButtonFrozen}">
+                      <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px;"
+                      title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving
+                      this field empty is the default operation (append the new sequence after the last one)"/>
+                      <a v-on:click="loadInput('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_REPLACE_LOAD, 'is-static': isButtonFrozen}"
+                      title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                         <span class="icon is-small">
                           <i class="fas fa-trash-alt"></i>
                         </span>
                         <span>Load</span>
                       </a>
-                      <a v-on:click="clearInfo" class="button is-neon-crimson" v-bind:class="{'is-static': isButtonFrozen}">
+                      <a v-on:click="clearInfo" class="button is-neon-crimson" v-bind:class="{'is-static': isButtonFrozen}"
+                      title="Clears the entire sequence">
                         <span class="icon is-small">
                           <i class="fas fa-trash-alt"></i>
                         </span>
@@ -465,11 +471,14 @@ function loadSequence(img_paths, ops) {
   console.log('loading sequences...');
   data.BSPR_IS_LOADING = true;
   toggleLoadButtonAnim(ops, true);
-  client.invoke("inspect_many", img_paths, (error, res) => {
+  let pymethod = ops == 'smart_insert'? "inspect_smart" : "inspect_many";
+  let paths = ops == 'smart_insert'? img_paths[0] : img_paths;
+  client.invoke(pymethod, paths, (error, res) => {
     if (error) {
       console.error(error);
       data.bspr_msgbox = error;
       data.BSPR_IS_LOADING = false;
+      toggleLoadButtonAnim(ops, false);
     }
     else {
       if (res && res.msg) {

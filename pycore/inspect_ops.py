@@ -284,3 +284,15 @@ def inspect_sequence(image_paths):
             "height": sequence_info[0]['height']['value'],
         }
     }
+    yield {"msg": f"{sequence_count} images loaded!"}
+
+
+def _inspect_smart(image_path):
+    """ Receives a single image, then finds similar images with the same name and then returns the information of those sequence """
+    imgdir = os.path.dirname(image_path)
+    filename, ext = os.path.splitext(os.path.basename(image_path))
+    base_fname = sequence_nameget(filename)
+    yield {"basefname": base_fname}
+    possible_sequence = [os.path.abspath(os.path.join(imgdir, f)) for f in os.listdir(imgdir) if base_fname in os.path.splitext(f)[0]]
+    yield {"possible": possible_sequence}
+    yield from inspect_sequence(possible_sequence)

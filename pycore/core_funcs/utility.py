@@ -44,7 +44,7 @@ def util_generator_shallow():
 
 
 def sequence_nameget(name: str):
-    """ Cuts of sequence number suffixes from a filename. Filenames only, extensions must be excluded """
+    """ Cuts of sequence number suffixes from a filename. Filenames only, extensions must be excluded from this check. """
     n_shards = name.split("_")
     if str.isnumeric(n_shards[-1]):
         return "_".join(n_shards[:-1])

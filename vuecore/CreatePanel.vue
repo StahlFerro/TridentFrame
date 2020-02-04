@@ -96,13 +96,15 @@
             <div class="level-left">
               <div class="level-item has-text-centered">
                 <div>
-                  <a v-on:click="loadImages('insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_INSERT_LOAD, 'is-static': isButtonFrozen}">
+                  <a v-on:click="loadImages('insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_INSERT_LOAD, 'is-static': isButtonFrozen}"
+                  title="Adds a new sequence of images">
                     <span class="icon is-small">
                       <i class="fas fa-plus"></i>
                     </span>
                     <span>Add</span>
                   </a>
-                  <a v-on:click="loadImages('smart_insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_SMARTINSERT_LOAD, 'is-static': isButtonFrozen}">
+                  <a v-on:click="loadImages('smart_insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_SMARTINSERT_LOAD, 'is-static': isButtonFrozen}"
+                  title="Adds a new sequence of images from selecting a single image">
                     <span class="icon is-small">
                       <i class="fas fa-plus-circle"></i>
                     </span>
@@ -111,7 +113,9 @@
                   <div class="dualine-label">
                     <span>Insert<br/>after</span>
                   </div>
-                  <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px;"/>
+                  <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px;"
+                  title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving
+                  this field empty is the default operation (append the new sequence after the last one)"/>
                   <a v-on:click="loadImages('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_REPLACE_LOAD, 'is-static': isButtonFrozen}"
                     title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                     <span class="icon is-small">
@@ -119,7 +123,8 @@
                     </span>
                     <span>Load</span>
                   </a>
-                  <a v-on:click="CRTClearAIMG" class="button is-neon-crimson" v-bind:class="{'is-static': isButtonFrozen}">
+                  <a v-on:click="CRTClearAIMG" class="button is-neon-crimson" v-bind:class="{'is-static': isButtonFrozen}"
+                  title="Clears the entire sequence">
                     <span class="icon is-small">
                       <i class="fas fa-trash-alt"></i>
                     </span>
@@ -507,6 +512,7 @@ function loadImages(ops) {
   // ops are between 'replace', 'insert' or 'smart_insert'
   console.log("crt load image with ops:", ops);
   let props = ops == 'smart_insert'? img_dialog_props : imgs_dialog_props;
+  let pymethod = ops == 'smart_insert'? "inspect_smart" : "inspect_many";
   console.log('obtained props', props);
   var options = {
     filters: extension_filters,
@@ -518,12 +524,13 @@ function loadImages(ops) {
     if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;
     toggleLoadButtonAnim(ops, true);
-
-    client.invoke("inspect_many", img_paths, (error, res) => {
+    let paths = ops == 'smart_insert'? img_paths[0] : img_paths;
+    client.invoke(pymethod, paths, (error, res) => {
       if (error) {
         console.error(error);
         data.create_msgbox = error;
         data.CRT_IS_LOADING = false;
+        toggleLoadButtonAnim(ops, false);
       } else {
         console.log(res);
         if (res && res.msg) {

@@ -217,7 +217,7 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
     return out_full_path
 
 
-def create_aimg(image_paths: List[str], out_dir: str, filename: str, crbundle: CriteriaBundle) -> bool:
+def create_aimg(image_paths: List[str], out_dir: str, filename: str, crbundle: CriteriaBundle):
     """ Umbrella generator for creating animated images from a sequence of images """
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]

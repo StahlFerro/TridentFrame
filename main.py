@@ -9,13 +9,13 @@ import time
 
 import zerorpc
 
-from pycore.inspect_ops import inspect_sequence, inspect_general
+from pycore.inspect_ops import inspect_sequence, inspect_general, _inspect_smart
 from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
 from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
 from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
-from pycore.core_funcs.utility import _purge_directory, util_generator
+from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
 from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
 
 
@@ -31,9 +31,16 @@ class API(object):
         return inspect_general(image_path, filter_on=fitler_on)
     
     @zerorpc.stream
-    def inspect_many(self, dir_path):
+    def inspect_many(self, image_paths):
         """Inspect a sequence of images and then return their information"""
-        info = inspect_sequence(dir_path)
+        info = inspect_sequence(image_paths)
+        return info
+
+    @zerorpc.stream
+    def inspect_smart(self, image_path):
+        """Inspect a sequence of images and then return their information"""
+        info = _inspect_smart(image_path)
+        # raise Exception("mama")
         return info
 
     @zerorpc.stream

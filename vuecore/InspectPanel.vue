@@ -21,11 +21,16 @@
                 <tr v-if="key == 'animation_info'" v-bind:key="key">
                   <td colspan="2" class="is-cyan">ANIMATION INFO</td>
                 </tr>
-                <tr v-for="(item, key, index) in item" v-bind:key="key">
+                <tr v-for="(iprop, key, index) in item" v-bind:key="key">
                   <td style="width: 123px;">
-                    <strong><span class="is-white-d">{{ item.label }}</span></strong>
+                    <strong><span class="is-white-d">{{ iprop.label }}</span></strong>
                   </td>  
-                  <td style="max-width: 369px; word-wrap: break-all;">{{ item.value }}</td>
+                  <template v-if="key == 'loop_count' && iprop.value == 0">
+                    <td style="max-width: 369px; word-wrap: break-all;">Infinite</td>
+                  </template>
+                  <template v-else>
+                    <td style="max-width: 369px; word-wrap: break-all;">{{ iprop.value }}</td>
+                  </template>
                 </tr>
               </template>
             </table>
