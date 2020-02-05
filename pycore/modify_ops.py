@@ -38,10 +38,9 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
         "will_generate_delay_info": False,
     })
     frame_paths = yield from split_aimg(img_path, frames_dir, split_criteria)
-    yield {"frames before": frame_paths}
+    yield {"MOD split frames": frame_paths}
     # if mod_criteria.is_reversed:
     #     frames.reverse()
-    yield {"frames after": frame_paths}
     pq_args = pngquant_args(apngopt_criteria)
     if mod_criteria.format == 'PNG' and pq_args:
         yield {"DEBUG": "PNG QUANTIZATION SELECTED"}
@@ -131,7 +130,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
                 target_path = yield from imagemagick_render(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
             # yield {"preview_path": target_path}
         elif criteria.orig_format == "PNG":
-            if criteria.apng_mustsplit_alteration() or pq_args:
+            if criteria.apng_mustsplit_alteration() or pq_args or apngopt_criteria.is_unoptimized:
                 target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
             if aopt_args:
                 yield {"MSGGGGGGGGGGGGG": "AOPT ARGS"}
