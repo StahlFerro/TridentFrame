@@ -5,6 +5,7 @@ from subprocess import PIPE
 from typing import List, Tuple
 
 from PIL import Image
+from apng import APNG
 
 from ..core_funcs.utility import _mk_temp_dir, imager_exec_path, shout_indices
 
@@ -56,8 +57,16 @@ def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0,
         cmd = ' '.join(cmdlist)
         yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
-        result = subprocess.check_output(cmd, shell=True)
-        yield {"out": result}
+        # result = subprocess.check_output(cmd, shell=True)
+        process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        index = 0
+        while True:
+            output = process.stdout.readline()
+            if process.poll() is not None:
+                break
+            if output:
+                yield {"STDOUT": output.decode('utf-8')}
+            index += 1
         # if target_path != out_full_path:
             # target_path = out_full_path
     x = shutil.move(target_path, out_full_path)
@@ -79,13 +88,24 @@ def apngdis_split(target_path: str, seq_rename="", out_dir=""):
         args.append(seq_rename)
     cmd = ' '.join(args)
     yield {"ARGS": cmd}
-    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+    fcount = len(APNG.open(target_path).frames)
+    yield {"fcount": fcount}
+    shout_nums = shout_indices(fcount, 5)
+    yield {"shout_nums": shout_nums}
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    index = 0
     while True:
         output = process.stdout.readline()
+        yield {"STDOUT": output.decode('utf-8')}
+        # err = process.stderr.readline()
         if process.poll() is not None:
             break
-        if output:
-            yield {"msg": output.decode('utf-8')}
+        if output and shout_nums.get(index):
+            yield {"msg": f'Extracting frames... ({shout_nums.get(index)})'}
+        # if err:
+        #     yield {"apngdis stderr": err.decode('utf-8')}
+        index += 1
+            # yield {"msg": output.decode('utf-8')}
     # for line in iter(process.stdout.readline(), b''):
     #     yield {"msg": line.decode('utf-8')}
     fragment_paths = (os.path.abspath(os.path.join(split_dir, f)) for f in os.listdir(split_dir) 
