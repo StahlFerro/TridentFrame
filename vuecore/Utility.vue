@@ -35,7 +35,7 @@ function validateFilename(filename) {
     return {"valid": true, "msg": ""};
   }
   else {
-    return {"valid": false, "msg": `File names must not contain these following characters: < > : " / \ | ? *`};
+    return {"valid": false, "msg": `File names must not contain these following characters: < > : " / \\ | ? *`};
   }
 }
 
