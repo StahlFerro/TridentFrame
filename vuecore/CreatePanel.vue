@@ -147,7 +147,7 @@
                 <div v-show="crt_menuselection == 0">
                   <table class="table crt-control-table" width="100%">
                     <tr>
-                      <td width="16.7%">
+                      <td width="31.67%" colspan="2">
                         <div class="field">
                           <label class="label" title="The name of the GIF/APNG">Name</label>
                           <div class="control">
@@ -155,7 +155,7 @@
                           </div>
                         </div>
                       </td>
-                      <td width="16.7%">
+                      <td width="15.83%">
                         <div class="field">
                           <label class="label" title="The width of the GIF/APNG">Width</label>
                           <div class="control">
@@ -164,7 +164,7 @@
                           </div>
                         </div>
                       </td>
-                      <td width="16.7%">
+                      <td width="15.83%">
                         <div class="field">
                           <label class="label" title="The height of the GIF/APNG">Height</label>
                           <div class="control">
@@ -173,7 +173,7 @@
                           </div>
                         </div>
                       </td>
-                      <td width="16.7%">
+                      <!-- <td width="15.83%">
                         <div class="field">
                           <label class="label" title="Which algorithm to use when resizing the image. Default is Bicubic">Resize Method</label>
                           <div class="control">
@@ -189,8 +189,8 @@
                             </div>
                           </div>
                         </div>
-                      </td>
-                      <td width="16.7%" style="vertical-align: bottom;">
+                      </td> -->
+                      <td width="15.83%" style="vertical-align: bottom;">
                         <label class="checkbox">
                           <input v-model="lock_aspect_ratio" type="checkbox"/>
                           Lock aspect ratio
@@ -201,11 +201,11 @@
                         </template>
                         <template v-else>&nbsp;</template>
                       </td>
-                      <td width="16.7%">
+                      <td width="15.83%">
                       </td>
                     </tr>
                     <tr>
-                      <td>
+                      <td width="15.83%">
                         <div class="field">
                           <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
                           <div class="control">
@@ -213,7 +213,7 @@
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td width="15.83%">
                         <div class="field">
                           <label class="label" title="How many frames will be consecutively displayed per second.">Frame rate</label>
                           <div class="control">
@@ -221,7 +221,7 @@
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td width="15.83%">
                         <div class="field">
                           <label class="label" title="How many times the GIF/APNG will loop. Zero/blank for infinite loop">Loop count</label>
                           <div class="control">
@@ -229,7 +229,7 @@
                           </div>
                         </div>
                       </td>
-                      <td>
+                      <td width="15.83%">
                         <div class="field">
                           <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
                           <div class="control">
@@ -237,7 +237,7 @@
                           </div>
                         </div>
                       </td>
-                      <td style="vertical-align: bottom;">
+                      <td width="15.83%" style="vertical-align: bottom;">
                         <label class="checkbox" title="Flip the image horizontally">
                           <input v-model="flip_x" type="checkbox" />
                           Flip X
@@ -248,7 +248,7 @@
                           Flip Y
                         </label>
                       </td>
-                      <td style="vertical-align: bottom;">
+                      <td width="15.83%" style="vertical-align: bottom;">
                         <label class="checkbox" title="Preserve transparent pixels">
                           <input v-model="is_transparent" type="checkbox" />
                           Preserve Alpha
@@ -391,6 +391,7 @@ var data = {
   flip_x: false,
   flip_y: false,
   rotation: 0,
+  
   format: "GIF",
   outdir: "",
   preview_path: "",
