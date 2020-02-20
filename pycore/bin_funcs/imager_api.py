@@ -129,7 +129,7 @@ def pngquant_render(pq_args, image_paths: List[str], optional_out_path=""):
         if shout_nums.get(index):
             yield {"msg": f'Quantizing PNG... ({shout_nums.get(index)})'}
 
-        args = [pngquant_exec, ' '.join([arg[0] for arg in pq_args]), ipath, "--force", "--output", target_path]
+        args = [pngquant_exec, ' '.join([arg[0] for arg in pq_args]), f'"{ipath}"', "--force", "--output", f'"{target_path}"']
         cmd = ' '.join(args)
         # yield {"cmd": cmd}
         result = subprocess.check_output(cmd, shell=True)
