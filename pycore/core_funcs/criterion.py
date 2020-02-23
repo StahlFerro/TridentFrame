@@ -11,13 +11,29 @@ class CreationCriteria:
         self.transparent: bool = vals['is_transparent']
         self.flip_h: bool = vals['flip_x']
         self.flip_v: bool = vals['flip_y']
-        self.resize_width = int(vals['width'] or 1)
-        self.resize_height = int(vals['height'] or 1)
+        self.resize_width = int(vals['width'] or 0)
+        self.resize_height = int(vals['height'] or 0)
         self.resize_method = vals.get('resize_method', "BICUBIC")
         self.loop_count = int(vals['loop_count'] or 0)
         self.start_frame = (int(vals['start_frame'] or 0) or 1)
         self.start_frame = self.start_frame - 1 if self.start_frame >= 0 else self.start_frame
         self.rotation = int(vals['rotation'] or 0)
+        self.ensure_filled()
+
+    def ensure_filled(self):
+        empty_fields = []
+        if not self.name:
+            empty_fields.append("name")
+        # if not self.resize_width or self.resize_width == 0:
+        #     empty_fields.append("width")
+        # if not self.resize_height or self.resize_height == 0:
+        #     empty_fields.append("height")
+        # if not self.fps:
+        #     empty_fields.append("FPS")
+        # if not self.delay:
+        #     empty_fields.append("delay")
+        if empty_fields:
+            raise Exception(f"Please fill in the {', '.join(empty_fields)} field(s)!")
     
     # def transform(self, resize_width, resize_height, flip_h, flip_v):
     #     try:
@@ -88,6 +104,12 @@ class ModificationCriteria:
         # self.apng_is_lossy = json_vals['apng_is_lossy']
         # self.apng_lossy_value = int(json_vals.get('apng_lossy_value') or 0)
         # self.apng_is_unoptimized = json_vals['apng_is_unoptimized']
+        self.ensure_filled()
+
+    def ensure_filled(self):
+        empty_fields = []
+        if not self.name:
+            empty_fields.append("name")
 
     def renamed(self) -> bool:
         return self.orig_base_name != self.name

@@ -17,7 +17,8 @@ def gifsicle_render(sicle_args: List[Tuple[str, str]], target_path: str, out_ful
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
         cmdlist = [gifsicle_path, arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
-        yield {"msg": f"[{index}/{total_ops}] {description}"}
+        yield {"msg": f"{description}"}
+        # yield {"msg": f"[{index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
         subprocess.run(cmd, shell=True)
         if target_path != out_full_path:
@@ -32,7 +33,8 @@ def imagemagick_render(magick_args: List[Tuple[str, str]], target_path: str, out
         yield {"msg": f"index {index}, arg {arg}, description: {description}"}
         cmdlist = [imagemagick_path, arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
-        yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
+        yield {"msg": f"{description}"}
+        # yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
         subprocess.run(cmd, shell=True)
         if target_path != out_full_path:
@@ -55,7 +57,8 @@ def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0,
         cmdlist = [opt_exec_path, arg, f'"{target_rel_path}"', f'"{target_rel_path}"']
         # raise Exception(cmdlist, out_full_path)
         cmd = ' '.join(cmdlist)
-        yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
+        yield {"msg": f"{description}"}
+        # yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
         yield {"cmd": cmd}
         # result = subprocess.check_output(cmd, shell=True)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
