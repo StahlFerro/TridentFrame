@@ -97,7 +97,7 @@
               <div class="level-item has-text-centered">
                 <div>
                   <a v-on:click="loadImages('insert')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_INSERT_LOAD, 'is-static': isButtonFrozen}"
-                  title="Adds a new sequence of images">
+                  title="Adds one or more images">
                     <span class="icon is-small">
                       <i class="fas fa-plus"></i>
                     </span>
@@ -114,8 +114,7 @@
                     <span>Insert<br/>after</span>
                   </div>
                   <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px;"
-                  title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving
-                  this field empty is the default operation (append the new sequence after the last one)"/>
+                  title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving this field empty is the default operation (append the new sequence after the last one)"/>
                   <a v-on:click="loadImages('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': CRT_REPLACE_LOAD, 'is-static': isButtonFrozen}"
                     title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                     <span class="icon is-small">

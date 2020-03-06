@@ -518,8 +518,8 @@ label.label.is-tight:not(:last-child) {
         table-layout: fixed !important;
     }
     tr, td {
-        border-bottom: 2px solid $white-d !important;
-        border-right: 2px solid $white-d !important;
+        border-bottom: 1px solid $dark-9 !important;
+        border-right: 1px solid $dark-9!important;
     }
     td {
         padding-top: 2px;
@@ -531,7 +531,9 @@ label.label.is-tight:not(:last-child) {
         border-collapse: collapse !important;
     }
 }
-
+// .grey-bordered-right-only {
+//     border-right: 1px solid $dark-9 !important
+// }
 
 
 

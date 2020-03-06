@@ -7552,8 +7552,8 @@ label.label.is-tight:not(:last-child) {
   table-layout: fixed !important; }
 
 .ins-info-table tr, .ins-info-table td {
-  border-bottom: 2px solid #cccccc !important;
-  border-right: 2px solid #cccccc !important; }
+  border-bottom: 1px solid #93a0ad !important;
+  border-right: 1px solid #93a0ad !important; }
 
 .ins-info-table td {
   padding-top: 2px;
