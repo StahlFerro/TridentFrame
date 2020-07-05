@@ -1,4 +1,4 @@
-# Developer notes
+# Electron Dilemma
 
 Yes I know, it is currently using Electron. When I was getting into frontend development, I saw Electron as that shiny swiss-army knife that has the right tools for me to develop cross-platform apps using web technologies. It didn't take long enough for me to realize that the swiss-army knife itself already weighs a few kilograms.
 
