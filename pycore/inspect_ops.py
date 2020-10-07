@@ -10,6 +10,7 @@ from PIL import Image, ExifTags, ImageFile
 # from PIL.GifImagePlugin import GifImageFile
 Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
+import json
 
 from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
@@ -108,7 +109,7 @@ def _inspect_simg(image):
     transparency = im.info.get('transparency', "No")
     # alpha = im.getchannel('A')
     comment = im.info.get('comment')
-    img_metadata = {
+    img_metadata = json.dumps({
         "general_info": {
             "name": {"value": filename, "label": "Name"},
             "base_fname": {"value": base_fname, "label": "Base Name"},
@@ -125,7 +126,7 @@ def _inspect_simg(image):
             "exif": {"value": exif, "label": "EXIF"},
             "is_animated": {"value": False, "label": "Is Animated"},
         }
-    }
+    })
     im.close()
     return img_metadata
 
@@ -273,7 +274,7 @@ def inspect_sequence(image_paths):
     # im = Image.open(static_img_paths[0])
     # width, height = im.size
     # im.close()
-    print({
+    print(json.dumps({
         "data": {
             "name": sequence_info[0]['base_fname']['value'],
             "total": sequence_count,
@@ -283,7 +284,7 @@ def inspect_sequence(image_paths):
             "width": sequence_info[0]['width']['value'],
             "height": sequence_info[0]['height']['value'],
         }
-    })
+    }))
     print({"msg": f"{sequence_count} images loaded!"})
 
 

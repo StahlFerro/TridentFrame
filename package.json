@@ -102,6 +102,7 @@
     ]
   },
   "dependencies": {
+    "python-shell": "^2.0.2",
     "vue-fragment": "^1.5.1"
   },
   "devDependencies": {

@@ -52,7 +52,7 @@ const createWindow = () => {
 }
 
 app.on('ready', () => {
-    createPyProc();
+    // createPyProc();
     createWindow();
 });
 app.on('window-all-closed', () => {
