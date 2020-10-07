@@ -257,7 +257,7 @@ def inspect_sequence(image_paths):
     shout_nums = shout_indices(len(abs_image_paths), perc_skip)
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
-            yield {"msg": f'Loading images... ({shout_nums.get(index)})'}
+            print({"msg": f'Loading images... ({shout_nums.get(index)})'})
         info = inspect_general(path, filter_on="static", skip=True)
         if info:
             gen_info = info['general_info']
@@ -273,7 +273,7 @@ def inspect_sequence(image_paths):
     # im = Image.open(static_img_paths[0])
     # width, height = im.size
     # im.close()
-    yield {
+    print({
         "data": {
             "name": sequence_info[0]['base_fname']['value'],
             "total": sequence_count,
@@ -283,8 +283,8 @@ def inspect_sequence(image_paths):
             "width": sequence_info[0]['width']['value'],
             "height": sequence_info[0]['height']['value'],
         }
-    }
-    yield {"msg": f"{sequence_count} images loaded!"}
+    })
+    print({"msg": f"{sequence_count} images loaded!"})
 
 
 def _inspect_smart(image_path):
@@ -292,7 +292,7 @@ def _inspect_smart(image_path):
     imgdir = os.path.dirname(image_path)
     filename, ext = os.path.splitext(os.path.basename(image_path))
     base_fname = sequence_nameget(filename)
-    yield {"basefname": base_fname}
+    print({"basefname": base_fname})
     possible_sequence = [os.path.abspath(os.path.join(imgdir, f)) for f in os.listdir(imgdir) if base_fname in os.path.splitext(f)[0]]
-    yield {"possible": possible_sequence}
-    yield from inspect_sequence(possible_sequence)
+    # print({"possible": possible_sequence})
+    return inspect_sequence(possible_sequence)
