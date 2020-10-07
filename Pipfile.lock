@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "60bc79c12ddfbd7ec6f820d5cc82510701b0defb5aae5cb9db8b2e9e3574af34"
+            "sha256": "e4629b41cc31a2dabbee5daf6996109df8ab8708a5f0b631e488997eb82f18a5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -78,6 +78,14 @@
             ],
             "index": "pypi",
             "version": "==1.13.2"
+        },
+        "click": {
+            "hashes": [
+                "sha256:d2b5255c7c6349bc1bd1e59e08cd12acbbd63ce649f2588755783aa94dfb6b1a",
+                "sha256:dacca89f4bfadd5de3d7489b7c8a566eee0d3676333fbb50030263894c38c0dc"
+            ],
+            "index": "pypi",
+            "version": "==7.1.2"
         },
         "colorama": {
             "hashes": [
@@ -372,14 +380,6 @@
                 "sha256:b62ffa81fb85f4332a4f609cab4ac40709470da05643a082ec1eb88e6d9b97d7"
             ],
             "version": "==1.12.1"
-        },
-        "zerorpc": {
-            "hashes": [
-                "sha256:0a91ab78db756aec25d5c7c326f8d0dcdf852144acba2cced2cfb2e736c51628",
-                "sha256:d2ee247a566fc703f29c277d767f6f61f1e12f76d0402faea4bd815f32cbf37f"
-            ],
-            "index": "pypi",
-            "version": "==0.6.3"
         }
     },
     "develop": {}
