@@ -19,7 +19,7 @@ pyinstaller = "==3.6"
 pywin32-ctypes = "==0.2.0"
 pyzmq = "==18.1.1"
 zerorpc = "==0.6.3"
-Pillow = "==6.2.1"
+Pillow = ">=7.1.0"
 pylint = "*"
 
 [requires]
