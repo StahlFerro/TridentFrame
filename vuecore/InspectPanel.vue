@@ -77,8 +77,11 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+// const { client } = require("./Client.vue");
 const { randString } = require("./Utility.vue");
+const { PythonShell } = require('python-shell');
+
+
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif", "jpg"] }];
 let file_dialog_props = ["openfile"];
@@ -91,6 +94,11 @@ var data = {
     INS_IS_INSPECTING: false,
     info_data: "",
 };
+// pyshell.send(`inspect-one --help`)
+// pyshell.on('message', (message) => {
+//   console.log("SuCCESS MESSAGE!!!!!!!!!!!!!!!!!!!");
+//   console.log(message);
+// });
 function loadImage() {
   var options = {
     filters: extension_filters,
@@ -102,18 +110,50 @@ function loadImage() {
       return;
     }
     data.INS_IS_INSPECTING = true;
-    client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
+    // PythonShell.run('main.py', options, )
+    console.log(chosen_path);  
+
+    // let pyshell = new PythonShell('main.py');
+    // pyshell.send(`inspect-one`)
+    // pyshell.on('message', function (message) {
+    //   console.log(message);
+    // });
+
+    let pyOptions = {
+      mode: 'text',
+      pythonPath: 'python.exe',
+      pythonOptions: ['-u'], // get print results in real-time
+      // scriptPath: 'main.py',
+      args: ['inspect-one', chosen_path[0]]
+    };
+    PythonShell.run("main.py", pyOptions, function(error, res) {
       if (error) {
         console.error(error);
         data.INS_IS_INSPECTING = false;
       }
       else {
+        res = JSON.parse(res[0]);
+        console.log("RES", res);
         data.info_data = res;
         data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
         console.log(res);
         data.INS_IS_INSPECTING = false;
       }
-    })
+    });
+
+    console.log('haha');
+    // client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
+    //   if (error) {
+    //     console.error(error);
+    //     data.INS_IS_INSPECTING = false;
+    //   }
+    //   else {
+    //     data.info_data = res;
+    //     data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
+    //     console.log(res);
+    //     data.INS_IS_INSPECTING = false;
+    //   }
+    // })
   });
 }
 function clearImage() {
@@ -129,9 +169,9 @@ export default {
     return data;
   },
   methods: {
-      loadImage: loadImage,
-      clearImage: clearImage,
-      toggleCheckerBG: toggleCheckerBG,
+    loadImage: loadImage,
+    clearImage: clearImage,
+    toggleCheckerBG: toggleCheckerBG,
   }
 };
 
