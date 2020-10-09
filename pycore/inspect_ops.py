@@ -7,6 +7,7 @@ from typing import List, Dict
 from urllib.parse import urlparse
 
 from PIL import Image, ExifTags, ImageFile
+from PIL.PngImagePlugin import PngImageFile, PngInfo
 # from PIL.GifImagePlugin import GifImageFile
 Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
@@ -98,6 +99,13 @@ def _inspect_simg(image):
                 for k, v in exif_raw.items()
                 if k in ExifTags.TAGS
             }
+    # print(json.dumps({"imtext": json.dumps(str(im))}))
+    # print(json.dumps({"imtext": im.text}))
+    # print(im.text)
+    # if fmt == "PNG":
+    #     pngimg = PngImageFile(im.path)
+    #     pngtext = pngimg.text
+    # print(str(pngtext))
     width, height = im.size
     path = im.filename
     filename = str(os.path.basename(path))

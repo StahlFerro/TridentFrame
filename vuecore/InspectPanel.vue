@@ -79,7 +79,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
 const { randString } = require("./Utility.vue");
-const { PythonShell } = require('python-shell');
+const { getPyShell } = require("./Client.vue");
 
 
 
@@ -88,11 +88,11 @@ let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 var data = {
-    img_path: "",
-    checkerbg_active: false,
-    isButtonFrozen: false,
-    INS_IS_INSPECTING: false,
-    info_data: "",
+  img_path: "",
+  checkerbg_active: false,
+  isButtonFrozen: false,
+  INS_IS_INSPECTING: false,
+  info_data: "",
 };
 // pyshell.send(`inspect-one --help`)
 // pyshell.on('message', (message) => {
@@ -119,29 +119,22 @@ function loadImage() {
     //   console.log(message);
     // });
 
-    let pyOptions = {
-      mode: 'text',
-      pythonPath: 'python.exe',
-      pythonOptions: ['-u'], // get print results in real-time
-      // scriptPath: 'main.py',
-      args: ['inspect-one', chosen_path[0]]
-    };
-    PythonShell.run("main.py", pyOptions, function(error, res) {
-      if (error) {
-        console.error(error);
-        data.INS_IS_INSPECTING = false;
-      }
-      else {
-        res = JSON.parse(res[0]);
-        console.log("RES", res);
+    let pyshell = getPyShell(["inspect-one", chosen_path[0]])
+    pyshell.on('message', (res) => {
+      console.log({"RES": res});
+        res = JSON.parse(res);
+        console.log({"JSONRES": res});
         data.info_data = res;
-        data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
+        if (res.general_info || res.animation_info) {
+          data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
+        }
         console.log(res);
         data.INS_IS_INSPECTING = false;
-      }
+    });    
+    pyshell.end(function(err) {
+        if (err) throw err;
+        console.log('End Script');
     });
-
-    console.log('haha');
     // client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
     //   if (error) {
     //     console.error(error);
