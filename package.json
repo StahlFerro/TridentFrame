@@ -113,7 +113,7 @@
     "bulma": "^0.7.5",
     "cross-env": "^6.0.3",
     "css-loader": "^3.2.0",
-    "electron": "^6.0.9",
+    "electron": "^7.2.4",
     "electron-builder": "^22.1.0",
     "electron-rebuild": "^1.8.6",
     "file-loader": "^4.2.0",
