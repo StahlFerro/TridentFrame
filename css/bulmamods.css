@@ -7915,9 +7915,6 @@ body {
   -o-user-select: none; }
 
 table.root-table {
-  width: 950px;
-  height: 700px;
-  table-layout: fixed;
   margin: 0px !important; }
 
 thead.frame-title-bar {
@@ -8047,10 +8044,51 @@ a.exit-button {
 
 /* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
 div.left-menu {
-  overflow: auto; }
+  height: 100%;
+  overflow: scroll; }
 
 div.left-menu::-webkit-scrollbar {
   width: 0px; }
+
+.root-ancestor {
+  display: flex; }
+
+.root-container {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex: 1;
+  height: 100vh;
+  z-index: 0; }
+  .root-container .root-panel {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: 600px;
+    order: 2;
+    overflow-x: hidden; }
+  .root-container .root-sidebar {
+    flex-basis: 100px;
+    background: #3D4F58;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin: 0;
+    overflow: hidden;
+    transition: flex-basis 400ms ease;
+    height: 100vh; }
+
+.root-footer {
+  position: relative;
+  user-select: auto;
+  width: 100%;
+  height: 24px;
+  max-height: 800px;
+  min-height: 24px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  background-color: #98e7ff; }
 
 div.crt-left-menu {
   overflow: auto; }
@@ -8356,6 +8394,38 @@ table.spr-control-table label {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%); }
+
+div.root-panel {
+  height: 100%; }
+  div.root-panel div.root-left {
+    float: left;
+    width: 10%;
+    background: #34caf8;
+    height: 100%;
+    overflow: scroll; }
+  div.root-panel div.root-right {
+    float: left;
+    width: 90%;
+    background: #e03d3d;
+    height: 100%;
+    overflow: scroll; }
+
+.tile.trident-tile {
+  padding: 3px; }
+
+.tile {
+  margin: 0 !important;
+  padding: 3px !important;
+  background-color: transparent !important; }
+  .tile .tile.is-child {
+    border: 2px solid #cccccc;
+    border-radius: 0px !important;
+    padding: 4px !important; }
+  .tile article.tile .figure {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%; }
 
 .ins-img-container {
   width: 100%;

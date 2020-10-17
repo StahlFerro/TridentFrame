@@ -33,9 +33,8 @@
     </thead> -->
     <!-- <tbody>
       <tr> -->
-      <div class="hero is-fullheight">
-        <div class="columns" style="height: 100%;">
-          <div class="column is-right-paddingless is-2">
+        <div class="root-container">
+          <div class="root-sidebar">
             <div class="left-menu">
               <aside class="menu has-text-centered" style="margin: 0;">
                 <ul class="menu-list left-menu">
@@ -151,21 +150,20 @@
               </aside>
             </div>
           </div>
-          <div class="column is-left-paddingless">
+          <div class="root-panel">
             <div>
-            <CreatePanel v-show="menuselection == 'create_panel'" />
-            <SplitPanel v-show="menuselection == 'split_panel'" />
-            <ModifyPanel v-show="menuselection == 'modify_panel'" />
-            <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
-            <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
-            <InspectPanel v-show="menuselection == 'inspect_panel'" />
-            <TilesPanel v-show="menuselection == 'tiles_panel'" />
-            <SettingsPanel v-show="menuselection == 'settings_panel'" />
-            <AboutPanel v-show="menuselection == 'about_panel'" />
+              <CreatePanel v-show="menuselection == 'create_panel'" />
+              <SplitPanel v-show="menuselection == 'split_panel'" />
+              <ModifyPanel v-show="menuselection == 'modify_panel'" />
+              <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
+              <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
+              <InspectPanel v-show="menuselection == 'inspect_panel'" />
+              <TilesPanel v-show="menuselection == 'tiles_panel'" />
+              <SettingsPanel v-show="menuselection == 'settings_panel'" />
+              <AboutPanel v-show="menuselection == 'about_panel'" />
             </div>
           </div>
-        </div>  
-      </div>
+        </div>
 
         <!-- </td>
       </tr>
