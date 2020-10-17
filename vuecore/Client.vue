@@ -8,6 +8,7 @@ let pyOptions = {
 };
 function getPyShell(args) {
   pyOptions.args = args;
+  console.log(args);
   return new PythonShell("main.py", pyOptions);
 }
 module.exports = {

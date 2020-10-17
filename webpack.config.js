@@ -29,15 +29,21 @@ module.exports = env => {
         }, 'css-loader',]},
         {
           test: /\.(png|svg|jpg|gif)$/,
-          use: 'file-loader',
+          loader: 'file-loader',
+          options: {
+            esModule: false,
+            // publicPath: '../',
+          },
+
         },
         { test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/, use: [{
           loader: 'file-loader',
           options: {
             name: '[name].[ext]',
             outputPath: 'webfonts/',
+            esModule: false,
             // publicPath: '../',
-          }
+          },
         }]},
         { test: /\.node$/, loader: node_loader, }
         // { test: /\.node$/, use: 'node-loader' },
@@ -59,6 +65,7 @@ module.exports = env => {
     ],
     output: {
       filename: 'bundle.js',
+      publicPath: "/",
       // path: path.resolve(__dirname, 'release/html'),
     },
   };

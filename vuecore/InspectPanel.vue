@@ -1,17 +1,16 @@
 <template>
   <div id="inspect_panel" class="container" style="padding:10px;">
-    <table class="table is-borderless" style="padding: 5px;" width="100%" height="620px;">
+    
+    <table class="table is-borderless" style="padding: 5px;" width="100%" height="700px">
       <tr>
-        <td class="silver-bordered force-center is-paddingless" 
-            style="width: 320px; height: 320px;"
+        <td class="silver-bordered force-center is-paddingless" width="500px" height="70%"
             v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
           <div class="ins-img-container is-paddingless is-marginless">
             <img v-bind:src="img_path"/>
           </div>
         </td>
-        <td class="is-paddingless silver-bordered"
-            style="width: 500px; height: 320px;" rowspan="2">
-          <div class="is-paddingless is-marginless" style="height: 620px; overflow: auto;">
+        <td class="is-paddingless silver-bordered" rowspan="2">
+          <div class="is-paddingless is-marginless" style="height: 100%; overflow: auto;">
             <table class="table ins-info-table is-paddingless" width="100%">
               <template v-for="(item, key) in info_data">
                 <!-- <span v-bind:key="key"/> -->
@@ -39,7 +38,7 @@
       </tr>
 
       <tr>
-        <td class="is-hpaddingless">
+        <td class="is-hpaddingless" height="100px;">
           <a
             v-on:click="loadImage"
             class="button is-neon-emerald"
@@ -104,14 +103,15 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
-    console.log(`chosen path: ${chosen_path}`);
-    if (chosen_path === undefined || chosen_path.length == 0) {
+  dialog.showOpenDialog(mainWindow, options).then(result => {
+    let chosen_paths = result.filePaths;
+    console.log(`chosen path: ${chosen_paths}`);
+    if (chosen_paths === undefined || chosen_paths.length == 0) {
       return;
     }
     data.INS_IS_INSPECTING = true;
     // PythonShell.run('main.py', options, )
-    console.log(chosen_path);  
+    console.log(chosen_paths);  
 
     // let pyshell = new PythonShell('main.py');
     // pyshell.send(`inspect-one`)
@@ -119,7 +119,7 @@ function loadImage() {
     //   console.log(message);
     // });
 
-    let pyshell = getPyShell(["inspect-one", chosen_path[0]])
+    let pyshell = getPyShell(["inspect-one", chosen_paths[0]])
     pyshell.on('message', (res) => {
       console.log({"RES": res});
         res = JSON.parse(res);
@@ -147,7 +147,9 @@ function loadImage() {
     //     data.INS_IS_INSPECTING = false;
     //   }
     // })
-  });
+  }).catch(err => {
+  console.log(err)
+  })
 }
 function clearImage() {
   data.img_path = "";

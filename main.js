@@ -13,14 +13,14 @@ let mainWindow = null
 const createWindow = () => {
     console.log("Creating window...");
     mainWindow = new BrowserWindow({
-        width: 950, height: 700,
-        minWidth: 950, minHeight: 700,
-        maxWidth: 950, maxHeight: 700,
+        width: 1000, height: 750,
+        minWidth: 1000, minHeight: 750,
+        // maxWidth: 1000, maxHeight: 750,
         center: true, 
-        frame: false,
+        // frame: false,
         darkTheme: true,
         fullscreen: false,
-        resizable: false,
+        // resizable: false,
         icon: path.join(__dirname, 'imgs/TridentFrame_logo_256x256.ico'),
         webPreferences: {
             webSecurity: false,

@@ -2,94 +2,102 @@
   <div id="create_panel" class="container" style="padding:10px;">
     <table class="table is-borderless" style="padding: 5px;" width="100%">
       <tr>
-        <td
-          id="CRT_sequence_cell"
-          class="silver-bordered is-paddingless"
-          style="width: 500px; height: 320px;"
-        >
-          <table class="sequence-grid is-paddingless" width="100%">
-            <tbody>
-              <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
-                <!-- <template v-for="(item, i) in quintjson">
-                  <template v-if="item == '_CONTROL_CELL'"> -->
-                    <!-- <td v-bind:key="i" class="force-center">
-                      <table class="intracell-table" width="100%">
-                        <tr>
-                          <td width="50%" class="">
-                            <a v-on:click="loadImages('insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
-                               title="Add Images. Select one or more images to be added into this sequence">
-                              <span class="icon is-small">
-                                <i class="fas fa-image"></i>
+        <td class="is-paddingless" colspan="2">
+          <table class="table is-borderless" width="100%">
+            <tr>
+            <td
+              id="CRT_sequence_cell"
+              class="silver-bordered is-paddingless"
+            >
+            <div style="min-height:330px;">
+              <table class="sequence-grid is-paddingless" width="100%">
+                <tbody>
+                  <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
+                    <!-- <template v-for="(item, i) in quintjson">
+                      <template v-if="item == '_CONTROL_CELL'"> -->
+                        <!-- <td v-bind:key="i" class="force-center">
+                          <table class="intracell-table" width="100%">
+                            <tr>
+                              <td width="50%" class="">
+                                <a v-on:click="loadImages('insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
+                                  title="Add Images. Select one or more images to be added into this sequence">
+                                  <span class="icon is-small">
+                                    <i class="fas fa-image"></i>
+                                  </span>
+                                </a>
+                              </td>
+                              <td class="">
+                                <a v-on:click="loadImages('smart_insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
+                                  title="Smart Add Image. Select one images and then let TridentFrame add the rest of the sequence by looking at images with the same name">
+                                  <span class="icon is-small">
+                                    <i class="fas fa-images"></i>
+                                  </span>
+                                </a>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td width="100%" colspan="2" class="">
+                                <label class="label" title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)">
+                                  Insert after</label>
+                                <input v-model="insert_index" class="input is-block-grey" type="number" v-on:keydown="numConstrain($event, true, true)" placeholder="Frame no." min="0"
+                                title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)"/>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </template>
+                      <template v-else> -->
+                        <td v-for="(item, i) in quintjson" v-bind:key="i" v-bind:title="
+                              `Name: ${item.name.value}\n` + 
+                              `Dimensions: ${item.width.value} x ${item.height.value}\n` +
+                              `Format: ${item.format.value}\n` +
+                              `Mode: ${item.color_mode.value}\n` +
+                              `Comment: ${item.comments.value || 'None'}`
+                            ">
+                          <div class="seqdiv">
+                            <!-- <span>{{ i }}</span><br/> -->
+                            <img v-bind:src="item.absolute_url.value"/>
+                            <span class="index-anchor">
+                              {{ parseInt(row) * 5 + parseInt(i) + 1 }}
+                            </span>
+                            <a class="del-anchor" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                              <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
+                                <i class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
                               </span>
                             </a>
-                          </td>
-                          <td class="">
-                            <a v-on:click="loadImages('smart_insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
-                              title="Smart Add Image. Select one images and then let TridentFrame add the rest of the sequence by looking at images with the same name">
-                              <span class="icon is-small">
-                                <i class="fas fa-images"></i>
-                              </span>
-                            </a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td width="100%" colspan="2" class="">
-                            <label class="label" title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)">
-                              Insert after</label>
-                            <input v-model="insert_index" class="input is-block-grey" type="number" v-on:keydown="numConstrain($event, true, true)" placeholder="Frame no." min="0"
-                             title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)"/>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </template>
-                  <template v-else> -->
-                    <td v-for="(item, i) in quintjson" v-bind:key="i" v-bind:title="
-                          `Name: ${item.name.value}\n` + 
-                          `Dimensions: ${item.width.value} x ${item.height.value}\n` +
-                          `Format: ${item.format.value}\n` +
-                          `Mode: ${item.color_mode.value}\n` +
-                          `Comment: ${item.comments.value || 'None'}`
-                        ">
-                      <div class="seqdiv">
-                        <!-- <span>{{ i }}</span><br/> -->
-                        <img v-bind:src="item.absolute_url.value"/>
-                        <span class="index-anchor">
-                          {{ parseInt(row) * 5 + parseInt(i) + 1 }}
-                        </span>
-                        <a class="del-anchor" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
-                          <span class="icon" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))">
-                            <i class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"></i>
-                          </span>
-                        </a>
-                      </div>
-                    </td>
-                  <!-- </template>
-                </template> -->
+                          </div>
+                        </td>
+                      <!-- </template>
+                    </template> -->
 
-              </tr>
-            </tbody>
-          </table>
-        </td>
-        <td
-          id="create_aimg_cell"
-          class="silver-bordered force-center is-paddingless"
-          style="width: 320px; height: 320px;"
-          v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
-          <!-- <div v-if="preview_info" class="crt-aimg-container"> -->
-            <div v-if="preview_info" class="crt-aimg-container" v-bind:title="
-              `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
-              `File size: ${preview_info.general_info.fsize_hr.value}\n` +
-              `FPS: ${preview_info.animation_info.fps.value}\n` +
-              `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
-              `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
-              `Format: ${preview_info.general_info.format.value}`
-            ">
-              <img v-bind:src="preview_path_cb"/>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-          <!-- </div> -->
+            </td>
+            <td
+              id="create_aimg_cell"
+              class="silver-bordered force-center is-paddingless"
+              v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
+              <!-- <div v-if="preview_info" class="crt-aimg-container"> -->
+                <div v-if="preview_info" class="crt-aimg-container" v-bind:title="
+                  `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
+                  `File size: ${preview_info.general_info.fsize_hr.value}\n` +
+                  `FPS: ${preview_info.animation_info.fps.value}\n` +
+                  `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
+                  `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
+                  `Format: ${preview_info.general_info.format.value}`
+                ">
+                  <img v-bind:src="preview_path_cb"/>
+                </div>
+              <!-- </div> -->
+            </td>
+          </tr>
+        </table>
         </td>
       </tr>
+
+
       <tr>
         <td class="is-hpaddingless">
           <nav class="level">
@@ -518,7 +526,7 @@ function loadImages(ops) {
     properties: props,
   }
 
-  dialog.showOpenDialog(mainWindow, options, (img_paths) => {
+  dialog.showOpenDialog(mainWindow, options).then(img_paths => {
     console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) { return; }
     data.CRT_IS_LOADING = true;

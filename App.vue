@@ -1,7 +1,7 @@
 <template>
-  <table class="table root-table is-borderless" v-on:click="whatClicked($event)">
-    <thead>
-      <tr class="has-background-dark-2 frame-title-bar" style="height: 30px;">
+  <!-- <table class="table root-table is-borderless" v-on:click="whatClicked($event)">
+    <thead> -->
+      <!-- <tr class="has-background-dark-2 frame-title-bar">
         <td width="10%" class="is-paddingless" style="vertical-align: middle;">
           <span style="padding-left: 10px;" class="is-white-d">TridentFrame</span>
         </td>
@@ -15,6 +15,11 @@
                     <i class="far fa-window-minimize fa-inverse"></i>
                   </span>
                 </a>
+                <a v-on:click="maximizeWindow" class="exit-button">
+                  <span class="icon is-medium">
+                    <i class="fas fa-window-maximize fa-inverse"></i>
+                  </span>
+                </a>
                 <a v-on:click="exitApp" class="exit-button">
                   <span class="icon is-medium">
                     <i class="fas fa-times fa-inverse"></i>
@@ -25,126 +30,147 @@
           </nav>
         </td>
       </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td width="10%" id="left_menu_panel" class="has-background-dark-2">
-          <div class="left-menu">
-            <aside class="menu has-text-centered" style="margin: 0;">
-              <ul class="menu-list left-menu">
-                <li
-                  id="create_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'create_panel'}"
-                >
-                  <a id="create_menu" v-on:click="menuselection = 'create_panel'">
-                    <span class="icon is-large">
-                      <i class="fas fa-image fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">Create AIMG</p>
-                  </a>
-                </li>
-                <li
-                  id="split_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'split_panel'}"
-                >
-                  <a id="split_menu" v-on:click="menuselection = 'split_panel'">
-                    <span class="icon is-large">
-                      <i class="far fa-images fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">Split AIMG</p>
-                  </a>
-                </li>
-                <li
-                  id="modify_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'modify_panel'}"
-                >
-                  <a id="modify_menu" v-on:click="menuselection = 'modify_panel'">
-                    <span class="icon is-large">
-                      <i class="fas fa-exchange-alt fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">Modify AIMG</p>
-                  </a>
-                </li>
-                <li
-                  id="buildsprite_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'buildspritesheet_panel'}"
-                >
-                  <a id="buildsprite_menu" v-on:click="menuselection = 'buildspritesheet_panel'">
-                    <span class="icon is-large">
-                      <i class="fas fa-border-all fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">Build Spritesheet</p>
-                  </a>
-                </li>
-                <li
-                  id="slicesprite_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'slicespritesheet_panel'}"
-                >
-                  <a id="slicesprite_menu" v-on:click="menuselection = 'slicespritesheet_panel'">
-                    <span class="icon is-large">
-                      <i class="fas fa-th fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">Slice Spritesheet</p>
-                  </a>
-                </li>
-                <li
-                  id="inspect_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'inspect_panel'}"
-                >
-                  <a id="inspect_menu" v-on:click="menuselection = 'inspect_panel'">
-                    <span class="icon is-large">
-                      <i class="fas fa-search fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">Inspect Image</p>
-                  </a>
-                </li>
-                <li
-                  id="settings_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'settings_panel'}"
-                >
-                  <a id="settings_menu" v-on:click="menuselection = 'settings_panel'">
-                    <span class="icon is-large">
-                      <i class="fas fa-cog fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">Settings</p>
-                  </a>
-                </li>
-                <li
-                  id="about_box"
-                  class="menu-item"
-                  v-bind:class="{'is-selected': menuselection == 'about_panel'}"
-                >
-                  <a id="about_menu" v-on:click="menuselection = 'about_panel'">
-                    <span class="icon is-large">
-                      <i class="fas fa-info-circle fa-2x fa-inverse"></i>
-                    </span>
-                    <p class="is-white-d">About</p>
-                  </a>
-                </li>
-              </ul>
-            </aside>
+    </thead> -->
+    <!-- <tbody>
+      <tr> -->
+      <div class="hero is-fullheight">
+        <div class="columns" style="height: 100%;">
+          <div class="column is-right-paddingless is-2">
+            <div class="left-menu">
+              <aside class="menu has-text-centered" style="margin: 0;">
+                <ul class="menu-list left-menu">
+                  <li
+                    id="create_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'create_panel'}"
+                  >
+                    <a id="create_menu" v-on:click="menuselection = 'create_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-image fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Create AIMG</p>
+                    </a>
+                  </li>
+                  <li
+                    id="split_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'split_panel'}"
+                  >
+                    <a id="split_menu" v-on:click="menuselection = 'split_panel'">
+                      <span class="icon is-large">
+                        <i class="far fa-images fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Split AIMG</p>
+                    </a>
+                  </li>
+                  <li
+                    id="modify_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'modify_panel'}"
+                  >
+                    <a id="modify_menu" v-on:click="menuselection = 'modify_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-exchange-alt fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Modify AIMG</p>
+                    </a>
+                  </li>
+                  <li
+                    id="buildsprite_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'buildspritesheet_panel'}"
+                  >
+                    <a id="buildsprite_menu" v-on:click="menuselection = 'buildspritesheet_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-border-all fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Build Spritesheet</p>
+                    </a>
+                  </li>
+                  <li
+                    id="slicesprite_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'slicespritesheet_panel'}"
+                  >
+                    <a id="slicesprite_menu" v-on:click="menuselection = 'slicespritesheet_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-th fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Slice Spritesheet</p>
+                    </a>
+                  </li>
+                  <li
+                    id="inspect_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'inspect_panel'}"
+                  >
+                    <a id="inspect_menu" v-on:click="menuselection = 'inspect_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-search fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Inspect Image</p>
+                    </a>
+                  </li>
+                  <li
+                    id="tile_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'tiles_panel'}"
+                  >
+                    <a id="tile_menu" v-on:click="menuselection = 'tiles_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-search fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Tiles Panel</p>
+                    </a>
+                  </li>
+                  <li
+                    id="settings_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'settings_panel'}"
+                  >
+                    <a id="settings_menu" v-on:click="menuselection = 'settings_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-cog fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">Settings</p>
+                    </a>
+                  </li>
+                  <li
+                    id="about_box"
+                    class="menu-item"
+                    v-bind:class="{'is-selected': menuselection == 'about_panel'}"
+                  >
+                    <a id="about_menu" v-on:click="menuselection = 'about_panel'">
+                      <span class="icon is-large">
+                        <i class="fas fa-info-circle fa-2x fa-inverse"></i>
+                      </span>
+                      <p class="is-white-d">About</p>
+                    </a>
+                  </li>
+                </ul>
+              </aside>
+            </div>
           </div>
-        </td>
-        <td width="90%" id="panel_container">
-          <CreatePanel v-show="menuselection == 'create_panel'" />
-          <SplitPanel v-show="menuselection == 'split_panel'" />
-          <ModifyPanel v-show="menuselection == 'modify_panel'" />
-          <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
-          <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
-          <InspectPanel v-show="menuselection == 'inspect_panel'" />
-          <SettingsPanel v-show="menuselection == 'settings_panel'" />
-          <AboutPanel v-show="menuselection == 'about_panel'" />
-        </td>
+          <div class="column is-left-paddingless">
+            <div>
+            <CreatePanel v-show="menuselection == 'create_panel'" />
+            <SplitPanel v-show="menuselection == 'split_panel'" />
+            <ModifyPanel v-show="menuselection == 'modify_panel'" />
+            <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
+            <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
+            <InspectPanel v-show="menuselection == 'inspect_panel'" />
+            <TilesPanel v-show="menuselection == 'tiles_panel'" />
+            <SettingsPanel v-show="menuselection == 'settings_panel'" />
+            <AboutPanel v-show="menuselection == 'about_panel'" />
+            </div>
+          </div>
+        </div>  
+      </div>
+
+        <!-- </td>
       </tr>
-    </tbody>
-  </table>
+    </tbody> -->
+  <!-- </table> -->
 </template>
 
 <script>
@@ -159,6 +185,7 @@ import ModifyPanel from "./vuecore/ModifyPanel.vue";
 import BuildSpritesheetPanel from "./vuecore/BuildSpritesheetPanel.vue";
 import SliceSpritesheetPanel from "./vuecore/SliceSpritesheetPanel.vue";
 import InspectPanel from "./vuecore/InspectPanel.vue";
+import TilesPanel from "./vuecore/TilesPanel.vue";
 import SettingsPanel from "./vuecore/SettingsPanel.vue";
 import AboutPanel from "./vuecore/AboutPanel.vue";
 
@@ -183,6 +210,7 @@ export default {
     BuildSpritesheetPanel,
     SliceSpritesheetPanel,
     InspectPanel,
+    TilesPanel,
     SettingsPanel,
     AboutPanel
   },
@@ -190,6 +218,15 @@ export default {
     minimizeWindow: function () {
       var window = remote.getCurrentWindow();
       window.minimize();
+    },    
+    maximizeWindow: function () {
+      var window = remote.getCurrentWindow();
+      if (window.isMaximized()) {
+        window.unmaximize();
+      }
+      else {
+        window.maximize();
+      }
     },
     exitApp: function() {
       var window = remote.getCurrentWindow();
