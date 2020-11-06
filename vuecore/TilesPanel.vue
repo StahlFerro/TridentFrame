@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="tiles_panel" style="padding:10px;">
     <div class="tile trident-tile is-ancestor" style="height: 100%;">
       <div class="tile is-vertical">
         <div class="tile">

@@ -1,5 +1,6 @@
 @charset "utf-8";
 @import "../node_modules/bulma/sass/utilities/_all.sass";
+@import "components/inspect_panel.scss";
 
 
 /* Color definitions */
@@ -218,18 +219,22 @@ div.left-menu::-webkit-scrollbar { width: 0px; }
     flex-direction: row;
     align-items: stretch;
     flex: 1;
+    width: 100vw;
     height: 100vh;
     z-index: 0;
+    transition: flex-basis 400ms ease;
     .root-panel {
+        height: 100vh;
         flex-grow: 1;
         flex-shrink: 1;
-        flex-basis: 600px;
+        flex-basis: 700px;
         order: 2;
         overflow-x: hidden;
+        transition: flex-basis 400ms ease;
     }
     .root-sidebar {
         flex-basis: 100px;   
-        background: #3D4F58;
+        // background: #3D4F58;
         color: #fff;
         display: flex;
         flex-direction: column;

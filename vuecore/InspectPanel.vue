@@ -1,16 +1,15 @@
 <template>
-  <div id="inspect_panel" class="container" style="padding:10px;">
-    
-    <table class="table is-borderless" style="padding: 5px;" width="100%" height="700px">
-      <tr>
-        <td class="silver-bordered force-center is-paddingless" width="500px" height="70%"
-            v-bind:class="{'has-checkerboard-bg': checkerbg_active}">
-          <div class="ins-img-container is-paddingless is-marginless">
-            <img v-bind:src="img_path"/>
-          </div>
-        </td>
-        <td class="is-paddingless silver-bordered" rowspan="2">
-          <div class="is-paddingless is-marginless" style="height: 100%; overflow: auto;">
+  <div id="inspect_panel">
+    <div class="inspect-panel-root">
+      <div class="inspect-panel-display">
+        <div class="inspect-panel-image silver-bordered-no-right">
+          <img v-bind:src="img_path" />
+        </div>
+        <div class="inspect-panel-info">
+          <div
+            class="silver-bordered is-paddingless is-marginless"
+            style="height: 100%; overflow: auto"
+          >
             <table class="table ins-info-table is-paddingless" width="100%">
               <template v-for="(item, key) in info_data">
                 <!-- <span v-bind:key="key"/> -->
@@ -21,53 +20,62 @@
                   <td colspan="2" class="is-cyan">ANIMATION INFO</td>
                 </tr>
                 <tr v-for="(iprop, key, index) in item" v-bind:key="key">
-                  <td style="width: 123px;">
-                    <strong><span class="is-white-d">{{ iprop.label }}</span></strong>
-                  </td>  
+                  <td style="width: 123px">
+                    <strong
+                      ><span class="is-white-d">{{ iprop.label }}</span></strong
+                    >
+                  </td>
                   <template v-if="key == 'loop_count' && iprop.value == 0">
-                    <td style="max-width: 369px; word-wrap: break-all;">Infinite</td>
+                    <td style="max-width: 369px; word-wrap: break-all">
+                      Infinite
+                    </td>
                   </template>
                   <template v-else>
-                    <td style="max-width: 369px; word-wrap: break-all;">{{ iprop.value }}</td>
+                    <td style="max-width: 369px; word-wrap: break-all">
+                      {{ iprop.value }}
+                    </td>
                   </template>
                 </tr>
               </template>
             </table>
           </div>
-        </td>
-      </tr>
-
-      <tr>
-        <td class="is-hpaddingless" height="100px;">
-          <a
-            v-on:click="loadImage"
-            class="button is-neon-emerald"
-            v-bind:class="{'is-loading': INS_IS_INSPECTING, 'is-static': isButtonFrozen}"
-          >
-            <span class="icon is-small">
-              <i class="fas fa-plus"></i>
-            </span>
-            <span>Load Any Image</span>
-          </a>
-          <a v-on:click="clearImage" class="button is-neon-crimson"
-            v-bind:class="{'is-static': isButtonFrozen}">
-            <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
-            </span>
-            <span>Clear</span>
-          </a>
-          <a
-            v-on:click="toggleCheckerBG"
-            class="button is-neon-white"
-            v-bind:class="{'is-active': checkerbg_active}"
-          >
-            <span class="icon is-medium">
-              <i class="fas fa-chess-board"></i>
-            </span>
-          </a>
-        </td>
-      </tr>
-    </table>
+        </div>
+      </div>
+      <div class="inspect-panel-controls">
+        <a
+          v-on:click="loadImage"
+          class="button is-neon-emerald"
+          v-bind:class="{
+            'is-loading': INS_IS_INSPECTING,
+            'is-static': isButtonFrozen,
+          }"
+        >
+          <span class="icon is-small">
+            <i class="fas fa-plus"></i>
+          </span>
+          <span>Load Any Image</span>
+        </a>
+        <a
+          v-on:click="clearImage"
+          class="button is-neon-crimson"
+          v-bind:class="{ 'is-static': isButtonFrozen }"
+        >
+          <span class="icon is-small">
+            <i class="fas fa-trash-alt"></i>
+          </span>
+          <span>Clear</span>
+        </a>
+        <a
+          v-on:click="toggleCheckerBG"
+          class="button is-neon-white"
+          v-bind:class="{ 'is-active': checkerbg_active }"
+        >
+          <span class="icon is-medium">
+            <i class="fas fa-chess-board"></i>
+          </span>
+        </a>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -80,9 +88,12 @@ const session = remote.getCurrentWebContents().session;
 const { randString } = require("./Utility.vue");
 const { getPyShell } = require("./Client.vue");
 
-
-
-let extension_filters = [{ name: "Images", extensions: ["png", "gif", "jpg"] }];
+let extension_filters = [
+  {
+    name: "Images",
+    extensions: ["png", "gif", "jpg"],
+  },
+];
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
@@ -101,73 +112,83 @@ var data = {
 function loadImage() {
   var options = {
     filters: extension_filters,
-    properties: file_dialog_props
+    properties: file_dialog_props,
   };
-  dialog.showOpenDialog(mainWindow, options).then(result => {
-    let chosen_paths = result.filePaths;
-    console.log(`chosen path: ${chosen_paths}`);
-    if (chosen_paths === undefined || chosen_paths.length == 0) {
-      return;
-    }
-    data.INS_IS_INSPECTING = true;
-    // PythonShell.run('main.py', options, )
-    console.log(chosen_paths);  
+  dialog
+    .showOpenDialog(mainWindow, options)
+    .then((result) => {
+      let chosen_paths = result.filePaths;
+      console.log(`chosen path: ${chosen_paths}`);
+      if (chosen_paths === undefined || chosen_paths.length == 0) {
+        return;
+      }
+      data.INS_IS_INSPECTING = true;
+      // PythonShell.run('main.py', options, )
+      console.log(chosen_paths);
 
-    // let pyshell = new PythonShell('main.py');
-    // pyshell.send(`inspect-one`)
-    // pyshell.on('message', function (message) {
-    //   console.log(message);
-    // });
+      // let pyshell = new PythonShell('main.py');
+      // pyshell.send(`inspect-one`)
+      // pyshell.on('message', function (message) {
+      //   console.log(message);
+      // });
 
-    let pyshell = getPyShell(["inspect-one", chosen_paths[0]])
-    pyshell.on('message', (res) => {
-      console.log({"RES": res});
+      let pyshell = getPyShell(["inspect-one", chosen_paths[0]]);
+      pyshell.on("message", (res) => {
+        console.log({
+          RES: res,
+        });
         res = JSON.parse(res);
-        console.log({"JSONRES": res});
+        console.log({
+          JSONRES: res,
+        });
         data.info_data = res;
         if (res.general_info || res.animation_info) {
-          data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
+          data.img_path = `${
+            res.general_info.absolute_url.value
+          }?timestamp=${randString()}`;
         }
         console.log(res);
         data.INS_IS_INSPECTING = false;
-    });    
-    pyshell.end(function(err) {
+      });
+      pyshell.end(function (err) {
         if (err) throw err;
-        console.log('End Script');
+        console.log("End Script");
+      });
+      // client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
+      //   if (error) {
+      //     console.error(error);
+      //     data.INS_IS_INSPECTING = false;
+      //   }
+      //   else {
+      //     data.info_data = res;
+      //     data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
+      //     console.log(res);
+      //     data.INS_IS_INSPECTING = false;
+      //   }
+      // })
+    })
+    .catch((err) => {
+      console.log(err);
     });
-    // client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
-    //   if (error) {
-    //     console.error(error);
-    //     data.INS_IS_INSPECTING = false;
-    //   }
-    //   else {
-    //     data.info_data = res;
-    //     data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
-    //     console.log(res);
-    //     data.INS_IS_INSPECTING = false;
-    //   }
-    // })
-  }).catch(err => {
-  console.log(err)
-  })
 }
+
 function clearImage() {
   data.img_path = "";
   data.info_data = "";
 }
+
 function toggleCheckerBG() {
   data.checkerbg_active = !data.checkerbg_active;
-  console.log('now checkerbg is', data.checkerbg_active);
+  console.log("now checkerbg is", data.checkerbg_active);
 }
 export default {
-  data: function() {
+  data: function () {
     return data;
   },
   methods: {
     loadImage: loadImage,
     clearImage: clearImage,
     toggleCheckerBG: toggleCheckerBG,
-  }
+  },
 };
-
 </script>

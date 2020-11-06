@@ -1,0 +1,33 @@
+.inspect-panel-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .inspect-panel-display {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: stretch;
+        flex: 1;
+        .inspect-panel-image {
+            flex-grow: inherit;
+            width: 60%;
+            height: 90vh;
+            img {
+                max-width: 100%;
+                box-sizing: border-box;
+                max-height: 100%;
+                object-fit: scale-down;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }        
+        .inspect-panel-info {
+            flex-grow: inherit;
+            width: 40%;
+        }
+    }
+    .inspect-panel-controls {
+        flex-basis: 10vh;
+    }
+}
