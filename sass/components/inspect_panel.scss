@@ -1,3 +1,4 @@
+/* Inspect Panel */
 .inspect-panel-root {
     display: flex;
     flex-direction: column;
@@ -8,10 +9,11 @@
         flex-grow: 1;
         align-items: stretch;
         flex: 1;
+        height: 88vh;
         .inspect-panel-image {
             flex-grow: inherit;
             width: 60%;
-            height: 90vh;
+            height: 88vh;
             img {
                 max-width: 100%;
                 box-sizing: border-box;
@@ -21,13 +23,38 @@
                 margin-left: auto;
                 margin-right: auto;
             }
-        }        
+        }
         .inspect-panel-info {
             flex-grow: inherit;
             width: 40%;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            &::-webkit-scrollbar {
+                height: 10px;
+            }
+            .ins-info-table { 
+                table {
+                    table-layout: fixed !important;
+                }
+                tr, td {
+                    border-bottom: 1px solid $dark-9 !important;
+                    border-right: 1px solid $dark-9!important;
+                }
+                td {
+                    padding-top: 2px;
+                    padding-bottom: 2px;
+                    font-size: 16px;
+                    word-wrap: break-word !important;
+                }
+                table, tr, td {
+                    border-collapse: collapse !important;
+                }
+            }
         }
     }
     .inspect-panel-controls {
-        flex-basis: 10vh;
+        flex-basis: calc(10vh - 20px);
+        padding-top: 10px;
     }
 }

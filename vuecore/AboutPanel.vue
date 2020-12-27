@@ -1,42 +1,32 @@
 <template>
-  <div id="about_panel" class="container has-text-centered" style="display: none; padding:10px;">
+  <div id="about_panel" class="container" style="display: none;">
     <div class="about-content">
-      <table class="table about-table" width="100%">
-        <tr>
-          <td class="has-text-centered">
-            <img v-bind:src="logo" width="200px;" height="200px;" />
-          </td>
-        </tr>
-        <tr>
-          <td class="has-text-centered is-vcentered">
-            <h1 class="title is-1">TridentFrame</h1>
-            <p class="subtitle is-4">v1.0.0-beta.5</p>
-          </td>
-        </tr>
-        <tr>
-          <td class="has-text-centered is-vcentered">
-            <p>Developed by StahlFerro</p>
-            <div class="field is-grouped is-grouped-centered">
-              <p class="control">
-                <a v-on:click="warpGithub" class="button is-neon-cyan is-medium">
-                  <span class="icon">
-                    <i class="fab fa-github"></i>
-                  </span>
-                  <span>Github</span>
-                </a>
-              </p>
-              <p class="control">
-                <a v-on:click="warpDonate" class="button is-neon-cyan is-medium">
-                  <span class="icon">
-                    <i class="fas fa-heart"></i>
-                  </span>
-                  <span>Donate</span>
-                </a>
-              </p>
-            </div>
-          </td>
-        </tr>
-      </table>
+      <div class="about-info">
+        <img v-bind:src="logo" class="about-logo"/>
+        <h1 class="about-software-name">TridentFrame</h1>
+        <p class="about-software-version">v1.0.0-beta.5</p>
+        <p class="about-software-author">Developed by StahlFerro</p>
+      </div>
+      <div class="about-buttons">
+        <div class="field is-grouped is-grouped-centered">
+          <p class="control">
+            <a v-on:click="warpGithub" class="button is-neon-cyan is-medium">
+              <span class="icon">
+                <i class="fab fa-github"></i>
+              </span>
+              <span>Github</span>
+            </a>
+          </p>
+          <p class="control">
+            <a v-on:click="warpDonate" class="button is-neon-cyan is-medium">
+              <span class="icon">
+                <i class="fas fa-heart"></i>
+              </span>
+              <span>Donate</span>
+            </a>
+          </p>
+        </div>
+      </div>
     </div>
   </div>
 </template>

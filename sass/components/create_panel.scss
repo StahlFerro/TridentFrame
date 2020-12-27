@@ -1,0 +1,43 @@
+/* Create Panel */
+.create-panel-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .create-panel-display {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: stretch;
+        height: 45vh;
+        .create-panel-sequence {
+            flex-grow: inherit;
+            width: 60%;
+            height: 45vh;
+        }        
+        .create-panel-preview {
+            flex-grow: inherit;
+            width: 40%;
+            height: 45vh;
+        }
+    }
+    .create-panel-buttonbar {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: center;
+        height: calc(10vh - 20px);
+        .crt-sequence-buttons {
+            width: 60%;
+            .dualine-label {
+                color: $white-d;
+            }
+        }
+        .crt-preview-buttons {
+            width: 40%;
+            text-align: center;
+        }
+    }
+    .create-panel-controls {
+        flex-basis: 45vh;
+    }
+}

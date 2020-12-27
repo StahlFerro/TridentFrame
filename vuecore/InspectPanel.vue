@@ -2,43 +2,38 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display">
-        <div class="inspect-panel-image silver-bordered-no-right">
+        <div class="inspect-panel-image silver-bordered">
           <img v-bind:src="img_path" />
         </div>
-        <div class="inspect-panel-info">
-          <div
-            class="silver-bordered is-paddingless is-marginless"
-            style="height: 100%; overflow: auto"
-          >
-            <table class="table ins-info-table is-paddingless" width="100%">
-              <template v-for="(item, key) in info_data">
-                <!-- <span v-bind:key="key"/> -->
-                <tr v-if="key == 'general_info'" v-bind:key="key">
-                  <td colspan="2" class="is-cyan">GENERAL INFO</td>
-                </tr>
-                <tr v-if="key == 'animation_info'" v-bind:key="key">
-                  <td colspan="2" class="is-cyan">ANIMATION INFO</td>
-                </tr>
-                <tr v-for="(iprop, key, index) in item" v-bind:key="key">
-                  <td style="width: 123px">
-                    <strong
-                      ><span class="is-white-d">{{ iprop.label }}</span></strong
-                    >
+        <div class="inspect-panel-info silver-bordered-no-left">
+          <table class="table ins-info-table is-paddingless" width="100%">
+            <template v-for="(item, key) in info_data">
+              <!-- <span v-bind:key="key"/> -->
+              <tr v-if="key == 'general_info'" v-bind:key="key">
+                <td colspan="2" class="is-cyan">GENERAL INFO</td>
+              </tr>
+              <tr v-if="key == 'animation_info'" v-bind:key="key">
+                <td colspan="2" class="is-cyan">ANIMATION INFO</td>
+              </tr>
+              <tr v-for="(iprop, key, index) in item" v-bind:key="key">
+                <td style="width: 123px">
+                  <strong
+                    ><span class="is-white-d">{{ iprop.label }}</span></strong
+                  >
+                </td>
+                <template v-if="key == 'loop_count' && iprop.value == 0">
+                  <td style="max-width: 369px; word-wrap: break-all">
+                    Infinite
                   </td>
-                  <template v-if="key == 'loop_count' && iprop.value == 0">
-                    <td style="max-width: 369px; word-wrap: break-all">
-                      Infinite
-                    </td>
-                  </template>
-                  <template v-else>
-                    <td style="max-width: 369px; word-wrap: break-all">
-                      {{ iprop.value }}
-                    </td>
-                  </template>
-                </tr>
-              </template>
-            </table>
-          </div>
+                </template>
+                <template v-else>
+                  <td style="max-width: 369px; word-wrap: break-all">
+                    {{ iprop.value }}
+                  </td>
+                </template>
+              </tr>
+            </template>
+          </table>
         </div>
       </div>
       <div class="inspect-panel-controls">

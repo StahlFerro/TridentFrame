@@ -190,6 +190,43 @@
   fieldset[disabled] .pagination-ellipsis {
     cursor: not-allowed; }
 
+/* Color definitions */
+/* Create Panel */
+.create-panel-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%; }
+  .create-panel-root .create-panel-display {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: stretch;
+    height: 45vh; }
+    .create-panel-root .create-panel-display .create-panel-sequence {
+      flex-grow: inherit;
+      width: 60%;
+      height: 45vh; }
+    .create-panel-root .create-panel-display .create-panel-preview {
+      flex-grow: inherit;
+      width: 40%;
+      height: 45vh; }
+  .create-panel-root .create-panel-buttonbar {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    align-items: center;
+    height: calc(10vh - 20px); }
+    .create-panel-root .create-panel-buttonbar .crt-sequence-buttons {
+      width: 60%; }
+      .create-panel-root .create-panel-buttonbar .crt-sequence-buttons .dualine-label {
+        color: #cccccc; }
+    .create-panel-root .create-panel-buttonbar .crt-preview-buttons {
+      width: 40%;
+      text-align: center; }
+  .create-panel-root .create-panel-controls {
+    flex-basis: 45vh; }
+
+/* Inspect Panel */
 .inspect-panel-root {
   display: flex;
   flex-direction: column;
@@ -199,11 +236,12 @@
     flex-direction: row;
     flex-grow: 1;
     align-items: stretch;
-    flex: 1; }
+    flex: 1;
+    height: 88vh; }
     .inspect-panel-root .inspect-panel-display .inspect-panel-image {
       flex-grow: inherit;
       width: 60%;
-      height: 90vh; }
+      height: 88vh; }
       .inspect-panel-root .inspect-panel-display .inspect-panel-image img {
         max-width: 100%;
         box-sizing: border-box;
@@ -214,11 +252,56 @@
         margin-right: auto; }
     .inspect-panel-root .inspect-panel-display .inspect-panel-info {
       flex-grow: inherit;
-      width: 40%; }
+      width: 40%;
+      margin: 0;
+      padding: 0;
+      overflow: auto; }
+      .inspect-panel-root .inspect-panel-display .inspect-panel-info::-webkit-scrollbar {
+        height: 10px; }
+      .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table table {
+        table-layout: fixed !important; }
+      .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table tr, .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table td {
+        border-bottom: 1px solid #93a0ad !important;
+        border-right: 1px solid #93a0ad !important; }
+      .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table td {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        font-size: 16px;
+        word-wrap: break-word !important; }
+      .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table table, .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table tr, .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table td {
+        border-collapse: collapse !important; }
   .inspect-panel-root .inspect-panel-controls {
-    flex-basis: 10vh; }
+    flex-basis: calc(10vh - 20px);
+    padding-top: 10px; }
 
-/* Color definitions */
+/* About Panel */
+div.about-content {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
+  height: calc(100vh - 20px);
+  display: flex;
+  flex-direction: column; }
+  div.about-content h1 {
+    color: #cccccc; }
+  div.about-content p {
+    color: #cccccc;
+    margin-bottom: 0 !important; }
+  div.about-content .about-info {
+    height: 55vh; }
+    div.about-content .about-info .about-logo {
+      width: 30vh;
+      height: 30vh; }
+    div.about-content .about-info .about-software-name {
+      font-size: 7vh; }
+    div.about-content .about-info .about-software-version {
+      font-size: 2.5vh; }
+    div.about-content .about-info .about-software-author {
+      font-size: 3vh; }
+  div.about-content .about-buttons {
+    height: 10vh; }
+
 /* Sass variable overrides */
 /*! bulma.io v0.9.1 | MIT License | github.com/jgthms/bulma */
 /* Bulma Utilities */
@@ -8021,9 +8104,21 @@ a.exit-button {
   a.exit-button:hover {
     background-color: #f14668; }
 
+aside.menu {
+  height: 100% !important; }
+
+/* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
+div.left-menu {
+  height: 100%;
+  overflow: scroll; }
+
+div.left-menu::-webkit-scrollbar {
+  width: 0px; }
+
 /* Selected menu box */
 .menu-item {
-  border: 2px solid #232629; }
+  border: 2px solid #232629;
+  background-color: #232629; }
   .menu-item a {
     padding: 0.3em 0em; }
   .menu-item:hover {
@@ -8070,17 +8165,6 @@ a.exit-button {
 .subtab-menu-item.is-selected p, .subtab-menu-item.is-selected i {
   color: #34caf8 !important; }
 
-/* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
-div.left-menu {
-  height: 100%;
-  overflow: scroll; }
-
-div.left-menu::-webkit-scrollbar {
-  width: 0px; }
-
-.root-ancestor {
-  display: flex; }
-
 .root-container {
   display: flex;
   flex-direction: row;
@@ -8097,7 +8181,8 @@ div.left-menu::-webkit-scrollbar {
     flex-basis: 700px;
     order: 2;
     overflow-x: hidden;
-    transition: flex-basis 400ms ease; }
+    transition: flex-basis 400ms ease;
+    padding: 10px; }
   .root-container .root-sidebar {
     flex-basis: 100px;
     color: #fff;
@@ -8108,7 +8193,12 @@ div.left-menu::-webkit-scrollbar {
     margin: 0;
     overflow: hidden;
     transition: flex-basis 400ms ease;
-    height: 100vh; }
+    height: 100vh;
+    background-color: #232629; }
+
+.root-left-menu {
+  display: flex;
+  flex-direction: column; }
 
 .root-footer {
   position: relative;
@@ -8193,9 +8283,13 @@ input.input.is-border-colorless {
 .silver-bordered {
   border: 2px solid #cccccc !important; }
 
+.silver-bordered-no-left {
+  border: 2px solid #cccccc;
+  border-left: 0; }
+
 .silver-bordered-no-right {
-  border: 2px solid #cccccc !important;
-  border-width: 2px 0px 2px 2px; }
+  border: 2px solid #cccccc;
+  border-right: 0; }
 
 .silver-bordered-left-thicc {
   border: 2px solid #cccccc !important;
@@ -8365,22 +8459,6 @@ label.label.is-tight:not(:last-child) {
   height: 277px;
   padding-right: 7px; }
 
-.ins-info-table table {
-  table-layout: fixed !important; }
-
-.ins-info-table tr, .ins-info-table td {
-  border-bottom: 1px solid #93a0ad !important;
-  border-right: 1px solid #93a0ad !important; }
-
-.ins-info-table td {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  font-size: 16px;
-  word-wrap: break-word !important; }
-
-.ins-info-table table, .ins-info-table tr, .ins-info-table td {
-  border-collapse: collapse !important; }
-
 .mod-new-control-table td {
   padding-top: 4px !important;
   padding-bottom: 4px !important;
@@ -8425,21 +8503,6 @@ table.spr-control-table label {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%); }
-
-div.root-panel {
-  height: 100%; }
-  div.root-panel div.root-left {
-    float: left;
-    width: 10%;
-    background: #34caf8;
-    height: 100%;
-    overflow: scroll; }
-  div.root-panel div.root-right {
-    float: left;
-    width: 90%;
-    background: #e03d3d;
-    height: 100%;
-    overflow: scroll; }
 
 .tile.trident-tile {
   padding: 3px; }
@@ -8617,9 +8680,3 @@ canvas.slicegrid-canvas {
 
 .select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
   border-color: #34caf8; }
-
-div.about-content h1 {
-  color: #cccccc; }
-
-div.about-content p {
-  color: #cccccc; }
