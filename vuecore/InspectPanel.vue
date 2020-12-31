@@ -9,22 +9,20 @@
           <table class="table ins-info-table is-paddingless" width="100%">
             <template v-for="(item, key) in info_data">
               <!-- <span v-bind:key="key"/> -->
-              <tr v-if="key == 'general_info'" v-bind:key="key">
+              <tr v-if="key == 'general_info'" v-bind:key="'general_info_' + key">
                 <td colspan="2" class="is-cyan">GENERAL INFO</td>
               </tr>
-              <tr v-if="key == 'animation_info'" v-bind:key="key">
+              <tr v-if="key == 'animation_info'" v-bind:key="'animation_info_' + key">
                 <td colspan="2" class="is-cyan">ANIMATION INFO</td>
               </tr>
-              <tr v-for="(iprop, key, index) in item" v-bind:key="key">
+              <tr v-for="(iprop, key, index) in item" v-bind:key="'iprop_' + key">
                 <td style="width: 123px">
                   <strong
                     ><span class="is-white-d">{{ iprop.label }}</span></strong
                   >
                 </td>
                 <template v-if="key == 'loop_count' && iprop.value == 0">
-                  <td style="max-width: 369px; word-wrap: break-all">
-                    Infinite
-                  </td>
+                  <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
                 </template>
                 <template v-else>
                   <td style="max-width: 369px; word-wrap: break-all">
@@ -56,7 +54,7 @@
           v-bind:class="{ 'is-static': isButtonFrozen }"
         >
           <span class="icon is-small">
-            <i class="fas fa-trash-alt"></i>
+            <i class="fas fa-times"></i>
           </span>
           <span>Clear</span>
         </a>
@@ -75,6 +73,7 @@
 </template>
 
 <script>
+import { webFrame } from "electron";
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
@@ -133,9 +132,7 @@ function loadImage() {
           RES: res,
         });
         res = JSON.parse(res);
-        console.log({
-          JSONRES: res,
-        });
+        console.table(res);
         data.info_data = res;
         if (res.general_info || res.animation_info) {
           data.img_path = `${
@@ -170,6 +167,7 @@ function loadImage() {
 function clearImage() {
   data.img_path = "";
   data.info_data = "";
+  webFrame.clearCache();
 }
 
 function toggleCheckerBG() {

@@ -11,9 +11,12 @@
         flex: 1;
         height: 88vh;
         .inspect-panel-image {
+            display: flex;
             flex-grow: inherit;
             width: 60%;
             height: 88vh;
+            justify-content: center;
+            align-items: center;
             img {
                 max-width: 100%;
                 box-sizing: border-box;
@@ -27,6 +30,7 @@
         .inspect-panel-info {
             flex-grow: inherit;
             width: 40%;
+            height: 88vh;
             margin: 0;
             padding: 0;
             overflow: auto;

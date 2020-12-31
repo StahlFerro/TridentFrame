@@ -21,7 +21,7 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
     """ Main single image inspection handler function.
     :param `image_path`: Input path.
     :param `filter_on`: "" no filter, "static": "Throws error on detecting an animated image", "animated": "Throws error on detecting a static image"
-    :param `skip`: Returns an empty dict instead of throwing an error. Used in conjuntion with fitler_on
+    :param `skip`: Returns an empty dict instead of throwing an error. Used in conjuntion with filter_on
     """
     abspath = os.path.abspath(image_path)
     filename = str(os.path.basename(abspath))
@@ -114,10 +114,10 @@ def _inspect_simg(image):
     fsize = os.stat(path).st_size
     fsize_hr = read_filesize(fsize)
     color_mode = im.mode
-    transparency = im.info.get('transparency', "No")
+    transparency = im.info.get('transparency', "-")
     # alpha = im.getchannel('A')
     comment = im.info.get('comment')
-    img_metadata = json.dumps({
+    img_metadata = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
             "base_fname": {"value": base_fname, "label": "Base Name"},
@@ -129,14 +129,14 @@ def _inspect_simg(image):
             "format": {"value": fmt, "label": "Format"},
             "comments": {"value": comment, "label": "Comments"},
             "color_mode": {"value": color_mode, "label": "Color Mode"},
-            "transparency": {"value": transparency, "label": "Has Transparency"},
+            "transparency": {"value": str(transparency), "label": "Transparency Info"},
             # "alpha": {"value": alpha, "label": "Has Alpha"},
             "exif": {"value": exif, "label": "EXIF"},
             "is_animated": {"value": False, "label": "Is Animated"},
         }
-    })
+    }
     im.close()
-    return img_metadata
+    return json.dumps(img_metadata)
 
 
 def _inspect_agif(abspath: str, gif: Image):
@@ -166,13 +166,13 @@ def _inspect_agif(abspath: str, gif: Image):
     else:
         frame_count_ds = sum([delay//min_duration for delay in delays])
     # raise Exception(delays)
-    delay_is_uneven = len(set(delays)) > 1
+    delay_is_even = len(set(delays)) == 1
     avg_delay = sum(delays) / len(delays) if sum(delays) != 0 else 0
     fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
     loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
     fmt = 'GIF'
     full_format = str(gif.info.get('version') or "")
-    transparency = gif.info.get('transparency', "No")
+    transparency = gif.info.get('transparency', "-")
     # alpha = gif.getchannel('A')
     image_info = {
         "general_info": {
@@ -185,7 +185,7 @@ def _inspect_agif(abspath: str, gif: Image):
             "absolute_url": {"value": abspath, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
             "format_version": {"value": full_format, "label": "Full format"},
-            "transparency": {"value": transparency, "label": "Has Transparency"},
+            "transparency": {"value": str(transparency), "label": "Transparency Info"},
             # "alpha": {"value": alpha, "label": "Has Alpha"},
             "comments": {"value": comments, "label": "Comments"},
             "is_animated": {"value": True, "label": "Is Animated"},
@@ -193,7 +193,7 @@ def _inspect_agif(abspath: str, gif: Image):
         "animation_info": {
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
-            "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
+            "delay_is_even": {"value": delay_is_even, "label": "Delays are even"},
             "delays": {"value": delays, "label": "Delays (milliseconds)"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
@@ -202,7 +202,7 @@ def _inspect_agif(abspath: str, gif: Image):
         }
     }
     gif.close()
-    return image_info
+    return json.dumps(image_info)
 
 
 def _inspect_apng(abspath, apng: APNG):  
@@ -225,7 +225,7 @@ def _inspect_apng(abspath, apng: APNG):
         frame_count_ds = frame_count
     else:
         frame_count_ds = sum([delay//min_duration for delay in delays])
-    delay_is_uneven = len(set(delays)) > 1
+    delay_is_even = len(set(delays)) == 1
     avg_delay = sum(delays) / frame_count if sum(delays) != 0 else 0
     fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
     loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
@@ -246,7 +246,7 @@ def _inspect_apng(abspath, apng: APNG):
         "animation_info": {
             "fps": {"value": fps, "label": "FPS"},
             "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
-            "delay_is_uneven": {"value": delay_is_uneven, "label": "Delays are uneven"},
+            "delay_is_even": {"value": delay_is_even, "label": "Delays are even"},
             "delays": {"value": delays, "label": "Delays (milliseconds)"},
             "frame_count": {"value": frame_count, "label": "Frame count"},
             "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
@@ -254,7 +254,7 @@ def _inspect_apng(abspath, apng: APNG):
             "loop_count": {"value": loop_count, "label": "Loop count"},
         }
     }
-    return image_info
+    return json.dumps(image_info)
 
 
 def inspect_sequence(image_paths):

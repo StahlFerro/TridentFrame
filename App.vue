@@ -196,6 +196,10 @@ function whatClicked(event) {
   console.log(event);
 }
 
+session.clearCache(() => {
+  alert("Cache cleared!");
+});
+
 export default {
   name: "app",
   data: function() {

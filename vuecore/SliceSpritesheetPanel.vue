@@ -97,7 +97,7 @@
           </a>
           <a v-on:click="clearSheet" class="button is-neon-crimson">
             <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>

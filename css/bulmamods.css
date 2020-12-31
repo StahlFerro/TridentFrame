@@ -192,6 +192,7 @@
 
 /* Color definitions */
 /* Create Panel */
+/* Color definitions */
 .create-panel-root {
   display: flex;
   flex-direction: column;
@@ -201,30 +202,57 @@
     flex-direction: row;
     flex-grow: 1;
     align-items: stretch;
-    height: 45vh; }
+    height: 44vh; }
     .create-panel-root .create-panel-display .create-panel-sequence {
       flex-grow: inherit;
       width: 60%;
-      height: 45vh; }
+      height: 44vh; }
     .create-panel-root .create-panel-display .create-panel-preview {
       flex-grow: inherit;
       width: 40%;
-      height: 45vh; }
+      height: 44vh; }
   .create-panel-root .create-panel-buttonbar {
     display: flex;
     flex-direction: row;
     flex-grow: 1;
     align-items: center;
-    height: calc(10vh - 20px); }
-    .create-panel-root .create-panel-buttonbar .crt-sequence-buttons {
+    height: calc(11vh - 20px); }
+    .create-panel-root .create-panel-buttonbar .cpb-sequence-buttons {
       width: 60%; }
-      .create-panel-root .create-panel-buttonbar .crt-sequence-buttons .dualine-label {
+      .create-panel-root .create-panel-buttonbar .cpb-sequence-buttons .dualine-label {
         color: #cccccc; }
-    .create-panel-root .create-panel-buttonbar .crt-preview-buttons {
+    .create-panel-root .create-panel-buttonbar .cpb-preview-buttons {
       width: 40%;
       text-align: center; }
   .create-panel-root .create-panel-controls {
-    flex-basis: 45vh; }
+    display: flex;
+    flex-basis: 45vh;
+    flex-direction: row; }
+    .create-panel-root .create-panel-controls .cpc-left-panel {
+      border: 2px solid #cccccc;
+      width: 7%;
+      overflow: auto; }
+      .create-panel-root .create-panel-controls .cpc-left-panel::-webkit-scrollbar {
+        width: 0px;
+        height: 0px; }
+    .create-panel-root .create-panel-controls .cpc-right-panel {
+      border: 2px solid #cccccc;
+      border-left: 0;
+      width: 93%; }
+    .create-panel-root .create-panel-controls table {
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      border: 0 !important;
+      margin: 0 !important; }
+      .create-panel-root .create-panel-controls table th {
+        border: 0 !important; }
+      .create-panel-root .create-panel-controls table td {
+        border: 0 !important;
+        padding: 5px !important;
+        border: 1px solid black; }
+      .create-panel-root .create-panel-controls table label {
+        margin: 0px !important; }
 
 /* Inspect Panel */
 .inspect-panel-root {
@@ -239,9 +267,12 @@
     flex: 1;
     height: 88vh; }
     .inspect-panel-root .inspect-panel-display .inspect-panel-image {
+      display: flex;
       flex-grow: inherit;
       width: 60%;
-      height: 88vh; }
+      height: 88vh;
+      justify-content: center;
+      align-items: center; }
       .inspect-panel-root .inspect-panel-display .inspect-panel-image img {
         max-width: 100%;
         box-sizing: border-box;
@@ -253,6 +284,7 @@
     .inspect-panel-root .inspect-panel-display .inspect-panel-info {
       flex-grow: inherit;
       width: 40%;
+      height: 88vh;
       margin: 0;
       padding: 0;
       overflow: auto; }

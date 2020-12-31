@@ -48,7 +48,7 @@
           </a>
           <a v-on:click="clearImage" class="button is-neon-crimson">
             <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>
@@ -70,7 +70,7 @@
           </a>
           <a v-on:click="clearPrevImage" class="button is-neon-white" v-bind:class="{'is-static': buttonIsFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>
@@ -570,8 +570,8 @@ function loadOrigInfo(res) {
   data.orig_frame_count_ds= ainfo.frame_count_ds.value;
   data.orig_format = geninfo.format.value;
   let delay_info = `${ainfo.avg_delay.value} seconds`;
-  if (ainfo.delay_is_uneven) {
-    delay_info += ` (uneven)`;
+  if (ainfo.delay_is_even) {
+    delay_info += ` (even)`;
   }
   data.orig_delay = ainfo.avg_delay.value;
   data.orig_delay_info = delay_info;

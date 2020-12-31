@@ -103,7 +103,7 @@
           </a>
           <a v-on:click="clearImage" class="button is-neon-crimson">
             <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>
@@ -303,8 +303,8 @@ function loadImage() {
         data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`;
         data.fps = `${ainfo.fps.value} fps`;
         let delay_info = `${ainfo.avg_delay.value} seconds`;
-        if (ainfo.delay_is_uneven.value) {
-          delay_info += ` (uneven)`;
+        if (ainfo.delay_is_even.value) {
+          delay_info += ` (even)`;
         }
         data.delay = delay_info;
         data.loop_duration = `${ainfo.loop_duration.value} seconds`;
