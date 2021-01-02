@@ -50,15 +50,13 @@
   },
   "build": {
     "productName": "TridentFrame",
-    "appId": "com.stahlferro.tridentframe",
+    "appId": "io.stahlferro.tridentframe",
     "directories": {
       "output": "release/tridentframe"
     },
     "asar": false,
     "win": {
       "target": [
-        "7z",
-        "zip"
       ],
       "icon": "release/tridentframe/win-unpacked/resources/app/imgs/TridentFrame_logo_256x256.ico"
     },
@@ -74,6 +72,8 @@
     "files": [
       "**/*",
       "engine/**",
+      "dist/**",
+      "!_DEVDOCS/**",
       "!.github/**",
       "!.sass-cache/**",
       "!.vscode/**",

@@ -5,8 +5,9 @@ const path = require('path');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 module.exports = env => {
   console.log("NODE ENV", env.NODE_ENV);
-  let node_loader = env.NODE_ENV === "DEV"? "node-loader" : "native-ext-loader";
-  console.log("used node_loader:", node_loader);
+  console.log(__dirname);
+  // let node_loader = env.NODE_ENV === "DEV"? "node-loader" : "native-ext-loader";
+  // console.log("used node_loader:", node_loader);
   return {
     entry: './app.js',
     target: 'electron-renderer',
@@ -23,7 +24,6 @@ module.exports = env => {
           options: {
             name: 'style.css',
             outputPath: 'css/',
-            // publicPath: '../',
             hmr: env.NODE_ENV == 'DEV'
           },
         }, 'css-loader',]},
@@ -45,8 +45,8 @@ module.exports = env => {
             // publicPath: '../',
           },
         }]},
-        { test: /\.node$/, loader: node_loader, }
-        // { test: /\.node$/, use: 'node-loader' },
+        { test: /\.node$/, loader: "node-loader", }
+        // { test: /\.node$/, use: 'node_loader' },
       ]
     },
     devServer: {
@@ -65,7 +65,7 @@ module.exports = env => {
     ],
     output: {
       filename: 'bundle.js',
-      publicPath: "/",
+      publicPath: "",
       // path: path.resolve(__dirname, 'release/html'),
     },
   };
