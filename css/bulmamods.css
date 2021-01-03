@@ -206,7 +206,8 @@
     .create-panel-root .create-panel-display .create-panel-sequence {
       flex-grow: inherit;
       width: 60%;
-      height: 44vh; }
+      height: 44vh;
+      overflow: auto; }
     .create-panel-root .create-panel-display .create-panel-preview {
       flex-grow: inherit;
       width: 40%;
@@ -273,6 +274,10 @@
       height: 88vh;
       justify-content: center;
       align-items: center; }
+      .inspect-panel-root .inspect-panel-display .inspect-panel-image .inspect-panel-msgbox {
+        padding: 7px;
+        display: block;
+        flex-grow: 1; }
       .inspect-panel-root .inspect-panel-display .inspect-panel-image img {
         max-width: 100%;
         box-sizing: border-box;

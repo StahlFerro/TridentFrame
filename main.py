@@ -42,21 +42,18 @@ def inspect_one(image_path, filter=""):
 
     info = inspect_general(image_path, filter)
     if (info):
-        info = json.dumps({"res": info})
-    return info
+        info = json.dumps({"data": info})
+        print(info)
 
 
 @cli.command("inspect-many")
-@click.argument('image_paths')
+@click.argument('image_paths', nargs=-1)
 def inspect_many(image_paths):
     """Inspect a sequence of images and then return their information"""
-
-    print(image_paths)
-    pathjson = json.loads(image_paths)
-    print("paths", pathjson['paths'])
-    info = inspect_sequence(pathjson['paths'])
-    print(info)
-    return info
+    info = inspect_sequence(image_paths)
+    if (info):
+        info = json.dumps({"data": info})
+        print(info)
 
 
 @cli.command("inspect-smart")

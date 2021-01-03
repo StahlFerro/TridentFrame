@@ -85,7 +85,7 @@ def _inspect_simg(image):
     Keyword arguments:
     image -- Path or Pillow Image
     """
-    img_metadata = {}
+    image_info = {}
     im: Image = None
     try:
         if image.__class__.__bases__[0] is ImageFile.ImageFile:
@@ -186,7 +186,7 @@ def _inspect_agif(abspath: str, gif: Image):
             "format_version": {"value": full_format, "label": "Full format"},
             "transparency": {"value": str(transparency), "label": "Transparency Info"},
             # "alpha": {"value": alpha, "label": "Has Alpha"},
-            "comments": {"value": comments, "label": "Comments"},
+            "comments": {"value": str(comments), "label": "Comments"},
             "is_animated": {"value": True, "label": "Is Animated"},
         },
         "animation_info": {
@@ -265,7 +265,7 @@ def inspect_sequence(image_paths):
     shout_nums = shout_indices(len(abs_image_paths), perc_skip)
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
-            print({"msg": f'Loading images... ({shout_nums.get(index)})'})
+            print(json.dumps({"msg": f'Loading images... ({shout_nums.get(index)})'}))
         info = inspect_general(path, filter_on="static", skip=True)
         if info:
             gen_info = info['general_info']
@@ -281,18 +281,16 @@ def inspect_sequence(image_paths):
     # im = Image.open(static_img_paths[0])
     # width, height = im.size
     # im.close()
-    print(json.dumps({
-        "data": {
-            "name": sequence_info[0]['base_fname']['value'],
-            "total": sequence_count,
-            "sequence": static_img_paths,
-            "sequence_info": sequence_info,
-            "size": sequence_filesize,
-            "width": sequence_info[0]['width']['value'],
-            "height": sequence_info[0]['height']['value'],
-        }
-    }))
-    print({"msg": f"{sequence_count} images loaded!"})
+    image_info = {
+        "name": sequence_info[0]['base_fname']['value'],
+        "total": sequence_count,
+        "sequence": static_img_paths,
+        "sequence_info": sequence_info,
+        "size": sequence_filesize,
+        "width": sequence_info[0]['width']['value'],
+        "height": sequence_info[0]['height']['value'],
+    }
+    return image_info
 
 
 def _inspect_smart(image_path):

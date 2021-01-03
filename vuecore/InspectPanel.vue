@@ -3,6 +3,9 @@
     <div class="inspect-panel-root">
       <div class="inspect-panel-display">
         <div class="inspect-panel-image silver-bordered">
+          <div class="inspect-panel-msgbox" v-show="inspect_msgbox != false">
+            <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
+          </div>
           <img v-bind:src="img_path" />
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
@@ -15,7 +18,7 @@
               <tr v-if="key == 'animation_info'" v-bind:key="'animation_info_' + key">
                 <td colspan="2" class="is-cyan">ANIMATION INFO</td>
               </tr>
-              <tr v-for="(iprop, key, index) in item" v-bind:key="'iprop_' + key">
+              <tr v-for="(iprop, key, index) in item" v-bind:key="'iprop_' + index">
                 <td style="width: 123px">
                   <strong
                     ><span class="is-white-d">{{ iprop.label }}</span></strong
@@ -97,15 +100,20 @@ var data = {
   isButtonFrozen: false,
   INS_IS_INSPECTING: false,
   info_data: "",
+  inspect_msgbox: "",
 };
+
+function clearMsgBox() {
+  data.inspect_msgbox = "";
+}
 
 function loadImage() {
   var options = {
+    filters: extension_filters,
     properties: file_dialog_props,
   };
   dialog
-    .showOpenDialog(mainWindow, options)
-    .then((result) => {
+    .showOpenDialog(mainWindow, options).then((result) => {
       let chosen_paths = result.filePaths;
       console.log(`chosen path: ${chosen_paths}`);
       if (chosen_paths === undefined || chosen_paths.length == 0) {
@@ -115,22 +123,22 @@ function loadImage() {
       console.log(chosen_paths);
       tridentEngine(["inspect-one", chosen_paths[0]], (error, res) => {
         if (error) {
-          console.log("stderr error: ", error);
-          console.error(error);
+          let error_data = JSON.parse(error);
+          data.inspect_msgbox = error_data.error;
         }
         else {
-          console.log({
-            RES: res,
-          });
-          res = JSON.parse(res);
-          console.table(res);
-          data.info_data = res;
-          if (res.general_info || res.animation_info) {
-            data.img_path = `${
-              res.general_info.absolute_url.value
-            }?timestamp=${randString()}`;
-          }
           console.log(res);
+          res = JSON.parse(res);
+          console.log(res);
+          if (res.data) {
+            let res_data = res.data;
+            data.info_data = res_data;
+            if (res_data.general_info || res_data.animation_info) {
+              data.img_path = `${
+                res_data.general_info.absolute_url.value
+              }?timestamp=${randString()}`;
+            }
+          }
         }
         data.INS_IS_INSPECTING = false;
       });
@@ -143,6 +151,7 @@ function loadImage() {
 function clearImage() {
   data.img_path = "";
   data.info_data = "";
+  clearMsgBox();
   webFrame.clearCache();
 }
 

@@ -32,11 +32,11 @@ function tridentEngine(args, callback) {
       console.log(stdout);
       console.log(">>stderr");
       console.log(stderr);
-      if (error) {
-        console.error(error);
+      if (stderr) {
+        callback(stderr, "");
       }
-      else {
-        callback(stderr, stdout);
+      else if (stdout) {
+        callback("", stdout);
       }
     });
   }

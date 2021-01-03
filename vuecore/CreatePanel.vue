@@ -476,9 +476,7 @@
                         v-bind:class="{
                           'is-loading': CRT_IS_CREATING == true,
                           'is-static': isButtonFrozen,
-                        }"
-                        >Create</a
-                      >
+                        }">Create</a>
                     </div>
                   </div>
                 </td>
@@ -644,7 +642,8 @@ function loadImages(ops) {
     properties: props,
   };
 
-  dialog.showOpenDialog(mainWindow, options).then((img_paths) => {
+  dialog.showOpenDialog(mainWindow, options).then((result) => {
+    let img_paths = result.filePaths;
     console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) {
       return;
@@ -652,17 +651,16 @@ function loadImages(ops) {
     data.CRT_IS_LOADING = true;
     toggleLoadButtonAnim(ops, true);
     let paths = ops == "smart_insert" ? img_paths[0] : img_paths;
-    tridentEngine([pymethod, paths], (res) => {
-
-    });
-    client.invoke(pymethod, paths, (error, res) => {
+    tridentEngine([pymethod, ...paths], (error, res) => {
       if (error) {
-        console.error(error);
-        data.create_msgbox = error;
+        let error_data = JSON.parse(error);
+        console.error(error_data);
+        data.create_msgbox = error_data.error;
         data.CRT_IS_LOADING = false;
         toggleLoadButtonAnim(ops, false);
       } else {
         console.log(res);
+        res = JSON.parse(res);
         if (res && res.msg) {
           console.log("msg executed");
           data.create_msgbox = res.msg;

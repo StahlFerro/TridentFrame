@@ -17,6 +17,11 @@
             height: 88vh;
             justify-content: center;
             align-items: center;
+            .inspect-panel-msgbox {
+                padding: 7px;
+                display: block;
+                flex-grow: 1;
+            }
             img {
                 max-width: 100%;
                 box-sizing: border-box;

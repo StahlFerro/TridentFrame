@@ -1,0 +1,2 @@
+class ImageMetadata():
+    pass
