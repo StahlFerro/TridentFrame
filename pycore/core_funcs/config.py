@@ -16,6 +16,7 @@ with open("./config/settings.json") as f:
 CACHE_DIRNAME = SETTINGS['cache_dir']
 TEMP_DIRNAME = 'temp'
 BUFFERFILE_NAME = SETTINGS['bufferfile']
+CRITERIONFILE_NAME = SETTINGS['criterionfile']
 
 BIN_DIRNAME = 'bin'
 
@@ -43,6 +44,15 @@ def ABS_TEMP_PATH():
     return os.path.abspath(TEMP_DIRNAME)
 
 
+def ABS_BUFFERFILE_PATH():
+    return os.path.abspath(os.path.join(ABS_CACHE_PATH(), BUFFERFILE_NAME))
+
+
+def ABS_CRITERIONFILE_PATH():
+    return os.path.abspath(os.path.join(ABS_CACHE_PATH(), CRITERIONFILE_NAME))
+
+
+
 def imager_exec_path(binname: str) -> str:
     """ Get the path to the internal image processing binaries\n
         Supported binname params: ['gifsicle', 'imagemagick', 'apngasm', 'apngopt', 'apngdis', 'pngquant']
@@ -63,12 +73,40 @@ def imager_exec_path(binname: str) -> str:
 
 
 def get_bufferfile_content():
-    bufferfile_path = os.path.abspath(os.path.join(ABS_CACHE_PATH(), BUFFERFILE_NAME))
+    bufferfile_path = ABS_BUFFERFILE_PATH()
     if not os.path.exists(ABS_CACHE_PATH()):
         os.mkdir(ABS_CACHE_PATH())
+    if not os.path.exists(os.path.join(ABS_CACHE_PATH(), ".include")):
         open(os.path.join(ABS_CACHE_PATH(), ".include"), "").close()
     if not os.path.exists(bufferfile_path):
         open(bufferfile_path, "a").close()
     with open(bufferfile_path, "r") as f:
         paths = json.loads(f.read())
     return paths
+
+
+def set_bufferfile_content(content):
+    bufferfile_path = ABS_BUFFERFILE_PATH()
+    if not os.path.exists(ABS_CACHE_PATH()):
+        os.mkdir(ABS_CACHE_PATH())
+    if not os.path.exists(os.path.join(ABS_CACHE_PATH(), ".include")):
+        open(os.path.join(ABS_CACHE_PATH(), ".include"), "").close()
+    if not os.path.exists(bufferfile_path):
+        open(bufferfile_path, "a").close()
+    with open(bufferfile_path, "w") as f:
+        f.write(json.dumps(content))
+    return
+
+def get_criterionfile_content():
+    criterionfile_path = ABS_CRITERIONFILE_PATH()
+    print(criterionfile_path)
+    if not os.path.exists(ABS_CACHE_PATH()):
+        os.mkdir(ABS_CACHE_PATH())
+    if not os.path.exists(os.path.join(ABS_CACHE_PATH(), ".include")):
+        open(os.path.join(ABS_CACHE_PATH(), ".include"), "").close()
+    if not os.path.exists(criterionfile_path):
+        open(criterionfile_path, "a").close()
+    with open(criterionfile_path, "r") as f:
+        criteria = json.loads(f.read())
+    return criteria
+

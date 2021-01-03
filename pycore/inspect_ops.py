@@ -15,7 +15,7 @@ from PIL.PngImagePlugin import PngImageFile, PngInfo
 Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
 
-from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
+from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS, set_bufferfile_content
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
 
 
@@ -304,6 +304,7 @@ def _inspect_smart(image_path):
     base_fname = sequence_nameget(filename)
     print(json.dumps({"basefname": base_fname}))
     possible_sequence = [os.path.abspath(os.path.join(imgdir, f)) for f in os.listdir(imgdir) if base_fname in os.path.splitext(f)[0]]
+    set_bufferfile_content(possible_sequence)
     # paths_bufferio = io.StringIO(json.dumps(possible_sequence))
     return inspect_sequence(possible_sequence)
 

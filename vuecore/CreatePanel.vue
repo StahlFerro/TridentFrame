@@ -545,7 +545,7 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { writeImagePathsCache, getCachePath } = require("./Client.vue");
+const { writeImagePathsCache, writeCriterionCache } = require("./Client.vue");
 const { tridentEngine } = require("./Client.vue");
 import {
   quintcellLister,
@@ -675,7 +675,7 @@ function loadImages(ops) {
         data.create_msgbox = error_data.error;
         data.CRT_IS_LOADING = false;
         toggleLoadButtonAnim(ops, false);
-      } else {
+      } else if (res) {
         console.log(res);
         res = JSON.parse(res);
         if (res && res.msg) {
@@ -792,45 +792,44 @@ function previewAIMG() {
     return;
   }
   data.CRT_IS_PREVIEWING = true;
-  client.invoke(
-    "combine_image",
-    data.image_paths,
-    "./temp",
-    data.name,
-    data,
-    (error, res) => {
-      if (error) {
-        console.error(error);
-        data.create_msgbox = error;
-        data.CRT_IS_PREVIEWING = false;
-      } else {
-        if (res) {
-          console.log(res);
-          if (res.msg) {
-            data.create_msgbox = res.msg;
+  console.log(data);
+  writeCriterionCache(data);
+  tridentEngine(["create-aimg", "./temp", data.name], (error, res) => {
+  if (error) {
+    let error_data = JSON.parse(error);
+    console.error(error_data);
+    data.create_msgbox = error_data.error;
+    data.CRT_IS_PREVIEWING = false;
+  } else if (res) {
+      res = JSON.parse(res);
+      console.log(`res -> ${res}`);
+      if (res.msg) {
+        data.create_msgbox = res.msg;
+      }
+      if (res.preview_path) {
+        data.preview_path = res.preview_path;
+        previewPathCacheBreaker();
+      }
+      console.log("a");
+      if (res.CONTROL == "CRT_FINISH") {
+        tridentEngine(["inspect-one", data.preview_path], (err, info) => {
+        console.log("b");
+          if (err) {
+            let err_data = JSON.parse(err);
+            console.error(err_data);
+            data.CRT_IS_PREVIEWING = false;
+          } else if (info) {
+            info = JSON.parse(info).data;
+            console.log("preview inspect");
+            console.log(info);
+            data.preview_info = info;
+            data.create_msgbox = "Previewed!";
+            data.CRT_IS_PREVIEWING = false;
           }
-          if (res.preview_path) {
-            data.preview_path = res.preview_path;
-            previewPathCacheBreaker();
-          }
-          if (res.CONTROL == "CRT_FINISH") {
-            client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
-              if (error) {
-                console.error(error);
-                data.CRT_IS_PREVIEWING = false;
-              } else {
-                console.log("preview inspect");
-                console.log(info);
-                data.preview_info = info;
-                data.create_msgbox = "Previewed!";
-                data.CRT_IS_PREVIEWING = false;
-              }
-            });
-          }
-        }
+        });
       }
     }
-  );
+  });
 }
 
 function CRTCreateAIMG() {

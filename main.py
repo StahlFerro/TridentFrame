@@ -16,7 +16,7 @@ from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
 from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
-from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH, get_bufferfile_content
+from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH, get_bufferfile_content, get_criterionfile_content
 
 
 IS_FROZEN = getattr(sys, 'frozen', False)
@@ -68,7 +68,15 @@ def inspect_smart(image_path):
         print(info)
 
 
-def combine_image(self, image_paths, out_dir, filename, vals: dict):
+@cli.command("create-aimg")
+@click.argument("out-dir")
+@click.argument("filename")
+def combine_image(out_dir, filename):
+    image_paths = get_bufferfile_content()
+    criterion_vals = get_criterionfile_content()
+    print({
+        "criterion_vals": criterion_vals
+    })
     """Combine a sequence of images into a GIF/APNG"""
     # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
     if not image_paths and not out_dir:
@@ -78,11 +86,14 @@ def combine_image(self, image_paths, out_dir, filename, vals: dict):
     elif not out_dir:
         raise Exception("Please choose the output folder!")
     crbundle = CriteriaBundle({
-        "create_aimg": CreationCriteria(vals),
-        "gif_opt": GIFOptimizationCriteria(vals),
-        "apng_opt": APNGOptimizationCriteria(vals)
+        "create_aimg": CreationCriteria(criterion_vals),
+        "gif_opt": GIFOptimizationCriteria(criterion_vals),
+        "apng_opt": APNGOptimizationCriteria(criterion_vals)
     })
-    return create_aimg(image_paths, out_dir, filename, crbundle)
+    out_path = create_aimg(image_paths, out_dir, filename, crbundle)
+    if (out_path):
+        print(json.dumps({"data": out_path}))
+    return
 
 
 def split_image(self, image_path, out_dir, vals):

@@ -8,6 +8,7 @@ import math
 import time
 import subprocess
 import tempfile
+import json
 from collections import deque
 from random import choices
 from pprint import pprint
@@ -31,18 +32,18 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
     #     image_paths.reverse()
     # temp_gifs = []
     fcount = len(image_paths)
-    yield {"msg": f"Criteria start frame {criteria.start_frame}"}
+    print(json.dumps({"msg": f"Criteria start frame {criteria.start_frame}"}))
     if criteria.start_frame:
         shift_items = deque(image_paths)
         shift = -criteria.start_frame
-        yield {"SHIFT!": shift}
+        print(json.dumps({"SHIFT!": shift}))
         shift_items.rotate(-criteria.start_frame)
         image_paths = list(shift_items)
     perc_skip = 5
     shout_nums = shout_indices(fcount, perc_skip)
     for index, ipath in enumerate(image_paths):
         if shout_nums.get(index):
-            yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
+            print(json.dumps({"msg": f'Processing frames... ({shout_nums.get(index)})'}))
         with Image.open(ipath) as im:
             im: Image.Image
             transparency = im.info.get("transparency", False)
@@ -105,11 +106,11 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
 
 
 def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
-    yield {"CRT IMAGE PATHS": image_paths}
+    print(json.dumps({"CRT IMAGE PATHS": image_paths}))
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     criteria = crbundle.create_aimg
     gif_criteria = crbundle.gif_opt
-    yield from _create_gifragments(image_paths, gifragment_dir, criteria)
+    _create_gifragments(image_paths, gifragment_dir, criteria)
     executable = str(imager_exec_path('gifsicle'))
     delay = int(criteria.delay * 100)
     disposal = "background"
@@ -135,23 +136,23 @@ def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
 
     ROOT_PATH = str(os.getcwd())
     if os.getcwd() != gifragment_dir:
-        yield {"msg": f"Changing directory from {os.getcwd()} to {gifragment_dir}"}
+        print(json.dumps({"msg": f"Changing directory from {os.getcwd()} to {gifragment_dir}"}))
         os.chdir(gifragment_dir)
-    yield {"msg": f"Obtained gifsicle exec path: {executable}"}
+    print(json.dumps({"msg": f"Obtained gifsicle exec path: {executable}"}))
     args = [executable, opti_mode, lossy_arg, colorspace_arg, f"--delay={delay}", f"--disposal={disposal}", loop_arg, globstar_path, "--output", f'"{out_full_path}"']
     cmd = ' '.join(args)
-    yield {"cmd": cmd}
+    print(json.dumps({"cmd": cmd}))
     # yield {"shlexed cmd": cmd}
-    yield {"msg": "Combining frames..."}
+    print(json.dumps({"msg": "Combining frames..."}))
     result = subprocess.run(cmd, shell=True, capture_output=True)
-    yield {"gifsicle STDOUT": result.stdout.decode('utf-8')}
-    yield {"gifsicle STDERR": result.stderr.decode('utf-8')}
+    print(json.dumps({"gifsicle STDOUT": result.stdout.decode('utf-8')}))
+    print(json.dumps({"gifsicle STDERR": result.stderr.decode('utf-8')}))
     # if result.stderr:
     #     raise Exception(result.stderr)
     os.chdir(ROOT_PATH)
     # shutil.rmtree(gifragment_dir)
-    yield {"preview_path": out_full_path}
-    yield {"CONTROL": "CRT_FINISH"}
+    print(json.dumps({"preview_path": out_full_path}))
+    print(json.dumps({"CONTROL": "CRT_FINISH"}))
     return out_full_path
 
 
@@ -197,11 +198,11 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
                         im = im.rotate(criteria.rotation, expand=True)
                     im.save(bytebox, "PNG")
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
-        yield {"msg": "Saving APNG...."}
+        print(json.dumps({"msg": "Saving APNG...."}))
         apng.num_plays = criteria.loop_count
         apng.save(out_full_path)
     else:
-        yield {"msg": "Saving APNG..."}
+        print(json.dumps({"msg": "Saving APNG..."}))
         apng = APNG.from_files(image_paths, delay=int(criteria.delay * 1000))
         apng.num_plays = criteria.loop_count
         apng.save(out_full_path)

@@ -8,6 +8,7 @@ const engine_exec_path = "./resources/app/engine/windows/main.exe";
 const settings = JSON.parse(fs.readFileSync(deploy_env == "DEV"? "./config/settings.json" : "./resources/app/config/settings.json"));
 const cache_path = deploy_env == "DEV"? `./${settings.cache_dir}` : `./resources/app/engine/windows/${settings.cache_dir}`;
 const bufferfile = `${cache_path}/${settings.bufferfile}`;
+const criterionfile = `${cache_path}/${settings.criterionfile}`;
 
 function writeImagePathsCache(paths) {
   if (!fs.existsSync(cache_path)){
@@ -15,6 +16,14 @@ function writeImagePathsCache(paths) {
       fs.writeFileSync(`${cache_path}/.include`, "");
   }
   fs.writeFileSync(bufferfile, JSON.stringify(paths));
+}
+
+function writeCriterionCache(vals) {
+  if (!fs.existsSync(cache_path)){
+      fs.mkdirSync(cache_path);
+      fs.writeFileSync(`${cache_path}/.include`, "");
+  }
+  fs.writeFileSync(criterionfile, JSON.stringify(vals));
 }
 
 function tridentEngine(args, callback) {
@@ -56,5 +65,6 @@ function tridentEngine(args, callback) {
 module.exports = {
   tridentEngine: tridentEngine,
   writeImagePathsCache: writeImagePathsCache,
+  writeCriterionCache: writeCriterionCache,
 };
 </script>
