@@ -1,4 +1,5 @@
 import os
+import io
 import string
 import math
 import sys
@@ -32,7 +33,7 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
         try:
             gif: Image = Image.open(abspath)
         except Exception:
-            raise Exception(f'The chosen file ({filename}) is not a valid GIF image')
+            print({"error": f'The chosen file ({filename}) is not a valid GIF image'}, file=sys.stderr)
             
         # raise Exception(gif.is_animated, filter_on, skip)
         if gif.format == 'GIF':
@@ -41,7 +42,7 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                     if skip:
                         return {}
                     else:
-                        raise Exception(f"The GIF {base_fname} is not static!")
+                        print({"error": f"The GIF {base_fname} is not static!"}, file=sys.stderr)
                 else:
                     return _inspect_agif(image_path, gif)
             else:
@@ -49,14 +50,15 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                     if skip:
                         return {}
                     else:
-                        raise Exception(f"The GIF {base_fname} is not animated!")
+                        print({"error": f"The GIF {base_fname} is not animated!"}, file=sys.stderr)
                 else:
                     return _inspect_simg(image_path)
     elif ext == '.png':
         try:
             apng: APNG = APNG.open(abspath)
         except Exception:
-            raise Exception(f'The chosen file ({filename}) is not a valid PNG image')
+            print({"error": f'The chosen file ({filename}) is not a valid PNG image'}, file=sys.stderr)
+            return
         frames = apng.frames
         frame_count = len(frames)
         if frame_count > 1:
@@ -64,7 +66,8 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                 if skip:
                     return {}
                 else:
-                    raise Exception(f"The APNG ({filename}) is not static!")
+                    print({"error": f"The APNG ({filename}) is not static!"}, file=sys.stderr)
+                    return
             else:
                 return _inspect_apng(image_path, apng)
         else:
@@ -72,7 +75,8 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                 if skip:
                     return {}
                 else:
-                    raise Exception(f"The PNG {base_fname} is not animated!")
+                    print({"error": f"The PNG {base_fname} is not animated!"}, file=sys.stderr)
+                    return
             else:
                 return _inspect_simg(image_path)
     else:
@@ -259,7 +263,6 @@ def _inspect_apng(abspath, apng: APNG):
 def inspect_sequence(image_paths):
     """Returns information of a selected sequence of static images"""
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip) and os.path.isfile(ip)]
-    # raise Exception(abs_image_paths)
     sequence_info = []
     perc_skip = 5
     shout_nums = shout_indices(len(abs_image_paths), perc_skip)
@@ -271,7 +274,8 @@ def inspect_sequence(image_paths):
             gen_info = info['general_info']
             sequence_info.append(gen_info)
     if not sequence_info:
-        raise Exception("No images selected. Make sure the path to them are correct and they are static images")
+        print(json.dumps({"error": "No images selected. Make sure the path to them are correct and they are not animated images!"}), file=sys.stderr)
+        return
     static_img_paths = [si['absolute_url']['value'] for si in sequence_info]
     # print("imgs count", len(static_img_paths))
     first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
@@ -300,4 +304,6 @@ def _inspect_smart(image_path):
     base_fname = sequence_nameget(filename)
     print(json.dumps({"basefname": base_fname}))
     possible_sequence = [os.path.abspath(os.path.join(imgdir, f)) for f in os.listdir(imgdir) if base_fname in os.path.splitext(f)[0]]
+    # paths_bufferio = io.StringIO(json.dumps(possible_sequence))
     return inspect_sequence(possible_sequence)
+

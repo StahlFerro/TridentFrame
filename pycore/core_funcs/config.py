@@ -1,4 +1,5 @@
 import os
+import json
 import sys
 import platform
 import json
@@ -9,8 +10,12 @@ IMG_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff']
 STATIC_IMG_EXTS = ['png', 'jpg', 'jpeg', 'bmp', 'gif']
 ANIMATED_IMG_EXTS = ['gif', 'png']
 
-CACHE_DIRNAME = 'cache'
+with open("./config/settings.json") as f:
+    SETTINGS = json.loads(f.read())
+
+CACHE_DIRNAME = SETTINGS['cache_dir']
 TEMP_DIRNAME = 'temp'
+BUFFERFILE_NAME = SETTINGS['bufferfile']
 
 BIN_DIRNAME = 'bin'
 
@@ -26,7 +31,7 @@ def _bin_dirpath():
 
 
 def imager_confile():
-    with open('config/imagers.json') as jsonfile:
+    with open('config/imagers.json', "r") as jsonfile:
         return json.load(jsonfile)
 
 
@@ -55,3 +60,15 @@ def imager_exec_path(binname: str) -> str:
     # path = path.replace("'", "''")
     # path = f".'{path}'"
     return path
+
+
+def get_bufferfile_content():
+    bufferfile_path = os.path.abspath(os.path.join(ABS_CACHE_PATH(), BUFFERFILE_NAME))
+    if not os.path.exists(ABS_CACHE_PATH()):
+        os.mkdir(ABS_CACHE_PATH())
+        open(os.path.join(ABS_CACHE_PATH(), ".include"), "").close()
+    if not os.path.exists(bufferfile_path):
+        open(bufferfile_path, "a").close()
+    with open(bufferfile_path, "r") as f:
+        paths = json.loads(f.read())
+    return paths

@@ -1,4 +1,6 @@
 {
+    "cache_dir": "cache",
+    "bufferfile": "paths_bufferfile.json",
     "autoclean_cache": true,
     "autoclean_temp": false
 }

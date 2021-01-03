@@ -545,7 +545,7 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+const { writeImagePathsCache, getCachePath } = require("./Client.vue");
 const { tridentEngine } = require("./Client.vue");
 import {
   quintcellLister,
@@ -632,10 +632,19 @@ function toggleLoadButtonAnim(ops, state = false) {
 }
 
 function loadImages(ops) {
-  // ops are between 'replace', 'insert' or 'smart_insert'
   console.log("crt load image with ops:", ops);
-  let props = ops == "smart_insert" ? img_dialog_props : imgs_dialog_props;
-  let pymethod = ops == "smart_insert" ? "inspect-smart" : "inspect-many";
+  let props = ops == "replace" ? imgs_dialog_props : img_dialog_props;
+  let cmd_args = [];
+  switch (ops) {
+    case "insert":
+      // Add one image uses inspect-many instead of inspect-one because of the different data structure returned.
+      // inspect-one is suited for singular file inspection, while inspect-many can support 1 to n amount of images.
+      cmd_args.push("inspect-many"); break;
+    case "smart_insert":
+      cmd_args.push("inspect-smart"); break;
+    case "replace":
+      cmd_args.push("inspect-many"); break;
+  }
   console.log("obtained props", props);
   var options = {
     filters: extension_filters,
@@ -648,11 +657,19 @@ function loadImages(ops) {
     if (img_paths === undefined || img_paths.length == 0) {
       return;
     }
+
     data.CRT_IS_LOADING = true;
     toggleLoadButtonAnim(ops, true);
-    let paths = ops == "smart_insert" ? img_paths : img_paths;
-    tridentEngine([pymethod, ...paths], (error, res) => {
+
+    if (["insert", "replace"].includes(ops)) {
+      writeImagePathsCache(img_paths);
+    } else {
+      cmd_args.push(img_paths[0]);
+    }
+
+    tridentEngine(cmd_args, (error, res) => {
       if (error) {
+        console.error(error);
         let error_data = JSON.parse(error);
         console.error(error_data);
         data.create_msgbox = error_data.error;
@@ -668,6 +685,7 @@ function loadImages(ops) {
           let info = res.data;
           console.log("sequence info");
           console.log(info.sequence_info);
+          console.log(info);
           renderSequence(info, { operation: ops });
           data.name = info.name;
           data.orig_width = info.width;
@@ -694,6 +712,18 @@ function renderSequence(pyinfo, options) {
     data.sequence_info = pyinfo.sequence_info;
   } else if (["insert", "smart_insert"].includes(operation)) {
     console.log("BB");
+    let image_paths = []
+    let sequence_info = []
+    /*
+    if (operation == "insert") {
+      image_paths.push(pyinfo.general_info.absolute_url.value);
+      sequence_info.push(pyinfo.general_info)
+    }
+    else if (operation == "smart_insert") {
+      image_paths.push(...pyinfo.sequence);
+      sequence_info.push(...pyinfo.sequence_info);
+    }
+    */
     if (data.insert_index) {
       data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
       data.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);

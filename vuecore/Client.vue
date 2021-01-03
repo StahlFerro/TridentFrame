@@ -2,8 +2,20 @@
 const { execFile } = require("child_process");
 const { stderr }=require("process");
 const { PythonShell } = require("python-shell");
+const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
-const engine_exec_path = ".resources/app/engine/windows/main.exe";
+const engine_exec_path = "./resources/app/engine/windows/main.exe";
+const settings = JSON.parse(fs.readFileSync(deploy_env == "DEV"? "./config/settings.json" : "./resources/app/config/settings.json"));
+const cache_path = deploy_env == "DEV"? `./${settings.cache_dir}` : `./resources/app/engine/windows/${settings.cache_dir}`;
+const bufferfile = `${cache_path}/${settings.bufferfile}`;
+
+function writeImagePathsCache(paths) {
+  if (!fs.existsSync(cache_path)){
+      fs.mkdirSync(cache_path);
+      fs.writeFileSync(`${cache_path}/.include`, "");
+  }
+  fs.writeFileSync(bufferfile, JSON.stringify(paths));
+}
 
 function tridentEngine(args, callback) {
   console.log(`Current dir: ${process.cwd()}`);
@@ -23,7 +35,7 @@ function tridentEngine(args, callback) {
     pyshell.on("stderr", (err) => {
       callback(err, "");
     });
-  } else if (deploy_env == "PROD") {
+  } else {
     const exec = require("child_process").execFile;
     exec(engine_exec_path, args, (error, stdout, stderr) => {
       console.log(">>error");
@@ -43,5 +55,6 @@ function tridentEngine(args, callback) {
 }
 module.exports = {
   tridentEngine: tridentEngine,
+  writeImagePathsCache: writeImagePathsCache,
 };
 </script>

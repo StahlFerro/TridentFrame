@@ -16,7 +16,7 @@ from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
 from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
-from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
+from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH, get_bufferfile_content
 
 
 IS_FROZEN = getattr(sys, 'frozen', False)
@@ -47,9 +47,11 @@ def inspect_one(image_path, filter=""):
 
 
 @cli.command("inspect-many")
-@click.argument('image_paths', nargs=-1)
-def inspect_many(image_paths):
-    """Inspect a sequence of images and then return their information"""
+def inspect_many():
+    """ Inspect a sequence of images and then return their information.
+        Intermediary buffer file is used to avoid char limit of command lines
+    """
+    image_paths = get_bufferfile_content()
     info = inspect_sequence(image_paths)
     if (info):
         info = json.dumps({"data": info})
