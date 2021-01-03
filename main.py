@@ -25,6 +25,7 @@ IS_FROZEN = getattr(sys, 'frozen', False)
 def cli():
     pass
 
+
 # class API(object):
 @cli.command("echo")
 @click.argument('msg')
@@ -32,25 +33,31 @@ def echo(msg):
     print(msg)
     return f"{msg} echoed"
 
+
 @cli.command("inspect-one")
 @click.argument('image_path')
-@click.argument('filter_on', default='')
-def inspect_one(image_path, filter_on=""):
+@click.option('--filter', required=False, type=click.Choice(['static', 'animated'], case_sensitive=False))
+def inspect_one(image_path, filter=""):
     """Inspect a single image and then return its information"""
-    info = inspect_general(image_path, filter_on)
-    print(info)
+
+    info = inspect_general(image_path, filter)
+    if (info):
+        info = json.dumps({"res": info})
     return info
+
 
 @cli.command("inspect-many")
 @click.argument('image_paths')
 def inspect_many(image_paths):
     """Inspect a sequence of images and then return their information"""
+
     print(image_paths)
     pathjson = json.loads(image_paths)
     print("paths", pathjson['paths'])
     info = inspect_sequence(pathjson['paths'])
     print(info)
     return info
+
 
 @cli.command("inspect-smart")
 @click.argument('image_path')
@@ -60,6 +67,7 @@ def inspect_smart(image_path):
     # raise Exception("mama")
     print(info)
     return info
+
 
 def combine_image(self, image_paths, out_dir, filename, vals: dict):
     """Combine a sequence of images into a GIF/APNG"""
@@ -77,6 +85,7 @@ def combine_image(self, image_paths, out_dir, filename, vals: dict):
     })
     return create_aimg(image_paths, out_dir, filename, crbundle)
 
+
 def split_image(self, image_path, out_dir, vals):
     """Split all the frames of a GIF/APNG into a sequence of images"""
     if not image_path and not out_dir:
@@ -87,6 +96,7 @@ def split_image(self, image_path, out_dir, vals):
         raise Exception("Please choose an output folder!")
     criteria = SplitCriteria(vals)
     return split_aimg(image_path, out_dir, criteria)
+
 
 def modify_image(self, image_path, out_dir, vals):
     """Modify the criteria and behavior of a GIF/APNG"""
@@ -119,6 +129,7 @@ def build_spritesheet(self, image_paths, out_dir, filename, vals: dict):
     # yield {"msg": "yo"}
     return _build_spritesheet(image_paths, out_dir, filename, criteria)
 
+
 def slice_spritesheet(self, image_path, out_dir, filename, vals: dict):
     """Slice a spritesheet into individual sections"""
     if not image_path and not out_dir:
@@ -130,11 +141,13 @@ def slice_spritesheet(self, image_path, out_dir, filename, vals: dict):
     criteria = SpritesheetSliceCriteria(vals)
     return _slice_spritesheet(image_path, out_dir, filename, criteria)
 
+
 def purge_cache_temp(self):
     """Remove cache and temp directories"""
     _purge_directory(ABS_TEMP_PATH())
     _purge_directory(ABS_CACHE_PATH())
     return "Cache and temp evaporated"
+
 
 def print_cwd(self):
     """Dev method for displaying python cwd"""
@@ -145,6 +158,7 @@ def print_cwd(self):
         "IS_FROZEN": IS_FROZEN
     }
     return msg
+
 
 def test_generator(self):
     return util_generator()
@@ -160,6 +174,7 @@ def test_generator(self):
 #     def exit_gracefully(self, signum, frame):
 #         print(f"{signum} Closing server...")
 #         self.SERVER.close()
+
 
 def main():
     pass

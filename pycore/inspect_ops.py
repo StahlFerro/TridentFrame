@@ -1,6 +1,8 @@
 import os
 import string
 import math
+import sys
+import json
 from random import choices
 from pprint import pprint
 from typing import List, Dict
@@ -11,7 +13,6 @@ from PIL.PngImagePlugin import PngImageFile, PngInfo
 # from PIL.GifImagePlugin import GifImageFile
 Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
-import json
 
 from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
@@ -85,10 +86,15 @@ def _inspect_simg(image):
     image -- Path or Pillow Image
     """
     img_metadata = {}
-    if image.__class__.__bases__[0] is ImageFile.ImageFile:
-        im = image
-    else:
-        im = Image.open(image)
+    im: Image = None
+    try:
+        if image.__class__.__bases__[0] is ImageFile.ImageFile:
+            im = image
+        else:
+            im = Image.open(image)
+    except Exception as e:
+        print(json.dumps({"error": str(e).replace("\\\\", "/")}), file=sys.stderr)
+        return
     fmt = im.format
     exif = "-"
     if fmt.upper() != "GIF":
@@ -99,13 +105,6 @@ def _inspect_simg(image):
                 for k, v in exif_raw.items()
                 if k in ExifTags.TAGS
             }
-    # print(json.dumps({"imtext": json.dumps(str(im))}))
-    # print(json.dumps({"imtext": im.text}))
-    # print(im.text)
-    # if fmt == "PNG":
-    #     pngimg = PngImageFile(im.path)
-    #     pngtext = pngimg.text
-    # print(str(pngtext))
     width, height = im.size
     path = im.filename
     filename = str(os.path.basename(path))
@@ -117,7 +116,7 @@ def _inspect_simg(image):
     transparency = im.info.get('transparency', "-")
     # alpha = im.getchannel('A')
     comment = im.info.get('comment')
-    img_metadata = {
+    image_info = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
             "base_fname": {"value": base_fname, "label": "Base Name"},
@@ -127,16 +126,16 @@ def _inspect_simg(image):
             "fsize_hr": {"value": fsize_hr, "label": "File size "},
             "absolute_url": {"value": path, "label": "Path"},
             "format": {"value": fmt, "label": "Format"},
-            "comments": {"value": comment, "label": "Comments"},
-            "color_mode": {"value": color_mode, "label": "Color Mode"},
+            "comments": {"value": str(comment), "label": "Comments"},
+            "color_mode": {"value": str(color_mode), "label": "Color Mode"},
             "transparency": {"value": str(transparency), "label": "Transparency Info"},
             # "alpha": {"value": alpha, "label": "Has Alpha"},
-            "exif": {"value": exif, "label": "EXIF"},
+            "exif": {"value": str(exif), "label": "EXIF"},
             "is_animated": {"value": False, "label": "Is Animated"},
         }
     }
     im.close()
-    return json.dumps(img_metadata)
+    return image_info
 
 
 def _inspect_agif(abspath: str, gif: Image):
@@ -202,7 +201,7 @@ def _inspect_agif(abspath: str, gif: Image):
         }
     }
     gif.close()
-    return json.dumps(image_info)
+    return image_info
 
 
 def _inspect_apng(abspath, apng: APNG):  
@@ -254,7 +253,7 @@ def _inspect_apng(abspath, apng: APNG):
             "loop_count": {"value": loop_count, "label": "Loop count"},
         }
     }
-    return json.dumps(image_info)
+    return image_info
 
 
 def inspect_sequence(image_paths):

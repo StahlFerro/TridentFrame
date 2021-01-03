@@ -80,7 +80,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
 const { randString } = require("./Utility.vue");
-const { getPyShell } = require("./Client.vue");
+const { tridentEngine } = require("./Client.vue");
 
 let extension_filters = [
   {
@@ -98,14 +98,9 @@ var data = {
   INS_IS_INSPECTING: false,
   info_data: "",
 };
-// pyshell.send(`inspect-one --help`)
-// pyshell.on('message', (message) => {
-//   console.log("SuCCESS MESSAGE!!!!!!!!!!!!!!!!!!!");
-//   console.log(message);
-// });
+
 function loadImage() {
   var options = {
-    filters: extension_filters,
     properties: file_dialog_props,
   };
   dialog
@@ -117,47 +112,28 @@ function loadImage() {
         return;
       }
       data.INS_IS_INSPECTING = true;
-      // PythonShell.run('main.py', options, )
       console.log(chosen_paths);
-
-      // let pyshell = new PythonShell('main.py');
-      // pyshell.send(`inspect-one`)
-      // pyshell.on('message', function (message) {
-      //   console.log(message);
-      // });
-
-      let pyshell = getPyShell(["inspect-one", chosen_paths[0]]);
-      pyshell.on("message", (res) => {
-        console.log({
-          RES: res,
-        });
-        res = JSON.parse(res);
-        console.table(res);
-        data.info_data = res;
-        if (res.general_info || res.animation_info) {
-          data.img_path = `${
-            res.general_info.absolute_url.value
-          }?timestamp=${randString()}`;
+      tridentEngine(["inspect-one", chosen_paths[0]], (error, res) => {
+        if (error) {
+          console.log("stderr error: ", error);
+          console.error(error);
         }
-        console.log(res);
+        else {
+          console.log({
+            RES: res,
+          });
+          res = JSON.parse(res);
+          console.table(res);
+          data.info_data = res;
+          if (res.general_info || res.animation_info) {
+            data.img_path = `${
+              res.general_info.absolute_url.value
+            }?timestamp=${randString()}`;
+          }
+          console.log(res);
+        }
         data.INS_IS_INSPECTING = false;
       });
-      pyshell.end(function (err) {
-        if (err) throw err;
-        console.log("End Script");
-      });
-      // client.invoke("inspect_one", chosen_path[0], "", (error, res) => {
-      //   if (error) {
-      //     console.error(error);
-      //     data.INS_IS_INSPECTING = false;
-      //   }
-      //   else {
-      //     data.info_data = res;
-      //     data.img_path = `${res.general_info.absolute_url.value}?timestamp=${randString()}`;;
-      //     console.log(res);
-      //     data.INS_IS_INSPECTING = false;
-      //   }
-      // })
     })
     .catch((err) => {
       console.log(err);

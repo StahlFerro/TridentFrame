@@ -548,6 +548,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
+const { tridentEngine } = require("./Client.vue");
 import {
   quintcellLister,
   validateFilename,
@@ -636,7 +637,7 @@ function loadImages(ops) {
   // ops are between 'replace', 'insert' or 'smart_insert'
   console.log("crt load image with ops:", ops);
   let props = ops == "smart_insert" ? img_dialog_props : imgs_dialog_props;
-  let pymethod = ops == "smart_insert" ? "inspect_smart" : "inspect_many";
+  let pymethod = ops == "smart_insert" ? "inspect-smart" : "inspect-many";
   console.log("obtained props", props);
   var options = {
     filters: extension_filters,
@@ -651,6 +652,9 @@ function loadImages(ops) {
     data.CRT_IS_LOADING = true;
     toggleLoadButtonAnim(ops, true);
     let paths = ops == "smart_insert" ? img_paths[0] : img_paths;
+    tridentEngine([pymethod, paths], (res) => {
+
+    });
     client.invoke(pymethod, paths, (error, res) => {
       if (error) {
         console.error(error);
