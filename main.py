@@ -61,9 +61,9 @@ def inspect_many(image_paths):
 def inspect_smart(image_path):
     """Inspect a sequence of images and then return their information"""
     info = _inspect_smart(image_path)
-    # raise Exception("mama")
-    print(info)
-    return info
+    if (info):
+        info = json.dumps({"data": info})
+        print(info)
 
 
 def combine_image(self, image_paths, out_dir, filename, vals: dict):

@@ -650,7 +650,7 @@ function loadImages(ops) {
     }
     data.CRT_IS_LOADING = true;
     toggleLoadButtonAnim(ops, true);
-    let paths = ops == "smart_insert" ? img_paths[0] : img_paths;
+    let paths = ops == "smart_insert" ? img_paths : img_paths;
     tridentEngine([pymethod, ...paths], (error, res) => {
       if (error) {
         let error_data = JSON.parse(error);
@@ -668,11 +668,8 @@ function loadImages(ops) {
           let info = res.data;
           console.log("sequence info");
           console.log(info.sequence_info);
-          // data.image_paths = info.sequence;
-          // data.sequence_info = info.sequence_info;
           renderSequence(info, { operation: ops });
           data.name = info.name;
-          // data.sequence_counter = `${info.total} image${info.total > 1 ? "s" : ""} (${info.size})`;
           data.orig_width = info.width;
           data.width = info.width;
           data.orig_height = info.height;

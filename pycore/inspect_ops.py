@@ -298,7 +298,6 @@ def _inspect_smart(image_path):
     imgdir = os.path.dirname(image_path)
     filename, ext = os.path.splitext(os.path.basename(image_path))
     base_fname = sequence_nameget(filename)
-    print({"basefname": base_fname})
+    print(json.dumps({"basefname": base_fname}))
     possible_sequence = [os.path.abspath(os.path.join(imgdir, f)) for f in os.listdir(imgdir) if base_fname in os.path.splitext(f)[0]]
-    # print({"possible": possible_sequence})
     return inspect_sequence(possible_sequence)
