@@ -4,10 +4,12 @@ import string
 import math
 import sys
 import json
+import pickle
 from random import choices
 from pprint import pprint
 from typing import List, Dict
 from urllib.parse import urlparse
+from pprint import pprint
 
 from PIL import Image, ExifTags, ImageFile
 from PIL.PngImagePlugin import PngImageFile, PngInfo
@@ -17,6 +19,7 @@ from apng import APNG
 
 from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS, set_bufferfile_content
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
+from .core_funcs.metadata_builder import ImageMetadata, AnimatedImageMetadata
 
 
 def inspect_general(image_path, filter_on="", skip=False) -> Dict:
@@ -120,6 +123,7 @@ def _inspect_simg(image):
     transparency = im.info.get('transparency', "-")
     # alpha = im.getchannel('A')
     comment = im.info.get('comment')
+    '''
     image_info = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
@@ -138,8 +142,24 @@ def _inspect_simg(image):
             "is_animated": {"value": False, "label": "Is Animated"},
         }
     }
+    '''
     im.close()
-    return image_info
+    
+    metadata = ImageMetadata({
+        "name": filename, 
+        "base_filename": base_fname,
+        "width": width,
+        "height": height,
+        "format": fmt,
+        "fsize": fsize,
+        "absolute_url": path,
+        "comments": str(comment),
+        "color_mode": str(color_mode),    
+        "transparency": str(transparency),
+        "is_animated": False,
+        "exif": str(exif),
+    })
+    return metadata.format_info()
 
 
 def _inspect_agif(abspath: str, gif: Image):
@@ -163,20 +183,10 @@ def _inspect_agif(abspath: str, gif: Image):
         gif.seek(f)
         delays.append(gif.info['duration'])
         comments.append(gif.info.get('comment', ""))
-    min_duration = min(delays)
-    if min_duration == 0:
-        frame_count_ds = frame_count
-    else:
-        frame_count_ds = sum([delay//min_duration for delay in delays])
-    # raise Exception(delays)
-    delay_is_even = len(set(delays)) == 1
-    avg_delay = sum(delays) / len(delays) if sum(delays) != 0 else 0
-    fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
-    loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
     fmt = 'GIF'
     full_format = str(gif.info.get('version') or "")
     transparency = gif.info.get('transparency', "-")
-    # alpha = gif.getchannel('A')
+    '''
     image_info = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
@@ -204,8 +214,25 @@ def _inspect_agif(abspath: str, gif: Image):
             "loop_count": {"value": loop_count, "label": "Loop count"},
         }
     }
+    '''
     gif.close()
-    return image_info
+    metadata = AnimatedImageMetadata({
+        "name": filename, 
+        "base_filename": base_fname,
+        "width": width,
+        "height": height,
+        "format": fmt,
+        "format_version": full_format,
+        "fsize": fsize,
+        "absolute_url": abspath,
+        "comments": comments,
+        "transparency": transparency,
+        "is_animated": True,
+        "frame_count": frame_count,
+        "delays": delays,
+        "loop_count": loop_count
+    })
+    return metadata.format_info()
 
 
 def _inspect_apng(abspath, apng: APNG):  
@@ -228,11 +255,7 @@ def _inspect_apng(abspath, apng: APNG):
         frame_count_ds = frame_count
     else:
         frame_count_ds = sum([delay//min_duration for delay in delays])
-    delay_is_even = len(set(delays)) == 1
-    avg_delay = sum(delays) / frame_count if sum(delays) != 0 else 0
-    fps = round(1000.0 / avg_delay, 3) if avg_delay != 0 else 0
-    loop_duration = round(frame_count / fps, 3) if fps != 0 else 0
-
+    '''
     image_info = {
         "general_info": {
             "name": {"value": filename, "label": "Name"},
@@ -257,7 +280,22 @@ def _inspect_apng(abspath, apng: APNG):
             "loop_count": {"value": loop_count, "label": "Loop count"},
         }
     }
-    return image_info
+    '''
+    metadata = AnimatedImageMetadata({
+        "name": filename, 
+        "base_filename": base_fname,
+        "width": width,
+        "height": height,
+        "format": fmt,
+        "fsize": fsize,
+        "absolute_url": abspath,
+        "is_animated": True,
+        "frame_count": frame_count,
+        "delays": delays,
+        "loop_count": loop_count
+    })
+    return metadata.format_info()
+    # return image_info
 
 
 def inspect_sequence(image_paths):
@@ -286,7 +324,7 @@ def inspect_sequence(image_paths):
     # width, height = im.size
     # im.close()
     image_info = {
-        "name": sequence_info[0]['base_fname']['value'],
+        "name": sequence_info[0]['base_filename']['value'],
         "total": sequence_count,
         "sequence": static_img_paths,
         "sequence_info": sequence_info,

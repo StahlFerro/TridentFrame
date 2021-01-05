@@ -11,14 +11,14 @@ from ..core_funcs.utility import _mk_temp_dir, imager_exec_path, shout_indices
 
 
 def gifsicle_render(sicle_args: List[Tuple[str, str]], target_path: str, out_full_path: str, total_ops: int) -> str:
-    yield {"sicle_args": sicle_args}
+    # yield {"sicle_args": sicle_args}
     gifsicle_path = imager_exec_path('gifsicle')
     for index, (arg, description) in enumerate(sicle_args, start=1):
-        yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+        # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
         cmdlist = [gifsicle_path, arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
         cmd = ' '.join(cmdlist)
-        yield {"msg": f"[{index}/{total_ops}] {description}"}
-        yield {"cmd": cmd}
+        # yield {"msg": f"[{index}/{total_ops}] {description}"}
+        # yield {"cmd": cmd}
         subprocess.run(cmd, shell=True)
         if target_path != out_full_path:
             target_path = out_full_path

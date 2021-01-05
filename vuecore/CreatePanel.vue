@@ -670,9 +670,14 @@ function loadImages(ops) {
     tridentEngine(cmd_args, (error, res) => {
       if (error) {
         console.error(error);
-        let error_data = JSON.parse(error);
-        console.error(error_data);
-        data.create_msgbox = error_data.error;
+        try {
+          let error_data = JSON.parse(error);
+          console.error(error_data);
+          data.create_msgbox = error_data.error;
+        }
+        catch (e) {
+          data.create_msgbox = error;
+        }
         data.CRT_IS_LOADING = false;
         toggleLoadButtonAnim(ops, false);
       } else if (res) {
