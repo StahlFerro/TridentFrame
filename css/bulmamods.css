@@ -191,6 +191,39 @@
     cursor: not-allowed; }
 
 /* Color definitions */
+/* Color definitions */
+.r-click-menu {
+  width: 120px;
+  box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+  display: block;
+  position: fixed;
+  z-index: 999; }
+  .r-click-menu .r-click-menu-options {
+    display: block;
+    position: relative;
+    padding: 2px 2px;
+    background: #000;
+    border-radius: 0;
+    color: #FFF;
+    text-decoration: none;
+    font-size: 13px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    padding: 8px; }
+    .r-click-menu .r-click-menu-options:hover, .r-click-menu .r-click-menu-options:focus {
+      background: #fff;
+      color: #000;
+      outline: none; }
+  .r-click-menu .r-click-menu-option {
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 40px 10px 20px;
+    cursor: pointer;
+    z-index: 999; }
+    .r-click-menu .r-click-menu-option:hover {
+      background: rgba(0, 0, 0, 0.2); }
+
 /* Create Panel */
 /* Color definitions */
 .create-panel-root {

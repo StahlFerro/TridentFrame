@@ -1,8 +1,8 @@
 <template>
   <div id="inspect_panel">
     <div class="inspect-panel-root">
-      <div class="inspect-panel-display">
-        <div class="inspect-panel-image silver-bordered">
+      <div class="inspect-panel-display" >
+        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspectRCM', $event, ['send_image', 'donwload_image', 'share_image'])">
           <div class="inspect-panel-msgbox" v-show="inspect_msgbox != false">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>

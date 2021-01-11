@@ -39,9 +39,12 @@ function tridentEngine(args, callback) {
     console.log(args);
     let pyshell = new PythonShell("main.py", pyOptions);
     pyshell.on("message", (res) => {
+      console.log("[PYTHON STDOUT]")
       callback("", res);
     });
     pyshell.on("stderr", (err) => {
+      console.log("[PYTHON STDERR]");
+      console.error(err);
       callback(err, "");
     });
   } else {
@@ -57,6 +60,8 @@ function tridentEngine(args, callback) {
         callback(stderr, "");
       }
       else if (stdout) {
+        console.log("[PYTHON STDERR]");
+        console.error(err);
         callback("", stdout);
       }
     });
@@ -67,4 +72,5 @@ module.exports = {
   writeImagePathsCache: writeImagePathsCache,
   writeCriterionCache: writeCriterionCache,
 };
+
 </script>

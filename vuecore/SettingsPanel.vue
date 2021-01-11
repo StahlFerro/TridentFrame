@@ -47,6 +47,12 @@
           </a>
         </td>
         <td>
+          <a v-on:click="$refs.menu.open($event, 'Payload')" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fas fa-bug"></i>
+            </span>
+            <span>Confirm tester</span>
+          </a>
         </td>
       </tr>
     </table>
