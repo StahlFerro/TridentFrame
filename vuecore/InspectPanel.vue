@@ -2,13 +2,13 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspectRCM', $event, rcm_payload)">
+        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspectRCM', $event, inspect_image_payload)">
           <div class="inspect-panel-msgbox" v-show="inspect_msgbox != false">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
           <img v-bind:src="img_path" />
         </div>
-        <div class="inspect-panel-info silver-bordered-no-left">
+        <div class="inspect-panel-info silver-bordered-no-left" @contextmenu="$emit('inspectRCM', $event, inspect_info_payload)">
           <table class="table ins-info-table is-paddingless" width="100%">
             <template v-for="(item, key) in info_data">
               <!-- <span v-bind:key="key"/> -->
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import { webFrame } from "electron";
+import { webFrame, clipboard } from "electron";
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
@@ -101,13 +101,22 @@ var data = {
   INS_IS_INSPECTING: false,
   info_data: "",
   inspect_msgbox: "",
-  rcm_payload: [
+  inspect_image_payload: [
     {'name': "Shout Image", 'callback': shoutImage}
+  ],
+  inspect_info_payload: [
+    {'name': "Copy Info", 'callback': copyInfo}
   ]
 };
 
 function shoutImage() {
-  alert(data)
+  alert("shout image")
+}
+
+function copyInfo(event) {
+  alert("copy info");
+  console.log(event);
+  clipboard.writeText("blarg");
 }
 
 function clearMsgBox() {

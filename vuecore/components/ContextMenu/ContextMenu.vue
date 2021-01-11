@@ -25,6 +25,38 @@ let data = {
   contextData: {},
 }
 
+function open(evt, contextData) {
+  data.isVisible = true;
+  data.contextData = contextData;
+  
+  if (this.popper) {
+    this.popper.destroy();
+  }
+
+  this.popper = createPopper(this.referenceObject(evt), document.querySelector(".r-click-menu"), {
+    placement: 'right-start',
+    modifiers: {
+    },
+  });
+    // Recalculate position
+  this.$nextTick(() => {
+    // this.popper.scheduleUpdate();
+  });
+}
+
+function callOptionFunction(callback) {
+  callback();
+  this.close();
+}
+
+function close() {
+  data.isVisible = false;
+  data.contextData = null;
+  console.log("Closed Context Menu");
+}
+
+window.onresize = close;
+
 export default {
   props: {
     boundariesElement: {
@@ -42,33 +74,9 @@ export default {
     ClickOutside,
   },
   methods: {
-    open(evt, contextData) {
-      console.log(this.referenceObject(evt));
-      data.isVisible = true;
-      data.contextData = contextData;
-      
-      if (this.popper) {
-        this.popper.destroy();
-      }
-
-      this.popper = createPopper(this.referenceObject(evt), document.querySelector(".r-click-menu"), {
-        placement: 'right-start',
-        modifiers: {
-          
-        },
-      });
-      console.log(this.popper);
-       // Recalculate position
-      this.$nextTick(() => {
-        // this.popper.scheduleUpdate();
-      });
-      
-    },
-    close() {
-      data.isVisible = false;
-      data.contextData = null;
-      console.log("Closed Context Menu");
-    },
+    open: open,
+    callOptionFunction: callOptionFunction,
+    close: close,
     referenceObject(evt) {
       const left = evt.clientX;
       const top = evt.clientY;
@@ -76,8 +84,6 @@ export default {
       const bottom = top;
       const clientWidth = 0;
       const clientHeight = 0;
-      console.log(evt);
-      console.log(left, top, right, bottom);
       return {
         getBoundingClientRect: () => ({
           width: 0,

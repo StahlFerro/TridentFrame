@@ -163,7 +163,7 @@
         <ModifyPanel v-show="menuselection == 'modify_panel'" />
         <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
         <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
-        <InspectPanel v-show="menuselection == 'inspect_panel'" @inspectRCM="shoutEvent"/>
+        <InspectPanel v-show="menuselection == 'inspect_panel'" @inspectRCM="openContextMenu"/>
         <TilesPanel v-show="menuselection == 'tiles_panel'" />
         <SettingsPanel v-show="menuselection == 'settings_panel'" />
         <AboutPanel v-show="menuselection == 'about_panel'" />
@@ -172,7 +172,7 @@
       <ContextMenu ref="ctxmenu">
         <template slot-scope="{ contextData }">
           <ContextMenuItem v-for="(ctxData, ctxIndex) in contextData" v-bind:key="ctxIndex" 
-            @click.native="ctxData.callback(); $refs.ctxmenu.close();">
+            @click.native="$refs.ctxmenu.callOptionFunction(ctxData.callback);">
               {{ ctxData.name }}
           </ContextMenuItem>
         </template>
@@ -209,8 +209,8 @@ var data = {
   menuselection: "create_panel",
 };
 
-function shoutEvent(event, payload) {
-  console.log("SHOUT EVENT");
+function openContextMenu(event, payload) {
+  console.log("openContextMenu");
   console.log(event);
   console.log(payload);
   this.$refs.ctxmenu.open(event, payload);
@@ -270,7 +270,7 @@ export default {
       var window = remote.getCurrentWindow();
       window.close();
     },
-    shoutEvent: shoutEvent,
+    openContextMenu: openContextMenu,
     whatClicked: whatClicked,
   },
 };
