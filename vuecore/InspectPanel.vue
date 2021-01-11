@@ -8,7 +8,7 @@
           </div>
           <img v-bind:src="img_path" />
         </div>
-        <div class="inspect-panel-info silver-bordered-no-left" @contextmenu="$emit('inspectRCM', $event, inspect_info_payload)">
+        <div class="inspect-panel-info silver-bordered-no-left">
           <table class="table ins-info-table is-paddingless" width="100%">
             <template v-for="(item, key) in info_data">
               <!-- <span v-bind:key="key"/> -->
@@ -28,7 +28,7 @@
                   <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
                 </template>
                 <template v-else>
-                  <td style="max-width: 369px; word-wrap: break-all">
+                  <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspectRCM', $event, inspect_info_payload)">
                     {{ iprop.value }}
                   </td>
                 </template>
@@ -102,21 +102,35 @@ var data = {
   info_data: "",
   inspect_msgbox: "",
   inspect_image_payload: [
-    {'name': "Shout Image", 'callback': shoutImage}
+    {'name': "Copy Image", 'callback': copyImage},
+    {'name': "Share Image", 'callback': shareImage},
+    {'name': 'Send To', 'callback': sendTo},
   ],
   inspect_info_payload: [
     {'name': "Copy Info", 'callback': copyInfo}
   ]
 };
 
-function shoutImage() {
-  alert("shout image")
+function copyImage(event) {
+  console.log("copy  image");
+  console.log(event);
+}
+
+function shareImage(event) {
+  console.log("share image")
+}
+
+function sendTo(even) {
+  
 }
 
 function copyInfo(event) {
-  alert("copy info");
+  console.log("copy info");
   console.log(event);
-  clipboard.writeText("blarg");
+  let text = event.srcElement.innerText;
+  console.log(`text ${text}`);
+  if (text)
+    clipboard.writeText(text);
 }
 
 function clearMsgBox() {

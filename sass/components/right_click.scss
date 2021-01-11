@@ -1,8 +1,8 @@
 @import "_colors.scss";
 
 .r-click-menu {
-    width: 120px;
-    box-shadow: 0 4px 5px 3px rgba(0, 0, 0, 0.2);
+    width: 160px;
+    box-shadow: 0 5px 10px 3px rgba(0, 0, 0, 0.3);
     display: block;
     position: fixed;
     z-index: 999;
@@ -10,35 +10,35 @@
     .r-click-menu-options {
       display: block;
       position: relative;
-      padding: 2px 2px;
-      background: #000;
-      border-radius: 0;
-      color: #FFF;
+      padding: 1px 1px;
+      background: rgba($color: black, $alpha: 0.9);
+      border-radius: 0px;
+      color: $white-d;
       text-decoration: none;
       font-size: 13px;
       width: 100%;
       text-align: left;
       cursor: pointer;
       padding:8px;
-  
-  
       &:hover,
       &:focus {
-         background: #fff;
-         color:#000;
-         outline: none;
+        //  background: #fff;
+        //  color:#000;
+      }
+      .r-click-menu-option {
+        font-weight: 500;
+        font-size: 16px;
+        padding: 10px 40px 10px 20px;
+        cursor: pointer;
+        border: 2px solid transparent;
+  
+        z-index: 999;
+        &:hover {
+          border-color: $cyan;
+          color: $cyan;
+        }
       }
     }
-    .r-click-menu-option {
-      font-weight: 500;
-      font-size: 14px;
-      padding: 10px 40px 10px 20px;
-      cursor: pointer;
 
-      z-index: 999;
-      &:hover {
-        background: rgba(0, 0, 0, 0.2);
-      }
-    }
   }
   

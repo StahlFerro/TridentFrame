@@ -23,12 +23,13 @@ console.log(ClickOutside)
 let data = {
   isVisible: false,
   contextData: {},
+  originalEvent: null,
 }
 
 function open(evt, contextData) {
   data.isVisible = true;
   data.contextData = contextData;
-  
+  data.originalEvent = evt;
   if (this.popper) {
     this.popper.destroy();
   }
@@ -45,7 +46,7 @@ function open(evt, contextData) {
 }
 
 function callOptionFunction(callback) {
-  callback();
+  callback(data.originalEvent);
   this.close();
 }
 
