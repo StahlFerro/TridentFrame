@@ -171,8 +171,9 @@
     <div>
       <ContextMenu ref="ctxmenu">
         <template slot-scope="{ contextData }">
-          <ContextMenuItem v-for="(ctxData, ctxIndex) in contextData" v-bind:key="ctxIndex" @click.native="$refs.ctxmenu.close">
-              Action 1 {{ ctxData }}
+          <ContextMenuItem v-for="(ctxData, ctxIndex) in contextData" v-bind:key="ctxIndex" 
+            @click.native="ctxData.callback(); $refs.ctxmenu.close();">
+              {{ ctxData.name }}
           </ContextMenuItem>
         </template>
       </ContextMenu>

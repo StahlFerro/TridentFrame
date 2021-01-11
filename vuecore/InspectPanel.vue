@@ -2,7 +2,7 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspectRCM', $event, ['send_image', 'donwload_image', 'share_image'])">
+        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspectRCM', $event, rcm_payload)">
           <div class="inspect-panel-msgbox" v-show="inspect_msgbox != false">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
@@ -101,7 +101,14 @@ var data = {
   INS_IS_INSPECTING: false,
   info_data: "",
   inspect_msgbox: "",
+  rcm_payload: [
+    {'name': "Shout Image", 'callback': shoutImage}
+  ]
 };
+
+function shoutImage() {
+  alert(data)
+}
 
 function clearMsgBox() {
   data.inspect_msgbox = "";
