@@ -1,5 +1,5 @@
 <template>
-  <li class="r-click-menu-option">
+  <li class="context-menu-option">
     <slot/>
   </li>
 </template>

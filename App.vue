@@ -163,7 +163,7 @@
         <ModifyPanel v-show="menuselection == 'modify_panel'" />
         <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
         <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
-        <InspectPanel v-show="menuselection == 'inspect_panel'" @inspectRCM="openContextMenu"/>
+        <InspectPanel v-show="menuselection == 'inspect_panel'" @inspect-ctxmenu="openContextMenu"/>
         <TilesPanel v-show="menuselection == 'tiles_panel'" />
         <SettingsPanel v-show="menuselection == 'settings_panel'" />
         <AboutPanel v-show="menuselection == 'about_panel'" />
@@ -213,7 +213,7 @@ function openContextMenu(event, payload) {
   console.log("openContextMenu");
   console.log(event);
   console.log(payload);
-  this.$refs.ctxmenu.open(event, payload);
+  this.$refs.ctxmenu.openPopper(event, payload);
 }
 
 function whatClicked(event) {

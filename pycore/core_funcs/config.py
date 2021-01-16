@@ -99,7 +99,6 @@ def set_bufferfile_content(content):
 
 def get_criterionfile_content():
     criterionfile_path = ABS_CRITERIONFILE_PATH()
-    print(criterionfile_path)
     if not os.path.exists(ABS_CACHE_PATH()):
         os.mkdir(ABS_CACHE_PATH())
     if not os.path.exists(os.path.join(ABS_CACHE_PATH(), ".include")):

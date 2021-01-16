@@ -101,46 +101,64 @@
         </div>
       </div>
 
-      <div class="create-panel-buttonbar">
+      <div class="create-panel-middlebar">
+        <div id="crtLoadPopper" class="context-menu" ref="popper" v-show="popperIsVisible" tabindex="-1" style="display: block;">
+          <ul class="context-menu-options">
+            <li class="context-menu-option" @click="loadImages('insert')">
+              <div class="ctxmenu-content">
+                <div class="ctxmenu-icon">
+                  <span class="icon is-small"><i class="fas fa-plus"></i></span>
+                </div>
+                <div class="ctxmenu-text"><span>Image</span></div>
+              </div>
+            </li>
+            <li class="context-menu-option" @click="loadImages('replace')">
+              <div class="ctxmenu-content">
+                <div class="ctxmenu-icon">
+                  <span class="icon is-small"><i class="fas fa-plus-square"></i></span>
+                </div>
+                <div class="ctxmenu-text">Multiple images</div>
+              </div>
+            </li>
+            <li class="context-menu-option" @click="loadImages('smart_insert')">
+              <div class="ctxmenu-content">
+                <div class="ctxmenu-icon">
+                  <span class="icon is-small"><i class="fas fa-plus-circle"></i></span>
+                </div>
+                <div class="ctxmenu-text">Autodetect sequence</div>
+              </div>
+            </li>
+          </ul>
+        </div>
         <div class="cpb-sequence-buttons">
-          <a
-            v-on:click="loadImages('insert')"
-            class="button is-neon-emerald"
-            v-bind:class="{ 'is-loading': CRT_INSERT_LOAD, 'is-static': isButtonFrozen }"
-            title="Adds one or more images"
-          >
-            <span class="icon is-small">
-              <i class="fas fa-plus"></i>
-            </span>
-            <span>Add</span>
-          </a>
-          <a
-            v-on:click="loadImages('smart_insert')"
-            class="button is-neon-emerald"
-            v-bind:class="{
-              'is-loading': CRT_SMARTINSERT_LOAD,
-              'is-static': isButtonFrozen,
-            }"
-            title="Adds a new sequence of images from selecting a single image"
-          >
-            <span class="icon is-small">
-              <i class="fas fa-plus-circle"></i>
-            </span>
-            <span>Smart</span>
-          </a>
-          <div class="dualine-label">
-            <span>Insert<br />after</span>
+          <div class="cpb-sequence-btn">
+            <a id="addPopperBtn" v-on:click="toggleLoadPopper" v-click-outside="closeLoadPopper" class="button is-neon-emerald"
+              v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen }" title="Open image loading dialog">
+              <span class="icon is-small">
+                <i class="fas fa-plus"></i>
+              </span>
+              <span>Add...</span>
+            </a>
           </div>
-          <input
-            v-model="insert_index"
-            v-on:keydown="numConstrain($event, true, true)"
-            class="input is-neon-white"
-            type="number"
-            min="0"
-            style="width: 70px"
-            title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving this field empty is the default operation (append the new sequence after the last one)"
-          />
-          <a
+          <div class="cpb-sequence-btn">
+            <span class="is-white-d">Insert<br />after</span>
+          </div>
+          <div class="cpb-sequence-btn">
+            <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px"
+              title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving this field empty is the default operation (append the new sequence after the last frame)"/>
+          </div>
+          <div class="cpb-sequence-btn">
+            <a v-on:click="CRTClearAIMG" class="button is-neon-crimson" v-bind:class="{ 'is-static': isButtonFrozen }" title="Clears the entire sequence">
+              <span class="icon is-small">
+                <i class="fas fa-times"></i>
+              </span>
+              <span>Clear</span>
+            </a>
+          </div>
+          <div class="cpb-sequence-btn">
+            <span class="is-white-d" v-if="total_size != ''">{{ total_size }}</span>
+          </div>
+          <!-- <a
             v-on:click="loadImages('replace')"
             class="button is-neon-emerald"
             v-bind:class="{ 'is-loading': CRT_REPLACE_LOAD, 'is-static': isButtonFrozen }"
@@ -150,38 +168,21 @@
               <i class="fas fa-plus-square"></i>
             </span>
             <span>Load</span>
-          </a>
-          <a
-            v-on:click="CRTClearAIMG"
-            class="button is-neon-crimson"
-            v-bind:class="{ 'is-static': isButtonFrozen }"
-            title="Clears the entire sequence"
-          >
-            <span class="icon is-small">
-              <i class="fas fa-times"></i>
-            </span>
-            <span>Clear</span>
-          </a>
+          </a> -->
         </div>
         <div class="cpb-preview-buttons">
-          <a
-            v-on:click="previewAIMG"
-            class="button is-neon-cyan"
+          <a v-on:click="previewAIMG" class="button is-neon-cyan"
             v-bind:class="{
               'is-loading': CRT_IS_PREVIEWING,
               'is-static': isButtonFrozen,
-            }"
-          >
+            }">
             <span class="icon is-medium">
               <i id="autoprev_icon" class="far fa-eye"></i>
             </span>
             <span>Preview</span>
           </a>
-          <a
-            v-on:click="CRTToggleCheckerBG"
-            class="button is-neon-white"
-            v-bind:class="{ 'is-active': checkerbg_active }"
-          >
+          <a v-on:click="CRTToggleCheckerBG" class="button is-neon-white"
+            v-bind:class="{ 'is-active': checkerbg_active }">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
@@ -193,10 +194,7 @@
         <div class="cpc-left-panel">
           <aside class="menu has-text-centered" style="margin: 0">
             <ul class="menu-list">
-              <li
-                class="subtab-menu-item"
-                v-bind:class="{ 'is-selected': crt_menuselection == 0 }"
-              >
+              <li class="subtab-menu-item" v-bind:class="{ 'is-selected': crt_menuselection == 0 }">
                 <a v-on:click="crt_menuselection = 0">
                   <span class="icon is-large">
                     <i class="fas fa-image fa-2x fa-inverse"></i>
@@ -204,28 +202,20 @@
                   <p class="is-white-d">General</p>
                 </a>
               </li>
-              <li
-                class="subtab-menu-item is-cyan"
-                v-bind:class="{ 'is-selected': crt_menuselection == 1 }"
-              >
-                <a
-                  v-on:click="crt_menuselection = 1"
-                  v-bind:class="{ 'is-disabled': format == 'PNG' }"
-                >
+              <li class="subtab-menu-item is-cyan"
+                v-bind:class="{ 'is-selected': crt_menuselection == 1 }">
+                <a v-on:click="crt_menuselection = 1"
+                  v-bind:class="{ 'is-disabled': format == 'PNG' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
                   <p class="is-white-d is-large">GIF</p>
                 </a>
               </li>
-              <li
-                class="subtab-menu-item"
-                v-bind:class="{ 'is-selected': crt_menuselection == 2 }"
-              >
-                <a
-                  v-on:click="crt_menuselection = 2"
-                  v-bind:class="{ 'is-disabled': format == 'GIF' }"
-                >
+              <li class="subtab-menu-item"
+                v-bind:class="{ 'is-selected': crt_menuselection == 2 }">
+                <a v-on:click="crt_menuselection = 2"
+                  v-bind:class="{ 'is-disabled': format == 'GIF' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -251,14 +241,9 @@
                   <div class="field">
                     <label class="label" title="The width of the GIF/APNG">Width</label>
                     <div class="control">
-                      <input
-                        v-bind:value="width"
-                        v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="widthHandler(width, $event)"
-                        class="input is-neon-white"
-                        type="number"
-                        min="1"
-                      />
+                      <input v-bind:value="width" v-on:keydown="numConstrain($event, true, true)"
+                        v-on:input="widthHandler(width, $event)" class="input is-neon-white"
+                        type="number" min="1"/>
                     </div>
                   </div>
                 </td>
@@ -351,11 +336,8 @@
                 </td>
                 <td>
                   <div class="field">
-                    <label
-                      class="label"
-                      title="How many frames will be consecutively displayed per second."
-                      >Frame rate</label
-                    >
+                    <label class="label"
+                      title="How many frames will be consecutively displayed per second.">Frame rate</label>
                     <div class="control">
                       <input
                         v-model="fps"
@@ -561,12 +543,15 @@ import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./vueshards/APNGUnoptimizationRow.vue";
+import { popper, createPopper } from '@popperjs/core';
+import ClickOutside from 'vue-click-outside';
 
 var data = {
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
   insert_index: "",
+  total_size: "",
   name: "",
   fps: "",
   orig_width: "",
@@ -614,6 +599,8 @@ var data = {
   CRT_IS_LOADING: false,
   CRT_IS_PREVIEWING: false,
   CRT_IS_CREATING: false,
+
+  popperIsVisible: false,
 };
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
@@ -628,6 +615,31 @@ function toggleLoadButtonAnim(ops, state = false) {
     data.CRT_SMARTINSERT_LOAD = state;
   } else if (ops == "replace") {
     data.CRT_REPLACE_LOAD = state;
+  }
+}
+
+function toggleLoadPopper() {
+  if (!data.popperIsVisible) {
+  let popper = document.querySelector("#crtLoadPopper");
+  let button = document.querySelector("#addPopperBtn");
+  this.popper = createPopper(button, popper, {
+    placement: 'top-start',
+    modifiers: {
+    },
+  });
+  console.log("toggleLoadPopper");
+  data.popperIsVisible = true;
+  }
+  else {
+    data.popperIsVisible = false;
+  }
+}
+
+function closeLoadPopper(event) {
+  console.log(`closeLoadPopper ${data.popperIsVisible}, ${this.popper}`);
+  console.log(event);
+  if (data.popperIsVisible) {
+    data.popperIsVisible = false;
   }
 }
 
@@ -692,6 +704,7 @@ function loadImages(ops) {
           console.log(info.sequence_info);
           console.log(info);
           renderSequence(info, { operation: ops });
+          data.total_size = `Total size: ${info.total_size}`;
           data.name = info.name;
           data.orig_width = info.width;
           data.width = info.width;
@@ -763,6 +776,7 @@ function CRTClearAIMG() {
   data.preview_path = "";
   data.preview_path_cb = "";
   data.preview_info = "";
+  data.total_size = "";
   data.name = "";
   data.delay = "";
   data.fps = "";
@@ -790,6 +804,10 @@ function CRTClearAIMG() {
 function previewAIMG() {
   console.log("preview called");
   data.create_msgbox = "";
+  if (data.sequence_info.length < 2) {
+    data.create_msgbox = "Please load at least 2 images!";
+    return;
+  }
   let validator = validateFilename(data.name);
   if (!validator.valid) {
     console.error(validator.msg);
@@ -798,6 +816,7 @@ function previewAIMG() {
   }
   data.CRT_IS_PREVIEWING = true;
   console.log(data);
+  writeImagePathsCache(data.image_paths);
   writeCriterionCache(data);
   tridentEngine(["create-aimg", "./temp", data.name], (error, res) => {
   if (error) {
@@ -1000,6 +1019,8 @@ function previewPathCacheBreaker() {
   data.preview_path_cb = cb_url;
 }
 
+window.onresize = closeLoadPopper;
+
 export default {
   data: function () {
     return data;
@@ -1011,6 +1032,8 @@ export default {
     APNGUnoptimizationRow,
   },
   methods: {
+    toggleLoadPopper: toggleLoadPopper,
+    closeLoadPopper: closeLoadPopper,
     loadImages: loadImages,
     removeFrame: removeFrame,
     CRTClearAIMG: CRTClearAIMG,
@@ -1029,6 +1052,9 @@ export default {
     CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
     sequenceCounter: sequenceCounter,
+  },
+  directives:{
+    ClickOutside,
   },
 };
 </script>

@@ -72,11 +72,9 @@ def inspect_smart(image_path):
 @click.argument("out-dir")
 @click.argument("filename")
 def combine_image(out_dir, filename):
+    """Combine multiple static images into a single animated image file"""
     image_paths = get_bufferfile_content()
     criterion_vals = get_criterionfile_content()
-    print({
-        "criterion_vals": criterion_vals
-    })
     """Combine a sequence of images into a GIF/APNG"""
     # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
     if not image_paths and not out_dir:

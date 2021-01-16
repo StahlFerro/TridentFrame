@@ -1,13 +1,14 @@
 <template>
   <div
-    class="r-click-menu"
+    id="generalRClickMenu"
+    class="context-menu"
     ref="popper"
     v-show="isVisible"
     tabindex="-1"
-    v-click-outside="close"
+    v-click-outside="closePopper"
     @contextmenu.capture.prevent
     style="display: block;">
-    <ul class="r-click-menu-options">
+    <ul class="context-menu-options">
       <slot :contextData="contextData" />
     </ul>
   </div>
@@ -24,17 +25,18 @@ let data = {
   isVisible: false,
   contextData: {},
   originalEvent: null,
+  rcmPopper: null,
 }
 
-function open(evt, contextData) {
+function openPopper(evt, contextData) {
   data.isVisible = true;
   data.contextData = contextData;
   data.originalEvent = evt;
-  if (this.popper) {
-    this.popper.destroy();
+  if (data.rcmPopper) {
+    data.rcmPopper.destroy();
   }
 
-  this.popper = createPopper(this.referenceObject(evt), document.querySelector(".r-click-menu"), {
+  data.rcmPopper = createPopper(this.referenceObject(evt), document.querySelector("#generalRClickMenu"), {
     placement: 'right-start',
     modifiers: {
     },
@@ -47,16 +49,17 @@ function open(evt, contextData) {
 
 function callOptionFunction(callback) {
   callback(data.originalEvent);
-  this.close();
+  closePopper();
 }
 
-function close() {
+function closePopper() {
   data.isVisible = false;
   data.contextData = null;
+  data.originalEvent = null;
   console.log("Closed Context Menu");
 }
 
-window.onresize = close;
+window.onresize = closePopper;
 
 export default {
   props: {
@@ -75,9 +78,9 @@ export default {
     ClickOutside,
   },
   methods: {
-    open: open,
+    openPopper: openPopper,
     callOptionFunction: callOptionFunction,
-    close: close,
+    closePopper: closePopper,
     referenceObject(evt) {
       const left = evt.clientX;
       const top = evt.clientY;
@@ -98,8 +101,8 @@ export default {
     },
   },
   beforeDestroy() {
-    if (this.popper !== undefined) {
-      this.popper.destroy();
+    if (data.rcmPopper !== undefined) {
+      data.rcmPopper.destroy();
     }
   },
 };

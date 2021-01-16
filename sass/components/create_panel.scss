@@ -22,7 +22,7 @@
             height: 44vh;
         }
     }
-    .create-panel-buttonbar {
+    .create-panel-middlebar {
         display: flex;
         flex-direction: row;
         flex-grow: 1;
@@ -30,8 +30,12 @@
         height: calc(11vh - 20px);
         .cpb-sequence-buttons {
             width: 60%;
-            .dualine-label {
-                color: $white-d;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            .cpb-sequence-btn {
+                display: flex;
+                margin-right: 10px;
             }
         }
         .cpb-preview-buttons {

@@ -2,7 +2,7 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspectRCM', $event, inspect_image_payload)">
+        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_payload)">
           <div class="inspect-panel-msgbox" v-show="inspect_msgbox != false">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
@@ -28,7 +28,7 @@
                   <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
                 </template>
                 <template v-else>
-                  <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspectRCM', $event, inspect_info_payload)">
+                  <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_payload)">
                     {{ iprop.value }}
                   </td>
                 </template>
@@ -38,24 +38,18 @@
         </div>
       </div>
       <div class="inspect-panel-controls">
-        <a
-          v-on:click="loadImage"
-          class="button is-neon-emerald"
+        <a v-on:click="loadImage" class="button is-neon-emerald"
           v-bind:class="{
             'is-loading': INS_IS_INSPECTING,
             'is-static': isButtonFrozen,
-          }"
-        >
+          }">
           <span class="icon is-small">
             <i class="fas fa-plus"></i>
           </span>
           <span>Load Any Image</span>
         </a>
-        <a
-          v-on:click="clearImage"
-          class="button is-neon-crimson"
-          v-bind:class="{ 'is-static': isButtonFrozen }"
-        >
+        <a v-on:click="clearImage" class="button is-neon-crimson"
+          v-bind:class="{ 'is-static': isButtonFrozen }">
           <span class="icon is-small">
             <i class="fas fa-times"></i>
           </span>
@@ -102,30 +96,46 @@ var data = {
   info_data: "",
   inspect_msgbox: "",
   inspect_image_payload: [
-    {'name': "Copy Image", 'callback': copyImage},
-    {'name': "Share Image", 'callback': shareImage},
-    {'name': 'Send To', 'callback': sendTo},
+    {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
+    {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
+    {'id': 'send_to', 'name': 'Send To', 'callback': sendTo},
   ],
   inspect_info_payload: [
     {'name': "Copy Info", 'callback': copyInfo}
   ]
 };
 
+function addInspectImagePayload(payloads) {
+  let combined_payload = data.inspect_image_payload.concat(payloads);
+  data.inspect_image_payload = combined_payload;
+}
+
+function removeInspectImagePayload(ids) {
+  let filtered_payloads = data.inspect_image_payload.filter(payload => !ids.includes(payload.id));
+  data.inspect_image_payload = filtered_payloads;
+}
+
+function formatShouter(event) {
+  console.log("formatShouter");
+  let format = data.info_data.general_info.format.value
+  console.log(format);
+}
+
 function copyImage(event) {
-  console.log("copy  image");
+  console.log("copyImage");
   console.log(event);
 }
 
 function shareImage(event) {
-  console.log("share image")
+  console.log("shareImage")
 }
 
 function sendTo(even) {
-  
+  console.log("sendTo");
 }
 
 function copyInfo(event) {
-  console.log("copy info");
+  console.log("copyInfo");
   console.log(event);
   let text = event.srcElement.innerText;
   console.log(`text ${text}`);
@@ -135,6 +145,7 @@ function copyInfo(event) {
 
 function clearMsgBox() {
   data.inspect_msgbox = "";
+  removeInspectImagePayload(['format']);
 }
 
 function loadImage() {
@@ -142,40 +153,40 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props,
   };
-  dialog
-    .showOpenDialog(mainWindow, options).then((result) => {
-      let chosen_paths = result.filePaths;
-      console.log(`chosen path: ${chosen_paths}`);
-      if (chosen_paths === undefined || chosen_paths.length == 0) {
-        return;
+  dialog.showOpenDialog(mainWindow, options).then((result) => {
+    let chosen_paths = result.filePaths;
+    console.log(`chosen path: ${chosen_paths}`);
+    if (chosen_paths === undefined || chosen_paths.length == 0) {
+      return;
+    }
+    data.INS_IS_INSPECTING = true;
+    console.log(chosen_paths);
+    tridentEngine(["inspect-one", chosen_paths[0]], (error, res) => {
+      if (error) {
+        let error_data = JSON.parse(error);
+        data.inspect_msgbox = error_data.error;
       }
-      data.INS_IS_INSPECTING = true;
-      console.log(chosen_paths);
-      tridentEngine(["inspect-one", chosen_paths[0]], (error, res) => {
-        if (error) {
-          let error_data = JSON.parse(error);
-          data.inspect_msgbox = error_data.error;
+      else {
+        console.log(res);
+        res = JSON.parse(res);
+        console.log(res);
+        if (res.data) {
+          let res_data = res.data;
+          data.info_data = res_data;
+          // if (res_data.general_info || res_data.animation_info) {
+            data.img_path = `${
+              res_data.general_info.absolute_url.value
+            }?timestamp=${randString()}`;
+          // }
+          addInspectImagePayload([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
         }
-        else {
-          console.log(res);
-          res = JSON.parse(res);
-          console.log(res);
-          if (res.data) {
-            let res_data = res.data;
-            data.info_data = res_data;
-            if (res_data.general_info || res_data.animation_info) {
-              data.img_path = `${
-                res_data.general_info.absolute_url.value
-              }?timestamp=${randString()}`;
-            }
-          }
-        }
-        data.INS_IS_INSPECTING = false;
-      });
-    })
-    .catch((err) => {
-      console.log(err);
+      }
+      data.INS_IS_INSPECTING = false;
     });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
 }
 
 function clearImage() {

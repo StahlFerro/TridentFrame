@@ -123,26 +123,6 @@ def _inspect_simg(image):
     transparency = im.info.get('transparency', "-")
     # alpha = im.getchannel('A')
     comment = im.info.get('comment')
-    '''
-    image_info = {
-        "general_info": {
-            "name": {"value": filename, "label": "Name"},
-            "base_fname": {"value": base_fname, "label": "Base Name"},
-            "width": {"value": width, "label": "Width"},
-            "height": {"value": height, "label": "Height"},
-            "fsize": {"value": fsize, "label": "File size (bytes)"},
-            "fsize_hr": {"value": fsize_hr, "label": "File size "},
-            "absolute_url": {"value": path, "label": "Path"},
-            "format": {"value": fmt, "label": "Format"},
-            "comments": {"value": str(comment), "label": "Comments"},
-            "color_mode": {"value": str(color_mode), "label": "Color Mode"},
-            "transparency": {"value": str(transparency), "label": "Transparency Info"},
-            # "alpha": {"value": alpha, "label": "Has Alpha"},
-            "exif": {"value": str(exif), "label": "EXIF"},
-            "is_animated": {"value": False, "label": "Is Animated"},
-        }
-    }
-    '''
     im.close()
     
     metadata = ImageMetadata({
@@ -186,35 +166,6 @@ def _inspect_agif(abspath: str, gif: Image):
     fmt = 'GIF'
     full_format = str(gif.info.get('version') or "")
     transparency = gif.info.get('transparency', "-")
-    '''
-    image_info = {
-        "general_info": {
-            "name": {"value": filename, "label": "Name"},
-            "base_fname": {"value": base_fname, "label": "Base Name"},
-            "width": {"value": width, "label": "Width"},
-            "height": {"value": height, "label": "Height"},
-            "fsize": {"value": fsize, "label": "File size (bytes)"},
-            "fsize_hr": {"value": fsize_hr, "label": "File size "},
-            "absolute_url": {"value": abspath, "label": "Path"},
-            "format": {"value": fmt, "label": "Format"},
-            "format_version": {"value": full_format, "label": "Full format"},
-            "transparency": {"value": str(transparency), "label": "Transparency Info"},
-            # "alpha": {"value": alpha, "label": "Has Alpha"},
-            "comments": {"value": str(comments), "label": "Comments"},
-            "is_animated": {"value": True, "label": "Is Animated"},
-        },
-        "animation_info": {
-            "fps": {"value": fps, "label": "FPS"},
-            "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
-            "delay_is_even": {"value": delay_is_even, "label": "Delays are even"},
-            "delays": {"value": delays, "label": "Delays (milliseconds)"},
-            "frame_count": {"value": frame_count, "label": "Frame count"},
-            "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
-            "loop_duration": {"value": loop_duration, "label": "Loop duration (seconds)"},
-            "loop_count": {"value": loop_count, "label": "Loop count"},
-        }
-    }
-    '''
     gif.close()
     metadata = AnimatedImageMetadata({
         "name": filename, 
@@ -255,32 +206,6 @@ def _inspect_apng(abspath, apng: APNG):
         frame_count_ds = frame_count
     else:
         frame_count_ds = sum([delay//min_duration for delay in delays])
-    '''
-    image_info = {
-        "general_info": {
-            "name": {"value": filename, "label": "Name"},
-            "base_fname": {"value": base_fname, "label": "Base Name"},
-            "width": {"value": width, "label": "Width"},
-            "height": {"value": height, "label": "Height"},
-            "fsize": {"value": fsize, "label": "File size (bytes)"},
-            "fsize_hr": {"value": fsize_hr, "label": "File size "},
-            "absolute_url": {"value": abspath, "label": "Path"},
-            "format": {"value": fmt, "label": "Format"},
-            "is_animated": {"value": True, "label": "Is Animated"},
-            # "comments": {"value": comments, "label": "Comments"},
-        },
-        "animation_info": {
-            "fps": {"value": fps, "label": "FPS"},
-            "avg_delay": {"value": round(avg_delay / 1000, 3), "label": "Average Delay"},
-            "delay_is_even": {"value": delay_is_even, "label": "Delays are even"},
-            "delays": {"value": delays, "label": "Delays (milliseconds)"},
-            "frame_count": {"value": frame_count, "label": "Frame count"},
-            "frame_count_ds": {"value": frame_count_ds, "label": "Frame count (DS)"},
-            "loop_duration": {"value": loop_duration, "label": "Loop duration (seconds)"},
-            "loop_count": {"value": loop_count, "label": "Loop count"},
-        }
-    }
-    '''
     metadata = AnimatedImageMetadata({
         "name": filename, 
         "base_filename": base_fname,
@@ -319,7 +244,7 @@ def inspect_sequence(image_paths):
     first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
     # filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     sequence_count = len(static_img_paths)
-    sequence_filesize = read_filesize(sum([os.stat(i).st_size for i in static_img_paths]))
+    sequence_filesize = read_filesize(sum( (si['fsize']['value'] for si in sequence_info) ))
     # im = Image.open(static_img_paths[0])
     # width, height = im.size
     # im.close()
@@ -328,7 +253,7 @@ def inspect_sequence(image_paths):
         "total": sequence_count,
         "sequence": static_img_paths,
         "sequence_info": sequence_info,
-        "size": sequence_filesize,
+        "total_size": sequence_filesize,
         "width": sequence_info[0]['width']['value'],
         "height": sequence_info[0]['height']['value'],
     }

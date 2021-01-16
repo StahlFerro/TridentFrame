@@ -39,12 +39,13 @@ function tridentEngine(args, callback) {
     console.log(args);
     let pyshell = new PythonShell("main.py", pyOptions);
     pyshell.on("message", (res) => {
-      console.log("[PYTHON STDOUT]")
+      console.log("[PYTHON STDOUT RAW MSG RES]")
+      console.log(res);
       callback("", res);
     });
     pyshell.on("stderr", (err) => {
-      console.log("[PYTHON STDERR]");
-      console.error(err);
+      console.log("[PYTHON STDOUT RAW ERR RES]");
+      console.log(err);
       callback(err, "");
     });
   } else {

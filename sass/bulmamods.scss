@@ -1,6 +1,6 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 @import "components/_colors.scss";
-@import "components/right_click.scss";
+@import "components/contextmenu.scss";
 @import "components/create_panel.scss";
 @import "components/inspect_panel.scss";
 @import "components/about_panel.scss";
@@ -353,6 +353,7 @@ input.input.is-border-colorless {
         border-collapse: collapse;
         overflow: auto;
         display: block;
+        width: 100;
     }
     tr {
         display: block;
@@ -364,8 +365,8 @@ input.input.is-border-colorless {
         border-bottom: 2px solid $white-d !important;
         border-collapse: collapse;
         padding: 0 !important;
-        width: 98px !important;
-        height: 98px !important;
+        width: 20% !important;
+        height: 20% !important;
         // vertical-align: middle !important;
     }
 }
