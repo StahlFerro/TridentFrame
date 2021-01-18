@@ -27,17 +27,19 @@ function writeCriterionCache(vals) {
 }
 
 function tridentEngine(args, callback) {
+  console.log("argon");
   console.log(`Current dir: ${process.cwd()}`);
+  console.log(`DEPLOY ENV ${deploy_env}`);
   if (deploy_env == "DEV") {
-    let pyOptions = {
+    let pyshell = new PythonShell('main.py',{
       mode: "text",
       pythonPath: "python.exe",
-      pythonOptions: ["-u"], // get print results in real-time
-      // scriptPath: 'main.py',
-    };
-    pyOptions.args = args;
-    console.log(args);
-    let pyshell = new PythonShell("main.py", pyOptions);
+      pythonOptions: ["-u"],
+    });
+    let command = args[0];
+    let cmd_args = args.slice(1);
+    console.log("json_command");
+    let json_command = JSON.stringify({"command": command, "args": cmd_args})
     pyshell.on("message", (res) => {
       console.log("[PYTHON STDOUT RAW MSG RES]")
       console.log(res);
@@ -48,6 +50,10 @@ function tridentEngine(args, callback) {
       console.log(err);
       callback(err, "");
     });
+    console.log("json_command");
+    console.log(json_command);
+    pyshell.send(json_command);
+    pyshell.end();
   } else {
     const exec = require("child_process").execFile;
     exec(engine_exec_path, args, (error, stdout, stderr) => {

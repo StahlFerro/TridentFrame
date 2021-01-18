@@ -47,11 +47,11 @@
           </a>
         </td>
         <td>
-          <a v-on:click="$refs.menu.open($event, 'Payload')" class="button is-large is-neon-cyan">
+          <a v-on:click="callPython" class="button is-large is-neon-cyan">
             <span class="icon is-large">
-              <i class="fas fa-bug"></i>
+              <i class="fab fa-python"></i>
             </span>
-            <span>Confirm tester</span>
+            <span>TestPythonShell</span>
           </a>
         </td>
       </tr>
@@ -64,6 +64,22 @@ const { remote, BrowserWindow } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
+const { PythonShell } = require("python-shell");
+
+function callPython() {
+  let shell = new PythonShell('main.py', { 
+    mode: "text",
+    pythonPath: "python.exe",
+    pythonOptions: ["-u"],
+  });
+  let jsonmsg = JSON.stringify({"command": "echostream", "args": [1, 3, 6]})
+  shell.send(jsonmsg);
+  shell.on('message', function (message) {
+    console.log('[STDOUT message]');
+    console.log(message);
+  });
+  shell.end();
+}
 
 function refreshWindow() {
   remote.getCurrentWindow().reload();
@@ -126,6 +142,7 @@ export default {
     openCWD: openCWD,
     testGenerator: testGenerator,
     openConfirm: openConfirm,
+    callPython: callPython,
   }
 };
 </script>

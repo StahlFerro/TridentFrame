@@ -651,11 +651,11 @@ function loadImages(ops) {
     case "insert":
       // Add one image uses inspect-many instead of inspect-one because of the different data structure returned.
       // inspect-one is suited for singular file inspection, while inspect-many can support 1 to n amount of images.
-      cmd_args.push("inspect-many"); break;
+      cmd_args.push("inspect_many"); break;
     case "smart_insert":
-      cmd_args.push("inspect-smart"); break;
+      cmd_args.push("inspect_smart"); break;
     case "replace":
-      cmd_args.push("inspect-many"); break;
+      cmd_args.push("inspect_many"); break;
   }
   console.log("obtained props", props);
   var options = {
@@ -673,11 +673,9 @@ function loadImages(ops) {
     data.CRT_IS_LOADING = true;
     toggleLoadButtonAnim(ops, true);
 
-    if (["insert", "replace"].includes(ops)) {
-      writeImagePathsCache(img_paths);
-    } else {
-      cmd_args.push(img_paths[0]);
-    }
+    cmd_args.push(img_paths)
+    console.log("cmd_args");
+    console.log(cmd_args);
 
     tridentEngine(cmd_args, (error, res) => {
       if (error) {

@@ -161,7 +161,7 @@ function loadImage() {
     }
     data.INS_IS_INSPECTING = true;
     console.log(chosen_paths);
-    tridentEngine(["inspect-one", chosen_paths[0]], (error, res) => {
+    tridentEngine(["inspect_one", chosen_paths[0]], (error, res) => {
       if (error) {
         let error_data = JSON.parse(error);
         data.inspect_msgbox = error_data.error;
