@@ -681,7 +681,6 @@ function loadImages(ops) {
       if (error) {
         console.error(error);
         try {
-          let error_data = JSON.parse(error);
           console.error(error_data);
           data.create_msgbox = error_data.error;
         }
@@ -816,13 +815,12 @@ function previewAIMG() {
   console.log(data);
   writeImagePathsCache(data.image_paths);
   writeCriterionCache(data);
-  tridentEngine(["create-aimg", "./temp", data.name], (error, res) => {
-  if (error) {
-    let error_data = JSON.parse(error);
-    console.error(error_data);
-    data.create_msgbox = error_data.error;
-    data.CRT_IS_PREVIEWING = false;
-  } else if (res) {
+  tridentEngine(["combine_image", "./temp", data.name], (error, res) => {
+    if (error) {
+      console.error(error);
+      data.create_msgbox = error.error;
+      data.CRT_IS_PREVIEWING = false;
+    } else if (res) {
       res = JSON.parse(res);
       console.log(`res -> ${res}`);
       if (res.msg) {
@@ -834,7 +832,7 @@ function previewAIMG() {
       }
       console.log("a");
       if (res.CONTROL == "CRT_FINISH") {
-        tridentEngine(["inspect-one", data.preview_path], (err, info) => {
+        tridentEngine(["inspect_one", data.preview_path], (err, info) => {
         console.log("b");
           if (err) {
             let err_data = JSON.parse(err);

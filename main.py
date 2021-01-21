@@ -179,7 +179,8 @@ def main():
         try:
             method = getattr(pyimager, data['command'])
         except AttributeError:
-            raise NotImplementedError(f"Method {data['command']} not implemented")
+            errmsg = f"Method {data['command']} not implemented"
+            raise NotImplementedError(errmsg)
         args = data['args']
         method(*args)
 

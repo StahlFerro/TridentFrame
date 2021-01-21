@@ -26,8 +26,18 @@ function writeCriterionCache(vals) {
   fs.writeFileSync(criterionfile, JSON.stringify(vals));
 }
 
-function tridentEngine(args, callback) {
-  console.log("argon");
+/**
+ * @callback pyOutCallback
+ * @param {string} error - Python STDOUT
+ * @param {string} res - Python STDIN
+ */
+
+/**
+ * Perform call to python console application.
+ * @param {Array} args - Array of arguments. First element of the array must be the name of the python method on the PythonImager class. The rest are the respective method parameters.
+ * @param {pyOutCallback} outCallback - The callback function to execute after receiving either stderr or stdout from Python. Must have arguments (error, res), which respresents stderr and stdout respectively. 
+ */
+function tridentEngine(args, outCallback) {
   console.log(`Current dir: ${process.cwd()}`);
   console.log(`DEPLOY ENV ${deploy_env}`);
   if (deploy_env == "DEV") {
@@ -43,17 +53,22 @@ function tridentEngine(args, callback) {
     pyshell.on("message", (res) => {
       console.log("[PYTHON STDOUT RAW MSG RES]")
       console.log(res);
-      callback("", res);
+      outCallback("", res);
     });
-    pyshell.on("stderr", (err) => {
-      console.log("[PYTHON STDOUT RAW ERR RES]");
-      console.log(err);
-      callback(err, "");
-    });
+    // pyshell.on("stderr", (err) => {
+    //   console.log("[PYTHON STDOUT RAW ERR RES]");
+    //   console.log(err);
+    //   outCallback(err, "");
+    // });
     console.log("json_command");
     console.log(json_command);
     pyshell.send(json_command);
-    pyshell.end();
+    pyshell.end(function (err,code,signal) {
+        if (err) throw err;
+        console.log('[PYSHELL END EXIT CODE] ' + code);
+        console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
+        console.log('[PYSHELL END FINISHED]');
+    });
   } else {
     const exec = require("child_process").execFile;
     exec(engine_exec_path, args, (error, stdout, stderr) => {
@@ -64,12 +79,12 @@ function tridentEngine(args, callback) {
       console.log(">>stderr");
       console.log(stderr);
       if (stderr) {
-        callback(stderr, "");
+        outCallback(stderr, "");
       }
       else if (stdout) {
         console.log("[PYTHON STDERR]");
         console.error(err);
-        callback("", stdout);
+        outCallback("", stdout);
       }
     });
   }
