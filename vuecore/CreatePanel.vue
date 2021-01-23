@@ -6,43 +6,7 @@
           <table class="sequence-grid is-paddingless" width="100%">
             <tbody>
               <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
-                <!-- <template v-for="(item, i) in quintjson">
-                  <template v-if="item == '_CONTROL_CELL'"> -->
-                <!-- <td v-bind:key="i" class="force-center">
-                      <table class="intracell-table" width="100%">
-                        <tr>
-                          <td width="50%" class="">
-                            <a v-on:click="loadImages('insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
-                              title="Add Images. Select one or more images to be added into this sequence">
-                              <span class="icon is-small">
-                                <i class="fas fa-image"></i>
-                              </span>
-                            </a>
-                          </td>
-                          <td class="">
-                            <a v-on:click="loadImages('smart_insert')" class="button square-button is-medium flex-expand is-neon-emerald neon-borderless"
-                              title="Smart Add Image. Select one images and then let TridentFrame add the rest of the sequence by looking at images with the same name">
-                              <span class="icon is-small">
-                                <i class="fas fa-images"></i>
-                              </span>
-                            </a>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td width="100%" colspan="2" class="">
-                            <label class="label" title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)">
-                              Insert after</label>
-                            <input v-model="insert_index" class="input is-block-grey" type="number" v-on:keydown="numConstrain($event, true, true)" placeholder="Frame no." min="0"
-                            title="The frame number in which new frames will be inserted after. Leave blank as default (insert new ones after the last on the existing sequence)"/>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </template>
-                  <template v-else> -->
-                <td
-                  v-for="(item, i) in quintjson"
-                  v-bind:key="i"
+                <td v-for="(item, i) in quintjson" v-bind:key="i"
                   v-bind:title="
                     `Name: ${item.name.value}\n` +
                     `Dimensions: ${item.width.value} x ${item.height.value}\n` +

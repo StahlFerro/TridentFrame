@@ -1,9 +1,9 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 @import "components/_colors.scss";
 @import "components/contextmenu.scss";
-@import "components/create_panel.scss";
-@import "components/inspect_panel.scss";
-@import "components/about_panel.scss";
+@import "panels/create_panel.scss";
+@import "panels/inspect_panel.scss";
+@import "panels/about_panel.scss";
 
 
 /* Sass variable overrides */

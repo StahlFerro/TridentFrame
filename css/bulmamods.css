@@ -323,6 +323,10 @@
         margin: 0px !important; }
 
 /* Inspect Panel */
+/* Color definitions */
+.is-white-d {
+  color: #cccccc; }
+
 .inspect-panel-root {
   display: flex;
   flex-direction: column;
@@ -379,6 +383,10 @@
     padding-top: 10px; }
 
 /* About Panel */
+/* Color definitions */
+.is-white-d {
+  color: #cccccc; }
+
 div.about-content {
   text-align: center;
   align-items: center;

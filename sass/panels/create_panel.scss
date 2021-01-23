@@ -1,5 +1,6 @@
 /* Create Panel */
-@import "_colors.scss";
+@import "../components/_colors.scss";
+
 .create-panel-root {
     display: flex;
     flex-direction: column;
