@@ -79,24 +79,17 @@
             </tbody>
           </table>
         </div>
-        <div class="create-panel-preview silver-bordered-no-left">
+        <div class="create-panel-preview silver-bordered-no-left"
+          v-bind:title="preview_info? 
+            `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
+            `File size: ${preview_info.general_info.fsize_hr.value}\n` +
+            `FPS: ${preview_info.animation_info.fps.value}\n` +
+            `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
+            `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
+            `Format: ${preview_info.general_info.format.value}` : ''
+          ">
           <!-- <div v-if="preview_info" class="crt-aimg-container"> -->
-          <div
-            v-if="preview_info"
-            class="crt-aimg-container"
-            v-bind:title="
-              `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
-              `File size: ${preview_info.general_info.fsize_hr.value}\n` +
-              `FPS: ${preview_info.animation_info.fps.value}\n` +
-              `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
-              `Loop count: ${
-                preview_info.animation_info.loop_count.value || 'Infinite'
-              }\n` +
-              `Format: ${preview_info.general_info.format.value}`
-            "
-          >
-            <img v-bind:src="preview_path_cb" />
-          </div>
+          <img v-if="preview_info" v-bind:src="preview_path_cb" />
           <!-- </div> -->
         </div>
       </div>
@@ -830,7 +823,6 @@ function previewAIMG() {
         data.preview_path = res.preview_path;
         previewPathCacheBreaker();
       }
-      console.log("a");
       if (res.CONTROL == "CRT_FINISH") {
         tridentEngine(["inspect_one", data.preview_path], (err, info) => {
         console.log("b");

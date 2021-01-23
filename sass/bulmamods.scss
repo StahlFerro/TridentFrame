@@ -448,23 +448,6 @@ label.label.is-tight:not(:last-child) {
 
 
 /* Animated image (GIF/PNG) preview container in Create Panel */
-.crt-aimg-container {
-    // width: 310px;
-    // height: 310px;
-    overflow: hidden;
-    // text-align: center;
-    display: block;
-    img {
-        // max-width: 310px !important;
-        // max-height: 310px !important;
-        display: block;
-        position: relative;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        // display: inline-block;
-    }
-}
 .crt-aimg-control-container {
     padding-right: 7px;
     // height: 248px;
