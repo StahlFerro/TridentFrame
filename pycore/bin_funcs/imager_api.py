@@ -1,4 +1,5 @@
 import os
+import json
 import shutil
 import subprocess
 from subprocess import PIPE
@@ -42,7 +43,6 @@ def imagemagick_render(magick_args: List[Tuple[str, str]], target_path: str, out
 
 def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0, shift_index=0):
     """ Use apngopt to optimize an APNG. Returns the output path """
-    yield {"aopt_args": aopt_args}
     aopt_dir = _mk_temp_dir(prefix_name='apngopt_dir')
     opt_exec_path = imager_exec_path('apngopt')
     filename = os.path.basename(target_path)
@@ -51,12 +51,12 @@ def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0,
     # common_path = os.path.commonpath([opt_exec_path, target_path])
     target_rel_path = os.path.relpath(target_path, cwd)
     for index, (arg, description) in enumerate(aopt_args, start=1):
-        yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+        print(json.dumps({"msg": f"index {index}, arg {arg}, description: {description}"}))
         cmdlist = [opt_exec_path, arg, f'"{target_rel_path}"', f'"{target_rel_path}"']
         # raise Exception(cmdlist, out_full_path)
         cmd = ' '.join(cmdlist)
-        yield {"msg": f"[{shift_index + index}/{total_ops}] {description}"}
-        yield {"cmd": cmd}
+        print(json.dumps({"msg": f"[{shift_index + index}/{total_ops}] {description}"}))
+        print(json.dumps({"cmd": cmd}))
         # result = subprocess.check_output(cmd, shell=True)
         process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         index = 0
@@ -65,12 +65,12 @@ def apngopt_render(aopt_args, target_path: str, out_full_path: str, total_ops=0,
             if process.poll() is not None:
                 break
             if output:
-                yield {"STDOUT": output.decode('utf-8')}
+               print(json.dumps({"STDOUT": output.decode('utf-8')}))
             index += 1
         # if target_path != out_full_path:
             # target_path = out_full_path
     x = shutil.move(target_path, out_full_path)
-    yield {"X": x}
+    print(json.dumps({"X": x}))
     # shutil.rmtree(aopt_dir)
     return out_full_path
 
@@ -117,7 +117,7 @@ def apngdis_split(target_path: str, seq_rename="", out_dir=""):
 def pngquant_render(pq_args, image_paths: List[str], optional_out_path=""):
     """ Perform PNG quantization on a list of PIL.Image.Images using PNGQuant. Returns a generator of image paths """
     quantized_frames = []
-    yield {"pmgquant_args": pq_args}
+    print(json.dumps({"pmgquant_args": pq_args}))
     pngquant_exec = imager_exec_path("pngquant")
     # quant_dir = _mk_temp_dir(prefix_name="quant_dir")
     shout_nums = shout_indices(len(image_paths), 5)
@@ -127,7 +127,7 @@ def pngquant_render(pq_args, image_paths: List[str], optional_out_path=""):
         else:
             target_path = ipath
         if shout_nums.get(index):
-            yield {"msg": f'Quantizing PNG... ({shout_nums.get(index)})'}
+            print(json.dumps({"msg": f'Quantizing PNG... ({shout_nums.get(index)})'}))
 
         args = [pngquant_exec, ' '.join([arg[0] for arg in pq_args]), f'"{ipath}"', "--force", "--output", f'"{target_path}"']
         cmd = ' '.join(args)

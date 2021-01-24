@@ -51,7 +51,7 @@
             <span class="icon is-large">
               <i class="fab fa-python"></i>
             </span>
-            <span>TestPythonShell</span>
+            <span>TestExec</span>
           </a>
         </td>
       </tr>

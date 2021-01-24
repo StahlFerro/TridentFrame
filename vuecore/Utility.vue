@@ -78,6 +78,24 @@ function wholeNumConstrain(event) {
   }
 }
 
+/***
+ * Convert bytes to human-readable file sizes using the biggest possible size unit without having the value smaller than 1
+ * @param {int} nbytes - Total amount of bytes
+ * @param {int} precision - Amount of decimal places to round up
+ */
+function readFilesize(nbytes, precision) {
+  let i = 0;
+  let size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  while (nbytes >= 1024 && i < size_suffixes.length - 1){
+    nbytes /= 1024;
+    i += 1;
+  }
+  let mult = Math.pow(10, precision);
+  let size = (Math.round(nbytes * mult) / mult);
+  // size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
+  return `${size} ${size_suffixes[i]}`;
+}
+
 function floatConstrain(event) {
   console.log('float constrain', event);
   let current_value = event.target.value;
@@ -159,6 +177,7 @@ module.exports = {
   numConstrain: numConstrain,
   floatConstrain: floatConstrain,
   fileExists: fileExists,
+  readFilesize: readFilesize
 }
 
 </script>

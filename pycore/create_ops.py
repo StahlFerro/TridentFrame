@@ -166,7 +166,7 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
     if pq_args:
         qtemp_dir = _mk_temp_dir(prefix_name="quant_temp")
         temp_dirs.append(qtemp_dir)
-        image_paths = yield from pngquant_render(pq_args, image_paths, optional_out_path=qtemp_dir)
+        image_paths = pngquant_render(pq_args, image_paths, optional_out_path=qtemp_dir)
 
     if criteria.reverse:
         image_paths.reverse()
@@ -175,11 +175,10 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
     first_width, first_height = Image.open(image_paths[0]).size
     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
     shout_nums = shout_indices(len(image_paths), 5)
-    yield criteria.__dict__
     if criteria.flip_h or criteria.flip_v or first_must_resize or criteria.rotation:
         for index, ipath in enumerate(image_paths):
             if shout_nums.get(index):
-                yield {"msg": f'Processing frames... ({shout_nums.get(index)})'}
+                print(json.dumps({"msg": f'Processing frames... ({shout_nums.get(index)})'}))
             with io.BytesIO() as bytebox:
                 with Image.open(ipath) as im:
                     # im = Image.open(ipath)
@@ -208,12 +207,12 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
         apng.save(out_full_path)
     
     if aopt_args:
-        out_full_path = yield from apngopt_render(aopt_args, out_full_path, out_full_path)
+        out_full_path = apngopt_render(aopt_args, out_full_path, out_full_path)
 
     # for td in temp_dirs:
     #     shutil.rmtree(td)
-    yield {"preview_path": out_full_path}
-    yield {"CONTROL": "CRT_FINISH"}
+    print(json.dumps({"preview_path": out_full_path}))
+    print(json.dumps({"CONTROL": "CRT_FINISH"}))
 
     return out_full_path
 

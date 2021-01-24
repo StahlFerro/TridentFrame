@@ -101,7 +101,7 @@
             </a>
           </div>
           <div class="cpb-sequence-btn">
-            <span class="is-white-d">Insert<br />after</span>
+            <span class="is-white-d compact-line">Insert<br />after</span>
           </div>
           <div class="cpb-sequence-btn">
             <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px"
@@ -112,11 +112,11 @@
               <span class="icon is-small">
                 <i class="fas fa-times"></i>
               </span>
-              <span>Clear</span>
+              <span>Clear All</span>
             </a>
           </div>
           <div class="cpb-sequence-btn">
-            <span class="is-white-d" v-if="total_size != ''">{{ total_size }}</span>
+             <span class="is-white-d" v-if="sequence_info.length &gt; 0">Total: {{ computeTotalSequenceSize }} </span>
           </div>
           <!-- <a
             v-on:click="loadImages('replace')"
@@ -498,6 +498,7 @@ import {
   gcd,
   numConstrain,
   fileExists,
+  readFilesize,
 } from "./Utility.vue";
 import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
@@ -862,6 +863,12 @@ function CRTCreateAIMG() {
   }
 }
 
+function computeTotalSequenceSize() {
+  console.log("computeTotalSequenceSize");
+  console.log(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
+  return readFilesize(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
+}
+
 function CRTToggleCheckerBG() {
   data.checkerbg_active = !data.checkerbg_active;
   console.log("now checkerbg is", data.checkerbg_active);
@@ -1007,6 +1014,7 @@ export default {
     CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
     sequenceCounter: sequenceCounter,
+    computeTotalSequenceSize: computeTotalSequenceSize,
   },
   directives:{
     ClickOutside,
