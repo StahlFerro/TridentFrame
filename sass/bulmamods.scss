@@ -1,6 +1,7 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 @import "components/_colors.scss";
 @import "components/contextmenu.scss";
+@import "components/rtable.scss";
 @import "panels/create_panel.scss";
 @import "panels/inspect_panel.scss";
 @import "panels/about_panel.scss";
@@ -416,35 +417,7 @@ label.label.is-tight:not(:last-child) {
         max-height: 90px;
     }
 }
-.index-anchor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0.8;
-}
-.del-anchor {
-    position: absolute;
-    top: 0;
-    right: 0;
-    &:hover i {
-        opacity: 1.0;
-    }
-    &:active i {
-        opacity: 1.0;
-        color: lighten($danger, 20%);
-    }
-    i {
-        opacity: 0.3;
-        color: $danger;
-        &:hover {
-            opacity: 1.0;
-        }
-        &:active {
-            opacity: 1.0;
-            color: lighten($danger, 20%);
-        }
-    }
-}
+
 
 
 /* Animated image (GIF/PNG) preview container in Create Panel */

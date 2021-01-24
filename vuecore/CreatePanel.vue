@@ -3,7 +3,29 @@
     <div class="create-panel-root">
       <div class="create-panel-display">
         <div class="create-panel-sequence silver-bordered">
-          <table class="sequence-grid is-paddingless" width="100%">
+          <div class="rtable rtable-5cols">
+            <div class="rtable-cell" v-for="(item, index) in sequence_info" v-bind:key="index"
+              v-bind:title="sequence_info?                    
+                `Name: ${item.name.value}\n` +
+                `Dimensions: ${item.width.value} x ${item.height.value}\n` +
+                `Format: ${item.format.value}\n` +
+                `Mode: ${item.color_mode.value}\n` +
+                `Comment: ${item.comments.value || 'None'}` : ''
+              ">
+              <img v-bind:src="item.absolute_url.value" />
+              <span class="index-anchor is-white-d">
+                {{ parseInt(index) + 1 }}
+              </span>
+              <a class="del-anchor" v-on:click="removeFrame(parseInt(index))">
+                <span class="icon" v-on:click="removeFrame(parseInt(index))">
+                  <i class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(index))"
+                  ></i>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <!-- <table class="sequence-grid is-paddingless" width="100%">
             <tbody>
               <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
                 <td v-for="(item, i) in quintjson" v-bind:key="i"
@@ -16,32 +38,13 @@
                   "
                 >
                   <div class="seqdiv">
-                    <!-- <span>{{ i }}</span><br/> -->
                     <img v-bind:src="item.absolute_url.value" />
-                    <span class="index-anchor">
-                      {{ parseInt(row) * 5 + parseInt(i) + 1 }}
-                    </span>
-                    <a
-                      class="del-anchor"
-                      v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"
-                    >
-                      <span
-                        class="icon"
-                        v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"
-                      >
-                        <i
-                          class="fas fa-minus-circle"
-                          v-on:click="removeFrame(parseInt(row) * 5 + parseInt(i))"
-                        ></i>
-                      </span>
-                    </a>
                   </div>
                 </td>
-                <!-- </template>
-                </template> -->
               </tr>
             </tbody>
-          </table>
+          </table> -->
+
         </div>
         <div class="create-panel-preview silver-bordered-no-left"
           v-bind:title="preview_info? 
@@ -678,11 +681,11 @@ function loadImages(ops) {
 
 function renderSequence(pyinfo, options) {
   let operation = options.operation;
-  if (operation == "replace") {
-    console.log("AA");
-    data.image_paths = pyinfo.sequence;
-    data.sequence_info = pyinfo.sequence_info;
-  } else if (["insert", "smart_insert"].includes(operation)) {
+  // if (operation == "replace") {
+    // console.log("AA");
+    // data.image_paths = pyinfo.sequence;
+    // data.sequence_info = pyinfo.sequence_info;
+  // } else if (["insert", "smart_insert"].includes(operation)) {
     console.log("BB");
     let image_paths = []
     let sequence_info = []
@@ -703,7 +706,7 @@ function renderSequence(pyinfo, options) {
       data.image_paths.push(...pyinfo.sequence);
       data.sequence_info.push(...pyinfo.sequence_info);
     }
-  }
+  // }
 }
 
 function removeFrame(index) {

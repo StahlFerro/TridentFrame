@@ -4,6 +4,10 @@ const fs = require('fs');
 const remote = require("electron").remote;
 const app = remote.app;
 
+// function imageTableGenerator(sequence_infos) {
+
+// }
+
 function quintcellLister(sequence_infos, from_where="") {
   var quintrows = {};
   // let sq_infos = Array.from(sequence_infos);

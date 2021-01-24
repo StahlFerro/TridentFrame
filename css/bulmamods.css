@@ -242,6 +242,70 @@
           display: flex;
           vertical-align: middle; }
 
+/* Responsive table */
+/* Color definitions */
+.is-white-d {
+  color: #cccccc; }
+
+.rtable {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 0 3em 0;
+  padding: 0; }
+  .rtable .rtable-cell {
+    display: flex;
+    position: relative;
+    box-sizing: border-box;
+    flex-grow: 1;
+    width: 100%;
+    height: 15vh;
+    overflow: hidden;
+    list-style: none;
+    border: 1px solid #cccccc !important; }
+    .rtable .rtable-cell img {
+      max-width: 100%;
+      box-sizing: border-box;
+      max-height: 100%;
+      object-fit: scale-down;
+      display: block;
+      margin-left: auto;
+      margin-right: auto; }
+  .rtable.rtable-2cols > .rtable-cell {
+    max-width: 50%; }
+  .rtable.rtable-3cols > .rtable-cell {
+    max-width: 33.33%; }
+  .rtable.rtable-4cols > .rtable-cell {
+    max-width: 25%; }
+  .rtable.rtable-5cols > .rtable-cell {
+    max-width: 20%; }
+  .rtable.rtable-6cols > .rtable-cell {
+    max-width: 16.6%; }
+
+/* Additional overlays */
+.index-anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.8; }
+
+.del-anchor {
+  position: absolute;
+  top: 0;
+  right: 0; }
+  .del-anchor:hover i {
+    opacity: 1.0; }
+  .del-anchor:active i {
+    opacity: 1.0;
+    color: #f8a5b6; }
+  .del-anchor i {
+    opacity: 0.3;
+    color: #f14668; }
+    .del-anchor i:hover {
+      opacity: 1.0; }
+    .del-anchor i:active {
+      opacity: 1.0;
+      color: #f8a5b6; }
+
 /* Create Panel */
 /* Color definitions */
 .is-white-d {
@@ -8459,30 +8523,6 @@ label.label.is-tight:not(:last-child) {
   .seqdiv img {
     max-width: 90px;
     max-height: 90px; }
-
-.index-anchor {
-  position: absolute;
-  top: 0;
-  left: 0;
-  opacity: 0.8; }
-
-.del-anchor {
-  position: absolute;
-  top: 0;
-  right: 0; }
-  .del-anchor:hover i {
-    opacity: 1.0; }
-  .del-anchor:active i {
-    opacity: 1.0;
-    color: #f8a5b6; }
-  .del-anchor i {
-    opacity: 0.3;
-    color: #f14668; }
-    .del-anchor i:hover {
-      opacity: 1.0; }
-    .del-anchor i:active {
-      opacity: 1.0;
-      color: #f8a5b6; }
 
 /* Animated image (GIF/PNG) preview container in Create Panel */
 .crt-aimg-control-container {

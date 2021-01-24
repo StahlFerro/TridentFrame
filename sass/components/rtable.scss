@@ -1,0 +1,68 @@
+/* Responsive table */
+@import "../components/_colors.scss";
+
+$bw: 3px;
+
+.rtable {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0 3em 0;
+    padding: 0;
+    .rtable-cell {
+        display: flex;
+        position: relative;
+        box-sizing: border-box;
+        flex-grow: 1;
+        width: 100%;  // Default to full width
+        height: 15vh;
+        overflow: hidden; // Or flex might break
+        list-style: none;
+        border: 1px solid $white-d !important;
+        // background: fade(slategrey,20%);
+        img {
+            max-width: 100%;
+            box-sizing: border-box;
+            max-height: 100%;
+            object-fit: scale-down;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+    }
+    &.rtable-2cols > .rtable-cell  { max-width: 50%; }
+    &.rtable-3cols > .rtable-cell  { max-width: 33.33%; }
+    &.rtable-4cols > .rtable-cell  { max-width: 25%; }
+    &.rtable-5cols > .rtable-cell  { max-width: 20%; }
+    &.rtable-6cols > .rtable-cell  { max-width: 16.6%; }
+}
+
+/* Additional overlays */
+.index-anchor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+}
+.del-anchor {
+    position: absolute;
+    top: 0;
+    right: 0;
+    &:hover i {
+        opacity: 1.0;
+    }
+    &:active i {
+        opacity: 1.0;
+        color: lighten($danger, 20%);
+    }
+    i {
+        opacity: 0.3;
+        color: $danger;
+        &:hover {
+            opacity: 1.0;
+        }
+        &:active {
+            opacity: 1.0;
+            color: lighten($danger, 20%);
+        }
+    }
+}
