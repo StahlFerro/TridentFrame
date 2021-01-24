@@ -1,0 +1,49 @@
+/* Split Panel */
+
+.split-panel-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .split-panel-display {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: stretch;
+        height: 55vh;
+        .split-panel-image {
+            flex-grow: inherit;
+            width: 45%;
+            height: 55vh;
+            overflow: auto;
+            img {
+                max-width: 100%;
+                box-sizing: border-box;
+                max-height: 100%;
+                object-fit: scale-down;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+        .split-panel-info {
+            display: flex;
+            flex-grow: inherit;
+            width: 55%;
+            height: 55vh;
+        }
+    }
+    .split-panel-middlebar {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: center;
+        height: calc(11vh - 20px);
+        .spl-control-btn {
+            display: flex;
+            margin-right: 10px;
+        }
+    }
+    .split-panel-controls {
+        height: 34vh;
+    }
+}

@@ -1,19 +1,12 @@
 <template>
-  <div id="split_panel" class="container" style="display: none; padding:10px;">
-    <table class="table is-borderless" style="padding: 5px;" width="100%">
-      <tr>
-        <td
-          id="split_aimg_cell"
-          class="silver-bordered force-center is-paddingless"
-          v-bind:class="{'has-checkerboard-bg': checkerbg_active }"
-          width="45%"
-          style="height: 380px;"
-        >
-          <div class="spl-aimg-container">
-            <img v-bind:src="preview_path_cb" />
-          </div>
-        </td>
-        <td width="55%" class="is-paddingless silver-bordered">
+  <div id="split_panel">
+    <div class="split-panel-root">
+      <div class="split-panel-display">
+        <div class="split-panel-image silver-bordered" 
+          v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
+          <img v-bind:src="preview_path_cb" />
+        </div>
+        <div class="split-panel-info silver-bordered-no-left">
           <table class="table spl-aimg-info-table" width="100%">
             <thead>
               <tr>
@@ -91,122 +84,114 @@
               </tr>
             </tbody>
           </table>
-        </td>
-      </tr>
-      <tr>
-        <td class="is-hpaddingless">
+        </div>
+      </div>
+      <div class="split-panel-middlebar">
+        <div class="spl-control-btn">
           <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': SPL_IS_LOADING, 'is-static': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
             <span>Load GIF/APNG</span>
           </a>
+        </div>
+        <div class="spl-control-btn">
           <a v-on:click="clearImage" class="button is-neon-crimson">
             <span class="icon is-small">
               <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>
-          <a
-            v-on:click="toggleCheckerBG"
-            class="button is-neon-white"
-            v-bind:class="{'is-active': checkerbg_active}"
-          >
+        </div>
+        <div class="spl-control-btn">
+          <a v-on:click="toggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
-        </td>
-        <td></td>
-      </tr>
-      <tr>
-        <td id="SPL_control_cell" class="is-paddingless" colspan="2">
-          <table class="table control-table" width="100%">
-            <tr>
-              <td width="25%">
-                <div class="field">
-                  <label class="label">Rename sequence</label>
-                  <div class="control">
-                    <input
-                      v-model="new_name"
-                      class="input is-neon-white"
-                    />
-                  </div>
+        </div>
+      </div>
+      <div class="split-panel-controls">
+        <table class="table control-table" width="100%">
+          <tr>
+            <td width="25%">
+              <div class="field">
+                <label class="label">Rename sequence</label>
+                <div class="control">
+                  <input
+                    v-model="new_name"
+                    class="input is-neon-white"
+                  />
                 </div>
-              </td>
-              <td width="25%">
-                <div class="field">
-                  <label class="label">Pad count</label>
-                  <div class="control">
-                    <input
-                      v-model="pad_count"
-                      class="input is-neon-white"
-                      type="number"
-                      min="0"
-                      max="6"
-                      v-on:keydown="numConstrain($event, true, true)"
-                    />
-                  </div>
+              </div>
+            </td>
+            <td width="25%">
+              <div class="field">
+                <label class="label">Pad count</label>
+                <div class="control">
+                  <input
+                    v-model="pad_count"
+                    class="input is-neon-white"
+                    type="number"
+                    min="0"
+                    max="6"
+                    v-on:keydown="numConstrain($event, true, true)"
+                  />
                 </div>
-              </td>
-              <td width="25%" style="vertical-align: middle;">
-                <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
-                  <input v-model="is_duration_sensitive" type="checkbox" />
-                  Duration-sensitive
-                </label>
-                <label class="checkbox" title="Reconstructs the original image of each frame. Use on optimized GIFs">
-                  <input v-model="is_unoptimized" type="checkbox" />
-                  Unoptimize
-                </label>
-                <!-- <label class="checkbox">
-                  <input v-model="is_reduced_color" type="checkbox" />
-                  Reduce Colors
-                </label> -->
-              </td>
-              <td width="25%" style="vertical-align: middle;">
-                <label class="checkbox" title="Generate a file containing the delay information of each frame">
-                  <input v-model="will_generate_delay_info" type="checkbox" />
-                  Generate delay info
-                </label>
-                <br/>
-              </td>
-            </tr>
-            <tr>
-              <td colspan="3">
-                <div class="field has-addons">
-                  <div class="control">
-                    <a v-on:click="chooseOutDir" class="button is-neon-cyan">
-                      <span class="icon is-small">
-                        <i class="fas fa-folder-open"></i>
-                      </span>
-                      <span>Save to</span>
-                    </a>
-                  </div>
-                  <div class="control is-expanded">
-                    <input
-                      v-model="outdir"
-                      class="input is-neon-white"
-                      type="text"
-                      placeholder="Output folder"
-                      readonly
-                    />
-                  </div>
+              </div>
+            </td>
+            <td width="25%" style="vertical-align: middle;">
+              <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
+                <input v-model="is_duration_sensitive" type="checkbox" />
+                Duration-sensitive
+              </label>
+              <label class="checkbox" title="Reconstructs the original image of each frame. Use on optimized GIFs">
+                <input v-model="is_unoptimized" type="checkbox" />
+                Unoptimize
+              </label>
+              <!-- <label class="checkbox">
+                <input v-model="is_reduced_color" type="checkbox" />
+                Reduce Colors
+              </label> -->
+            </td>
+            <td width="25%" style="vertical-align: middle;">
+              <label class="checkbox" title="Generate a file containing the delay information of each frame">
+                <input v-model="will_generate_delay_info" type="checkbox" />
+                Generate delay info
+              </label>
+              <br/>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="3">
+              <div class="field has-addons">
+                <div class="control">
+                  <a v-on:click="chooseOutDir" class="button is-neon-cyan">
+                    <span class="icon is-small">
+                      <i class="fas fa-folder-open"></i>
+                    </span>
+                    <span>Save to</span>
+                  </a>
                 </div>
-              </td>
-              <td class="has-text-centered">
-                <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'is-static': isButtonFrozen}">
-                  Split to folder</a>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="2" class="has-text-left" style="vertical-align: middle;">
-          <input v-model="split_msgbox" type="text" class="input is-left-paddingless is-border-colorless" readonly="readonly"/>
-        </td>
-      </tr>
-    </table>
+                <div class="control is-expanded">
+                  <input
+                    v-model="outdir"
+                    class="input is-neon-white"
+                    type="text"
+                    placeholder="Output folder"
+                    readonly
+                  />
+                </div>
+              </div>
+            </td>
+            <td class="has-text-centered">
+              <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'is-static': isButtonFrozen}">
+                Split to folder</a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
   </div>
 </template>
 
