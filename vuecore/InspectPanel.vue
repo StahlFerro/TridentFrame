@@ -20,9 +20,7 @@
               </tr>
               <tr v-for="(iprop, ikey, index) in item" v-bind:key="'iprop_' + key + '_' + index">
                 <td style="width: 123px">
-                  <strong
-                    ><span class="is-white-d">{{ iprop.label }}</span></strong
-                  >
+                  <strong><span class="is-white-d">{{ iprop.label }}</span></strong>
                 </td>
                 <template v-if="ikey == 'loop_count' && iprop.value == 0">
                   <td style="max-width: 369px; word-wrap: break-all">Infinite</td>

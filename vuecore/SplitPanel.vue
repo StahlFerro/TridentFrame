@@ -112,7 +112,7 @@
         </div>
       </div>
       <div class="split-panel-controls">
-        <table class="table control-table" width="100%">
+        <table width="100%">
           <tr>
             <td width="25%">
               <div class="field">
@@ -198,7 +198,6 @@
 
 
 <script>
-import { log } from "util";
 
 const remote = require("electron").remote;
 const dialog = remote.dialog;
@@ -206,6 +205,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./Client.vue");
 const { randString, validateFilename, numConstrain } = require('./Utility.vue');
+const { tridentEngine } = require("./Client.vue");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
@@ -263,13 +263,15 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
+  dialog.showOpenDialog(mainWindow, options).then((result) => {
+    let chosen_path = result.filePaths;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
     }
     data.SPL_IS_LOADING = true;
-    client.invoke("inspect_one", chosen_path[0], "animated", (error, res) => {
+    console.log(chosen_path);
+    tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
       if (error) {
         console.error(error);
         data.split_msgbox = error;
@@ -277,21 +279,25 @@ function loadImage() {
         data.SPL_IS_LOADING = false;
       } else {
         console.log(res);
-        var geninfo = res.general_info;
-        var ainfo = res.animation_info;
+        res = JSON.parse(res);
+        let info = res.data;
+        var geninfo = info.general_info;
+        var ainfo = info.animation_info;
+        console.log("geninfo");
+        console.log(geninfo);
         data.name = geninfo.name.value;
         data.dimensions = `${geninfo.width.value} x ${geninfo.height.value}`;
         data.info_header = `${geninfo.format.value} Information`;
         data.file_size = geninfo.fsize.value;
         data.file_size_hr = geninfo.fsize_hr.value;
-        data.frame_count = `${ainfo.frame_count.value} frames`;
-        data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`;
+        data.frame_count = `${ainfo.frame_count.value} frames`;;
+        // data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`
         data.fps = `${ainfo.fps.value} fps`;
-        let delay_info = `${ainfo.avg_delay.value} seconds`;
-        if (ainfo.delay_is_even.value) {
-          delay_info += ` (even)`;
-        }
-        data.delay = delay_info;
+        // let delay_info = `${ainfo.avg_delay.value} seconds`;
+        // if (ainfo.delay_is_even.value) {
+        //   delay_info += ` (even)`;
+        // }
+        // data.delay = delay_info;
         data.loop_duration = `${ainfo.loop_duration.value} seconds`;
         data.loop_count = ainfo.loop_count.value;
         data.preview_path = geninfo.absolute_url.value;

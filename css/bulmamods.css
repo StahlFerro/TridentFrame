@@ -390,6 +390,10 @@
         margin: 0px !important; }
 
 /* Split Panel */
+/* Color definitions */
+.is-white-d {
+  color: #cccccc; }
+
 .split-panel-root {
   display: flex;
   flex-direction: column;
@@ -401,6 +405,7 @@
     align-items: stretch;
     height: 55vh; }
     .split-panel-root .split-panel-display .split-panel-image {
+      display: flex;
       flex-grow: inherit;
       width: 45%;
       height: 55vh;
@@ -428,7 +433,22 @@
       display: flex;
       margin-right: 10px; }
   .split-panel-root .split-panel-controls {
-    height: 34vh; }
+    height: 34vh;
+    border: 2px solid #cccccc; }
+    .split-panel-root .split-panel-controls table {
+      width: 100%;
+      padding: 0;
+      margin: 0;
+      border: 0 !important;
+      margin: 0 !important; }
+      .split-panel-root .split-panel-controls table th {
+        border: 0 !important; }
+      .split-panel-root .split-panel-controls table td {
+        border: 0 !important;
+        padding: 1vh !important;
+        border: 1px solid black; }
+      .split-panel-root .split-panel-controls table label {
+        margin: 0px !important; }
 
 /* Inspect Panel */
 /* Color definitions */
