@@ -9401,7 +9401,7 @@ div.left-menu::-webkit-scrollbar {
     transition: flex-basis 400ms ease;
     padding: 10px; }
   .root-container .root-sidebar {
-    flex-basis: 100px;
+    flex-basis: 90px;
     color: #fff;
     display: flex;
     flex-direction: column;
