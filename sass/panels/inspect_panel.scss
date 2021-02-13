@@ -1,4 +1,5 @@
 /* Inspect Panel */
+@import "../components/globalvars.scss";
 @import "../components/_colors.scss";
 
 .inspect-panel-root {
@@ -66,7 +67,7 @@
         }
     }
     .inspect-panel-controls {
-        flex-basis: calc(10vh - 20px);
+        flex-basis: calc(10vh - #{$root-height-offset});
         padding-top: 10px;
     }
 }

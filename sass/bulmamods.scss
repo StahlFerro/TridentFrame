@@ -1,5 +1,6 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 @import "../node_modules/bulma/sass/elements/button.sass";
+@import "components/_globalvars.scss";
 @import "components/_colors.scss";
 @import "components/buttons.scss";
 @import "components/contextmenu.scss";
@@ -237,7 +238,7 @@ div.left-menu::-webkit-scrollbar { width: 0px; }
         order: 2;
         overflow-x: hidden;
         transition: flex-basis 400ms ease;
-        padding: 10px;
+        padding: $root-panel-padding;
     }
     .root-sidebar {
         flex-basis: 100px;   

@@ -1314,7 +1314,7 @@
     flex-direction: row;
     flex-grow: 1;
     align-items: center;
-    height: calc(11vh - 20px); }
+    height: 57px; }
     .create-panel-root .create-panel-middlebar .cpb-sequence-buttons {
       width: 60%;
       display: flex;
@@ -1328,7 +1328,7 @@
       text-align: center; }
   .create-panel-root .create-panel-controls {
     display: flex;
-    flex-basis: 45vh;
+    height: calc(100vh - 44vh - 57px - calc(10px * 2));
     flex-direction: row; }
     .create-panel-root .create-panel-controls .cpc-left-panel {
       border: 2px solid #cccccc;
@@ -1400,6 +1400,8 @@
         padding-bottom: 2px;
         font-size: 16px;
         word-wrap: break-word !important; }
+        .split-panel-root .split-panel-display .split-panel-info .spl-info-table td.spl-info-label {
+          width: 123px; }
       .split-panel-root .split-panel-display .split-panel-info .spl-info-table table, .split-panel-root .split-panel-display .split-panel-info .spl-info-table tr, .split-panel-root .split-panel-display .split-panel-info .spl-info-table td {
         border-collapse: collapse !important; }
   .split-panel-root .split-panel-middlebar {
@@ -1407,7 +1409,7 @@
     flex-direction: row;
     flex-grow: 1;
     align-items: center;
-    height: calc(11vh - 20px); }
+    height: calc(11vh - calc(10px * 2)); }
     .split-panel-root .split-panel-middlebar .spl-control-btn {
       display: flex;
       margin-right: 10px; }
@@ -1486,7 +1488,7 @@
       .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table table, .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table tr, .inspect-panel-root .inspect-panel-display .inspect-panel-info .ins-info-table td {
         border-collapse: collapse !important; }
   .inspect-panel-root .inspect-panel-controls {
-    flex-basis: calc(10vh - 20px);
+    flex-basis: calc(10vh - calc(10px * 2));
     padding-top: 10px; }
 
 /* About Panel */
@@ -1499,7 +1501,7 @@ div.about-content {
   align-items: center;
   justify-content: center;
   flex-grow: 1;
-  height: calc(100vh - 20px);
+  height: calc(100vh - calc(10px * 2));
   display: flex;
   flex-direction: column; }
   div.about-content h1 {
@@ -9401,7 +9403,7 @@ div.left-menu::-webkit-scrollbar {
     transition: flex-basis 400ms ease;
     padding: 10px; }
   .root-container .root-sidebar {
-    flex-basis: 90px;
+    flex-basis: 100px;
     color: #fff;
     display: flex;
     flex-direction: column;
