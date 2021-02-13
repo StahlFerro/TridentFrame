@@ -1,5 +1,7 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
+@import "../node_modules/bulma/sass/elements/button.sass";
 @import "components/_colors.scss";
+@import "components/buttons.scss";
 @import "components/contextmenu.scss";
 @import "components/rtable.scss";
 @import "components/text.scss";
@@ -180,9 +182,7 @@ div.left-menu::-webkit-scrollbar { width: 0px; }
 }
 // .menu-item.is-selected 
 
-.button.square-button {
-    border-radius: 0;
-}
+
 
 
 .crt-menu-subtab {
@@ -204,6 +204,21 @@ div.left-menu::-webkit-scrollbar { width: 0px; }
 .subtab-menu-item.is-selected p, .subtab-menu-item.is-selected i { color: $cyan !important; }
 
 
+/* Neon-white buttons. */
+// .button.is-neon-white {
+//     background-color: $dark-3;
+//     color: $white-d;
+//     border: 2px solid $white-d;
+//     &:hover, .is-neon-white.is-hovered {
+//         border-color: lighten($white-d, 20%);
+//         color: lighten($white-d, 20%);
+//     }
+//     &:active, .is-neon-white.is-active {
+//         background-color: $white-d;
+//         border-color: $white-d;
+//         color: $dark-3;
+//     }
+// }
 
 .root-container {
     display: flex;
@@ -275,11 +290,6 @@ div.mod-left-menu {
 div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 
 
-.button.flex-expand {
-    display: flex;
-    width: 100%;
-    height: 100%;
-}
 
 /* Borderless table helper css */
 .table.is-borderless td, th {
@@ -429,25 +439,25 @@ label.label.is-tight:not(:last-child) {
 
 
 
-.spl-aimg-info-table { 
-    td {
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-        padding: 3px !important;
-        padding-left: 10px !important;
-        &.spl-info-label { width: 140px; }
-        &.spl-info-data { max-width: 300px; }
-    }
-    tbody {
-        border-collapse: collapse;
-        overflow: auto;
-        display: block;
-        &::-webkit-scrollbar {
-            height: 7px;
-        }
-    }
-    tr { display: block; }
-}
+// .spl-aimg-info-table { 
+//     td {
+//         padding-top: 4px !important;
+//         padding-bottom: 4px !important;
+//         padding: 3px !important;
+//         padding-left: 10px !important;
+//         &.spl-info-label { width: 140px; }
+//         &.spl-info-data { max-width: 300px; }
+//     }
+//     tbody {
+//         border-collapse: collapse;
+//         overflow: auto;
+//         display: block;
+//         &::-webkit-scrollbar {
+//             height: 7px;
+//         }
+//     }
+//     tr { display: block; }
+// }
 
 
 
@@ -686,74 +696,7 @@ canvas.slicegrid-canvas {
     z-index:20;
 }
 
-/* Neon-cyan buttons. $cyan outlines with $dark-3 BG to match the global $dark-3 BG color */
-.button.is-neon-cyan {
-    background-color: $dark-3;
-    color: $cyan;
-    border: 2px solid $cyan;
-    &:hover, .is-hovered {
-        border-color: lighten($cyan, 20%);
-        color: lighten($cyan, 20%);
-    }
-    &:active, .is-active {
-        background-color: $cyan;
-        border-color: $cyan;
-        color: $dark-3;
-    }
-}
 
-
-/* Neon-cyan buttons. $emerald outlines with $dark-3 BG to match the global $dark-3 BG color */
-.button.is-neon-emerald {
-    background-color: $dark-3;
-    color: $emerald;
-    border: 2px solid $emerald;
-    &:hover, .is-hovered {
-        border-color: lighten($emerald, 20%);
-        color: lighten($emerald, 20%);
-    }
-    &:active, .is-neon-emerald.is-active {
-        background-color: $emerald;
-        border-color: $emerald;
-        color: $dark-3;
-    }
-}
-
-/* Neon-crimson buttons. $crimson outlines with $dark-3 BG to match the global $dark-3 BG color */
-.button.is-neon-crimson {
-    background-color: $dark-3;
-    color: $crimson;
-    border: 2px solid $crimson;
-    &:hover, .is-neon-crimson.is-hovered {
-        border-color: lighten($crimson, 20%);
-        color: lighten($crimson, 20%);
-    }
-    &:active, .is-neon-crimson.is-active {
-        background-color: $crimson;
-        border-color: $crimson;
-        color: $dark-3;
-    }
-}
-
-.button.neon-borderless {
-    border: none;
-}
-
-/* Neon-white buttons. */
-.button.is-neon-white {
-    background-color: $dark-3;
-    color: $white-d;
-    border: 2px solid $white-d;
-    &:hover, .is-neon-white.is-hovered {
-        border-color: lighten($white-d, 20%);
-        color: lighten($white-d, 20%);
-    }
-    &:active, .is-neon-white.is-active {
-        background-color: $white-d;
-        border-color: $white-d;
-        color: $dark-3;
-    }
-}
 
 /* Grey-block inputs. */
 .input.is-block-grey {

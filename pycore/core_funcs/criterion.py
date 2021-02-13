@@ -1,4 +1,5 @@
 from os import path
+import json
 
 class CreationCriteria:
     """ Contains all of the criterias for Creating an animated image """

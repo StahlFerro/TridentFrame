@@ -6,53 +6,55 @@
     display: block;
     position: fixed;
     z-index: 999;
-  
+
     .context-menu-options {
-      display: block;
-      position: relative;
-      padding: 1px 1px;
-      background: rgba($color: black, $alpha: 1);
-      border-radius: 0px;
-      color: $white-d;
-      text-decoration: none;
-      font-size: 13px;
-      width: 100%;
-      text-align: left;
-      cursor: pointer;
-      padding: 0px;
-      .context-menu-option {
-        font-weight: 500;
-        font-size: 16px;
-        padding: 5px 5px 5px 5px;
+        display: block;
+        position: relative;
+        padding: 1px 1px;
+        background: rgba($color: black, $alpha: 1);
+        border-radius: 0px;
+        color: $white-d;
+        text-decoration: none;
+        font-size: 13px;
+        width: 100%;
+        text-align: left;
         cursor: pointer;
-        border: 2px solid transparent;
-        z-index: 999;
-        &:hover {
-          border-color: $cyan;
-          color: $cyan;
-        }
-        &:active {
-          border-color: lighten($color: $cyan, $amount: 10);
-          color: lighten($color: $cyan, $amount: 10);
-        }
+        padding: 0px;
 
-        .ctxmenu-content {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          .ctxmenu-icon {
-            display: flex;
-            vertical-align: middle;
-            margin-right: 7px;
-          }
-          .ctxmenu-text {
-            display: flex;
-            vertical-align: middle;
-          }
-        }
+        .context-menu-option {
+            font-weight: 500;
+            font-size: 16px;
+            padding: 5px 5px 5px 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            z-index: 999;
 
-      }
+            &:hover {
+                border-color: $cyan;
+                color: $cyan;
+            }
+
+            &:active {
+                border-color: lighten($color: $cyan, $amount: 10);
+                color: lighten($color: $cyan, $amount: 10);
+            }
+
+            .ctxmenu-content {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+
+                .ctxmenu-icon {
+                    display: flex;
+                    vertical-align: middle;
+                    margin-right: 7px;
+                }
+
+                .ctxmenu-text {
+                    display: flex;
+                    vertical-align: middle;
+                }
+            }
+        }
     }
-
-  }
-  
+}

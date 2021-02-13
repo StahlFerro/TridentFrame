@@ -32,6 +32,25 @@
             flex-grow: inherit;
             width: 55%;
             height: 55vh;
+            .spl-info-table { 
+                table {
+                    table-layout: fixed !important;
+                }
+                tr, td {
+                    border-bottom: 1px solid $dark-9 !important;
+                    border-right: 1px solid $dark-9!important;
+                }
+                td {
+                    padding-top: 2px;
+                    padding-bottom: 2px;
+                    font-size: 16px;
+                    word-wrap: break-word !important;
+                    // user-select: text !important;
+                }
+                table, tr, td {
+                    border-collapse: collapse !important;
+                }
+            }
         }
     }
     .split-panel-middlebar {

@@ -52,17 +52,17 @@ $bw: 3px;
     }
     &:active i {
         opacity: 1.0;
-        color: lighten($danger, 20%);
+        color: lighten($crimson, 20%);
     }
     i {
         opacity: 0.3;
-        color: $danger;
+        color: $crimson;
         &:hover {
             opacity: 1.0;
         }
         &:active {
             opacity: 1.0;
-            color: lighten($danger, 20%);
+            color: lighten($crimson, 20%);
         }
     }
 }

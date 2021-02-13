@@ -93,7 +93,7 @@
         <div class="cpb-sequence-buttons">
           <div class="cpb-sequence-btn">
             <a id="addPopperBtn" v-on:click="toggleLoadPopper" v-click-outside="closeLoadPopper" class="button is-neon-emerald"
-              v-bind:class="{'is-loading': CRT_IS_LOADING, 'is-static': isButtonFrozen }" title="Open image loading dialog">
+              v-bind:class="{'is-loading': CRT_IS_LOADING, 'non-interactive': isButtonFrozen }" title="Open image loading dialog">
               <span class="icon is-small">
                 <i class="fas fa-plus"></i>
               </span>
@@ -108,11 +108,11 @@
               title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving this field empty is the default operation (append the new sequence after the last frame)"/>
           </div>
           <div class="cpb-sequence-btn">
-            <a v-on:click="CRTClearAIMG" class="button is-neon-crimson" v-bind:class="{ 'is-static': isButtonFrozen }" title="Clears the entire sequence">
+            <a v-on:click="CRTClearAIMG" class="button is-neon-crimson" v-bind:class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence">
               <span class="icon is-small">
                 <i class="fas fa-times"></i>
               </span>
-              <span>Clear All</span>
+              <span>Clear</span>
             </a>
           </div>
           <div class="cpb-sequence-btn">
@@ -121,7 +121,7 @@
           <!-- <a
             v-on:click="loadImages('replace')"
             class="button is-neon-emerald"
-            v-bind:class="{ 'is-loading': CRT_REPLACE_LOAD, 'is-static': isButtonFrozen }"
+            v-bind:class="{ 'is-loading': CRT_REPLACE_LOAD, 'non-interactive': isButtonFrozen }"
             title="Loads multiple static images to create an animated image. This replaces the current sequence above"
           >
             <span class="icon is-small">
@@ -134,7 +134,7 @@
           <a v-on:click="previewAIMG" class="button is-neon-cyan"
             v-bind:class="{
               'is-loading': CRT_IS_PREVIEWING,
-              'is-static': isButtonFrozen,
+              'non-interactive': isButtonFrozen,
             }">
             <span class="icon is-medium">
               <i id="autoprev_icon" class="far fa-eye"></i>
@@ -142,7 +142,7 @@
             <span>Preview</span>
           </a>
           <a v-on:click="CRTToggleCheckerBG" class="button is-neon-white"
-            v-bind:class="{ 'is-active': checkerbg_active }">
+            v-bind:class="{'is-active': checkerbg_active}">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
             </span>
@@ -165,7 +165,7 @@
               <li class="subtab-menu-item is-cyan"
                 v-bind:class="{ 'is-selected': crt_menuselection == 1 }">
                 <a v-on:click="crt_menuselection = 1"
-                  v-bind:class="{ 'is-disabled': format == 'PNG' }">
+                  v-bind:class="{ 'is-disabled': criteria.format == 'PNG' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -175,7 +175,7 @@
               <li class="subtab-menu-item"
                 v-bind:class="{ 'is-selected': crt_menuselection == 2 }">
                 <a v-on:click="crt_menuselection = 2"
-                  v-bind:class="{ 'is-disabled': format == 'GIF' }">
+                  v-bind:class="{ 'is-disabled': criteria.format == 'GIF' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -193,7 +193,7 @@
                   <div class="field">
                     <label class="label" title="The name of the GIF/APNG">Name</label>
                     <div class="control">
-                      <input v-model="name" class="input is-neon-white" type="text" />
+                      <input v-model="criteria.name" class="input is-neon-white" type="text" />
                     </div>
                   </div>
                 </td>
@@ -201,8 +201,8 @@
                   <div class="field">
                     <label class="label" title="The width of the GIF/APNG">Width</label>
                     <div class="control">
-                      <input v-bind:value="width" v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="widthHandler(width, $event)" class="input is-neon-white"
+                      <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)"
+                        v-on:input="widthHandler(criteria.width, $event)" class="input is-neon-white"
                         type="number" min="1"/>
                     </div>
                   </div>
@@ -212,9 +212,9 @@
                     <label class="label" title="The height of the GIF/APNG">Height</label>
                     <div class="control">
                       <input
-                        v-bind:value="height"
+                        v-bind:value="criteria.height"
                         v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="heightHandler(height, $event)"
+                        v-on:input="heightHandler(criteria.height, $event)"
                         class="input is-neon-white"
                         type="number"
                         min="1"
@@ -231,7 +231,7 @@
                     >
                     <div class="control">
                       <div class="select is-neon-cyan">
-                        <select v-model="resize_method">
+                        <select v-model="criteria.resize_method">
                           <option
                             value="BICUBIC"
                             title="General-use resizing algorithm for most images"
@@ -284,7 +284,7 @@
                     >
                     <div class="control">
                       <input
-                        v-model="delay"
+                        v-model="criteria.delay"
                         v-on:keydown="numConstrain($event, true, false)"
                         v-on:input="delayConstrain"
                         class="input is-neon-white"
@@ -300,7 +300,7 @@
                       title="How many frames will be consecutively displayed per second.">Frame rate</label>
                     <div class="control">
                       <input
-                        v-model="fps"
+                        v-model="criteria.fps"
                         v-on:keydown="numConstrain($event, true, false)"
                         v-on:input="fpsConstrain"
                         class="input is-neon-white"
@@ -321,7 +321,7 @@
                     >
                     <div class="control">
                       <input
-                        v-model="loop_count"
+                        v-model="criteria.loop_count"
                         v-on:keydown="numConstrain($event, true, true)"
                         class="input is-neon-white"
                         type="number"
@@ -341,7 +341,7 @@
                     >
                     <div class="control">
                       <input
-                        v-model="start_frame"
+                        v-model="criteria.start_frame"
                         v-on:keydown="numConstrain($event, true, true)"
                         class="input is-neon-white"
                         type="number"
@@ -353,23 +353,23 @@
                 </td>
                 <td style="vertical-align: bottom">
                   <label class="checkbox" title="Flip the image horizontally">
-                    <input v-model="flip_x" type="checkbox" />
+                    <input v-model="criteria.flip_x" type="checkbox" />
                     Flip X
                   </label>
                   <br />
                   <label class="checkbox" title="Flip the image vertically">
-                    <input v-model="flip_y" type="checkbox" />
+                    <input v-model="criteria.flip_y" type="checkbox" />
                     Flip Y
                   </label>
                 </td>
                 <td style="vertical-align: bottom">
                   <label class="checkbox" title="Preserve transparent pixels">
-                    <input v-model="is_transparent" type="checkbox" />
+                    <input v-model="criteria.is_transparent" type="checkbox" />
                     Preserve Alpha
                   </label>
                   <br />
                   <label class="checkbox" title="Reverse the animation">
-                    <input v-model="is_reversed" type="checkbox" />
+                    <input v-model="criteria.is_reversed" type="checkbox" />
                     Reversed
                   </label>
                 </td>
@@ -401,7 +401,7 @@
                     <!-- <label class="label">Format</label> -->
                     <div class="control">
                       <div class="select is-neon-cyan">
-                        <select v-model="format">
+                        <select v-model="criteria.format">
                           <option value="GIF">GIF</option>
                           <option value="PNG">APNG</option>
                         </select>
@@ -417,7 +417,7 @@
                         class="button is-neon-cyan"
                         v-bind:class="{
                           'is-loading': CRT_IS_CREATING == true,
-                          'is-static': isButtonFrozen,
+                          'non-interactive': isButtonFrozen,
                         }">Create</a>
                     </div>
                   </div>
@@ -441,13 +441,13 @@
               width="100%"
             >
               <GIFOptimizationRow
-                :is_optimized.sync="is_optimized"
-                :optimization_level.sync="optimization_level"
-                :is_lossy.sync="is_lossy"
-                :lossy_value.sync="lossy_value"
-                :is_reduced_color.sync="is_reduced_color"
-                :color_space.sync="color_space"
-                :is_unoptimized.sync="is_unoptimized"
+                :is_optimized.sync="gif_opt.is_optimized"
+                :optimization_level.sync="gif_opt.optimization_level"
+                :is_lossy.sync="gif_opt.is_lossy"
+                :lossy_value.sync="gif_opt.lossy_value"
+                :is_reduced_color.sync="gif_opt.is_reduced_color"
+                :color_space.sync="gif_opt.color_space"
+                :is_unoptimized.sync="gif_opt.is_unoptimized"
               />
               <!-- <GIFUnoptimizationRow
                       :is_optimized.sync="is_optimized"
@@ -463,11 +463,11 @@
               width="100%"
             >
               <APNGOptimizationRow
-                :apng_is_optimized.sync="apng_is_optimized"
-                :apng_optimization_level.sync="apng_optimization_level"
-                :apng_is_lossy.sync="apng_is_lossy"
-                :apng_lossy_value.sync="apng_lossy_value"
-                :apng_is_unoptimized.sync="apng_is_unoptimized"
+                :apng_is_optimized.sync="apng_opt.apng_is_optimized"
+                :apng_optimization_level.sync="apng_opt.apng_optimization_level"
+                :apng_is_lossy.sync="apng_opt.apng_is_lossy"
+                :apng_lossy_value.sync="apng_opt.apng_lossy_value"
+                :apng_is_unoptimized.sync="apng_opt.apng_is_unoptimized"
               />
               <!-- <APNGUnoptimizationRow
                       :apng_is_optimized.sync="apng_is_optimized"
@@ -508,48 +508,53 @@ import { popper, createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
 
 var data = {
+  criteria: {
+    name: "",
+    fps: "",
+    delay: "",
+    format: "GIF",
+    is_reversed: false,
+    is_transparent: false,
+    flip_x: false,
+    flip_y: false,
+    width: "",
+    height: "",
+    resize_method: "BICUBIC",
+    loop_count: "",
+    start_frame: "",
+    rotation: 0,
+  },
+  gif_opt: {
+    is_optimized: false,
+    optimization_level: "1",
+    is_lossy: false,
+    lossy_value: "",
+    is_reduced_color: false,
+    color_space: "",
+    is_unoptimized: false,
+  },
+  apng_opt: {
+    apng_is_optimized: false,
+    apng_optimization_level: "1",
+    apng_is_lossy: false,
+    apng_lossy_value: "",
+    apng_is_unoptimized: false,
+  },
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
   insert_index: "",
   total_size: "",
-  name: "",
-  fps: "",
   orig_width: "",
   old_width: "",
   orig_height: "",
   old_height: "",
-  width: "",
-  height: "",
-  resize_method: "BICUBIC",
-  delay: "",
-  loop_count: "",
-  start_frame: "",
-  is_transparent: false,
-  is_reversed: false,
-  flip_x: false,
-  flip_y: false,
-  rotation: 0,
-  format: "GIF",
   outdir: "",
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",
   aspect_ratio: "",
   lock_aspect_ratio: false,
-
-  is_optimized: false,
-  optimization_level: "1",
-  is_lossy: false,
-  lossy_value: "",
-  is_reduced_color: false,
-  color_space: "",
-  is_unoptimized: false,
-  apng_is_optimized: false,
-  apng_optimization_level: "1",
-  apng_is_lossy: false,
-  apng_lossy_value: "",
-  apng_is_unoptimized: false,
 
   create_msgbox: "",
   // sequence_counter: "",
@@ -663,15 +668,15 @@ function loadImages(ops) {
           console.log(info);
           renderSequence(info, { operation: ops });
           data.total_size = `Total size: ${info.total_size}`;
-          data.name = info.name;
+          data.criteria.name = info.name;
+          data.criteria.width = info.width;
+          data.criteria.height = info.height;
+          data.criteria.fps = 50;
+          data.criteria.delay = 0.02;
           data.orig_width = info.width;
-          data.width = info.width;
           data.orig_height = info.height;
-          data.height = info.height;
-          data.fps = 50;
-          data.delay = 0.02;
           data.create_msgbox = "";
-          updateAspectRatio(data.width, data.height);
+          updateAspectRatio(data.criteria.width, data.criteria.height);
           data.CRT_IS_LOADING = false;
           toggleLoadButtonAnim(ops, false);
         }
@@ -717,11 +722,12 @@ function removeFrame(index) {
 
 function CRTChooseOutdir() {
   var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options, (out_dirs) => {
-    console.log(out_dirs);
-    if (out_dirs && out_dirs.length > 0) {
+  dialog.showOpenDialog(mainWindow, options).then((result) => {
+    let img_paths = result.filePaths;
+    console.log(img_paths);
+    if (img_paths && img_paths.length > 0) {
       console.log("folder selected");
-      data.outdir = out_dirs[0];
+      data.outdir = img_paths[0];
       data.create_msgbox = "";
     }
   });
@@ -735,16 +741,16 @@ function CRTClearAIMG() {
   data.preview_path_cb = "";
   data.preview_info = "";
   data.total_size = "";
-  data.name = "";
-  data.delay = "";
-  data.fps = "";
-  data.loop_count = "";
   data.orig_width = "";
   data.old_width = "";
-  data.width = "";
   data.orig_height = "";
   data.old_height = "";
-  data.height = "";
+  data.criteria.name = "";
+  data.criteria.delay = "";
+  data.criteria.fps = "";
+  data.criteria.loop_count = "";
+  data.criteria.width = "";
+  data.criteria.height = "";
   // data.CRT_sequence_counter = "";
   data.create_msgbox = "";
   // data.sequence_counter = "";
@@ -766,7 +772,7 @@ function previewAIMG() {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
-  let validator = validateFilename(data.name);
+  let validator = validateFilename(data.criteria.name);
   if (!validator.valid) {
     console.error(validator.msg);
     data.create_msgbox = validator.msg;
@@ -776,7 +782,12 @@ function previewAIMG() {
   console.log(data);
   writeImagePathsCache(data.image_paths);
   writeCriterionCache(data);
-  tridentEngine(["combine_image", "./temp", data.name], (error, res) => {
+  let criteria_pack = {
+    "criteria": data.criteria,
+    "gif_opt": data.gif_opt,
+    "apng_opt": data.apng_opt,
+  }
+  tridentEngine(["combine_image", data.image_paths, "./temp", criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.create_msgbox = error.error;
@@ -822,7 +833,7 @@ function CRTCreateAIMG() {
     return;
   }
 
-  if (fileExists(data.outdir, `${data.name}.${data.format.toLowerCase()}`)) {
+  if (fileExists(data.outdir, `${data.criteria.name}.${data.criteria.format.toLowerCase()}`)) {
     let WINDOW = remote.getCurrentWindow();
     let options = {
       buttons: ["Yes", "Cancel"],
@@ -853,7 +864,7 @@ function CRTCreateAIMG() {
               data.create_msgbox = res.msg;
             }
             if (res.CONTROL == "CRT_FINISH") {
-              data.create_msgbox = `${data.format.toUpperCase()} created!`;
+              data.create_msgbox = `${data.criteria.format.toUpperCase()} created!`;
               data.CRT_IS_CREATING = false;
             }
           }
@@ -887,35 +898,35 @@ function widthHandler(width, event) {
   data.old_width = parseInt(width);
   console.log(event);
   let newWidth = event.target.value;
-  data.width = newWidth;
+  data.criteria.width = newWidth;
   if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) {
     // Change height if lock_aspect_ratio is true and height is not 0
     let raHeight = Math.round(
       (newWidth / data.aspect_ratio.w_ratio) * data.aspect_ratio.h_ratio
     );
-    data.height = raHeight > 0 ? raHeight : "";
+    data.criteria.height = raHeight > 0 ? raHeight : "";
   } else {
-    updateAspectRatio(data.width, data.height);
+    updateAspectRatio(data.criteria.width, data.criteria.height);
   }
 }
 
 function heightHandler(height, event) {
   data.old_height = parseInt(height);
   let newHeight = event.target.value;
-  data.height = newHeight;
+  data.criteria.height = newHeight;
   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
     let raWidth = Math.round(
       (newHeight / data.aspect_ratio.h_ratio) * data.aspect_ratio.w_ratio
     );
     console.log(raWidth);
-    data.width = raWidth > 0 ? raWidth : "";
+    data.criteria.width = raWidth > 0 ? raWidth : "";
   } else {
-    updateAspectRatio(data.width, data.height);
+    updateAspectRatio(data.criteria.width, data.criteria.height);
   }
 }
 
 function updateAspectRatio(width, height) {
-  if (data.width && data.height) {
+  if (data.criteria.width && data.criteria.height) {
     console.log("uAR", width, height);
     let divisor = gcd(width, height);
     let w_ratio = width / divisor;
@@ -937,18 +948,18 @@ function delayConstrain(event) {
     let numdec = value.split(".");
     console.log("numdec", numdec);
     let precision = 2;
-    if (data.format == "GIF") {
+    if (data.criteria.format == "GIF") {
       precision = GIF_DELAY_DECIMAL_PRECISION;
-    } else if (data.format == "PNG") {
+    } else if (data.criteria.format == "PNG") {
       precision = APNG_DELAY_DECIMAL_PRECISION;
     }
     if (numdec[1].length > precision) {
       let decs = numdec[1].substring(0, precision);
       console.log("decs limit triggered", decs);
-      data.delay = `${numdec[0]}.${decs}`;
+      data.criteria.delay = `${numdec[0]}.${decs}`;
     }
   }
-  data.fps = Math.round(1000 / data.delay) / 1000;
+  data.criteria.fps = Math.round(1000 / data.criteria.delay) / 1000;
 }
 
 function fpsConstrain(event) {
@@ -956,12 +967,12 @@ function fpsConstrain(event) {
   let value = event.target.value;
   if (value) {
     let mult = 100;
-    if (data.format == "GIF") {
+    if (data.criteria.format == "GIF") {
       mult = 100;
-    } else if (data.format == "PNG") {
+    } else if (data.criteria.format == "PNG") {
       mult = 1000;
     }
-    data.delay = Math.round(mult / data.fps) / mult;
+    data.criteria.delay = Math.round(mult / data.criteria.fps) / mult;
   }
 }
 

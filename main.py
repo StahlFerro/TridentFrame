@@ -61,10 +61,8 @@ class PythonImager():
             print(info)
 
 
-    def combine_image(self, out_dir, filename):
+    def combine_image(self, image_paths, out_dir, criteria_pack):
         """Combine multiple static images into a single animated image file"""
-        image_paths = get_bufferfile_content()
-        criterion_vals = get_criterionfile_content()
         """Combine a sequence of images into a GIF/APNG"""
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
         if not image_paths and not out_dir:
@@ -74,11 +72,11 @@ class PythonImager():
         elif not out_dir:
             raise Exception("Please choose the output folder!")
         crbundle = CriteriaBundle({
-            "create_aimg": CreationCriteria(criterion_vals),
-            "gif_opt": GIFOptimizationCriteria(criterion_vals),
-            "apng_opt": APNGOptimizationCriteria(criterion_vals)
+            "create_aimg": CreationCriteria(criteria_pack['criteria']),
+            "gif_opt": GIFOptimizationCriteria(criteria_pack['gif_opt']),
+            "apng_opt": APNGOptimizationCriteria(criteria_pack['apng_opt'])
         })
-        out_path = create_aimg(image_paths, out_dir, filename, crbundle)
+        out_path = create_aimg(image_paths, out_dir, criteria_pack['criteria']['name'], crbundle)
         if (out_path):
             print(json.dumps({"data": out_path}))
         return
@@ -170,11 +168,15 @@ def handle_execpath():
 
 
 def main():
+    print(json.dumps(f"{len(sys.argv) == 1}, {sys.stdin.isatty()}"))
     if len(sys.argv) == 1 and not sys.stdin.isatty():
+        data = {}
         try:
             data = json.loads(sys.stdin.read())
         except Exception as e:
             print(e)
+        if not data:
+            raise Exception("No data received from stdin!")
         pyimager = PythonImager()   
         try:
             method = getattr(pyimager, data['command'])

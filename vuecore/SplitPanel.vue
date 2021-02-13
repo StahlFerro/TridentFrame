@@ -7,7 +7,7 @@
           <img v-bind:src="preview_path_cb" />
         </div>
         <div class="split-panel-info silver-bordered-no-left">
-          <table class="table spl-aimg-info-table" width="100%">
+          <table class="table spl-info-table" width="100%">
             <thead>
               <tr>
                 <th colspan="2">
