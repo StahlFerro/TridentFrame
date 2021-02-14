@@ -1,12 +1,36 @@
+
 from __future__ import print_function
 import sys
+import os
+import json
+
+class Unbuffered(object):
+   def __init__(self, stream):
+       self.stream = stream
+   def write(self, data):
+       self.stream.write(data)
+       self.stream.flush()
+   def writelines(self, datas):
+       self.stream.writelines(datas)
+       self.stream.flush()
+   def __getattr__(self, attr):
+       return getattr(self.stream, attr)
+
+sys.stdout = Unbuffered(sys.stdout)
+
+
+IS_FROZEN = getattr(sys, 'frozen', False)
+if IS_FROZEN:
+    frozen_dir = os.path.dirname(sys.executable)
+    # print(json.dumps({"msg": f"Detected frozen dir: {frozen_dir}"}))
+    os.chdir(frozen_dir)
+
+
 import random
 import string
 from typing import List
-import os
 import signal
 import time
-import json
 
 from pycore.inspect_ops import inspect_sequence, inspect_general, _inspect_smart
 from pycore.create_ops import create_aimg
@@ -17,8 +41,6 @@ from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitC
 from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
 from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH, get_bufferfile_content, get_criterionfile_content
 
-
-IS_FROZEN = getattr(sys, 'frozen', False)
 
 class PythonImager():
 
@@ -144,37 +166,37 @@ class PythonImager():
         _purge_directory(ABS_CACHE_PATH())
         return "Cache and temp evaporated"
 
-
-    def print_cwd(self):
-        """Dev method for displaying python cwd"""
-        msg = {
-            "os.getcwd()": os.getcwd(),
-            "sys.executable": sys.executable,
-            "__file__": __file__,
-            "IS_FROZEN": IS_FROZEN
-        }
-        return msg
-
-
     def test_generator(self):
         return util_generator()
 
 
+        
+def print_cwd():
+    """Dev method for displaying python cwd"""
+    msg = {
+        "os.getcwd()": os.getcwd(),
+        "sys.executable": sys.executable,
+        "__file__": __file__,
+        "IS_FROZEN": IS_FROZEN
+    }
+    return msg
+
 
 def handle_execpath():
-    if IS_FROZEN:
-        frozen_dir = os.path.dirname(sys.executable)
-        os.chdir(frozen_dir)
+    pass
 
 
 def main():
-    print(json.dumps(f"{len(sys.argv) == 1}, {sys.stdin.isatty()}"))
+    # print(json.dumps({"msg": "Main called"}))
+    # handle_execpath()
+    # print(json.dumps(print_cwd()))
+    # print(json.dumps(f"{len(sys.argv) == 1}, {sys.stdin.isatty()}"))
     if len(sys.argv) == 1 and not sys.stdin.isatty():
         data = {}
         try:
             data = json.loads(sys.stdin.read())
         except Exception as e:
-            print(e)
+            print(json.dumps({"msg": str(e)}), flush=True)
         if not data:
             raise Exception("No data received from stdin!")
         pyimager = PythonImager()   

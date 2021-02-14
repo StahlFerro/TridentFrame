@@ -10,6 +10,8 @@ IMG_EXTS = ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'tiff']
 STATIC_IMG_EXTS = ['png', 'jpg', 'jpeg', 'bmp', 'gif']
 ANIMATED_IMG_EXTS = ['gif', 'png']
 
+print(json.dumps({"msg": f"On config.py, {os.getcwd()}"}))
+
 with open("./config/settings.json") as f:
     SETTINGS = json.loads(f.read())
 

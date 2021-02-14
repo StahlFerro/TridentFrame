@@ -20,7 +20,6 @@ scribe_texts = []
 os_name = ""
 with open(PACKAGEJSON_PATH, "r") as jsonfile:
     package_json = json.load(jsonfile)
-
 build_info = package_json['build']
 VERSION = package_json['version']
 print("VERSION", VERSION)
@@ -32,7 +31,6 @@ if os_name == 'Windows':
 elif os_name == 'Linux':
     targets = build_info['linux']['target']
     scribe_texts.append(f"- Ubuntu 18.04 LTS (64bit)")
-
 releases_content = (os.path.join(RELEASES_DIR, diritem) for diritem in os.listdir(RELEASES_DIR))
 release_files = [r for r in releases_content if os.path.isfile(r)]
 for target in targets:

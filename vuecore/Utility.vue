@@ -1,8 +1,6 @@
 <script>
 const path = require('path');
 const fs = require('fs');
-const remote = require("electron").remote;
-const app = remote.app;
 
 // function imageTableGenerator(sequence_infos) {
 

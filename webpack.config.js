@@ -16,17 +16,25 @@ module.exports = env => {
       __filename: false
     },
     module: {
-      rules: [
-        { test: /\.js$/, use: 'babel-loader' },
-        { test: /\.vue$/, use: 'vue-loader' },
-        { test: /\.css$/, use: [{
-          loader: MiniCssExtractPlugin.loader,
-          options: {
-            name: 'style.css',
-            outputPath: 'css/',
-            hmr: env.NODE_ENV == 'DEV'
-          },
-        }, 'css-loader',]},
+      rules: [{
+          test: /\.js$/,
+          use: 'babel-loader'
+        },
+        {
+          test: /\.vue$/,
+          use: 'vue-loader'
+        },
+        {
+          test: /\.css$/,
+          use: [{
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              name: 'style.css',
+              outputPath: 'css/',
+              hmr: env.NODE_ENV == 'DEV'
+            },
+          }, 'css-loader', ]
+        },
         {
           test: /\.(png|svg|jpg|gif)$/,
           loader: 'file-loader',
@@ -36,16 +44,22 @@ module.exports = env => {
           },
 
         },
-        { test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/, use: [{
-          loader: 'file-loader',
-          options: {
-            name: '[name].[ext]',
-            outputPath: 'webfonts/',
-            esModule: false,
-            // publicPath: '../',
-          },
-        }]},
-        { test: /\.node$/, loader: "node-loader", }
+        {
+          test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
+          use: [{
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'webfonts/',
+              esModule: false,
+              // publicPath: '../',
+            },
+          }]
+        },
+        {
+          test: /\.node$/,
+          loader: "node-loader",
+        }
         // { test: /\.node$/, use: 'node_loader' },
       ]
     },

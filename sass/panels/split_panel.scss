@@ -60,14 +60,14 @@
         flex-direction: row;
         flex-grow: 1;
         align-items: center;
-        height: calc(11vh - #{$root-height-offset});
+        height: 57px;
         .spl-control-btn {
             display: flex;
             margin-right: 10px;
         }
     }
     .split-panel-controls {
-        height: 34vh;
+        height: calc(100vh - 55vh - 57px - #{$root-height-offset});
         border: 2px solid $white-d;
         table {
             width: 100%;

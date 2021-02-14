@@ -26,7 +26,8 @@ const createWindow = () => {
 		icon: path.join(__dirname, 'imgs/TridentFrame_logo_256x256.ico'),
 		webPreferences: {
 			webSecurity: false,
-			nodeIntegration: true
+			nodeIntegration: true,
+			enableRemoteModule: true,
 		}
 	});
 	mainWindow.setMenu(null);
@@ -69,6 +70,13 @@ app.on('activate', () => {
 		createWindow();
 	}
 });
+
+// app.whenReady().then(() => {
+// 	protocol.registerFileProtocol('file', (request, callback) => {
+// 		const pathname = decodeURIComponent(request.url.replace('file:///', ''));
+// 		callback(pathname);
+// 	});
+// });
 
 const selectPort = () => {
 	pyPort = 42069;

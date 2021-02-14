@@ -1,6 +1,4 @@
 <script>
-const { execFile } = require("child_process");
-const { stderr }=require("process");
 const { PythonShell } = require("python-shell");
 const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
@@ -9,6 +7,8 @@ const settings = JSON.parse(fs.readFileSync(deploy_env == "DEV"? "./config/setti
 const cache_path = deploy_env == "DEV"? `./${settings.cache_dir}` : `./resources/app/engine/windows/${settings.cache_dir}`;
 const bufferfile = `${cache_path}/${settings.bufferfile}`;
 const criterionfile = `${cache_path}/${settings.criterionfile}`;
+const { EOL } = require('os');
+let _remaining;
 
 function writeImagePathsCache(paths) {
   if (!fs.existsSync(cache_path)){
@@ -40,16 +40,19 @@ function writeCriterionCache(vals) {
 function tridentEngine(args, outCallback) {
   console.log(`Current dir: ${process.cwd()}`);
   console.log(`DEPLOY ENV ${deploy_env}`);
+
+  let command = args[0];
+  let cmd_args = args.slice(1);
+  let json_command = JSON.stringify({"command": command, "args": cmd_args})
+  console.log("json_command");
+  console.log(json_command);
+
   if (deploy_env == "DEV") {
     let pyshell = new PythonShell('main.py',{
       mode: "text",
       pythonPath: "python.exe",
-      pythonOptions: ["-u"],
+      // pythonOptions: ["-u"],
     });
-    let command = args[0];
-    let cmd_args = args.slice(1);
-    console.log("json_command");
-    let json_command = JSON.stringify({"command": command, "args": cmd_args})
     pyshell.on("message", (res) => {
       console.log("[PYTHON STDOUT RAW MSG RES]")
       console.log(res);
@@ -60,8 +63,6 @@ function tridentEngine(args, outCallback) {
     //   console.log(err);
     //   outCallback(err, "");
     // });
-    console.log("json_command");
-    console.log(json_command);
     pyshell.send(json_command);
     pyshell.end(function (err,code,signal) {
         if (err) throw err;
@@ -70,25 +71,68 @@ function tridentEngine(args, outCallback) {
         console.log('[PYSHELL END FINISHED]');
     });
   } else {
-    const exec = require("child_process").execFile;
-    exec(engine_exec_path, args, (error, stdout, stderr) => {
-      console.log(">>error");
-      console.log(error);
-      console.log(">>stdout");
-      console.log(stdout);
-      console.log(">>stderr");
-      console.log(stderr);
-      if (stderr) {
-        outCallback(stderr, "");
-      }
-      else if (stdout) {
-        console.log("[PYTHON STDERR]");
-        console.error(err);
-        outCallback("", stdout);
+    const spawn = require("child_process").spawn;
+    const child = spawn(engine_exec_path, {mode: "text"});
+    // child.stdout.on("data", receive.bind(this));
+    child.stdout.on("data", (data) => { receiveInternal("message", data, outCallback) });
+    child.stderr.on("data", (err) => {  receiveInternal("stderr", err, outCallback) });
+    child.on('close', function (code) {
+      if (code != 0) {
+        console.log("Program ended with a error code : " + code);
       }
     });
+    console.log("beforewrite");
+    child.stdin.write(`${json_command}\n`, (error) => {
+      console.log(`[send error]\n${error}`);
+    });
+    child.stdin.end();
+    console.log("afterwrite");
+    child.on('exit', function (code) {
+      console.log('child process exited with code ' + code.toString());
+    });
+    // exec(engine_exec_path, args, (error, stdout, stderr) => {
+    //   console.log(">>error");
+    //   console.log(error);
+    //   console.log(">>stdout");
+    //   console.log(stdout);
+    //   console.log(">>stderr");
+    //   console.log(stderr);
+    //   if (stderr) {
+    //     console.log("[PYTHON STDERR]");
+    //     outCallback(stderr, "");
+    //   }
+    //   else if (stdout) {
+    //     console.log("[PYTHON STDOUT]");
+    //     outCallback("", stdout);
+    //   }
+    // });
   }
 }
+
+function receiveInternal(emitType, data, outCallback){
+  console.log(`Data is buffer: ${Buffer.isBuffer(data)}`);
+  console.log(data);
+  let parts = (''+data).split(EOL);
+  if (parts.length === 1) {
+    // an incomplete record, keep buffering
+    _remaining = (_remaining || '') + parts[0];
+  }
+  let lastLine = parts.pop();
+  // fix the first line with the remaining from the previous iteration of 'receive'
+  parts[0] = (_remaining || '') + parts[0];
+  // keep the remaining for the next iteration of 'receive'
+  _remaining = lastLine;
+
+  parts.forEach(function (part) {
+    if(emitType == 'message') {
+      outCallback("", part);
+    }
+    else if(emitType == 'stderr') {
+      outCallback(part, "");
+    }
+  });
+}
+
 module.exports = {
   tridentEngine: tridentEngine,
   writeImagePathsCache: writeImagePathsCache,

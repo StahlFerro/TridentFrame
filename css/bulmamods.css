@@ -1409,12 +1409,12 @@
     flex-direction: row;
     flex-grow: 1;
     align-items: center;
-    height: calc(11vh - calc(10px * 2)); }
+    height: 57px; }
     .split-panel-root .split-panel-middlebar .spl-control-btn {
       display: flex;
       margin-right: 10px; }
   .split-panel-root .split-panel-controls {
-    height: 34vh;
+    height: calc(100vh - 55vh - 57px - calc(10px * 2));
     border: 2px solid #cccccc; }
     .split-panel-root .split-panel-controls table {
       width: 100%;

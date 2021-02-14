@@ -486,7 +486,6 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
-const session = remote.getCurrentWebContents().session;
 const { writeImagePathsCache, writeCriterionCache } = require("./Client.vue");
 const { tridentEngine } = require("./Client.vue");
 import {
@@ -640,8 +639,6 @@ function loadImages(ops) {
     toggleLoadButtonAnim(ops, true);
 
     cmd_args.push(img_paths)
-    console.log("cmd_args");
-    console.log(cmd_args);
 
     tridentEngine(cmd_args, (error, res) => {
       if (error) {
@@ -656,10 +653,9 @@ function loadImages(ops) {
         data.CRT_IS_LOADING = false;
         toggleLoadButtonAnim(ops, false);
       } else if (res) {
-        console.log(res);
+        console.log(`[res]\n${res}`);
         res = JSON.parse(res);
         if (res && res.msg) {
-          console.log("msg executed");
           data.create_msgbox = res.msg;
         } else if (res && res.data) {
           let info = res.data;
@@ -988,6 +984,7 @@ function sequenceCounter() {
 
 function previewPathCacheBreaker() {
   let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  // let cb_url = `${data.preview_path}`;
   console.log("Cache breaker url", cb_url);
   data.preview_path_cb = cb_url;
 }
