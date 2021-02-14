@@ -47,9 +47,9 @@ const createWindow = () => {
 		);
 	}
 
-		mainWindow.webContents.openDevTools({
-			mode: 'detach'
-		});
+	mainWindow.webContents.openDevTools({
+		mode: 'detach'
+	});
 	mainWindow.focus();
 	mainWindow.on('closed', () => {
 		mainWindow = null;
@@ -90,7 +90,7 @@ const createPyProc = () => {
 	if (deploy_env && deploy_env == 'DEV') {
 		let script = path.join(__dirname, 'main.py');
 		console.log(`Obtained python path script: \n${script}`);
-		pyProc = require('child_process').spawn('python', [ script ]);
+		pyProc = require('child_process').spawn('python', [script]);
 		if (pyProc != null) {
 			console.log('development child process success');
 		}
