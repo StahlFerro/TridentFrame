@@ -56,7 +56,9 @@
     },
     "asar": false,
     "win": {
-      "target": [],
+      "target": [
+        "zip"
+      ],
       "icon": "release/tridentframe/win-unpacked/resources/app/imgs/TridentFrame_logo_256x256.ico"
     },
     "linux": {
