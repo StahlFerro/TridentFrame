@@ -74,7 +74,7 @@
                 <p class="is-white-d">Modify AIMG</p>
               </a>
             </li>
-            <li
+            <!-- <li
               id="buildsprite_box"
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'buildspritesheet_panel' }"
@@ -103,7 +103,7 @@
                 </span>
                 <p class="is-white-d">Slice Spritesheet</p>
               </a>
-            </li>
+            </li> -->
             <li
               id="inspect_box"
               class="menu-item"
@@ -161,8 +161,8 @@
         <CreatePanel v-show="menuselection == 'create_panel'" />
         <SplitPanel v-show="menuselection == 'split_panel'" />
         <ModifyPanel v-show="menuselection == 'modify_panel'" />
-        <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" />
-        <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" />
+        <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
+        <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
         <InspectPanel v-show="menuselection == 'inspect_panel'" @inspect-ctxmenu="openContextMenu"/>
         <TilesPanel v-show="menuselection == 'tiles_panel'" />
         <SettingsPanel v-show="menuselection == 'settings_panel'" />
@@ -198,8 +198,8 @@ import ContextMenuItem from './vuecore/components/ContextMenu/ContextMenuItem.vu
 import CreatePanel from "./vuecore/CreatePanel.vue";
 import SplitPanel from "./vuecore/SplitPanel.vue";
 import ModifyPanel from "./vuecore/ModifyPanel.vue";
-import BuildSpritesheetPanel from "./vuecore/BuildSpritesheetPanel.vue";
-import SliceSpritesheetPanel from "./vuecore/SliceSpritesheetPanel.vue";
+// import BuildSpritesheetPanel from "./vuecore/BuildSpritesheetPanel.vue";
+// import SliceSpritesheetPanel from "./vuecore/SliceSpritesheetPanel.vue";
 import InspectPanel from "./vuecore/InspectPanel.vue";
 import TilesPanel from "./vuecore/TilesPanel.vue";
 import SettingsPanel from "./vuecore/SettingsPanel.vue";
@@ -244,8 +244,8 @@ export default {
     CreatePanel,
     SplitPanel,
     ModifyPanel,
-    BuildSpritesheetPanel,
-    SliceSpritesheetPanel,
+    // BuildSpritesheetPanel,
+    // SliceSpritesheetPanel,
     InspectPanel,
     TilesPanel,
     SettingsPanel,
