@@ -46,7 +46,7 @@
     "genlauncher-linux": "",
     "build-launcher": "pyinstaller --onefile launcher/tridentframe.py --workpath launcher/build/ --distpath launcher/dist/ --specpath launcher/",
     "copy-launcher-linux": "cp launcher/dist release/tridentframe/linux-unpacked",
-    "scribe-version": "python writer/version_scribe.py"
+    "scribe-version": "python writer/info_scribe.py"
   },
   "build": {
     "productName": "TridentFrame",
@@ -57,6 +57,8 @@
     "asar": false,
     "win": {
       "target": [
+        "7z",
+        "portable",
         "zip"
       ],
       "icon": "release/tridentframe/win-unpacked/resources/app/imgs/TridentFrame_logo_256x256.ico"
