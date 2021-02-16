@@ -28,11 +28,11 @@ module.exports = env => {
           test: /\.css$/,
           use: [{
             loader: MiniCssExtractPlugin.loader,
-            options: {
-              name: 'style.css',
-              outputPath: 'css/',
-              hmr: env.NODE_ENV == 'DEV'
-            },
+            // options: {
+            //   name: 'style.css',
+            //   outputPath: 'css/',
+            //   hmr: env.NODE_ENV == 'DEV'
+            // },
           }, 'css-loader', ]
         },
         {
