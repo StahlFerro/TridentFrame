@@ -190,7 +190,7 @@
 const remote = require("electron").remote;
 const session = remote.getCurrentWebContents().session;
 
-import { client } from "./vuecore/Client.vue";
+// import { client } from "./vuecore/Client.vue";
 // import { client, ImageViewer } from "./vuecore/Client.vue";
 import ContextMenu from './vuecore/components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './vuecore/components/ContextMenu/ContextMenuItem.vue';

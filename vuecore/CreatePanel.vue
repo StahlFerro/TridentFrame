@@ -488,6 +488,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const { writeImagePathsCache, writeCriterionCache } = require("./Client.vue");
 const { tridentEngine } = require("./Client.vue");
+const lodashClonedeep = require('lodash.clonedeep');
 import {
   quintcellLister,
   validateFilename,
@@ -503,7 +504,7 @@ import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./vueshards/APNGUnoptimizationRow.vue";
-import { popper, createPopper } from '@popperjs/core';
+import { createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
 
 var data = {
@@ -778,11 +779,12 @@ function previewAIMG() {
   console.log(data);
   writeImagePathsCache(data.image_paths);
   writeCriterionCache(data);
-  let criteria_pack = {
+  let criteria_pack = lodashClonedeep({
     "criteria": data.criteria,
     "gif_opt": data.gif_opt,
     "apng_opt": data.apng_opt,
-  }
+  });
+  criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["combine_image", data.image_paths, "./temp", criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
@@ -800,7 +802,6 @@ function previewAIMG() {
       }
       if (res.CONTROL == "CRT_FINISH") {
         tridentEngine(["inspect_one", data.preview_path], (err, info) => {
-        console.log("b");
           if (err) {
             let err_data = JSON.parse(err);
             console.error(err_data);
@@ -983,8 +984,8 @@ function sequenceCounter() {
 }
 
 function previewPathCacheBreaker() {
-  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
-  // let cb_url = `${data.preview_path}`;
+  // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  let cb_url = `${data.preview_path}`;
   console.log("Cache breaker url", cb_url);
   data.preview_path_cb = cb_url;
 }

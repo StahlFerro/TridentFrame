@@ -2,7 +2,7 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_payload)">
+        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)">
           <div class="inspect-panel-msgbox" v-show="inspect_msgbox != false">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
@@ -26,7 +26,7 @@
                   <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
                 </template>
                 <template v-else>
-                  <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_payload)">
+                  <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)">
                     {{ iprop.value }}
                   </td>
                 </template>
@@ -93,24 +93,24 @@ var data = {
   INS_IS_INSPECTING: false,
   info_data: "",
   inspect_msgbox: "",
-  inspect_image_payload: [
+  inspect_image_menu_options: [
     {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
     {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
     {'id': 'send_to', 'name': 'Send To', 'callback': sendTo},
   ],
-  inspect_info_payload: [
+  inspect_info_menu_options: [
     {'name': "Copy Info", 'callback': copyInfo}
   ]
 };
 
-function addInspectImagePayload(payloads) {
-  let combined_payload = data.inspect_image_payload.concat(payloads);
-  data.inspect_image_payload = combined_payload;
+function addExtraCtxOptions(payloads) {
+  let combined_payload = data.inspect_image_menu_options.concat(payloads);
+  data.inspect_image_menu_options = combined_payload;
 }
 
-function removeInspectImagePayload(ids) {
-  let filtered_payloads = data.inspect_image_payload.filter(payload => !ids.includes(payload.id));
-  data.inspect_image_payload = filtered_payloads;
+function removeExtraCtxOptions(ids) {
+  let filtered_payloads = data.inspect_image_menu_options.filter(payload => !ids.includes(payload.id));
+  data.inspect_image_menu_options = filtered_payloads;
 }
 
 function formatShouter(event) {
@@ -143,7 +143,6 @@ function copyInfo(event) {
 
 function clearMsgBox() {
   data.inspect_msgbox = "";
-  removeInspectImagePayload(['format']);
 }
 
 function loadImage() {
@@ -172,11 +171,12 @@ function loadImage() {
           let res_data = res.data;
           data.info_data = res_data;
           // if (res_data.general_info || res_data.animation_info) {
-            data.img_path = `${
-              res_data.general_info.absolute_url.value
-            }?timestamp=${randString()}`;
+          // data.img_path = `${
+          //   res_data.general_info.absolute_url.value
+          // }?timestamp=${randString()}`;
+          data.img_path = res_data.general_info.absolute_url.value;
           // }
-          addInspectImagePayload([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
+          addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
         }
       }
       data.INS_IS_INSPECTING = false;
@@ -191,6 +191,7 @@ function clearImage() {
   data.img_path = "";
   data.info_data = "";
   clearMsgBox();
+  removeExtraCtxOptions(['format']);
   webFrame.clearCache();
 }
 

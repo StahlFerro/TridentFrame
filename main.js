@@ -1,4 +1,5 @@
 const electron = require('electron');
+const protocol = electron.protocol;
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require('path');
@@ -46,7 +47,6 @@ const createWindow = () => {
 			})
 		);
 	}
-
 	mainWindow.webContents.openDevTools({
 		mode: 'detach'
 	});
@@ -71,62 +71,62 @@ app.on('activate', () => {
 	}
 });
 
-// app.whenReady().then(() => {
-// 	protocol.registerFileProtocol('file', (request, callback) => {
-// 		const pathname = decodeURIComponent(request.url.replace('file:///', ''));
-// 		callback(pathname);
-// 	});
-// });
+app.whenReady().then(() => {
+	protocol.registerFileProtocol('file', (request, callback) => {
+		const pathname = decodeURIComponent(request.url.replace('file:///', ''));
+		callback(pathname);
+	});
+});
 
-const selectPort = () => {
-	pyPort = 42069;
-	return pyPort;
-};
+// const selectPort = () => {
+// 	pyPort = 42069;
+// 	return pyPort;
+// };
 
-const createPyProc = () => {
-	// console.log(deploy_env);
-	console.log('Starting python engine...');
-	let port = '' + selectPort();
-	if (deploy_env && deploy_env == 'DEV') {
-		let script = path.join(__dirname, 'main.py');
-		console.log(`Obtained python path script: \n${script}`);
-		pyProc = require('child_process').spawn('python', [script]);
-		if (pyProc != null) {
-			console.log('development child process success');
-		}
-	} else {
-		let script = '';
-		if (process.platform == 'win32') {
-			script = path.join(__dirname, 'engine/windows/main.exe');
-		} else if (process.platform == 'linux') {
-			script = path.join(__dirname, 'engine/linux/main');
-		}
-		console.log(`Obtained python path script: \n${script}`);
-		try {
-			pyProc = require('child_process').spawn(script, {
-				detached: true,
-				windowsHide: true
-			});
-		} catch (error) {
-			console.log(error);
-		}
-		if (pyProc != null) {
-			console.log('production child process success');
-		}
-	}
-};
+// const createPyProc = () => {
+// 	// console.log(deploy_env);
+// 	console.log('Starting python engine...');
+// 	let port = '' + selectPort();
+// 	if (deploy_env && deploy_env == 'DEV') {
+// 		let script = path.join(__dirname, 'main.py');
+// 		console.log(`Obtained python path script: \n${script}`);
+// 		pyProc = require('child_process').spawn('python', [script]);
+// 		if (pyProc != null) {
+// 			console.log('development child process success');
+// 		}
+// 	} else {
+// 		let script = '';
+// 		if (process.platform == 'win32') {
+// 			script = path.join(__dirname, 'engine/windows/main.exe');
+// 		} else if (process.platform == 'linux') {
+// 			script = path.join(__dirname, 'engine/linux/main');
+// 		}
+// 		console.log(`Obtained python path script: \n${script}`);
+// 		try {
+// 			pyProc = require('child_process').spawn(script, {
+// 				detached: true,
+// 				windowsHide: true
+// 			});
+// 		} catch (error) {
+// 			console.log(error);
+// 		}
+// 		if (pyProc != null) {
+// 			console.log('production child process success');
+// 		}
+// 	}
+// };
 
-const exitPyProc = (event) => {
-	// console.log(event);
-	if (pyProc) {
-		pyProc.kill();
-	}
-	pyProc = null;
-	pyPort = null;
-};
+// const exitPyProc = (event) => {
+// 	// console.log(event);
+// 	if (pyProc) {
+// 		pyProc.kill();
+// 	}
+// 	pyProc = null;
+// 	pyPort = null;
+// };
 
-app.on('will-quit', exitPyProc);
-app.on('window-all-closed', exitPyProc);
-app.on('quit', exitPyProc);
-app.on('session-end', exitPyProc);
-app.on('shutdown', exitPyProc);
+// app.on('will-quit', exitPyProc);
+// app.on('window-all-closed', exitPyProc);
+// app.on('quit', exitPyProc);
+// app.on('session-end', exitPyProc);
+// app.on('shutdown', exitPyProc);

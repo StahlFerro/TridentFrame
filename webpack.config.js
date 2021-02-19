@@ -2,15 +2,33 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
-// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const DashboardPlugin = require('webpack-dashboard/plugin');
+
 module.exports = env => {
   console.log("NODE ENV", env.NODE_ENV);
   console.log(__dirname);
+  let dev_plugins = env.NODE_ENV === "DEV"? [
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'node_modules/devtron/manifest.json'),
+        }, 
+        {
+          from: path.resolve(__dirname, 'node_modules/devtron/out/browser-globals.js'),
+          to: path.resolve(__dirname, 'out'),
+        }
+      ]
+    }),
+    new BundleAnalyzerPlugin(),
+    new DashboardPlugin({ port: 8091 }),
+  ] : [];
   // let node_loader = env.NODE_ENV === "DEV"? "node-loader" : "native-ext-loader";
   // console.log("used node_loader:", node_loader);
   return {
     entry: './app.js',
-    target: 'electron-renderer',
+    target: 'electron-main',
     node: {
       __dirname: false,
       __filename: false
@@ -65,6 +83,7 @@ module.exports = env => {
     },
     devServer: {
       hot: true,
+      contentBase: "/",
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -75,7 +94,7 @@ module.exports = env => {
         chunkFilename: '[id].css',
       }),
       new VueLoaderPlugin(),
-      // new BundleAnalyzerPlugin(),
+      ...dev_plugins,
     ],
     output: {
       filename: 'bundle.js',

@@ -47,12 +47,12 @@ function ticks() {
   return epoch
 }
 
-function randString() {
+function randString(length) {
    let result = '';
-   let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   let charactersLength = characters.length;
-   for ( let i = 0; i < 50; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   let charsetlen = charset.length;
+   for ( let i = 0; i < length; i++ ) {
+      result += charset.charAt(Math.floor(Math.random() * charsetlen));
    }
    return result;
 }
