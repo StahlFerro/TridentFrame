@@ -16,8 +16,8 @@ class Unbuffered(object):
    def __getattr__(self, attr):
        return getattr(self.stream, attr)
 
-# sys.stdout = Unbuffered(sys.stdout)
-# os.environ["PYTHONUNBUFFERED"] = "1"
+sys.stdout = Unbuffered(sys.stdout)
+os.environ["PYTHONUNBUFFERED"] = "1"
 
 
 IS_FROZEN = getattr(sys, 'frozen', False)
