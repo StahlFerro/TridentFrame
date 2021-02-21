@@ -1,9 +1,13 @@
 import os
+from pycore.core_funcs.output_printer import out_message
 import shutil
 import time
 import subprocess
 import json
-from typing import List, Tuple, Dict
+import contextlib
+import subprocess
+from pathlib import Path
+from typing import Iterator, List, Tuple, Dict
 
 from PIL import Image
 from PIL.GifImagePlugin import GifImageFile
@@ -90,38 +94,63 @@ def _purge_directory(target_folder):
             raise Exception(e)
 
 
-def _mk_temp_dir(prefix_name: str = ''):
-    """ Creates a directory for temporary storage inside cache/, and then returns its absolute path """
+def _mk_temp_dir(prefix_name: str = '') -> Path:
+    """Creates a directory for temporary storage inside cache/, and then returns its absolute path
+
+    Args:
+        prefix_name (str, optional): Name of the temporary directory. Defaults to ''.
+
+    Returns:
+        Path: Absolute path of the created temporary directory
+    """
     dirname = str(int(round(time.time() * 1000)))
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"
-    temp_dir = os.path.join(ABS_CACHE_PATH(), dirname)
+    temp_dir = ABS_CACHE_PATH().joinpath(dirname)
     # raise Exception(temp_dir, os.getcwd())
-    os.mkdir(temp_dir)
+    Path.mkdir(temp_dir)
     return temp_dir
 
 
-def _unoptimize_gif(gif_path, out_dir, decoder: str) -> str:
-    """ Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF """
+def _unoptimize_gif(gif_path: Path, out_dir: Path, decoder: str) -> Path:
+    """Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF
+
+    Args:
+        gif_path (Path): Path to GIF image
+        out_dir (Path): Output directory of unoptimized GIF
+        decoder (str): 'imagemagick' or 'gifsicle', to be used to unoptimize the GIF
+
+    Returns:
+        Path: Path of unoptimized GIF
+    """
     # raise Exception(gif_path, out_dir)
-    unop_gif_save_path = os.path.join(out_dir, os.path.basename(gif_path))
+    unop_gif_save_path = out_dir.joinpath(gif_path.name)
     imager_path = imager_exec_path(decoder)
     if decoder == 'imagemagick':
-        args = [imager_path, "-coalesce", f'"{gif_path}"', f'"{unop_gif_save_path}"']
+        args = [str(imager_path), "-coalesce", f'"{gif_path}"', f'"{unop_gif_save_path}"']
     elif decoder == 'gifsicle':
-        args = [imager_path, "-b", "--unoptimize", f'"{gif_path}"', "--output", f'"{unop_gif_save_path}"']
+        args = [str(imager_path), "-b", "--unoptimize", f'"{gif_path}"', "--output", f'"{unop_gif_save_path}"']
     cmd = ' '.join(args)
     # print(cmd)
     subprocess.run(cmd, shell=True)
     return unop_gif_save_path
 
 
-def _reduce_color(gif_path, out_dir, color: int = 256) -> str:
-    " Reduce the color of a gif. Returns the reduxed GIF path"
-    print("Performing color reduction...")
+def _reduce_color(gif_path: Path, out_dir: Path, color: int = 256) -> Path:
+    """Reduce the color of a gif.
+
+    Args:
+        gif_path (Path): Path to the GIF.
+        out_dir (Path): Output directory to save the color-reduced GIF to.
+        color (int, optional): Amount of color to reduce to. Defaults to 256.
+
+    Returns:
+        Path: Absolute path of the color-reduced GIF.
+    """
+    out_message("Performing color reduction...")
     gifsicle_path = imager_exec_path('gifsicle')
-    redux_gif_path = os.path.join(out_dir, os.path.basename(gif_path))
-    args = [gifsicle_path, f"--colors={color}", gif_path, "--output", redux_gif_path]
+    redux_gif_path = out_dir.joinpath(gif_path.name)
+    args = [str(gifsicle_path), f"--colors={color}", str(gif_path), "--output", str(redux_gif_path)]
     cmd = ' '.join(args)
     subprocess.run(cmd, shell=True)
     return redux_gif_path
@@ -143,7 +172,16 @@ def _delete_temp_images():
     return True
 
 
-def get_image_delays(image_path, extension: str):
+def get_image_delays(image_path: str, extension: str) -> Iterator[float]:
+    """Get the delays of each frame from an animated image
+
+    Args:
+        image_path (str): Path to the animated image
+        extension (str): The animated image format
+
+    Yields:
+        Iterator[float]: Image delays
+    """
     if extension == 'GIF':
         with Image.open(image_path) as gif:
             for i in range(0, gif.n_frames):
@@ -158,7 +196,14 @@ def get_image_delays(image_path, extension: str):
                 yield ""
 
 
-def generate_delay_file(image_path, extension: str, out_folder: str):
+def generate_delay_file(image_path: str, extension: str, out_folder: str):
+    """Create a file containing the frame delays of an animated image
+
+    Args:
+        image_path (str): Path to animated image
+        extension (str): Format of the animated image
+        out_folder (str): Output directory of the delay file
+    """
     delays = get_image_delays(image_path, extension)
     delay_info = {
         "delays": {index: d for index, d in enumerate(delays)}
@@ -227,3 +272,22 @@ def shout_indices(frame_count: int, percentage_skip: int) -> Dict[int, str]:
 
 # if __name__ == "__main__":
 #     gs_build()
+
+def unbuffered_process(proc, stream='stdout'):
+    newlines = ['\n', '\r\n', '\r']
+    stream = getattr(proc, stream)
+    with contextlib.closing(stream):
+        while True:
+            out = []
+            last = stream.read(1)
+            # Don't loop forever
+            if last == '' and proc.poll() is not None:
+                break
+            while last not in newlines:
+                # Don't loop forever
+                if last == '' and proc.poll() is not None:
+                    break
+                out.append(last)
+                last = stream.read(1)
+            out = ''.join(out)
+            yield out

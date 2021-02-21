@@ -378,7 +378,7 @@
                 <td colspan="4" style="padding-top: 15px">
                   <div class="field has-addons">
                     <div class="control">
-                      <a class="button is-neon-cyan" v-on:click="CRTChooseOutdir">
+                      <a class="button is-neon-cyan" v-on:click="chooseOutDir">
                         <span class="icon is-small">
                           <i class="fas fa-folder-open"></i>
                         </span>
@@ -643,9 +643,9 @@ function loadImages(ops) {
 
     tridentEngine(cmd_args, (error, res) => {
       if (error) {
-        console.error(error);
         try {
-          console.error(error_data);
+          console.error(error);
+          let error_data = JSON.parse(error);
           data.create_msgbox = error_data.error;
         }
         catch (e) {
@@ -665,11 +665,11 @@ function loadImages(ops) {
           console.log(info);
           renderSequence(info, { operation: ops });
           data.total_size = `Total size: ${info.total_size}`;
-          data.criteria.name = info.name;
-          data.criteria.width = info.width;
-          data.criteria.height = info.height;
-          data.criteria.fps = 50;
-          data.criteria.delay = 0.02;
+          data.criteria.name = data.criteria.name || info.name;
+          data.criteria.width = data.criteria.width || info.width;
+          data.criteria.height = data.criteria.height || info.height;
+          data.criteria.fps = data.criteria.fps || 50;
+          data.criteria.delay = data.criteria.delay || 0.02;
           data.orig_width = info.width;
           data.orig_height = info.height;
           data.create_msgbox = "";
@@ -680,6 +680,13 @@ function loadImages(ops) {
       }
     });
   });
+}
+
+function setMinimalDimensions() {
+  if (data.criteria.width == 0)
+    data.criteria.width = 1;
+  if (data.criteria.height == 0)
+    data.criteria.height = 1;
 }
 
 function renderSequence(pyinfo, options) {
@@ -717,7 +724,7 @@ function removeFrame(index) {
   data.sequence_info.splice(index, 1);
 }
 
-function CRTChooseOutdir() {
+function chooseOutDir() {
   var options = { properties: dir_dialog_props };
   dialog.showOpenDialog(mainWindow, options).then((result) => {
     let img_paths = result.filePaths;
@@ -763,6 +770,7 @@ function CRTClearAIMG() {
 }
 
 function previewAIMG() {
+  setMinimalDimensions();
   console.log("preview called");
   data.create_msgbox = "";
   if (data.sequence_info.length < 2) {
@@ -821,9 +829,10 @@ function previewAIMG() {
 }
 
 function CRTCreateAIMG() {
+  setMinimalDimensions();
   let proceed_create = true;
   data.create_msgbox = "";
-  var validator = validateFilename(data.name);
+  var validator = validateFilename(data.criteria.name);
   if (!validator.valid) {
     console.error(validator.msg);
     data.create_msgbox = validator.msg;
@@ -843,31 +852,31 @@ function CRTCreateAIMG() {
 
   if (proceed_create) {
     data.CRT_IS_CREATING = true;
-    client.invoke(
-      "combine_image",
-      data.image_paths,
-      data.outdir,
-      data.name,
-      data,
-      (error, res) => {
-        if (error) {
-          console.error(error);
-          data.create_msgbox = error;
-          data.CRT_IS_CREATING = false;
-        } else {
-          if (res) {
-            console.log(res);
-            if (res.msg) {
-              data.create_msgbox = res.msg;
-            }
-            if (res.CONTROL == "CRT_FINISH") {
-              data.create_msgbox = `${data.criteria.format.toUpperCase()} created!`;
-              data.CRT_IS_CREATING = false;
-            }
+    let criteria_pack = lodashClonedeep({
+      "criteria": data.criteria,
+      "gif_opt": data.gif_opt,
+      "apng_opt": data.apng_opt,
+    });
+    tridentEngine(["combine_image", data.image_paths, data.outdir, criteria_pack], (error, res) => {
+      if (error) {
+        console.error(error);
+        data.create_msgbox = error.error;
+        data.CRT_IS_PREVIEWING = false;
+      } else if (res) {
+        res = JSON.parse(res);
+        console.log(`res -> ${res}`);
+        if (res) {
+          console.log(res);
+          if (res.msg) {
+            data.create_msgbox = res.msg;
+          }
+          if (res.CONTROL == "CRT_FINISH") {
+            data.create_msgbox = `${data.criteria.format.toUpperCase()} created!`;
+            data.CRT_IS_CREATING = false;
           }
         }
       }
-    );
+    });
   }
 }
 
@@ -1008,7 +1017,7 @@ export default {
     loadImages: loadImages,
     removeFrame: removeFrame,
     CRTClearAIMG: CRTClearAIMG,
-    CRTChooseOutdir: CRTChooseOutdir,
+    chooseOutDir: chooseOutDir,
     previewAIMG: previewAIMG,
     CRTCreateAIMG: CRTCreateAIMG,
     CRTToggleCheckerBG: CRTToggleCheckerBG,

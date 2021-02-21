@@ -1422,6 +1422,9 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   position: fixed;
   z-index: 999;
 }
+.context-menu:focus {
+  outline: 0;
+}
 .context-menu .context-menu-options {
   display: block;
   position: relative;
@@ -1436,6 +1439,9 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   cursor: pointer;
   padding: 0px;
 }
+.context-menu .context-menu-options:focus {
+  outline: 0;
+}
 .context-menu .context-menu-options .context-menu-option {
   font-weight: 500;
   font-size: 16px;
@@ -1443,6 +1449,9 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   cursor: pointer;
   border: 2px solid transparent;
   z-index: 999;
+}
+.context-menu .context-menu-options .context-menu-option:focus {
+  outline: 0;
 }
 .context-menu .context-menu-options .context-menu-option:hover {
   border-color: #34caf8;

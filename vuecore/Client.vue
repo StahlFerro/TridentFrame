@@ -58,24 +58,28 @@ function tridentEngine(args, outCallback) {
       console.log(res);
       outCallback("", res);
     });
-    // pyshell.on("stderr", (err) => {
-    //   console.log("[PYTHON STDOUT RAW ERR RES]");
-    //   console.log(err);
-    //   outCallback(err, "");
-    // });
+    pyshell.on("stderr", (err) => {
+      console.log("[PYTHON STDOUT RAW ERR RES]");
+      console.log(err);
+      outCallback(err, "");
+    });
     pyshell.send(json_command);
     pyshell.end(function (err,code,signal) {
-        if (err) throw err;
-        console.log('[PYSHELL END EXIT CODE] ' + code);
-        console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
-        console.log('[PYSHELL END FINISHED]');
+      if (err) {
+        console.error(err);
+      }
+      console.log('[PYSHELL END EXIT CODE] ' + code);
+      console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
+      console.log('[PYSHELL END FINISHED]');
     });
-  } else {
+  } 
+  
+  else {
     const spawn = require("child_process").spawn;
     const child = spawn(engine_exec_path, {mode: "text"});
     // child.stdout.on("data", receive.bind(this));
     child.stdout.on("data", (data) => { receiveInternal("message", data, outCallback) });
-    child.stderr.on("data", (err) => {  receiveInternal("stderr", err, outCallback) });
+    child.stderr.on("data", (err) => { receiveInternal("stderr", err, outCallback) });
     child.on('close', function (code) {
       if (code != 0) {
         console.log("Program ended with a error code : " + code);
@@ -110,7 +114,6 @@ function tridentEngine(args, outCallback) {
 }
 
 function receiveInternal(emitType, data, outCallback){
-  console.log(`Data is buffer: ${Buffer.isBuffer(data)}`);
   console.log(data);
   let parts = (''+data).split(EOL);
   if (parts.length === 1) {

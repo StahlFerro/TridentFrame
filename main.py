@@ -16,7 +16,8 @@ class Unbuffered(object):
    def __getattr__(self, attr):
        return getattr(self.stream, attr)
 
-sys.stdout = Unbuffered(sys.stdout)
+# sys.stdout = Unbuffered(sys.stdout)
+# os.environ["PYTHONUNBUFFERED"] = "1"
 
 
 IS_FROZEN = getattr(sys, 'frozen', False)
@@ -31,6 +32,7 @@ import string
 from typing import List
 import signal
 import time
+from pathlib import Path
 
 from pycore.inspect_ops import inspect_sequence, inspect_general, _inspect_smart
 from pycore.create_ops import create_aimg
@@ -40,9 +42,10 @@ from pycore.modify_ops import modify_aimg
 from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
 from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH, get_bufferfile_content, get_criterionfile_content
+from pycore.core_funcs.output_printer import out_message, out_error, out_control
 
 
-class PythonImager():
+class TridentFrameImager():
 
     def echo(self, msg):
         print(msg)
@@ -104,7 +107,7 @@ class PythonImager():
         return
 
 
-    def split_image(self, image_path, out_dir, vals):
+    def split_image(self, image_path: str, out_dir: str, criteria_vals: SplitCriteria):
         """Split all the frames of a GIF/APNG into a sequence of images"""
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
@@ -112,11 +115,18 @@ class PythonImager():
             raise Exception("Please load a GIF or APNG!")
         elif not out_dir:
             raise Exception("Please choose an output folder!")
-        criteria = SplitCriteria(vals)
-        return split_aimg(image_path, out_dir, criteria)
+        image_path = Path(image_path).resolve()
+        out_dir = Path(out_dir).resolve()
+        if not image_path.exists():
+            raise FileNotFoundError(image_path.name)
+        if not out_dir.exists():
+            raise FileNotFoundError(out_dir)
+        criteria = SplitCriteria(criteria_vals)
+        img_sequence = split_aimg(image_path, out_dir, criteria)
+        return
 
 
-    def modify_image(self, image_path, out_dir, vals):
+    def modify_image(self, image_path, out_dir, criteria_pack):
         """Modify the criteria and behavior of a GIF/APNG"""
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
@@ -124,11 +134,10 @@ class PythonImager():
             raise Exception("Please load a GIF or APNG!")
         elif not out_dir:
             raise Exception("Please choose an output folder!")
-        criteria = ModificationCriteria(vals)
         crbundle = CriteriaBundle({
-            'modify_aimg': ModificationCriteria(vals),
-            'gif_opt': GIFOptimizationCriteria(vals),
-            'apng_opt': APNGOptimizationCriteria(vals),
+            'modify_aimg': ModificationCriteria(criteria_pack['criteria']),
+            'gif_opt': GIFOptimizationCriteria(criteria_pack['gif_opt']),
+            'apng_opt': APNGOptimizationCriteria(criteria_pack['apng_opt']),
         })
         return modify_aimg(image_path, out_dir, crbundle)
         
@@ -199,7 +208,7 @@ def main():
             print(json.dumps({"msg": str(e)}), flush=True)
         if not data:
             raise Exception("No data received from stdin!")
-        pyimager = PythonImager()   
+        pyimager = TridentFrameImager()   
         try:
             method = getattr(pyimager, data['command'])
         except AttributeError:

@@ -6,6 +6,8 @@ import math
 import time
 import subprocess
 import tempfile
+import json
+from pathlib import Path
 from random import choices
 from pprint import pprint
 from urllib.parse import urlparse
@@ -13,6 +15,7 @@ from typing import List, Dict, Tuple
 from datetime import datetime
 from copy import deepcopy
 from heapq import nsmallest
+from typing import Iterator, List, Tuple, Dict
 
 from PIL import Image, ImageChops
 from PIL.GifImagePlugin import GifImageFile
@@ -22,6 +25,7 @@ from .bin_funcs.imager_api import apngdis_split
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .core_funcs.criterion import SplitCriteria
 from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices, generate_delay_file
+from .core_funcs.output_printer import out_message, out_error, out_control
 
 
 def _get_aimg_delay_ratios(aimg_path: str, aimg_type: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
@@ -59,7 +63,7 @@ def _get_aimg_delay_ratios(aimg_path: str, aimg_type: str, duration_sensitive: b
             ratios = [1 for d in delays]
         indexed_ratios.extend(list(zip(indices, ratios)))
     return indexed_ratios
-    
+
 
 
 # def _pillow_fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
@@ -79,10 +83,19 @@ def _get_aimg_delay_ratios(aimg_path: str, aimg_type: str, duration_sensitive: b
 #             gif.save(save_path, "PNG")
 #             sequence += 1
 
+def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria) -> List[Image.Image]:
+    """
+    Split GIF frames and return them as a list of PIL.Image.Images using Gifsicle based on the specified criteria
 
-def _fragment_gif_frames(unop_gif_path: str, name: str, criteria: SplitCriteria) -> List[Image.Image]:
+    Args:
+        unop_gif_path (Path): Path to unoptimized GIF
+        name (str): New name of the sequence
+        criteria (SplitCriteria): Criteria 
+
+    Returns:
+        List[Image.Image]: List of the split images as Pillow Image
+    """
     fragment_dir = _mk_temp_dir(prefix_name="fragment_dir")
-    """ Split GIF frames and return them as a list of PIL.Image.Images using Gifsicle based on the specified criteria"""
     frames = []
     indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
     total_frames = sum([ir[1] for ir in indexed_ratios])
@@ -91,12 +104,12 @@ def _fragment_gif_frames(unop_gif_path: str, name: str, criteria: SplitCriteria)
     shout_nums = shout_indices(total_frames, 5)
     for index, ratio in indexed_ratios:
         if shout_nums.get(cumulative_index):
-            yield {"msg": f'Splitting frames... ({shout_nums.get(index)})'}
+            out_message(f'Splitting frames... ({shout_nums.get(index)})')
         selector = f'"#{index}"'
         for n in range(0, ratio):
-            # yield {"msg": f"Splitting GIF... ({cumulative_index + 1}/{total_frames})"}
+            out_message(f"Splitting GIF... ({cumulative_index + 1}/{total_frames})")
             dir_path = os.path.join(fragment_dir, f'{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png')
-            args = [gifsicle_path, f'"{unop_gif_path}"', selector, "--output", f'"{dir_path}"']
+            args = [str(gifsicle_path), f'"{unop_gif_path}"', selector, "--output", f'"{dir_path}"']
             cmd = ' '.join(args)
             subprocess.run(cmd, shell=True)
             cumulative_index += 1
@@ -112,18 +125,31 @@ def _fragment_gif_frames(unop_gif_path: str, name: str, criteria: SplitCriteria)
     return frames
 
 
-def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
-    """ Unoptimizes GIF, and then splits the frames into separate images """
+def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[Path]:
+    """Unoptimizes GIF, and then splits the frames into separate images
+
+    Args:
+        gif_path (Path): Path to the GIF image
+        out_dir (Path): Output directory of the image sequence
+        criteria (SplitCriteria): Image splitting criteria
+
+    Raises:
+        Exception: [description]
+
+    Returns:
+        List[Path]: Paths to each split images
+    """
     frame_paths = []
-    name = os.path.splitext(os.path.basename(gif_path))[0]
+    name = gif_path.name
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
     target_path = gif_path
+    out_message(str(target_path))
     if color_space:
         if color_space < 2 or color_space > 256:
             raise Exception("Color space must be between 2 and 256!")
         else:
-            yield {"msg": f"Reducing colors to {color_space}..."}
+            out_message(f"Reducing colors to {color_space}...")
             target_path = _reduce_color(gif_path, unop_dir, color=color_space)
 
     # ===== Start test splitting code =====
@@ -142,37 +168,45 @@ def _split_gif(gif_path: str, out_dir: str, criteria: SplitCriteria):
 
 
     if criteria.is_unoptimized:
-        yield {"msg": f"Unoptimizing GIF..."}
+        out_message("Unoptimizing GIF...")
         target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
 
-    frames = yield from _fragment_gif_frames(target_path, name, criteria)
+    frames = _fragment_gif_frames(target_path, name, criteria)
     shout_nums = shout_indices(len(frames), 5)
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
-            yield {"msg": f'Saving frames... ({shout_nums.get(index)})'}
+            out_message(f'Saving frames... ({shout_nums.get(index)})')
         save_path = os.path.join(out_dir, f'{save_name}_{str.zfill(str(index), criteria.pad_count)}.png')
         fr.save(save_path, "PNG")
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
-        yield {"msg": "Generating delay information file..."}
+        out_message("Generating delay information file...")
         generate_delay_file(gif_path, "GIF", out_dir)
     return frame_paths
 
 
-def _fragment_apng_frames(apng_path: str, criteria: SplitCriteria) -> List[Image.Image]:
-    """ Accepts the path of an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
+def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Image.Image]:
+    """Extracts all frames of an APNG and returns them as Pillow Images
+
+    Args:
+        apng_path (Path): Path to the APNG
+        criteria (SplitCriteria): Splitting criteria to follow
+
+    Returns:
+        List[Image.Image]: List of APNG's image frames, each as a Pillow Image
+    """
 # def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
 #     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
     frames = []
     indexed_ratios = _get_aimg_delay_ratios(apng_path, "PNG", duration_sensitive=criteria.is_duration_sensitive)
-    yield {"INDEXED RATIOS": list(indexed_ratios)}
+    out_message(list(indexed_ratios))
     if criteria.is_unoptimized:
-        yield {"msg": "Unoptimizing and splitting APNG..."}
-        fragment_paths = yield from apngdis_split(apng_path, criteria.new_name)
-        fragment_paths = sorted(list(fragment_paths), key=lambda fragment: fragment)
-        yield {"APNGDIS SPLIT PATHS": fragment_paths}
+        out_message("Unoptimizing and splitting APNG...")
+        fragment_paths = apngdis_split(apng_path, criteria.new_name)
+        fragment_paths = sorted(list(fragment_paths), key=lambda fragment: str(fragment))
         for fp in fragment_paths:
+            out_message(str(fp))
             frames.append(Image.open(fp))
     else:
         apng = APNG.open(apng_path)
@@ -197,10 +231,10 @@ def _fragment_apng_frames(apng_path: str, criteria: SplitCriteria) -> List[Image
         base_alpha = Image.new("RGBA", (width, height))
         output_buffer = Image.new('RGBA', base_stack_image.size)
         for index, (png, control) in enumerate(iframes):
-            if control:
-                yield {"CONTROL": control.__dict__}
+            # if control:
+            #     out_control(control.__dict__)
             if shout_nums.get(index):
-                yield {"msg": f'Splitting APNG... ({shout_nums.get(index)})'}
+                out_message(f'Splitting APNG... ({shout_nums.get(index)})')
             with io.BytesIO() as bytebox:
                 png.save(bytebox)
                 with Image.open(bytebox).convert("RGBA") as im:
@@ -267,9 +301,9 @@ def _fragment_apng_frames(apng_path: str, criteria: SplitCriteria) -> List[Image
                     #     depose_blend_ops.append("NO CONTROL")
         # for fr in frames:
         #     fr.show()
-        yield {"DEPOSE_BLEND_OPS": depose_blend_ops}
+        out_message(depose_blend_ops)
     if not all(ratio == 1 for index, ratio in indexed_ratios):
-        yield {"msg": "REORDER RATIOS"}
+        out_message("REORDER RATIOS")
         rationed_frames = []
         for index, ratio in indexed_ratios:
             for n in range(0, ratio):
@@ -336,51 +370,67 @@ def _fragment_apng_frames(apng_path: str, criteria: SplitCriteria) -> List[Image
 
 
 
-def _split_apng(apng_path: str, out_dir: str, name: str, criteria: SplitCriteria):
-    """ Extracts all of the frames of an animated PNG into a folder and return a list of each of the frames' absolute paths """
+def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriteria) -> List[Path]:
+    """Extracts all of the frames of an animated PNG into a folder
+
+    Args:
+        apng_path (Path): Path to the APNG.
+        out_dir (Path): Path to the output directory.
+        name (str): New prefix name of the sequence.
+        criteria (SplitCriteria): Splitting criteria to follow.
+
+    Returns:
+        List[Path]: List of paths for every split image.
+    """
     frame_paths = []
-    frames = yield from _fragment_apng_frames(apng_path, criteria)
+    frames = _fragment_apng_frames(apng_path, criteria)
     pad_count = criteria.pad_count
     shout_nums = shout_indices(len(frames), 5)
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
-            yield {"msg": f'Saving split frames... ({shout_nums.get(index)})'}
+            out_message(f'Saving split frames... ({shout_nums.get(index)})')
         save_path = os.path.join(out_dir, f"{save_name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
-        yield {"msg": "Generating delay information file..."}
+        out_message("Generating delay information file...")
         generate_delay_file(apng_path, "PNG", out_dir)
     return frame_paths
 
 
-def split_aimg(image_path: str, out_dir: str, criteria: SplitCriteria):
-    """ Umbrella function for splitting animated images into individual frames """
+def split_aimg(image_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[Path]:
+    """Umbrella function for splitting animated images into individual frames
+
+    Args:
+        image_path (Path): Path to animated image
+        out_dir (Path): Path to output directory
+        criteria (SplitCriteria): Criteria to follow for splitting the animated image
+
+    Raises:
+        Exception: [description]
+        Exception: [description]
+        Exception: [description]
+
+    Returns:
+        List[Path]: List of paths for each split images
+    """
     # print(error)
     frame_paths = []
-    image_path = os.path.abspath(image_path)
-    if not os.path.isfile(image_path):
-        raise Exception("Oi skrubman the path here seems to be a bloody directory, should've been a file", image_path)
-    filename = str(os.path.basename(image_path))
-
-    # Custom output dirname and frame names if specified on the cli
-    if '.' not in filename:
-        raise Exception('Where the fuk is the extension mate?!')
-
-    name, ext = os.path.splitext(filename)
+    name = image_path.stem
+    try:
+        ext = image_path.suffixes[-1]
+    except Exception:
+        raise Exception("Image needs to have an extension!")
     ext = str.lower(ext[1:])
     # raise Exception(fname, ext)
     if ext not in ANIMATED_IMG_EXTS:
-        raise Exception('Only supported extensions are gif and apng. Sry lad')
-
-    out_dir = os.path.abspath(out_dir)
+        raise Exception('Only supported extensions are .gif and .png (for APNG)')
     if ext == 'gif':
-        frame_paths = yield from _split_gif(image_path, out_dir, criteria)
-
+        frame_paths = _split_gif(image_path, out_dir, criteria)
     elif ext == 'png':
-        frame_paths = yield from _split_apng(image_path, out_dir, name, criteria)
-    yield {"CONTROL": "SPL_FINISH"}
+        frame_paths = _split_apng(image_path, out_dir, name, criteria)
+    out_control("SPL_FINISH")
     return frame_paths
 
 # if __name__ == "__main__":

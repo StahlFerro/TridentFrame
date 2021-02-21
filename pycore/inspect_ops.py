@@ -36,7 +36,7 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
         try:
             gif: Image = Image.open(abspath)
         except Exception:
-            print({"error": f'The chosen file ({filename}) is not a valid GIF image'}, file=sys.stderr)
+            print(json.dumps({"error": f'The chosen file ({filename}) is not a valid GIF image'}), file=sys.stderr)
             
         # raise Exception(gif.is_animated, filter_on, skip)
         if gif.format == 'GIF':
@@ -45,7 +45,7 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                     if skip:
                         return {}
                     else:
-                        print({"error": f"The GIF {base_fname} is not static!"}, file=sys.stderr)
+                        print(json.dumps({"error": f"The GIF {base_fname} is not static!"}), file=sys.stderr)
                 else:
                     return _inspect_agif(image_path, gif)
             else:
@@ -53,14 +53,14 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                     if skip:
                         return {}
                     else:
-                        print({"error": f"The GIF {base_fname} is not animated!"}, file=sys.stderr)
+                        print(json.dumps({"error": f"The GIF {base_fname} is not animated!"}), file=sys.stderr)
                 else:
                     return _inspect_simg(image_path)
     elif ext == '.png':
         try:
             apng: APNG = APNG.open(abspath)
         except Exception:
-            print({"error": f'The chosen file ({filename}) is not a valid PNG image'}, file=sys.stderr)
+            print(json.dumps({"error": f'The chosen file ({filename}) is not a valid PNG image'}), file=sys.stderr)
             return
         frames = apng.frames
         frame_count = len(frames)
@@ -69,7 +69,7 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                 if skip:
                     return {}
                 else:
-                    print({"error": f"The APNG ({filename}) is not static!"}, file=sys.stderr)
+                    print(json.dumps({"error": f"The APNG ({filename}) is not static!"}), file=sys.stderr)
                     return
             else:
                 return _inspect_apng(image_path, apng)
@@ -78,7 +78,8 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                 if skip:
                     return {}
                 else:
-                    print({"error": f"The PNG {base_fname} is not animated!"}, file=sys.stderr)
+                    print(json.dumps({"msg": f"The PNG {base_fname} is not animated!"}))
+                    print(json.dumps({"error": f"The PNG {base_fname} is not animated!"}), file=sys.stderr)
                     return
             else:
                 return _inspect_simg(image_path)

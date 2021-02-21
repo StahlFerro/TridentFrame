@@ -7,6 +7,11 @@
     position: fixed;
     z-index: 999;
 
+    // Override Chromium User Agent stylesheet
+    &:focus {
+        outline: 0;
+    }
+
     .context-menu-options {
         display: block;
         position: relative;
@@ -21,6 +26,11 @@
         cursor: pointer;
         padding: 0px;
 
+        // Override Chromium User Agent stylesheet
+        &:focus {
+            outline: 0;
+        }
+
         .context-menu-option {
             font-weight: 500;
             font-size: 16px;
@@ -28,6 +38,11 @@
             cursor: pointer;
             border: 2px solid transparent;
             z-index: 999;
+            
+            // Override Chromium User Agent stylesheet
+            &:focus {
+                outline: 0;
+            }
 
             &:hover {
                 border-color: $cyan;

@@ -88,7 +88,7 @@
       </div>
       <div class="split-panel-middlebar">
         <div class="spl-control-btn">
-          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': SPL_IS_LOADING, 'is-static': isButtonFrozen}">
+          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': SPL_IS_LOADING, 'non-interactive': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
@@ -119,7 +119,7 @@
                 <label class="label">Rename sequence</label>
                 <div class="control">
                   <input
-                    v-model="new_name"
+                    v-model="criteria.new_name"
                     class="input is-neon-white"
                   />
                 </div>
@@ -130,7 +130,7 @@
                 <label class="label">Pad count</label>
                 <div class="control">
                   <input
-                    v-model="pad_count"
+                    v-model="criteria.pad_count"
                     class="input is-neon-white"
                     type="number"
                     min="0"
@@ -142,11 +142,11 @@
             </td>
             <td width="25%" style="vertical-align: middle;">
               <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
-                <input v-model="is_duration_sensitive" type="checkbox" />
+                <input v-model="criteria.is_duration_sensitive" type="checkbox" />
                 Duration-sensitive
               </label>
               <label class="checkbox" title="Reconstructs the original image of each frame. Use on optimized GIFs">
-                <input v-model="is_unoptimized" type="checkbox" />
+                <input v-model="criteria.is_unoptimized" type="checkbox" />
                 Unoptimize
               </label>
               <!-- <label class="checkbox">
@@ -156,7 +156,7 @@
             </td>
             <td width="25%" style="vertical-align: middle;">
               <label class="checkbox" title="Generate a file containing the delay information of each frame">
-                <input v-model="will_generate_delay_info" type="checkbox" />
+                <input v-model="criteria.will_generate_delay_info" type="checkbox" />
                 Generate delay info
               </label>
               <br/>
@@ -185,8 +185,18 @@
               </div>
             </td>
             <td class="has-text-centered">
-              <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'is-static': isButtonFrozen}">
+              <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'non-interactive': isButtonFrozen}">
                 Split to folder</a>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4">
+              <input
+                v-model="split_msgbox"
+                type="text"
+                class="input is-left-paddingless is-border-colorless"
+                readonly="readonly"
+              />
             </td>
           </tr>
         </table>
@@ -232,7 +242,14 @@ var defaults = {
 var data = {
   info_header: "Information",
   name: "",
-  new_name: "",
+  criteria: {
+    new_name: "",
+    pad_count: "",
+    color_space: "",
+    is_duration_sensitive: false,
+    is_unoptimized: false,
+    will_generate_delay_info: false,
+  },
   dimensions: "",
   file_size: "",
   file_size_hr: "",
@@ -245,12 +262,7 @@ var data = {
   preview_path: "",
   preview_path_cb: "",
   checkerbg_active: false,
-  pad_count: "",
-  is_duration_sensitive: false,
   is_reduced_color: false,
-  color_space: "",
-  is_unoptimized: false,
-  will_generate_delay_info: false,
   outdir: "",
   split_msgbox: "",
   SPL_IS_LOADING: false,
@@ -272,50 +284,57 @@ function loadImage() {
     data.SPL_IS_LOADING = true;
     console.log(chosen_path);
     tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
-      if (error) {
-        console.error(error);
-        data.split_msgbox = error;
+      if (error) {        
+        try {
+          console.error(error);
+          let error_data = JSON.parse(error);
+          data.split_msgbox = error_data.error;
+        }
+        catch (e) {
+          data.split_msgbox = error;
+        }
         // mboxError(split_msgbox, error);
         data.SPL_IS_LOADING = false;
-      } else {
-        console.log(res);
+      } else if (res) {
         res = JSON.parse(res);
-        let info = res.data;
-        var geninfo = info.general_info;
-        var ainfo = info.animation_info;
-        console.log("geninfo");
-        console.log(geninfo);
-        data.name = geninfo.name.value;
-        data.dimensions = `${geninfo.width.value} x ${geninfo.height.value}`;
-        data.info_header = `${geninfo.format.value} Information`;
-        data.file_size = geninfo.fsize.value;
-        data.file_size_hr = geninfo.fsize_hr.value;
-        data.frame_count = `${ainfo.frame_count.value} frames`;;
-        // data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`
-        data.fps = `${ainfo.fps.value} fps`;
-        // let delay_info = `${ainfo.avg_delay.value} seconds`;
-        // if (ainfo.delay_is_even.value) {
-        //   delay_info += ` (even)`;
-        // }
-        // data.delay = delay_info;
-        data.loop_duration = `${ainfo.loop_duration.value} seconds`;
-        data.loop_count = ainfo.loop_count.value;
-        data.preview_path = geninfo.absolute_url.value;
-        data.pad_count = 3;
-        if (data.is_reduced_color) {
-          data.color_space - 256;
+        console.log("--- SPLIT RES START ---");
+        console.log(res);
+        console.log("--- SPLIT RES END ---");
+        if (res && res.msg) {
+          data.split_msgbox = res.msg;
+        } else if (res && res.data) {
+          let info = res.data;
+          var geninfo = info.general_info;
+          var ainfo = info.animation_info;
+          data.name = geninfo.name.value;
+          data.dimensions = `${geninfo.width.value} x ${geninfo.height.value}`;
+          data.info_header = `${geninfo.format.value} Information`;
+          data.file_size = geninfo.fsize.value;
+          data.file_size_hr = geninfo.fsize_hr.value;
+          data.frame_count = `${ainfo.frame_count.value} frames`;;
+          // data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`
+          data.fps = `${ainfo.fps.value} fps`;
+          // let delay_info = `${ainfo.avg_delay.value} seconds`;
+          // if (ainfo.delay_is_even.value) {
+          //   delay_info += ` (even)`;
+          // }
+          // data.delay = delay_info;
+          data.loop_duration = `${ainfo.loop_duration.value} seconds`;
+          data.loop_count = ainfo.loop_count.value;
+          data.preview_path = geninfo.absolute_url.value;
+          data.criteria.pad_count = 3;
+          if (data.is_reduced_color) {
+            data.criteria.color_space - 256;
+          }
+          data.split_msgbox = "";
+          data.SPL_IS_LOADING = false;
+          previewPathCacheBreaker();
+          // loadAIMG(res);
+          // SPL_pad_count.value = 3;
+          // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
         }
-        data.split_msgbox = "";
-        data.SPL_IS_LOADING = false;
-        previewPathCacheBreaker();
-        // loadAIMG(res);
-        // SPL_pad_count.value = 3;
-        // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
       }
     });
-    console.log("registered!");
-    console.log(data);
-    console.log(defaults);
   });
 }
 
@@ -325,7 +344,8 @@ function clearImage() {
 
 
 function previewPathCacheBreaker() {
-  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  let cb_url = data.preview_path;
+  // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
   console.log("Cache breaker url", cb_url);
   data.preview_path_cb = cb_url;
 }
@@ -338,7 +358,8 @@ function toggleCheckerBG() {
 
 function chooseOutDir() {
   var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options, (out_dirs) => {
+  dialog.showOpenDialog(mainWindow, options).then((result) => {
+    let out_dirs = result.filePaths;
     console.log(out_dirs);
     if (out_dirs && out_dirs.length > 0) { 
       data.outdir = out_dirs[0];
@@ -348,9 +369,7 @@ function chooseOutDir() {
 }
 
 function splitImage() {
-  // mboxClear(split_msgbox);
-  
-  let validator = validateFilename(data.new_name);
+  let validator = validateFilename(data.criteria.new_name);
   if (!validator.valid) {
     console.error(validator.msg);
     data.split_msgbox = validator.msg;
@@ -359,32 +378,34 @@ function splitImage() {
   data.SPL_IS_SPLITTING = true;
   // freezeButtons();
   // console.log(`in path: ${in_path} out path: ${out_path}`);
-  var color_space = data.color_space;
+  var color_space = data.criteria.color_space;
   if (!data.is_reduced_color || color_space == "") {
     color_space = 0;
   }
   console.log(data);
-  client.invoke(
-    "split_image", data.preview_path, data.outdir, data, (error, res) => {
-      if (error) {
-        console.log(error);
+  tridentEngine(["split_image", data.preview_path, data.outdir, data.criteria], (error, res) => {
+    if (error) {        
+      try {
+        console.error(error);
+        let error_data = JSON.parse(error);
+        data.split_msgbox = error_data.error;
+      }
+      catch (e) {
         data.split_msgbox = error;
+      }
+      data.SPL_IS_SPLITTING = false;
+    } else if (res) {
+      res = JSON.parse(res);
+      console.log("res", res);
+      if (res.msg) {
+        data.split_msgbox = res.msg;
+      }
+      if (res.CONTROL == "SPL_FINISH") {
+        data.split_msgbox = "All frames successfully split!"
         data.SPL_IS_SPLITTING = false;
-        // unfreezeButtons();
-      } else {
-        if (res) {
-          console.log("res", res);
-          if (res.msg) {
-            data.split_msgbox = res.msg;
-          }
-          if (res.CONTROL == "SPL_FINISH") {
-            data.split_msgbox = "All frames successfully split!"
-            data.SPL_IS_SPLITTING = false;
-          }
-        }
       }
     }
-  );
+  });
 }
 
 function isButtonFrozen() {
