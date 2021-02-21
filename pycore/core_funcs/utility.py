@@ -1,5 +1,5 @@
 import os
-from pycore.core_funcs.output_printer import out_message
+from pycore.core_funcs import logger
 import shutil
 import time
 import subprocess
@@ -147,7 +147,7 @@ def _reduce_color(gif_path: Path, out_dir: Path, color: int = 256) -> Path:
     Returns:
         Path: Absolute path of the color-reduced GIF.
     """
-    out_message("Performing color reduction...")
+    logger.message("Performing color reduction...")
     gifsicle_path = imager_exec_path('gifsicle')
     redux_gif_path = out_dir.joinpath(gif_path.name)
     args = [str(gifsicle_path), f"--colors={color}", str(gif_path), "--output", str(redux_gif_path)]
@@ -172,11 +172,11 @@ def _delete_temp_images():
     return True
 
 
-def get_image_delays(image_path: str, extension: str) -> Iterator[float]:
+def get_image_delays(image_path: Path, extension: str) -> Iterator[float]:
     """Get the delays of each frame from an animated image
 
     Args:
-        image_path (str): Path to the animated image
+        image_path (Path): Path to the animated image
         extension (str): The animated image format
 
     Yields:
@@ -196,20 +196,20 @@ def get_image_delays(image_path: str, extension: str) -> Iterator[float]:
                 yield ""
 
 
-def generate_delay_file(image_path: str, extension: str, out_folder: str):
+def generate_delay_file(image_path: Path, extension: str, out_folder: Path):
     """Create a file containing the frame delays of an animated image
 
     Args:
-        image_path (str): Path to animated image
+        image_path (Path): Path to animated image
         extension (str): Format of the animated image
-        out_folder (str): Output directory of the delay file
+        out_folder (Path): Output directory of the delay file
     """
     delays = get_image_delays(image_path, extension)
     delay_info = {
         "delays": {index: d for index, d in enumerate(delays)}
     }
     filename = "_delays.json"
-    save_path = os.path.join(out_folder, filename)
+    save_path = out_folder.joinpath(filename)
     with open(save_path, "w") as outfile:
         json.dump(delay_info, outfile, indent=4, sort_keys=True)
 
@@ -236,7 +236,15 @@ def _log(message):
     return {"log": message}
     
 
-def read_filesize(nbytes):
+def read_filesize(nbytes: int) -> str:
+    """Convert bytes into a human-readable file size notation using the biggest unit suffix in which the numerical value is equal or greater than 1
+
+    Args:
+        nbytes (int): Amount of bytes
+
+    Returns:
+        str: Human-readable file size
+    """
     i = 0
     while nbytes >= 1024 and i < len(size_suffixes)-1:
         nbytes /= 1024.
@@ -245,13 +253,20 @@ def read_filesize(nbytes):
     return f"{size} {size_suffixes[i]}"
 
 
-def shout_indices(frame_count: int, percentage_skip: int) -> Dict[int, str]:
-    """ Returns a dictionary of indices for message yielding, with the specified percentage skip. Examples:\n
-        shout_incides(24, 50) -> {0: "0%", 12: "50%"}\n
+def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:
+    """Returns a dictionary of indices for message logging, with the specified percentage skip. 
+
+    Args:
+        frame_count (int): Number of image frames.
+        percentage_mult (int): Percentage multiples.
+
+    Returns:
+        Dict[int, str]: Examples:
+        shout_incides(24, 50) -> {0: "0%", 12: "50%"}
         shout_indices(40, 25) -> {0: "0%", 10: "25%", 20: "50%", 30: "75%"}
     """
-    mults = 100 // percentage_skip
-    return {round(frame_count / mults * mult): f"{mult * percentage_skip}%" for mult in range(0, mults)}
+    mults = 100 // percentage_mult
+    return {round(frame_count / mults * mult): f"{mult * percentage_mult}%" for mult in range(0, mults)}
 
         
 

@@ -182,6 +182,7 @@ class APNGOptimizationCriteria:
     def must_opt(self) -> bool:
         return (self.is_optimized and self.optimization_level) or (self.is_lossy and self.lossy_value)
 
+
 class CriteriaBundle:
     """ Packs multiple criterias into one"""
 

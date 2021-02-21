@@ -25,7 +25,7 @@ from .bin_funcs.imager_api import apngdis_split
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .core_funcs.criterion import SplitCriteria
 from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices, generate_delay_file
-from .core_funcs.output_printer import out_message, out_error, out_control
+from .core_funcs import logger
 
 
 def _get_aimg_delay_ratios(aimg_path: str, aimg_type: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
@@ -104,10 +104,10 @@ def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria
     shout_nums = shout_indices(total_frames, 5)
     for index, ratio in indexed_ratios:
         if shout_nums.get(cumulative_index):
-            out_message(f'Splitting frames... ({shout_nums.get(index)})')
+            logger.message(f'Splitting frames... ({shout_nums.get(index)})')
         selector = f'"#{index}"'
         for n in range(0, ratio):
-            out_message(f"Splitting GIF... ({cumulative_index + 1}/{total_frames})")
+            logger.message(f"Splitting GIF... ({cumulative_index + 1}/{total_frames})")
             dir_path = os.path.join(fragment_dir, f'{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png')
             args = [str(gifsicle_path), f'"{unop_gif_path}"', selector, "--output", f'"{dir_path}"']
             cmd = ' '.join(args)
@@ -144,12 +144,12 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     unop_dir = _mk_temp_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
     target_path = gif_path
-    out_message(str(target_path))
+    logger.message(str(target_path))
     if color_space:
         if color_space < 2 or color_space > 256:
             raise Exception("Color space must be between 2 and 256!")
         else:
-            out_message(f"Reducing colors to {color_space}...")
+            logger.message(f"Reducing colors to {color_space}...")
             target_path = _reduce_color(gif_path, unop_dir, color=color_space)
 
     # ===== Start test splitting code =====
@@ -168,7 +168,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
 
 
     if criteria.is_unoptimized:
-        out_message("Unoptimizing GIF...")
+        logger.message("Unoptimizing GIF...")
         target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
 
     frames = _fragment_gif_frames(target_path, name, criteria)
@@ -176,12 +176,12 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
-            out_message(f'Saving frames... ({shout_nums.get(index)})')
+            logger.message(f'Saving frames... ({shout_nums.get(index)})')
         save_path = os.path.join(out_dir, f'{save_name}_{str.zfill(str(index), criteria.pad_count)}.png')
         fr.save(save_path, "PNG")
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
-        out_message("Generating delay information file...")
+        logger.message("Generating delay information file...")
         generate_delay_file(gif_path, "GIF", out_dir)
     return frame_paths
 
@@ -200,13 +200,13 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
 #     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
     frames = []
     indexed_ratios = _get_aimg_delay_ratios(apng_path, "PNG", duration_sensitive=criteria.is_duration_sensitive)
-    out_message(list(indexed_ratios))
+    logger.message(list(indexed_ratios))
     if criteria.is_unoptimized:
-        out_message("Unoptimizing and splitting APNG...")
+        logger.message("Unoptimizing and splitting APNG...")
         fragment_paths = apngdis_split(apng_path, criteria.new_name)
         fragment_paths = sorted(list(fragment_paths), key=lambda fragment: str(fragment))
         for fp in fragment_paths:
-            out_message(str(fp))
+            logger.message(str(fp))
             frames.append(Image.open(fp))
     else:
         apng = APNG.open(apng_path)
@@ -234,7 +234,7 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
             # if control:
             #     out_control(control.__dict__)
             if shout_nums.get(index):
-                out_message(f'Splitting APNG... ({shout_nums.get(index)})')
+                logger.message(f'Splitting APNG... ({shout_nums.get(index)})')
             with io.BytesIO() as bytebox:
                 png.save(bytebox)
                 with Image.open(bytebox).convert("RGBA") as im:
@@ -301,9 +301,9 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
                     #     depose_blend_ops.append("NO CONTROL")
         # for fr in frames:
         #     fr.show()
-        out_message(depose_blend_ops)
+        logger.message(depose_blend_ops)
     if not all(ratio == 1 for index, ratio in indexed_ratios):
-        out_message("REORDER RATIOS")
+        logger.message("REORDER RATIOS")
         rationed_frames = []
         for index, ratio in indexed_ratios:
             for n in range(0, ratio):
@@ -389,12 +389,12 @@ def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriter
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
-            out_message(f'Saving split frames... ({shout_nums.get(index)})')
+            logger.message(f'Saving split frames... ({shout_nums.get(index)})')
         save_path = os.path.join(out_dir, f"{save_name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
-        out_message("Generating delay information file...")
+        logger.message("Generating delay information file...")
         generate_delay_file(apng_path, "PNG", out_dir)
     return frame_paths
 

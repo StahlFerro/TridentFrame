@@ -12,12 +12,14 @@ import json
 from collections import deque
 from random import choices
 from pprint import pprint
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Generator, Iterator
+from pathlib import Path
 from datetime import datetime
 
 from PIL import Image
 from apng import APNG, PNG
 
+from .core_funcs import logger
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
 from .core_funcs.criterion import CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria, CriteriaBundle
 from .core_funcs.utility import _mk_temp_dir, shout_indices
@@ -25,25 +27,31 @@ from .bin_funcs.arg_builder import apngopt_args, pngquant_args
 from .bin_funcs.imager_api import apngopt_render, pngquant_render
 
 
-def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCriteria) -> Tuple[str, List[str]]:
-    """ Generate a sequence of GIFs created from the input sequence with the specified criteria, before compiling them into a single animated GIF"""
+def _create_gifragments(image_paths: List[Path], out_path: Path, criteria: CreationCriteria):
+    """Generate a sequence of GIFs created from the input sequence with the specified criteria, before compiling them into a single animated GIF
+
+    Args:
+        image_paths (List[Path]): List of image paths to be converted into GIF images.
+        out_path (Path): Output directory of the GIF sequences.
+        criteria (CreationCriteria): Creation criteria.
+    """
     # disposal = 0
     # if criteria.reverse:
     #     image_paths.reverse()
     # temp_gifs = []
     fcount = len(image_paths)
-    print(json.dumps({"msg": f"Criteria start frame {criteria.start_frame}"}))
+    logger.message(f"Criteria start frame {criteria.start_frame}")
     if criteria.start_frame:
         shift_items = deque(image_paths)
         shift = -criteria.start_frame
-        print(json.dumps({"SHIFT!": shift}))
+        logger.message(f"SHIFT {shift}")
         shift_items.rotate(-criteria.start_frame)
         image_paths = list(shift_items)
     perc_skip = 5
     shout_nums = shout_indices(fcount, perc_skip)
     for index, ipath in enumerate(image_paths):
         if shout_nums.get(index):
-            print(json.dumps({"msg": f'Processing frames... ({shout_nums.get(index)})'}))
+            logger.message(f'Processing frames... ({shout_nums.get(index)})')
         with Image.open(ipath) as im:
             im: Image.Image
             transparency = im.info.get("transparency", False)
@@ -65,7 +73,7 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
             if criteria.reverse:
                 reverse_index = len(image_paths) - (index + 1)
                 fragment_name = f"rev_{str.zfill(str(reverse_index), 3)}_{fragment_name}"
-            save_path = f'{os.path.join(out_path, fragment_name)}.gif'
+            save_path = out_path.joinpath(f'{fragment_name}.gif')
             if im.mode == 'RGBA':
                 if criteria.transparent:
                     alpha = im.getchannel('A')
@@ -105,8 +113,8 @@ def _create_gifragments(image_paths: List, out_path: str, criteria: CreationCrit
                 # temp_gifs.append(os.path.relpath(save_path, os.getcwd()))
 
 
-def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
-    print(json.dumps({"CRT IMAGE PATHS": image_paths}))
+def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
+    logger.message(str(image_paths))
     gifragment_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
     criteria = crbundle.create_aimg
     gif_criteria = crbundle.gif_opt
@@ -136,23 +144,25 @@ def _build_gif(image_paths: List, out_full_path: str, crbundle: CriteriaBundle):
 
     ROOT_PATH = str(os.getcwd())
     if os.getcwd() != gifragment_dir:
-        print(json.dumps({"msg": f"Changing directory from {os.getcwd()} to {gifragment_dir}"}))
+        logger.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")
         os.chdir(gifragment_dir)
-    print(json.dumps({"msg": f"Obtained gifsicle exec path: {executable}"}))
+    logger.message(f"Obtained gifsicle exec path: {executable}")
     args = [executable, opti_mode, lossy_arg, colorspace_arg, f"--delay={delay}", f"--disposal={disposal}", loop_arg, globstar_path, "--output", f'"{out_full_path}"']
     cmd = ' '.join(args)
-    print(json.dumps({"cmd": cmd}))
+    logger.message(cmd)
     # yield {"shlexed cmd": cmd}
-    print(json.dumps({"msg": "Combining frames..."}))
+    logger.message("Combining frames...")
     result = subprocess.run(cmd, shell=True, capture_output=True)
-    print(json.dumps({"gifsicle STDOUT": result.stdout.decode('utf-8')}))
-    print(json.dumps({"gifsicle STDERR": result.stderr.decode('utf-8')}))
+    logger.message(result.stdout.decode('utf-8'))
+    logger.error(result.stderr.decode('utf-8'))
+    # print(json.dumps({"gifsicle STDOUT": result.stdout.decode('utf-8')}))
+    # print(json.dumps({"gifsicle STDERR": result.stderr.decode('utf-8')}))
     # if result.stderr:
     #     raise Exception(result.stderr)
     os.chdir(ROOT_PATH)
     # shutil.rmtree(gifragment_dir)
-    print(json.dumps({"preview_path": out_full_path}))
-    print(json.dumps({"CONTROL": "CRT_FINISH"}))
+    logger.preview_path(out_full_path)
+    logger.control("CRT_FINISH")
     return out_full_path
 
 
@@ -217,7 +227,7 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
     return out_full_path
 
 
-def create_aimg(image_paths: List[str], out_dir: str, filename: str, crbundle: CriteriaBundle):
+def create_aimg(image_paths: List[Path], out_dir: Path, filename: str, crbundle: CriteriaBundle):
     """ Umbrella generator for creating animated images from a sequence of images """
     abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
@@ -229,16 +239,16 @@ def create_aimg(image_paths: List[str], out_dir: str, filename: str, crbundle: C
     fname, ext = os.path.splitext(filename)
     if ext:
         filename = fname
-    if not out_dir:
-        raise Exception("No output folder selected, please select it first")
-    out_dir = os.path.abspath(out_dir)
-    if not os.path.exists(out_dir):
-        raise Exception(f"The specified absolute out_dir does not exist!\n{out_dir}")
+    # if not out_dir:
+    #     raise Exception("No output folder selected, please select it first")
+    # out_dir = os.path.abspath(out_dir)
+    # if not os.path.exists(out_dir):
+    #     raise Exception(f"The specified absolute out_dir does not exist!\n{out_dir}")
     if img_format == 'GIF':
-        out_full_path = os.path.join(out_dir, f"{filename}.gif")
+        out_full_path = out_dir.joinpath(f"{filename}.gif")
         filename = f"{filename}.gif"
         return _build_gif(image_paths, out_full_path, crbundle)
     
     elif img_format == 'PNG':
-        out_full_path = os.path.join(out_dir, f"{filename}.png")
+        out_full_path = out_dir.joinpath(f"{filename}.png")
         return _build_apng(img_paths, out_full_path, crbundle)

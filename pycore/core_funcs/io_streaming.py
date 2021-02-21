@@ -4,7 +4,7 @@ import pty
 import select
 import signal
 import subprocess
-from output_printer import out_message
+from . import logger
 
 # Set signal handler for SIGINT.
 signal.signal(signal.SIGINT, lambda s,f: print("received SIGINT"))
@@ -29,7 +29,7 @@ def unbuffered_Popen(cmd):
             lines, readable = f.read_lines()
             # Example: Just print every line. Add your real code here.
             for line in lines:
-                out_message(line)
+                logger.message(line)
             if not readable:
                 # This OutStream is finished.
                 fds.remove(f)

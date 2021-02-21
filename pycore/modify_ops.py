@@ -44,7 +44,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     pq_args = pngquant_args(apngopt_criteria)
     if mod_criteria.format == 'PNG' and pq_args:
         yield {"DEBUG": "PNG QUANTIZATION SELECTED"}
-        frame_paths = yield from pngquant_render(pq_args, frame_paths)
+        frame_paths = pngquant_render(pq_args, frame_paths)
         yield {"QUANTPATHS": frame_paths}
     ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
     # ds_delay = 1 / ds_fps

@@ -45,6 +45,14 @@ def apngdis_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     return args
 
 def apngopt_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
+    """Get a list apngopt arguments
+
+    Args:
+        apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
+
+    Returns:
+        List[Tuple[str, str]]: List of two valued tuples containing apngopt argument on the first value, and a status string to echo out on the second value
+    """
     args = []
     if apngopt_criteria.is_optimized:
         args.append((f'-z{apngopt_criteria.optimization_level - 1}', f'Optimizing APNG with level {apngopt_criteria.optimization_level} compression...'))
@@ -52,6 +60,14 @@ def apngopt_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, 
 
 
 def pngquant_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
+    """Get a list of pngquant arguments
+
+    Args:
+        apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
+
+    Returns:
+        List[Tuple[str, str]]: List of two valued tuples containing pngquant argument on the first value, and a status string to echo out on the second value
+    """
     args = []
     if apngopt_criteria.is_lossy and apngopt_criteria.lossy_value:
         args.append((f"--quality={apngopt_criteria.lossy_value}", f"Quantizing PNG with quality value: {apngopt_criteria.lossy_value}"))

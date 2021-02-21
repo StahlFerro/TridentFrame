@@ -1,5 +1,6 @@
 import os
 import io
+from pathlib import Path
 import string
 import math
 import sys
@@ -11,41 +12,46 @@ from typing import List, Dict
 from urllib.parse import urlparse
 from pprint import pprint
 
-from PIL import Image, ExifTags, ImageFile
+from PIL import Image, ExifTags, ImageFile, UnidentifiedImageError
 from PIL.PngImagePlugin import PngImageFile, PngInfo
 # from PIL.GifImagePlugin import GifImageFile
 Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
 
+from .core_funcs import logger
+from .core_funcs.exceptions import ImageNotStaicException, ImageNotAnimatedException, UnidentifiedImageException
 from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS, set_bufferfile_content
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
 from .core_funcs.metadata_builder import ImageMetadata, AnimatedImageMetadata
 
 
-def inspect_general(image_path, filter_on="", skip=False) -> Dict:
-    """ Main single image inspection handler function.
-    :param `image_path`: Input path.
-    :param `filter_on`: "" no filter, "static": "Throws error on detecting an animated image", "animated": "Throws error on detecting a static image"
-    :param `skip`: Returns an empty dict instead of throwing an error. Used in conjuntion with filter_on
+def inspect_general(image_path: Path, filter_on: str="", skip: bool=False) -> Dict:
+    """Main single image inspection handler function.
+
+    Args:
+        image_path (Path): Input path
+        filter_on (str, optional): "static" = Throws error on detecting an animated image; "animated": Throws error on detecting a static image. Defaults to "".
+        skip (bool, optional): If True, returns an empty dict instead of throwing an error. Used in conjuntion with filter_on. Defaults to False.
+
+    Returns:
+        Dict: Information of the image
     """
-    abspath = os.path.abspath(image_path)
-    filename = str(os.path.basename(abspath))
-    base_fname, ext = os.path.splitext(filename)
+    abspath = image_path
+    filename = image_path.stem
+    ext = image_path.suffixes[-1]
     ext = ext.lower()
     if ext == '.gif':
         try:
             gif: Image = Image.open(abspath)
-        except Exception:
-            print(json.dumps({"error": f'The chosen file ({filename}) is not a valid GIF image'}), file=sys.stderr)
-            
-        # raise Exception(gif.is_animated, filter_on, skip)
+        except UnidentifiedImageError:
+            raise UnidentifiedImageException(abspath)
         if gif.format == 'GIF':
             if gif.is_animated:
                 if filter_on == "static":
                     if skip:
                         return {}
                     else:
-                        print(json.dumps({"error": f"The GIF {base_fname} is not static!"}), file=sys.stderr)
+                        raise ImageNotStaicException(filename, "GIF")
                 else:
                     return _inspect_agif(image_path, gif)
             else:
@@ -53,15 +59,14 @@ def inspect_general(image_path, filter_on="", skip=False) -> Dict:
                     if skip:
                         return {}
                     else:
-                        print(json.dumps({"error": f"The GIF {base_fname} is not animated!"}), file=sys.stderr)
+                        raise ImageNotAnimatedException(filename, "GIF")
                 else:
                     return _inspect_simg(image_path)
     elif ext == '.png':
         try:
             apng: APNG = APNG.open(abspath)
-        except Exception:
-            print(json.dumps({"error": f'The chosen file ({filename}) is not a valid PNG image'}), file=sys.stderr)
-            return
+        except UnidentifiedImageError:
+            raise UnidentifiedImageException(abspath)
         frames = apng.frames
         frame_count = len(frames)
         if frame_count > 1:
