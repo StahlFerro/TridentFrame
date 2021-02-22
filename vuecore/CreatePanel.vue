@@ -785,8 +785,8 @@ function previewAIMG() {
   }
   data.CRT_IS_PREVIEWING = true;
   console.log(data);
-  writeImagePathsCache(data.image_paths);
-  writeCriterionCache(data);
+  // writeImagePathsCache(data.image_paths);
+  // writeCriterionCache(data);
   let criteria_pack = lodashClonedeep({
     "criteria": data.criteria,
     "gif_opt": data.gif_opt,

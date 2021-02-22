@@ -48,7 +48,7 @@ function tridentEngine(args, outCallback) {
     "command": command, 
     "args": cmd_args,
     "globalvar_overrides": {
-      "debug": false,
+      "debug": true,
   }});
   console.log("json_command");
   console.log(json_command);

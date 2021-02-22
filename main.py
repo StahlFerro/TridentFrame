@@ -1,15 +1,18 @@
 import sys
 import os
 import json
-from pycore.core_funcs import logger
-from pycore.core_funcs import exception
+from pathlib import Path
 
 
 IS_FROZEN = getattr(sys, 'frozen', False)
 if IS_FROZEN:
-    frozen_dir = os.path.dirname(sys.executable)
+    frozen_dir = Path(sys.executable).resolve().parents[0]
     # print(json.dumps({"msg": f"Detected frozen dir: {frozen_dir}"}))
     os.chdir(frozen_dir)
+
+
+from pycore.core_funcs import logger
+from pycore.core_funcs import exception
 
 
 import random
@@ -17,7 +20,6 @@ import string
 from typing import Dict, List
 import signal
 import time
-from pathlib import Path
 
 from pycore.inspect_ops import inspect_sequence, inspect_general, _inspect_smart
 from pycore.create_ops import create_aimg
@@ -26,7 +28,7 @@ from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
 from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
-from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH, get_bufferfile_content, get_criterionfile_content
+from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
 
 
 class TridentFrameImager():
@@ -63,8 +65,15 @@ class TridentFrameImager():
         if info:
             logger.data(info)
 
-    def inspect_smart(self, image_path):
+    def inspect_smart(self, image_path: str):
         """Inspect a sequence of images and then return their information"""
+        if not image_path:
+            raise Exception("Please load an image!")
+        elif type(image_path) is list:
+            image_path = image_path[0]
+        image_path = Path(image_path).resolve()
+        if not image_path.exists():
+            raise FileNotFoundError(image_path.name)
         info = _inspect_smart(image_path)
         if info:
             logger.data(info)

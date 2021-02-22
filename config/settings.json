@@ -1,7 +1,20 @@
 {
     "cache_dir": "cache",
-    "bufferfile": "paths_bufferfile.json",
-    "criterionfile": "temp_criterion.json",
-    "autoclean_cache": true,
-    "autoclean_temp": false
+    "imagers_dir": "bin",
+    "imagers": { 
+        "win": {
+            "gifsicle": "gifsicle-1.92-win64/gifsicle.exe",
+            "imagemagick": "ImageMagick-7.0.8-61-win/convert.exe",
+            "apngopt": "apngopt-1.4-bin-win32/apngopt.exe",
+            "apngdis": "apngdis-2.9-bin-win64/apngdis.exe",
+            "pngquant": "pngquant/pngquant.exe"
+        },
+        "linux": {
+            "gifsicle": "gifsicle-1.92-2+b1_amd64/gifsicle",
+            "imagemagick": "ImageMagick-7.0.8-61-unix/convert",
+            "apngopt": "apngopt-1.4-bin-linux/apngopt",
+            "apngdis": "apngdis-2.9-bin-linux/apngdis",
+            "pngquant": "pngquant/pngquant"
+        }
+    }
 }

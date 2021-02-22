@@ -20,7 +20,7 @@ from apng import APNG
 
 from .core_funcs import logger
 from .core_funcs.exception import ImageNotStaicException, ImageNotAnimatedException, UnidentifiedImageException
-from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS, set_bufferfile_content
+from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
 from .core_funcs.metadata_builder import ImageMetadata, AnimatedImageMetadata
 
@@ -286,15 +286,14 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     return image_info
 
 
-def _inspect_smart(image_path):
+def _inspect_smart(image_path: Path):
     """ Receives a single image, then finds similar images with the same name and then returns the information of those sequence """
-    if type(image_path) is list:
-        image_path = image_path[0]
-    imgdir = os.path.dirname(image_path)
-    filename, ext = os.path.splitext(os.path.basename(image_path))
+    imgdir = image_path.parents[0]
+    filename = image_path.stem
     base_fname = sequence_nameget(filename)
-    print(json.dumps({"basefname": base_fname}))
-    possible_sequence = [os.path.abspath(os.path.join(imgdir, f)) for f in os.listdir(imgdir) if base_fname in os.path.splitext(f)[0]]
+    logger.message(f"base_fname {base_fname}")
+    possible_sequence = [f for f in imgdir.glob("*") if base_fname in f.stem]
+    # raise Exception(possible_sequence)
     # paths_bufferio = io.StringIO(json.dumps(possible_sequence))
     return inspect_sequence(possible_sequence)
 

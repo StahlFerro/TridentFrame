@@ -54,7 +54,6 @@
     "win": {
       "target": [
         "7z",
-        "portable",
         "zip"
       ],
       "icon": "release/tridentframe/win-unpacked/resources/app/imgs/TridentFrame_logo_256x256.ico"
