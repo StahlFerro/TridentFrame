@@ -19,7 +19,7 @@ Image.MAX_IMAGE_PIXELS = None
 from apng import APNG
 
 from .core_funcs import logger
-from .core_funcs.exceptions import ImageNotStaicException, ImageNotAnimatedException, UnidentifiedImageException
+from .core_funcs.exception import ImageNotStaicException, ImageNotAnimatedException, UnidentifiedImageException
 from .core_funcs.config import IMG_EXTS, STATIC_IMG_EXTS, ANIMATED_IMG_EXTS, set_bufferfile_content
 from .core_funcs.utility import _filter_images, read_filesize, shout_indices, sequence_nameget
 from .core_funcs.metadata_builder import ImageMetadata, AnimatedImageMetadata
@@ -74,8 +74,7 @@ def inspect_general(image_path: Path, filter_on: str="", skip: bool=False) -> Di
                 if skip:
                     return {}
                 else:
-                    print(json.dumps({"error": f"The APNG ({filename}) is not static!"}), file=sys.stderr)
-                    return
+                    raise ImageNotStaicException(filename, "APNG")
             else:
                 return _inspect_apng(image_path, apng)
         else:
@@ -83,9 +82,7 @@ def inspect_general(image_path: Path, filter_on: str="", skip: bool=False) -> Di
                 if skip:
                     return {}
                 else:
-                    print(json.dumps({"msg": f"The PNG {base_fname} is not animated!"}))
-                    print(json.dumps({"error": f"The PNG {base_fname} is not animated!"}), file=sys.stderr)
-                    return
+                    raise ImageNotAnimatedException(filename, "APNG")
             else:
                 return _inspect_simg(image_path)
     else:
@@ -148,10 +145,18 @@ def _inspect_simg(image):
     return metadata.format_info()
 
 
-def _inspect_agif(abspath: str, gif: Image):
-    filename = str(os.path.basename(abspath))
-    base_fname, ext = os.path.splitext(filename)
-    base_fname = sequence_nameget(base_fname)
+def _inspect_agif(abspath: Path, gif: Image) -> Dict:
+    """Inspect an animated GIF and return its metadata
+
+    Args:
+        abspath (Path): Path to the animated GIF
+        gif (Image): Pillow image instance of the animated GIF
+
+    Returns:
+        Dict: Metadata of the animated GIF
+    """
+    filename = abspath.name
+    base_fname = sequence_nameget(abspath.stem)
     width, height = gif.size
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
@@ -181,7 +186,7 @@ def _inspect_agif(abspath: str, gif: Image):
         "format": fmt,
         "format_version": full_format,
         "fsize": fsize,
-        "absolute_url": abspath,
+        "absolute_url": str(abspath),
         "comments": comments,
         "transparency": transparency,
         "is_animated": True,
@@ -192,10 +197,18 @@ def _inspect_agif(abspath: str, gif: Image):
     return metadata.format_info()
 
 
-def _inspect_apng(abspath, apng: APNG):  
-    filename = str(os.path.basename(abspath))
-    base_fname, ext = os.path.splitext(filename)
-    base_fname = sequence_nameget(base_fname)
+def _inspect_apng(abspath: Path, apng: APNG) -> Dict:  
+    """Inspect an animated PNG and return its metadata
+
+    Args:
+        abspath (Path): Path to the animated PNG
+        apng (Image): APNG.APNG instance of the animated PNG
+
+    Returns:
+        Dict: Metadata of the animated PNG
+    """
+    filename = abspath.name
+    base_fname = sequence_nameget(abspath.stem)
     frames = apng.frames
     frame_count = len(frames)
     loop_count = apng.num_plays
@@ -219,7 +232,7 @@ def _inspect_apng(abspath, apng: APNG):
         "height": height,
         "format": fmt,
         "fsize": fsize,
-        "absolute_url": abspath,
+        "absolute_url": str(abspath),
         "is_animated": True,
         "frame_count": frame_count,
         "delays": delays,
@@ -229,21 +242,28 @@ def _inspect_apng(abspath, apng: APNG):
     # return image_info
 
 
-def inspect_sequence(image_paths):
-    """Returns information of a selected sequence of static images"""
-    abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip) and os.path.isfile(ip)]
+def inspect_sequence(image_paths: List[Path]) -> Dict:
+    """Gets information of a selected sequence of static images
+
+    Args:
+        image_paths (List[Path]): List of resolved image sequence paths
+
+    Returns:
+        Dict: Information of the image sequence as a whole
+    """
+    abs_image_paths = image_paths
     sequence_info = []
     perc_skip = 5
     shout_nums = shout_indices(len(abs_image_paths), perc_skip)
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
-            print(json.dumps({"msg": f'Loading images... ({shout_nums.get(index)})'}))
+            logger.message(f'Loading images... ({shout_nums.get(index)})')
         info = inspect_general(path, filter_on="static", skip=True)
         if info:
             gen_info = info['general_info']
             sequence_info.append(gen_info)
     if not sequence_info:
-        print(json.dumps({"error": "No images selected. Make sure the path to them are correct and they are not animated images!"}), file=sys.stderr)
+        logger.error("No images selected. Make sure the path to them are correct and they are not animated images!")
         return
     static_img_paths = [si['absolute_url']['value'] for si in sequence_info]
     # print("imgs count", len(static_img_paths))

@@ -2,7 +2,7 @@ import sys
 import os
 import json
 from pycore.core_funcs import logger
-from pycore.core_funcs import exceptions
+from pycore.core_funcs import exception
 
 
 IS_FROZEN = getattr(sys, 'frozen', False)
@@ -45,27 +45,29 @@ class TridentFrameImager():
         """Inspect a single image and then return its information"""
         image_path = Path(image_path).resolve()
         if not image_path.exists():
-            raise FileNotFoundError(image_path)
+            raise FileNotFoundError(f"{image_path} not found")
         info = inspect_general(image_path, filter)
-        if (info):
-            info = json.dumps({"data": info})
-            print(info)
+        if info:
+            logger.data(info)
 
-    def inspect_many(self, image_paths: List):
+    def inspect_many(self, image_paths: List[str]):
         """ Inspect a sequence of images and then return their information.
             Intermediary buffer file is used to avoid char limit of command lines
         """
-        info = inspect_sequence(image_paths)
-        if (info):
-            info = json.dumps({"data": info})
-            print(info)
+        resolved_paths = []
+        for ipath in image_paths:
+            cpath = Path(ipath).resolve()
+            if cpath.exists():
+                resolved_paths.append(cpath)
+        info = inspect_sequence(resolved_paths)
+        if info:
+            logger.data(info)
 
     def inspect_smart(self, image_path):
         """Inspect a sequence of images and then return their information"""
         info = _inspect_smart(image_path)
-        if (info):
-            info = json.dumps({"data": info})
-            print(info)
+        if info:
+            logger.data(info)
 
     def combine_image(self, image_paths: List[str], out_dir: str, criteria_pack: Dict):
         """Combine multiple static images into a single animated image file"""
@@ -95,7 +97,7 @@ class TridentFrameImager():
         })
         out_path = create_aimg(resolved_paths, out_dir, criteria_pack['criteria']['name'], crbundle)
         if out_path:
-            logger.data(out_path)
+            logger.data(str(out_path))
         if len(missing_paths) > 0:
             logger.warn(str(missing_paths))
         return
@@ -188,7 +190,7 @@ def main():
     # handle_execpath()
     # print(json.dumps(print_cwd()))
     # print(json.dumps(f"{len(sys.argv) == 1}, {sys.stdin.isatty()}"))
-    exceptions.set_exception_handler(True)
+    exception.set_exception_handler(True)
     if len(sys.argv) == 1 and not sys.stdin.isatty():
         data = {}
         try:
@@ -207,7 +209,7 @@ def main():
         if globalvar_overrides:
             debug = globalvar_overrides.get('debug', None)
             if debug != None:
-                exceptions.set_exception_handler(debug)
+                exception.set_exception_handler(debug)
         args = data['args']
         method(*args)
 

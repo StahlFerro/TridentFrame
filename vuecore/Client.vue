@@ -8,6 +8,7 @@ const cache_path = deploy_env == "DEV"? `./${settings.cache_dir}` : `./resources
 const bufferfile = `${cache_path}/${settings.bufferfile}`;
 const criterionfile = `${cache_path}/${settings.criterionfile}`;
 const { EOL } = require('os');
+const { isNullOrWhitespace } = require("./Utility.vue");
 let _remaining;
 
 function writeImagePathsCache(paths) {
@@ -43,7 +44,12 @@ function tridentEngine(args, outCallback) {
 
   let command = args[0];
   let cmd_args = args.slice(1);
-  let json_command = JSON.stringify({"command": command, "args": cmd_args})
+  let json_command = JSON.stringify({
+    "command": command, 
+    "args": cmd_args,
+    "globalvar_overrides": {
+      "debug": false,
+  }});
   console.log("json_command");
   console.log(json_command);
 
@@ -54,14 +60,18 @@ function tridentEngine(args, outCallback) {
       // pythonOptions: ["-u"],
     });
     pyshell.on("message", (res) => {
-      console.log("[PYTHON STDOUT RAW MSG RES]")
-      console.log(res);
-      outCallback("", res);
+      if (!(isNullOrWhitespace(res))) {
+        console.log("[PYTHON STDOUT RAW MSG RES]")
+        console.log(res);
+        outCallback("", res);
+      }
     });
     pyshell.on("stderr", (err) => {
-      console.log("[PYTHON STDOUT RAW ERR RES]");
-      console.log(err);
-      outCallback(err, "");
+      if (!(isNullOrWhitespace(err))) {
+        console.log("[PYTHON STDOUT RAW ERR RES]");
+        console.log(err);
+        outCallback(err, "");
+      }
     });
     pyshell.send(json_command);
     pyshell.end(function (err,code,signal) {

@@ -153,8 +153,10 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     # yield {"shlexed cmd": cmd}
     logger.message("Combining frames...")
     result = subprocess.run(cmd, shell=True, capture_output=True)
-    logger.message(result.stdout.decode('utf-8'))
-    logger.error(result.stderr.decode('utf-8'))
+    stdout_res = result.stdout.decode('utf-8')
+    stderr_res = result.stderr.decode('utf-8')
+    logger.message(stdout_res)
+    logger.error(stderr_res)
     # print(json.dumps({"gifsicle STDOUT": result.stdout.decode('utf-8')}))
     # print(json.dumps({"gifsicle STDERR": result.stderr.decode('utf-8')}))
     # if result.stderr:

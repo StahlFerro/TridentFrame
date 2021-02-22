@@ -832,6 +832,10 @@ function CRTCreateAIMG() {
   setMinimalDimensions();
   let proceed_create = true;
   data.create_msgbox = "";
+  if (data.sequence_info.length < 2) {
+    data.create_msgbox = "Please load at least 2 images!";
+    return;
+  }
   var validator = validateFilename(data.criteria.name);
   if (!validator.valid) {
     console.error(validator.msg);

@@ -159,6 +159,13 @@ function fileExists(out_dir, name) {
   return fs.existsSync(full_path);
 }
 
+function isNullOrWhitespace( input ) {
+
+    if (typeof input === 'undefined' || input == null) return true;
+
+    return input.replace(/\s/g, '').length < 1;
+}
+
 
 const GIF_DELAY_DECIMAL_PRECISION = 2;
 const APNG_DELAY_DECIMAL_PRECISION = 3;
@@ -175,7 +182,8 @@ module.exports = {
   numConstrain: numConstrain,
   floatConstrain: floatConstrain,
   fileExists: fileExists,
-  readFilesize: readFilesize
+  readFilesize: readFilesize,
+  isNullOrWhitespace: isNullOrWhitespace,
 }
 
 </script>

@@ -65,5 +65,5 @@ def set_exception_handler(debug_flag: bool = True):
         if debug_flag:
             debug_hook(exception_type, exception, traceback)
         else:
-            logger.message(f"Error: {exception}")
+            logger.error(f"Error: {exception}")
     sys.excepthook = exception_handler
