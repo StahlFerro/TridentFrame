@@ -116,7 +116,7 @@
                 <p class="is-white-d">Inspect Image</p>
               </a>
             </li>
-            <li
+            <!-- <li
               id="tile_box"
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'tiles_panel' }"
@@ -127,7 +127,7 @@
                 </span>
                 <p class="is-white-d">Tiles Panel</p>
               </a>
-            </li>
+            </li> -->
             <li
               id="settings_box"
               class="menu-item"
@@ -164,7 +164,7 @@
         <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
         <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
         <InspectPanel v-show="menuselection == 'inspect_panel'" @inspect-ctxmenu="openContextMenu"/>
-        <TilesPanel v-show="menuselection == 'tiles_panel'" />
+        <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
         <SettingsPanel v-show="menuselection == 'settings_panel'" />
         <AboutPanel v-show="menuselection == 'about_panel'" />
     </div>
@@ -201,7 +201,7 @@ import ModifyPanel from "./vuecore/ModifyPanel.vue";
 // import BuildSpritesheetPanel from "./vuecore/BuildSpritesheetPanel.vue";
 // import SliceSpritesheetPanel from "./vuecore/SliceSpritesheetPanel.vue";
 import InspectPanel from "./vuecore/InspectPanel.vue";
-import TilesPanel from "./vuecore/TilesPanel.vue";
+// import TilesPanel from "./vuecore/TilesPanel.vue";
 import SettingsPanel from "./vuecore/SettingsPanel.vue";
 import AboutPanel from "./vuecore/AboutPanel.vue";
 
@@ -247,7 +247,7 @@ export default {
     // BuildSpritesheetPanel,
     // SliceSpritesheetPanel,
     InspectPanel,
-    TilesPanel,
+    // TilesPanel,
     SettingsPanel,
     AboutPanel,
     ContextMenu,
