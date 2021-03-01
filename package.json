@@ -125,6 +125,7 @@
     "node-loader": "^1.0.2",
     "rimraf": "^3.0.2",
     "sass": "^1.32.7",
+    "spectron": "^13.0.0",
     "vue": "^2.6.12",
     "vue-loader": "^15.9.3",
     "vue-template-compiler": "^2.6.12",
