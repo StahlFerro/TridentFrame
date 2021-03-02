@@ -152,7 +152,7 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     logger.message(cmd)
     # yield {"shlexed cmd": cmd}
     logger.message("Combining frames...")
-    result = subprocess.run(cmd, shell=True, capture_output=True)
+    result = subprocess.run(cmd, capture_output=True)
     stdout_res = result.stdout.decode('utf-8')
     stderr_res = result.stderr.decode('utf-8')
     logger.message(stdout_res)
@@ -168,7 +168,7 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     return out_full_path
 
 
-def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
+def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: CriteriaBundle) -> APNG:
     criteria = crbundle.create_aimg
     aopt_criteria = crbundle.apng_opt
     temp_dirs = []
@@ -190,7 +190,7 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
     if criteria.flip_h or criteria.flip_v or first_must_resize or criteria.rotation:
         for index, ipath in enumerate(image_paths):
             if shout_nums.get(index):
-                print(json.dumps({"msg": f'Processing frames... ({shout_nums.get(index)})'}))
+                logger.message(f'Processing frames... ({shout_nums.get(index)})')
             with io.BytesIO() as bytebox:
                 with Image.open(ipath) as im:
                     # im = Image.open(ipath)
@@ -209,11 +209,11 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
                         im = im.rotate(criteria.rotation, expand=True)
                     im.save(bytebox, "PNG")
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
-        print(json.dumps({"msg": "Saving APNG...."}))
+        logger.message("Saving APNG....")
         apng.num_plays = criteria.loop_count
         apng.save(out_full_path)
     else:
-        print(json.dumps({"msg": "Saving APNG..."}))
+        logger.message("Saving APNG....")
         apng = APNG.from_files(image_paths, delay=int(criteria.delay * 1000))
         apng.num_plays = criteria.loop_count
         apng.save(out_full_path)
@@ -223,16 +223,16 @@ def _build_apng(image_paths, out_full_path, crbundle: CriteriaBundle) -> APNG:
 
     # for td in temp_dirs:
     #     shutil.rmtree(td)
-    print(json.dumps({"preview_path": out_full_path}))
-    print(json.dumps({"CONTROL": "CRT_FINISH"}))
+    logger.preview_path(out_full_path)
+    logger.control("CRT_FINISH")
 
     return out_full_path
 
 
 def create_aimg(image_paths: List[Path], out_dir: Path, filename: str, crbundle: CriteriaBundle):
     """ Umbrella generator for creating animated images from a sequence of images """
-    abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
-    img_paths = [f for f in abs_image_paths if str.lower(os.path.splitext(f)[1][1:]) in STATIC_IMG_EXTS]
+    # abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
+    img_paths = [f for f in image_paths if str.lower(f.suffix[1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     # Test if inputted filename has extension, then remove it from the filename
     img_format = crbundle.create_aimg.extension
@@ -249,7 +249,7 @@ def create_aimg(image_paths: List[Path], out_dir: Path, filename: str, crbundle:
     if img_format == 'GIF':
         out_full_path = out_dir.joinpath(f"{filename}.gif")
         filename = f"{filename}.gif"
-        return _build_gif(image_paths, out_full_path, crbundle)
+        return _build_gif(img_paths, out_full_path, crbundle)
     
     elif img_format == 'PNG':
         out_full_path = out_dir.joinpath(f"{filename}.png")

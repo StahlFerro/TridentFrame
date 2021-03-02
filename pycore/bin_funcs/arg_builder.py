@@ -3,6 +3,15 @@ from ..core_funcs.criterion import ModificationCriteria, GIFOptimizationCriteria
 
 
 def gifsicle_args(criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria) -> List[Tuple[str, str]]:
+    """Get a list of gifsicle arguments from either ModificationCriteria, or GIFOptimizationCriteria
+
+    Args:
+        criteria (ModificationCriteria): Image modification criteria
+        gif_criteria (GIFOptimizationCriteria): GIF Optimization criteria
+
+    Returns:
+        List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and a status string to echo out on the second value
+    """
     args = []
     if criteria.must_resize():
         args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
@@ -32,6 +41,14 @@ def gifsicle_args(criteria: ModificationCriteria, gif_criteria: GIFOptimizationC
 
 
 def imagemagick_args(gifopt_criteria: GIFOptimizationCriteria) -> List[Tuple[str, str]]:
+    """Get a list of imagemagick arguments from a GIFOptimizationCriteria
+
+    Args:
+        gifopt_criteria (GIFOptimizationCriteria): GIF Optimization Criteria
+
+    Returns:
+        List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and a status string to echo out on the second value
+    """
     args = []
     if gifopt_criteria.is_unoptimized:
         args.append(("-coalesce", "Unoptimizing GIF..."))
@@ -45,7 +62,7 @@ def apngdis_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     return args
 
 def apngopt_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
-    """Get a list apngopt arguments
+    """Get a list apngopt arguments from an APNGOptimizationCriteria
 
     Args:
         apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
@@ -60,7 +77,7 @@ def apngopt_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, 
 
 
 def pngquant_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
-    """Get a list of pngquant arguments
+    """Get a list of pngquant arguments from an APNGOptimizationCriteria
 
     Args:
         apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
