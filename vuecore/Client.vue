@@ -1,5 +1,6 @@
 <script>
 const { PythonShell } = require("python-shell");
+const process = require("process");
 const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
 const engine_exec_path = "./resources/app/engine/windows/main.exe";
@@ -53,10 +54,14 @@ function tridentEngine(args, outCallback) {
   console.log("json_command");
   console.log(json_command);
 
+  let pythonPath = "";
+  if (process.platform == "win32") pythonPath = "python.exe";
+  else if (process.platform == "linux") pythonPath = "python3.7";
+
   if (deploy_env == "DEV") {
     let pyshell = new PythonShell('main.py',{
       mode: "text",
-      pythonPath: "python.exe",
+      pythonPath: pythonPath,
       // pythonOptions: ["-u"],
     });
     pyshell.on("message", (res) => {
