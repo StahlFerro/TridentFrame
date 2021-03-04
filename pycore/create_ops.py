@@ -47,8 +47,7 @@ def _create_gifragments(image_paths: List[Path], out_path: Path, criteria: Creat
         logger.message(f"SHIFT {shift}")
         shift_items.rotate(-criteria.start_frame)
         image_paths = list(shift_items)
-    perc_skip = 5
-    shout_nums = shout_indices(fcount, perc_skip)
+    shout_nums = shout_indices(fcount, 1)
     for index, ipath in enumerate(image_paths):
         if shout_nums.get(index):
             logger.message(f'Processing frames... ({shout_nums.get(index)})')
@@ -186,7 +185,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     apng = APNG()
     first_width, first_height = Image.open(image_paths[0]).size
     first_must_resize = criteria.resize_width != first_width or criteria.resize_height != first_height
-    shout_nums = shout_indices(len(image_paths), 5)
+    shout_nums = shout_indices(len(image_paths), 1)
     if criteria.flip_h or criteria.flip_v or first_must_resize or criteria.rotation:
         for index, ipath in enumerate(image_paths):
             if shout_nums.get(index):

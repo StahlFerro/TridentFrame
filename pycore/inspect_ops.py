@@ -253,8 +253,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     """
     abs_image_paths = image_paths
     sequence_info = []
-    perc_skip = 5
-    shout_nums = shout_indices(len(abs_image_paths), perc_skip)
+    shout_nums = shout_indices(len(abs_image_paths), 1)
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
             logger.message(f'Loading images... ({shout_nums.get(index)})')

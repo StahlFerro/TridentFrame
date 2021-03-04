@@ -203,7 +203,7 @@ def pngquant_render(pq_args: List[Tuple[str, str]], image_paths: List[Path], opt
     logger.message(pq_args)
     pngquant_exec = imager_exec_path("pngquant")
     # quant_dir = _mk_temp_dir(prefix_name="quant_dir")
-    shout_nums = shout_indices(len(image_paths), 5)
+    shout_nums = shout_indices(len(image_paths), 1)
     for index, ipath in enumerate(image_paths):
         if optional_out_path:
             target_path = optional_out_path.joinpath(ipath.name)
