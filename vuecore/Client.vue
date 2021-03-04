@@ -3,7 +3,6 @@ const { PythonShell } = require("python-shell");
 const process = require("process");
 const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
-const engine_exec_path = "./resources/app/engine/windows/main.exe";
 const settings = JSON.parse(fs.readFileSync(deploy_env == "DEV"? "./config/settings.json" : "./resources/app/config/settings.json"));
 const cache_path = deploy_env == "DEV"? `./${settings.cache_dir}` : `./resources/app/engine/windows/${settings.cache_dir}`;
 const bufferfile = `${cache_path}/${settings.bufferfile}`;
@@ -11,6 +10,17 @@ const criterionfile = `${cache_path}/${settings.criterionfile}`;
 const { EOL } = require('os');
 const { isNullOrWhitespace } = require("./Utility.vue");
 let _remaining;
+
+let python_path = "";
+let engine_exec_path = "";
+if (process.platform == "win32") {
+  python_path = "python.exe";
+  engine_exec_path = "./resources/app/engine/windows/main.exe";
+}
+else if (process.platform == "linux") { 
+  python_path = "python3.7";
+  engine_exec_path = "./resources/app/engine/linux/main";
+}
 
 function writeImagePathsCache(paths) {
   if (!fs.existsSync(cache_path)){
@@ -54,14 +64,11 @@ function tridentEngine(args, outCallback) {
   console.log("json_command");
   console.log(json_command);
 
-  let pythonPath = "";
-  if (process.platform == "win32") pythonPath = "python.exe";
-  else if (process.platform == "linux") pythonPath = "python3.7";
 
   if (deploy_env == "DEV") {
     let pyshell = new PythonShell('main.py',{
       mode: "text",
-      pythonPath: pythonPath,
+      pythonPath: python_path,
       // pythonOptions: ["-u"],
     });
     pyshell.on("message", (res) => {
