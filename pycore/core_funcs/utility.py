@@ -1,5 +1,6 @@
 import os
 from pycore.core_funcs import logger
+from collections import OrderedDict
 import shutil
 import time
 import subprocess
@@ -205,9 +206,14 @@ def generate_delay_file(image_path: Path, extension: str, out_folder: Path):
         out_folder (Path): Output directory of the delay file
     """
     delays = get_image_delays(image_path, extension)
-    delay_info = {
-        "delays": {index: d for index, d in enumerate(delays)}
-    }
+
+    # delay_info = OrderedDict({
+    #     "filename": str(image_path),
+    #     "delays": {index: d for index, d in enumerate(delays)}
+    # })
+    delay_info = OrderedDict()
+    delay_info["image_path"] = str(image_path)
+    delay_info["delays"] = {index: d for index, d in enumerate(delays)}
     filename = "_delays.json"
     save_path = out_folder.joinpath(filename)
     with open(save_path, "w") as outfile:

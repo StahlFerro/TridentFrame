@@ -430,7 +430,7 @@ def split_aimg(image_path: Path, out_dir: Path, criteria: SplitCriteria) -> List
         frame_paths = _split_gif(image_path, out_dir, criteria)
     elif ext == 'png':
         frame_paths = _split_apng(image_path, out_dir, name, criteria)
-    out_control("SPL_FINISH")
+    logger.control("SPL_FINISH")
     return frame_paths
 
 # if __name__ == "__main__":
