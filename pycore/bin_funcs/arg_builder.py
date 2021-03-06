@@ -2,7 +2,7 @@ from typing import List, Tuple
 from ..core_funcs.criterion import ModificationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 
 
-def gifsicle_args(criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria) -> List[Tuple[str, str]]:
+def gifsicle_mod_args(criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria) -> List[Tuple[str, str]]:
     """Get a list of gifsicle arguments from either ModificationCriteria, or GIFOptimizationCriteria
 
     Args:
@@ -61,33 +61,4 @@ def apngdis_args(criteria: ModificationCriteria) -> List[Tuple[str, str]]:
     args = []
     return args
 
-def apngopt_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
-    """Get a list apngopt arguments from an APNGOptimizationCriteria
 
-    Args:
-        apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
-
-    Returns:
-        List[Tuple[str, str]]: List of two valued tuples containing apngopt argument on the first value, and a status string to echo out on the second value
-    """
-    args = []
-    if apngopt_criteria.is_optimized:
-        args.append((f'-z{apngopt_criteria.optimization_level - 1}', f'Optimizing APNG with level {apngopt_criteria.optimization_level} compression...'))
-    return args
-
-
-def pngquant_args(apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
-    """Get a list of pngquant arguments from an APNGOptimizationCriteria
-
-    Args:
-        apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
-
-    Returns:
-        List[Tuple[str, str]]: List of two valued tuples containing pngquant argument on the first value, and a status string to echo out on the second value
-    """
-    args = []
-    if apngopt_criteria.is_lossy and apngopt_criteria.lossy_value:
-        args.append((f"--quality={apngopt_criteria.lossy_value}", f"Quantizing PNG with quality value: {apngopt_criteria.lossy_value}"))
-    # if criteria.apng_is_lossy:
-        # args.append(())
-    return args

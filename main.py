@@ -100,9 +100,9 @@ class TridentFrameImager():
         if not out_dir.exists():
             raise FileNotFoundError(out_dir)
         crbundle = CriteriaBundle({
-            "create_aimg": CreationCriteria(criteria_pack['criteria']),
-            "gif_opt": GIFOptimizationCriteria(criteria_pack['gif_opt']),
-            "apng_opt": APNGOptimizationCriteria(criteria_pack['apng_opt'])
+            "create_aimg_criteria": CreationCriteria(criteria_pack['criteria']),
+            "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack['gif_opt_criteria']),
+            "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack['apng_opt_criteria'])
         })
         out_path = create_aimg(resolved_paths, out_dir, criteria_pack['criteria']['name'], crbundle)
         if out_path:

@@ -1,12 +1,12 @@
 import os
-from pycore.core_funcs import logger
-from collections import OrderedDict
 import shutil
 import time
 import subprocess
 import json
 import contextlib
 import subprocess
+from collections import deque
+from collections import OrderedDict
 from pathlib import Path
 from typing import Iterator, List, Tuple, Dict
 
@@ -16,6 +16,7 @@ from apng import APNG
 
 from .config import ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
 from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
+from pycore.core_funcs import logger
 # from .create_ops import create_aimg
 # from .split_ops import split_aimg
 
@@ -46,6 +47,23 @@ def util_generator_shallow():
     x = yield from _create_num_fragments()
     print(f"x is {x}")
     return x
+
+
+def shift_image_sequence(image_paths: List[Path], start_frame: int) -> List[Path]:
+    """Shift an image sequence based on the indicated start frame.
+
+    Args:
+        image_paths (List[Path]): List of paths of each image in a sequence.
+        start_frame (int): The frame number to start the sequence at.
+
+    Returns:
+        List[Path]: List of image sequence which ordering has been shifted.
+    """
+    shift_items = deque(image_paths)
+    shift = -start_frame
+    logger.message(f"SHIFT {shift}")
+    shift_items.rotate(shift)
+    image_paths = list(shift_items)
 
 
 def sequence_nameget(name: str):

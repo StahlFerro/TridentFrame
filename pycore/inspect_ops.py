@@ -291,8 +291,7 @@ def _inspect_smart(image_path: Path):
     filename = image_path.stem
     base_fname = sequence_nameget(filename)
     logger.message(f"base_fname {base_fname}")
-    possible_sequence = [f for f in imgdir.glob("*") if base_fname in f.stem]
+    possible_sequence = [f for f in sorted(imgdir.glob("*")) if base_fname in f.stem]
     # raise Exception(possible_sequence)
     # paths_bufferio = io.StringIO(json.dumps(possible_sequence))
     return inspect_sequence(possible_sequence)
-

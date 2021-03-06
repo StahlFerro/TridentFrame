@@ -18,15 +18,15 @@ from apng import APNG, PNG
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
 from .core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, APNGOptimizationCriteria
 from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices
-from .bin_funcs.imager_api import gifsicle_render, imagemagick_render, apngopt_render, pngquant_render
-from .bin_funcs.arg_builder import gifsicle_args, imagemagick_args, apngopt_args, pngquant_args
+from .bin_funcs.imager_api import gifsicle_render, imagemagick_render, APNGOptAPI
+from .bin_funcs.arg_builder import gifsicle_mod_args, imagemagick_args
 from .create_ops import create_aimg
 from .split_ops import split_aimg, _fragment_gif_frames, _fragment_apng_frames
 
 
 def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     mod_criteria = crbundle.modify_aimg
-    apngopt_criteria = crbundle.apng_opt
+    apngopt_criteria = crbundle.apng_opt_criteria
     frames_dir = _mk_temp_dir(prefix_name="rebuild_aimg")
     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
     split_criteria = SplitCriteria({
@@ -41,7 +41,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     yield {"MOD split frames": frame_paths}
     # if mod_criteria.is_reversed:
     #     frames.reverse()
-    pq_args = pngquant_args(apngopt_criteria)
+    # pq_args = pngquant_args(apngopt_criteria)
     if mod_criteria.format == 'PNG' and pq_args:
         yield {"DEBUG": "PNG QUANTIZATION SELECTED"}
         frame_paths = pngquant_render(pq_args, frame_paths)
@@ -57,7 +57,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
         'delay': ds_delay,
         'format': mod_criteria.format,
         'is_reversed': mod_criteria.is_reversed,
-        'is_transparent': True,
+        'preverse_alpha': True,
         'flip_x': mod_criteria.flip_x, # Flipping horizontally is handled by gifsicle
         'flip_y': mod_criteria.flip_y, # Flipping vertically is handled by gifsicle
         'width': mod_criteria.width,
@@ -69,7 +69,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     })
     yield {"e": create_criteria.name}
     crbundle = CriteriaBundle({
-        "create_aimg": create_criteria
+        "create_aimg_criteria": create_criteria
     })
     new_image_path = yield from create_aimg(frame_paths, out_dir, create_criteria.name, crbundle)
     yield {"new_image_path": new_image_path}
@@ -78,8 +78,8 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
 
 def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     criteria = crbundle.modify_aimg
-    gifopt_criteria = crbundle.gif_opt
-    apngopt_criteria = crbundle.apng_opt
+    gifopt_criteria = crbundle.gif_opt_criteria
+    apngopt_criteria = crbundle.apng_opt_criteria
     img_path = os.path.abspath(img_path)
     # raise Exception(img_path, out_dir, criteria)
     if not os.path.isfile(img_path):
@@ -92,9 +92,8 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     out_full_path = os.path.join(out_dir, full_name)
     orig_out_full_path = os.path.join(out_dir, orig_full_name)
     yield {"OUTFULLPATH": f"{out_full_path}"}
-    sicle_args = gifsicle_args(criteria, gifopt_criteria)
+    sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)
     magick_args = imagemagick_args(gifopt_criteria)
-    aopt_args = apngopt_args(apngopt_criteria)
     pq_args = pngquant_args(apngopt_criteria)
     # yield sicle_args
     target_path = str(img_path)
@@ -110,7 +109,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
             yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
             target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
             if aopt_args:
-                target_path = yield from apngopt_render(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
+                target_path = yield from APNGOptAPI.optimize_apng(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
         elif criteria.format == "GIF":
             yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
             target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
@@ -134,7 +133,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
                 target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
             if aopt_args:
                 yield {"MSGGGGGGGGGGGGG": "AOPT ARGS"}
-                target_path = yield from apngopt_render(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
+                target_path = yield from APNGOptAPI.optimize_apng(aopt_args, target_path, out_full_path, total_ops, len(sicle_args) + len(magick_args))
             # elif criteria.renamed():
             #     yield {"MSGGGGGGGGGGGGG": "RENAME"}
                 if target_path != out_full_path:

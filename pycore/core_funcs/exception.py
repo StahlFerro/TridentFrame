@@ -54,6 +54,20 @@ class ImageNotAnimatedException(Exception):
         self.message = message.format(image_name=self.image_name, extension=self.extension)
         super().__init__(self.message)
 
+class MalformedCommandException(Exception):
+    """Raised when a imager command is malformed."""
+
+    def __init__(self, imager_name: str, message="The command passed for the imager {imager_name} is malformed!") -> None:
+        """Initialize the exception
+
+        Args:
+            imager_name (str): Name of the imager that the command is built for.
+            str (str, optional): [description]. Defaults to "The command passed for the imager {imager_name} is malformed!".
+        """
+        self.imager_name = imager_name
+        self.message = message.format(imager_name=imager_name)
+        super().__init__(self.message)
+
 
 def set_exception_handler(debug_flag: bool = True):
     """Toggle between normal python verbose traceback, or simplified error message depending on the specified DEBUG_FLAG

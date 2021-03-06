@@ -364,7 +364,7 @@
                 </td>
                 <td style="vertical-align: bottom">
                   <label class="checkbox" title="Preserve transparent pixels">
-                    <input v-model="criteria.is_transparent" type="checkbox" />
+                    <input v-model="criteria.preverse_alpha" type="checkbox" />
                     Preserve Alpha
                   </label>
                   <br />
@@ -441,13 +441,13 @@
               width="100%"
             >
               <GIFOptimizationRow
-                :is_optimized.sync="gif_opt.is_optimized"
-                :optimization_level.sync="gif_opt.optimization_level"
-                :is_lossy.sync="gif_opt.is_lossy"
-                :lossy_value.sync="gif_opt.lossy_value"
-                :is_reduced_color.sync="gif_opt.is_reduced_color"
-                :color_space.sync="gif_opt.color_space"
-                :is_unoptimized.sync="gif_opt.is_unoptimized"
+                :is_optimized.sync="gif_opt_criteria.is_optimized"
+                :optimization_level.sync="gif_opt_criteria.optimization_level"
+                :is_lossy.sync="gif_opt_criteria.is_lossy"
+                :lossy_value.sync="gif_opt_criteria.lossy_value"
+                :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
+                :color_space.sync="gif_opt_criteria.color_space"
+                :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
               />
               <!-- <GIFUnoptimizationRow
                       :is_optimized.sync="is_optimized"
@@ -463,11 +463,11 @@
               width="100%"
             >
               <APNGOptimizationRow
-                :apng_is_optimized.sync="apng_opt.apng_is_optimized"
-                :apng_optimization_level.sync="apng_opt.apng_optimization_level"
-                :apng_is_lossy.sync="apng_opt.apng_is_lossy"
-                :apng_lossy_value.sync="apng_opt.apng_lossy_value"
-                :apng_is_unoptimized.sync="apng_opt.apng_is_unoptimized"
+                :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
+                :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
+                :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
+                :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
               />
               <!-- <APNGUnoptimizationRow
                       :apng_is_optimized.sync="apng_is_optimized"
@@ -514,7 +514,7 @@ var data = {
     delay: "",
     format: "GIF",
     is_reversed: false,
-    is_transparent: false,
+    preverse_alpha: false,
     flip_x: false,
     flip_y: false,
     width: "",
@@ -524,7 +524,7 @@ var data = {
     start_frame: "",
     rotation: 0,
   },
-  gif_opt: {
+  gif_opt_criteria: {
     is_optimized: false,
     optimization_level: "1",
     is_lossy: false,
@@ -533,7 +533,7 @@ var data = {
     color_space: "",
     is_unoptimized: false,
   },
-  apng_opt: {
+  apng_opt_criteria: {
     apng_is_optimized: false,
     apng_optimization_level: "1",
     apng_is_lossy: false,
@@ -789,8 +789,8 @@ function previewAIMG() {
   // writeCriterionCache(data);
   let criteria_pack = lodashClonedeep({
     "criteria": data.criteria,
-    "gif_opt": data.gif_opt,
-    "apng_opt": data.apng_opt,
+    "gif_opt_criteria": data.gif_opt_criteria,
+    "apng_opt_criteria": data.apng_opt_criteria,
   });
   criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["combine_image", data.image_paths, "./temp", criteria_pack], (error, res) => {
@@ -858,14 +858,14 @@ function CRTCreateAIMG() {
     data.CRT_IS_CREATING = true;
     let criteria_pack = lodashClonedeep({
       "criteria": data.criteria,
-      "gif_opt": data.gif_opt,
-      "apng_opt": data.apng_opt,
+      "gif_opt_criteria": data.gif_opt,
+      "apng_opt_criteria": data.apng_opt,
     });
     tridentEngine(["combine_image", data.image_paths, data.outdir, criteria_pack], (error, res) => {
       if (error) {
         console.error(error);
         data.create_msgbox = error.error;
-        data.CRT_IS_PREVIEWING = false;
+        data.CRT_IS_CREATING = false;
       } else if (res) {
         res = JSON.parse(res);
         console.log(`res -> ${res}`);

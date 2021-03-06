@@ -150,9 +150,11 @@ function receiveInternal(emitType, data, outCallback){
 
   parts.forEach(function (part) {
     if(emitType == 'message') {
+      console.log(part);
       outCallback("", part);
     }
     else if(emitType == 'stderr') {
+      console.log(part);
       outCallback(part, "");
     }
   });

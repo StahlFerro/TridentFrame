@@ -96,9 +96,9 @@ def combine_image(out_dir, filename):
     elif not out_dir:
         raise Exception("Please choose the output folder!")
     crbundle = CriteriaBundle({
-        "create_aimg": CreationCriteria(criterion_vals),
-        "gif_opt": GIFOptimizationCriteria(criterion_vals),
-        "apng_opt": APNGOptimizationCriteria(criterion_vals)
+        "create_aimg_criteria": CreationCriteria(criterion_vals),
+        "gif_opt_criteria": GIFOptimizationCriteria(criterion_vals),
+        "apng_opt_criteria": APNGOptimizationCriteria(criterion_vals)
     })
     out_path = create_aimg(image_paths, out_dir, filename, crbundle)
     if (out_path):
@@ -128,9 +128,9 @@ def modify_image(self, image_path, out_dir, vals):
         raise Exception("Please choose an output folder!")
     criteria = ModificationCriteria(vals)
     crbundle = CriteriaBundle({
-        'modify_aimg': ModificationCriteria(vals),
-        'gif_opt': GIFOptimizationCriteria(vals),
-        'apng_opt': APNGOptimizationCriteria(vals),
+        'modify_aimg_criteria': ModificationCriteria(vals),
+        'gif_opt_criteria': GIFOptimizationCriteria(vals),
+        'apng_opt_criteria': APNGOptimizationCriteria(vals),
     })
     return modify_aimg(image_path, out_dir, crbundle)
     
