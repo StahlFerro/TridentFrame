@@ -199,10 +199,12 @@ class APNGOptAPI:
                     # break
                 if output:
                     output = output.decode('utf-8')
-                    out_words = " ".join(output.capitalize().split(" ")[3:])[:-2]
-                    out_msg = f"Optimizing frame {out_words}..."
-                    logger.message(out_msg)
-                    index += 1
+                    logger.message(output.capitalize())
+                    if 'saving' in output:
+                        out_words = " ".join(output.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:])[:-1]
+                        out_msg = f"Optimizing frame {out_words}..."
+                        logger.message(out_msg)
+                        index += 1
             # if target_path != out_full_path:
                 # target_path = out_full_path
         out_full_path = shutil.move(target_path, out_full_path)
