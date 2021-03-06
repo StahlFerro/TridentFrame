@@ -12,7 +12,7 @@ from PIL import Image
 from apng import APNG
 
 from ..core_funcs.utility import _mk_temp_dir, imager_exec_path, shout_indices, unbuffered_process
-from ..core_funcs.criterion import CriteriaBundle, APNGOptimizationCriteria
+from ..core_funcs.criterion import CriteriaBundle, APNGOptimizationCriteria, ModificationCriteria, GIFOptimizationCriteria
 from ..core_funcs import logger
 from ..core_funcs.exception import MalformedCommandException
 # from ..core_funcs.io_streaming import unbuffered_Popen
@@ -63,6 +63,44 @@ class GifsicleAPI:
         return args
 
     @classmethod
+    def _mod_args_builder(cls, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria) -> List[Tuple[str, str]]:
+        """Get a list of gifsicle arguments from either ModificationCriteria, or GIFOptimizationCriteria
+
+        Args:
+            criteria (ModificationCriteria): Image modification criteria
+            gif_criteria (GIFOptimizationCriteria): GIF Optimization criteria
+
+        Returns:
+            List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and a status string to echo out on the second value
+        """
+        args = []
+        if criteria.must_resize():
+            args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
+        if criteria.orig_delay != criteria.delay:
+            args.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
+        if gif_criteria.is_optimized and gif_criteria.optimization_level:
+            args.append((f"--optimize={gif_criteria.optimization_level}", f"Optimizing image with level {gif_criteria.optimization_level}..."))
+        if gif_criteria.is_lossy and gif_criteria.lossy_value:
+            args.append((f"--lossy={gif_criteria.lossy_value}", f"Lossy compressing with value: {gif_criteria.lossy_value}..."))
+        if gif_criteria.is_reduced_color and gif_criteria.color_space:
+            args.append((f"--colors={gif_criteria.color_space}", f"Reducing colors to: {gif_criteria.color_space}..."))
+        # if criteria.flip_x:
+        #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
+        # if criteria.flip_y:
+        #     args.append((f"--flip-vertical", "Flipping image vertically..."))
+        if criteria.orig_loop_count != criteria.loop_count:
+            loop_count = criteria.loop_count
+            loop_arg = "--loopcount"
+            if (not loop_count or loop_count == 0):
+                loop_arg = "--loopcount"
+            elif (loop_count == 1):
+                loop_arg = '--no-loopcount'
+            elif (loop_count > 1):
+                loop_arg = f'--loopcount={loop_count - 1}'
+            args.append((loop_arg, f"Changing loop count to {loop_count or 'Infinite'}..."))
+        return args
+
+    @classmethod
     def combine_gif_images(cls, gifragment_dir: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
         """Combine a list of static GIF images in a directory into one animated GIF image.
 
@@ -89,58 +127,85 @@ class GifsicleAPI:
         os.chdir(ROOT_PATH)
         return out_full_path
 
+    @classmethod
+    def modify_gif_image(cls, target_path: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
+        """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied arguments.
 
-def gifsicle_render(sicle_args: List[Tuple[str, str]], target_path: Path, out_full_path: Path, total_ops: int) -> Path:
-    """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied arguments.
+        Args:
+            sicle_args (List[Tuple[str, str]]): gifsicle arguments.
+            target_path (Path): Target path of the existing GIF image.
+            out_full_path (Path): Output full path to save the GIF to.
+            total_ops (int): UNUSED
 
-    Args:
-        sicle_args (List[Tuple[str, str]]): gifsicle arguments.
-        target_path (Path): Target path of the existing GIF image.
-        out_full_path (Path): Output full path to save the GIF to.
-        total_ops (int): UNUSED
+        Returns:
+            Path: Resulting path of the new modified GIF image.
+        """
+        sicle_args = cls._mod_args_builder(crbundle.modify_aimg_criteria, crbundle.gif_opt_criteria)
+        # yield {"sicle_args": sicle_args}
+        gifsicle_path = imager_exec_path('gifsicle')
+        for index, (arg, description) in enumerate(sicle_args, start=1):
+            # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+            cmdlist = [str(gifsicle_path), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+            cmd = ' '.join(cmdlist)
+            # yield {"msg": f"[{index}/{total_ops}] {description}"}
+            # yield {"cmd": cmd}
+            subprocess.run(cmd)
+            if target_path != out_full_path:
+                target_path = out_full_path
+        return target_path
 
-    Returns:
-        Path: Resulting path of the new modified GIF image.
-    """
-    # yield {"sicle_args": sicle_args}
-    gifsicle_path = imager_exec_path('gifsicle')
-    for index, (arg, description) in enumerate(sicle_args, start=1):
-        # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-        cmdlist = [str(gifsicle_path), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
-        cmd = ' '.join(cmdlist)
-        # yield {"msg": f"[{index}/{total_ops}] {description}"}
-        # yield {"cmd": cmd}
-        subprocess.run(cmd)
-        if target_path != out_full_path:
-            target_path = out_full_path
-    return target_path
+class ImageMagickAPI:
+    @classmethod
+    def _mod_args_builder(cls, gifopt_criteria: GIFOptimizationCriteria) -> List[Tuple[str, str]]:
+        """Get a list of imagemagick arguments from a GIFOptimizationCriteria
+
+        Args:
+            gifopt_criteria (GIFOptimizationCriteria): GIF Optimization Criteria
+
+        Returns:
+            List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and a status string to echo out on the second value
+        """
+        args = []
+        if gifopt_criteria.is_unoptimized:
+            args.append(("-coalesce", "Unoptimizing GIF..."))
+        # if criteria.rotation and criteria.rotation != 0:
+        #     args.append((f"-rotate {criteria.rotation}", f"Rotating image {criteria.rotation} degrees..."))
+        return args
+
+    @classmethod
+    def imagemagick_render(cls, target_path: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
+        """Use imagemagick to perform an array of modifications to an existing animated image.
+
+        Args:
+            magick_args (List[Tuple[str, str]]): Arguments to supply to imagemagick.
+            target_path (Path): Target path of the animated image.
+            out_full_path (Path): Output full path to save the animated image to.
+            total_ops (int, optional): UNUSED. Defaults to 0.
+            shift_index (int, optional): UNUSED. Defaults to 0.
+
+        Returns:
+            Path: Path of the new modified animated image.
+        """
+        magick_args = cls._mod_args_builder(crbundle.gif_opt_criteria)
+        # yield {"magick_args": magick_args}
+        imagemagick_path = imager_exec_path('imagemagick')
+        for index, (arg, description) in enumerate(magick_args, start=1):
+            logger.message(f"index {index}, arg {arg}, description: {description}")
+            cmdlist = [str(imagemagick_path), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
+            cmd = ' '.join(cmdlist)
+            # logger.message(f"[{shift_index + index}/{total_ops}] {description}")
+            # yield {"cmd": cmd}
+            subprocess.run(cmd)
+            if target_path != out_full_path:
+                target_path = out_full_path
+        return target_path
 
 
-def imagemagick_render(magick_args: List[Tuple[str, str]], target_path: Path, out_full_path: Path, total_ops=0, shift_index=0) -> Path:
-    """Use imagemagick to perform an array of modifications to an existing animated image.
-
-    Args:
-        magick_args (List[Tuple[str, str]]): Arguments to supply to imagemagick.
-        target_path (Path): Target path of the animated image.
-        out_full_path (Path): Output full path to save the animated image to.
-        total_ops (int, optional): UNUSED. Defaults to 0.
-        shift_index (int, optional): UNUSED. Defaults to 0.
-
-    Returns:
-        Path: Path of the new modified animated image.
-    """
-    # yield {"magick_args": magick_args}
-    imagemagick_path = imager_exec_path('imagemagick')
-    for index, (arg, description) in enumerate(magick_args, start=1):
-        logger.message(f"index {index}, arg {arg}, description: {description}")
-        cmdlist = [str(imagemagick_path), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
-        cmd = ' '.join(cmdlist)
-        logger.message(f"[{shift_index + index}/{total_ops}] {description}")
-        # yield {"cmd": cmd}
-        subprocess.run(cmd)
-        if target_path != out_full_path:
-            target_path = out_full_path
-    return target_path
+class APNGDisAPI:
+    @classmethod
+    def _dis_args_builder(cls, criteria: ModificationCriteria) -> List[Tuple[str, str]]:
+        args = []
+        return args
 
 
 class APNGOptAPI:
