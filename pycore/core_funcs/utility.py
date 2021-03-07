@@ -1,27 +1,28 @@
 import os
 import shutil
 import time
-import subprocess
 import json
-import contextlib
 import subprocess
 from collections import deque
 from collections import OrderedDict
 from pathlib import Path
-from typing import Iterator, List, Tuple, Dict
+from typing import Iterator, List, Dict
 
 from PIL import Image
-from PIL.GifImagePlugin import GifImageFile
 from apng import APNG
 
-from .config import ABS_CACHE_PATH, ABS_TEMP_PATH, imager_exec_path
-from .criterion import CreationCriteria, SplitCriteria, ModificationCriteria
+from .config import get_absolute_cache_path, imager_exec_path
 from pycore.core_funcs import logger
-# from .create_ops import create_aimg
-# from .split_ops import split_aimg
+
+SIZE_SUFFIXES = ["B", "KB", "MB", "GB", "TB", "PB"]
 
 
-size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB']
+class FileSystemUtility:
+    pass
+
+
+class ImageFileUtility:
+    pass
 
 
 def _create_num_fragments():
@@ -31,8 +32,8 @@ def _create_num_fragments():
 
 
 def _spit_numbers():
-    yield 'a'
-    yield 'b'
+    yield "a"
+    yield "b"
     x = yield from _create_num_fragments()
     print(f"x is {x}")
     yield {"x": x}
@@ -64,10 +65,19 @@ def shift_image_sequence(image_paths: List[Path], start_frame: int) -> List[Path
     logger.message(f"SHIFT {shift}")
     shift_items.rotate(shift)
     image_paths = list(shift_items)
+    return image_paths
 
 
-def sequence_nameget(name: str):
-    """ Cuts of sequence number suffixes from a filename. Filenames only, extensions must be excluded from this check. """
+def sequence_nameget(name: str) -> str:
+    """Cuts of sequence number suffixes from a filename. Filenames only, extensions must be excluded from this check
+
+    Args:
+        name: Filename without extensions.
+
+    Returns:
+        str: Filename wuthout sequence number.
+
+    """
     n_shards = name.split("_")
     if str.isnumeric(n_shards[-1]):
         return "_".join(n_shards[:-1])
@@ -75,29 +85,30 @@ def sequence_nameget(name: str):
         return name
 
 
-def _filter_images(image_paths, option="static"):
-    """ Filter out image whether they are static images or animated images """
-    ipath_tuples = []
-    for path in image_paths:
-        name, ext = os.path.splitext(os.path.basename(path))
-        im = Image.open(path)
-        if type(im) is GifImageFile and im.n_frames > 1:
-            continue
-        apng = APNG.open(path)
-        if len(apng.frames) > 1:
-            continue
-        ipath_tuples.append((im, path))
-    return ipath_tuples
+# def filter_images(image_paths: List[Path], option: str = "static"):
+#     """ Filter out image whether they are static images or animated images """
+#     ipath_tuples = []
+#     for path in image_paths:
+#         # name = path.stem
+#         # ext = path.suffix
+#         im = Image.open(path)
+#         if type(im) is GifImageFile and im.n_frames > 1:
+#             continue
+#         apng = APNG.open(path)
+#         if len(apng.frames) > 1:
+#             continue
+#         ipath_tuples.append((im, path))
+#     return ipath_tuples
 
 
 # def _purge_cache():
-#     abs_cache_path = ABS_CACHE_PATH()
-#     _purge_directory(abs_cache_path)
+#     get_absolute_cache_path = get_absolute_cache_path()
+#     _purge_directory(get_absolute_cache_path)
 
 
 # def _purge_temp():
-#     abs_temp_path = ABS_TEMP_PATH()
-#     _purge_directory(abs_temp_path)
+#     get_absolute_temp_path = get_absolute_temp_path()
+#     _purge_directory(get_absolute_temp_path)
 
 
 def _purge_directory(target_folder):
@@ -113,7 +124,7 @@ def _purge_directory(target_folder):
             raise Exception(e)
 
 
-def _mk_temp_dir(prefix_name: str = '') -> Path:
+def _mk_temp_dir(prefix_name: str = "") -> Path:
     """Creates a directory for temporary storage inside cache/, and then returns its absolute path
 
     Args:
@@ -125,14 +136,15 @@ def _mk_temp_dir(prefix_name: str = '') -> Path:
     dirname = str(int(round(time.time() * 1000)))
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"
-    temp_dir = ABS_CACHE_PATH().joinpath(dirname)
+    temp_dir = get_absolute_cache_path().joinpath(dirname)
     # raise Exception(temp_dir, os.getcwd())
     Path.mkdir(temp_dir)
     return temp_dir
 
 
 def _unoptimize_gif(gif_path: Path, out_dir: Path, decoder: str) -> Path:
-    """Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for Splitting purposes. Returns the path of the unoptimized GIF
+    """Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for
+    Splitting purposes. Returns the path of the unoptimized GIF.
 
     Args:
         gif_path (Path): Path to GIF image
@@ -145,11 +157,24 @@ def _unoptimize_gif(gif_path: Path, out_dir: Path, decoder: str) -> Path:
     # raise Exception(gif_path, out_dir)
     unop_gif_save_path = out_dir.joinpath(gif_path.name)
     imager_path = imager_exec_path(decoder)
-    if decoder == 'imagemagick':
-        args = [str(imager_path), "-coalesce", f'"{gif_path}"', f'"{unop_gif_save_path}"']
-    elif decoder == 'gifsicle':
-        args = [str(imager_path), "-b", "--unoptimize", f'"{gif_path}"', "--output", f'"{unop_gif_save_path}"']
-    cmd = ' '.join(args)
+    args = []
+    if decoder == "imagemagick":
+        args = [
+            str(imager_path),
+            "-coalesce",
+            f'"{gif_path}"',
+            f'"{unop_gif_save_path}"',
+        ]
+    elif decoder == "gifsicle":
+        args = [
+            str(imager_path),
+            "-b",
+            "--unoptimize",
+            f'"{gif_path}"',
+            "--output",
+            f'"{unop_gif_save_path}"',
+        ]
+    cmd = " ".join(args)
     # print(cmd)
     subprocess.run(cmd, shell=True)
     return unop_gif_save_path
@@ -167,21 +192,23 @@ def _reduce_color(gif_path: Path, out_dir: Path, color: int = 256) -> Path:
         Path: Absolute path of the color-reduced GIF.
     """
     logger.message("Performing color reduction...")
-    gifsicle_path = imager_exec_path('gifsicle')
+    gifsicle_path = imager_exec_path("gifsicle")
     redux_gif_path = out_dir.joinpath(gif_path.name)
-    args = [str(gifsicle_path), f"--colors={color}", str(gif_path), "--output", str(redux_gif_path)]
-    cmd = ' '.join(args)
+    args = [
+        str(gifsicle_path),
+        f"--colors={color}",
+        str(gif_path),
+        "--output",
+        str(redux_gif_path),
+    ]
+    cmd = " ".join(args)
     subprocess.run(cmd, shell=True)
     return redux_gif_path
 
 
-def _convert_to_rgba(image_paths: List[str]):
-    pass
-
-
 def _delete_temp_images():
     # raise Exception(os.getcwd())
-    temp_dir = os.path.abspath('temp')
+    temp_dir = os.path.abspath("temp")
     # raise Exception(os.getcwd(), temp_dir)
     # raise Exception(image_name, path)
     # os.remove(path)
@@ -201,12 +228,12 @@ def get_image_delays(image_path: Path, extension: str) -> Iterator[float]:
     Yields:
         Iterator[float]: Image delays
     """
-    if extension == 'GIF':
+    if extension == "GIF":
         with Image.open(image_path) as gif:
             for i in range(0, gif.n_frames):
                 gif.seek(i)
-                yield gif.info['duration']
-    elif extension == 'PNG':
+                yield gif.info["duration"]
+    elif extension == "PNG":
         apng = APNG.open(image_path)
         for png, control in apng.frames:
             if control:
@@ -239,7 +266,8 @@ def generate_delay_file(image_path: Path, extension: str, out_folder: Path):
 
 
 # def _restore_disposed_frames(frame_paths: List[str]):
-#     """ Pastes the target_frame over the first_frame (applied when restoring GIF frames). Overrides every single frames on disk """
+#     """ Pastes the target_frame over the first_frame (applied when restoring GIF frames). Overrides every single
+#     frames on disk """
 #     im = Image.open(frame_paths[0])
 #     # im.transparency = 0
 #     im = im.convert("RGBA")
@@ -253,15 +281,16 @@ def generate_delay_file(image_path: Path, extension: str, out_folder: Path):
 #         # im.paste(frame)
 #         frame.save(f, "PNG")
 #         yield f"Coalescing frames... ({index + 1}/{len(frame_paths)})"
-    # yield '\n'.join(fm)
-    
+# yield '\n'.join(fm)
+
 
 def _log(message):
     return {"log": message}
-    
+
 
 def read_filesize(nbytes: int) -> str:
-    """Convert bytes into a human-readable file size notation using the biggest unit suffix in which the numerical value is equal or greater than 1
+    """Convert bytes into a human-readable file size notation using the biggest unit suffix in which the numerical
+    value is equal or greater than 1
 
     Args:
         nbytes (int): Amount of bytes
@@ -270,15 +299,15 @@ def read_filesize(nbytes: int) -> str:
         str: Human-readable file size
     """
     i = 0
-    while nbytes >= 1024 and i < len(size_suffixes)-1:
-        nbytes /= 1024.
+    while nbytes >= 1024 and i < len(SIZE_SUFFIXES) - 1:
+        nbytes /= 1024.0
         i += 1
-    size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
-    return f"{size} {size_suffixes[i]}"
+    size = str(round(nbytes, 3)).rstrip("0").rstrip(".")
+    return f"{size} {SIZE_SUFFIXES[i]}"
 
 
 def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:
-    """Returns a dictionary of indices for message logging, with the specified percentage skip. 
+    """Returns a dictionary of indices for message logging, with the specified percentage skip.
 
     Args:
         frame_count (int): Number of image frames.
@@ -292,7 +321,6 @@ def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:
     mults = 100 // percentage_mult
     return {round(frame_count / mults * mult): f"{mult * percentage_mult}%" for mult in range(0, mults)}
 
-        
 
 # def gs_build():
 #     gifsicle_exec = os.path.abspath("./bin/gifsicle-1.92-win64/gifsicle.exe")
@@ -301,7 +329,7 @@ def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:
 #     out_dir = os.path.abspath('./test/')
 #     criteria = CreationCriteria(fps=50, extension='gif', transparent=True, reverse=False)
 #     create_aimg(images, out_dir, "sicle_test", criteria)
-    
+
 
 # def gs_split(gif_path: str, out_dir: str):
 #     criteria = SplitCriteria(pad_count=3, is_duration_sensitive=False)
@@ -312,21 +340,21 @@ def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:
 # if __name__ == "__main__":
 #     gs_build()
 
-def unbuffered_process(proc, stream='stdout'):
-    newlines = ['\n', '\r\n', '\r']
-    stream = getattr(proc, stream)
-    with contextlib.closing(stream):
-        while True:
-            out = []
-            last = stream.read(1)
-            # Don't loop forever
-            if last == '' and proc.poll() is not None:
-                break
-            while last not in newlines:
-                # Don't loop forever
-                if last == '' and proc.poll() is not None:
-                    break
-                out.append(last)
-                last = stream.read(1)
-            out = ''.join(out)
-            yield out
+# def unbuffered_process(proc, stream='stdout'):
+#     newlines = ['\n', '\r\n', '\r']
+#     stream = getattr(proc, stream)
+#     with contextlib.closing(stream):
+#         while True:
+#             out = []
+#             last = stream.read(1)
+#             # Don't loop forever
+#             if last == '' and proc.poll() is not None:
+#                 break
+#             while last not in newlines:
+#                 # Don't loop forever
+#                 if last == '' and proc.poll() is not None:
+#                     break
+#                 out.append(last)
+#                 last = stream.read(1)
+#             out = ''.join(out)
+#             yield out

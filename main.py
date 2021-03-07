@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 
-IS_FROZEN = getattr(sys, 'frozen', False)
+IS_FROZEN = getattr(sys, "frozen", False)
 if IS_FROZEN:
     frozen_dir = Path(sys.executable).resolve().parents[0]
     # print(json.dumps({"msg": f"Detected frozen dir: {frozen_dir}"}))
@@ -13,25 +13,31 @@ if IS_FROZEN:
 
 from pycore.core_funcs import logger
 from pycore.core_funcs import exception
-
-
-import random
-import string
 from typing import Dict, List
-import signal
-import time
-
 from pycore.inspect_ops import inspect_sequence, inspect_general, _inspect_smart
 from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
 from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
-from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
-from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
-from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
+from pycore.core_funcs.criterion import (
+    CriteriaBundle,
+    CreationCriteria,
+    SplitCriteria,
+    ModificationCriteria,
+    SpritesheetBuildCriteria,
+    SpritesheetSliceCriteria,
+    GIFOptimizationCriteria,
+    APNGOptimizationCriteria,
+)
+from pycore.core_funcs.utility import (
+    _purge_directory,
+    util_generator,
+    util_generator_shallow,
+)
+from pycore.core_funcs.config import get_absolute_cache_path, get_absolute_temp_path
 
 
-class TridentFrameImager():
+class TridentFrameImager:
     def echo(self, msg):
         print(msg)
         return f"{msg} echoed"
@@ -43,7 +49,7 @@ class TridentFrameImager():
         else:
             print(stdin_data)
 
-    def inspect_one(self, image_path: str, filter: str=""):
+    def inspect_one(self, image_path: str, filter: str = ""):
         """Inspect a single image and then return its information"""
         image_path = Path(image_path).resolve()
         if not image_path.exists():
@@ -53,8 +59,8 @@ class TridentFrameImager():
             logger.data(info)
 
     def inspect_many(self, image_paths: List[str]):
-        """ Inspect a sequence of images and then return their information.
-            Intermediary buffer file is used to avoid char limit of command lines
+        """Inspect a sequence of images and then return their information.
+        Intermediary buffer file is used to avoid char limit of command lines
         """
         resolved_paths = []
         for ipath in image_paths:
@@ -90,21 +96,23 @@ class TridentFrameImager():
             raise Exception("Please choose the output folder!")
         resolved_paths = []
         for ipath in image_paths:
-            cpath = Path(ipath).resolve()
-            if cpath.exists():
-                resolved_paths.append(cpath)
+            resolved_path = Path(ipath).resolve()
+            if resolved_path.exists():
+                resolved_paths.append(resolved_path)
         missing_paths = set(image_paths) - set((str(rp) for rp in resolved_paths))
         out_dir = Path(out_dir).resolve()
         if len(missing_paths) == len(image_paths):
             raise FileNotFoundError("All of the image sequences are missing! Check if they are not moved/deleted")
         if not out_dir.exists():
             raise FileNotFoundError(out_dir)
-        crbundle = CriteriaBundle({
-            "create_aimg_criteria": CreationCriteria(criteria_pack['criteria']),
-            "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack['gif_opt_criteria']),
-            "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack['apng_opt_criteria'])
-        })
-        out_path = create_aimg(resolved_paths, out_dir, criteria_pack['criteria']['name'], crbundle)
+        crbundle = CriteriaBundle(
+            {
+                "create_aimg_criteria": CreationCriteria(criteria_pack["criteria"]),
+                "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
+                "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
+            }
+        )
+        out_path = create_aimg(resolved_paths, out_dir, criteria_pack["criteria"]["name"], crbundle)
         if out_path:
             logger.data(str(out_path))
         if len(missing_paths) > 0:
@@ -126,7 +134,7 @@ class TridentFrameImager():
         if not out_dir.exists():
             raise FileNotFoundError(out_dir)
         criteria = SplitCriteria(criteria_vals)
-        img_sequence = split_aimg(image_path, out_dir, criteria)
+        split_aimg(image_path, out_dir, criteria)
         return
 
     def modify_image(self, image_path, out_dir, criteria_pack):
@@ -137,16 +145,17 @@ class TridentFrameImager():
             raise Exception("Please load a GIF or APNG!")
         elif not out_dir:
             raise Exception("Please choose an output folder!")
-        crbundle = CriteriaBundle({
-            'modify_aimg': ModificationCriteria(criteria_pack['criteria']),
-            'gif_opt': GIFOptimizationCriteria(criteria_pack['gif_opt']),
-            'apng_opt': APNGOptimizationCriteria(criteria_pack['apng_opt']),
-        })
+        crbundle = CriteriaBundle(
+            {
+                "modify_aimg": ModificationCriteria(criteria_pack["criteria"]),
+                "gif_opt": GIFOptimizationCriteria(criteria_pack["gif_opt"]),
+                "apng_opt": APNGOptimizationCriteria(criteria_pack["apng_opt"]),
+            }
+        )
         return modify_aimg(image_path, out_dir, crbundle)
 
     def build_spritesheet(self, image_paths, out_dir, filename, vals: dict):
         """Build a spritesheet using the specified sequence of images"""
-    # def build_spritesheet(self, image_paths, input_mode, out_dir, filename, width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha):
         if not image_paths and not out_dir:
             raise Exception("Please load the images and choose the output folder!")
         elif not image_paths:
@@ -171,21 +180,21 @@ class TridentFrameImager():
 
     def purge_cache_temp(self):
         """Remove cache and temp directories"""
-        _purge_directory(ABS_TEMP_PATH())
-        _purge_directory(ABS_CACHE_PATH())
+        _purge_directory(get_absolute_temp_path())
+        _purge_directory(get_absolute_cache_path())
         return "Cache and temp evaporated"
 
     def test_generator(self):
         return util_generator()
 
-        
+
 def print_cwd():
     """Dev method for displaying python cwd"""
     msg = {
         "os.getcwd()": os.getcwd(),
         "sys.executable": sys.executable,
         "__file__": __file__,
-        "IS_FROZEN": IS_FROZEN
+        "IS_FROZEN": IS_FROZEN,
     }
     return msg
 
@@ -208,18 +217,18 @@ def main():
             logger.message(str(e))
         if not data:
             raise Exception("No data received from stdin!")
-        pyimager = TridentFrameImager()   
+        pyimager = TridentFrameImager()
         try:
-            method = getattr(pyimager, data['command'])
+            method = getattr(pyimager, data["command"])
         except AttributeError:
             errmsg = f"Method {data['command']} not implemented"
             raise NotImplementedError(errmsg)
-        globalvar_overrides = data.get('globalvar_overrides', False)
+        globalvar_overrides = data.get("globalvar_overrides", None)
         if globalvar_overrides:
-            debug = globalvar_overrides.get('debug', None)
-            if debug != None:
+            debug = globalvar_overrides.get("debug", None)
+            if debug is not None:
                 exception.set_exception_handler(debug)
-        args = data['args']
+        args = data["args"]
         method(*args)
 
 

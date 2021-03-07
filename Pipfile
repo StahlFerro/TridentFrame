@@ -8,6 +8,11 @@ pyinstaller = "*"
 apng = "*"
 pillow = "*"
 pywin32 = {version = "*", sys_platform = "== 'win32'"}
+black = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true

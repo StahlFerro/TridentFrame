@@ -18,21 +18,21 @@ hash_info = []
 os_name = ""
 with open(PACKAGEJSON_FILE, "r") as jsonfile:
     package_json = json.load(jsonfile)
-build_info = package_json['build']
-VERSION = package_json['version']
+build_info = package_json["build"]
+VERSION = package_json["version"]
 
 os_name = platform.system()
-if os_name == 'Windows':
-    targets = build_info['win']['target']
+if os_name == "Windows":
+    targets = build_info["win"]["target"]
     scribe_texts.append(f"- Windows 7 SP1, 10 (64bit)")
-elif os_name == 'Linux':
-    targets = build_info['linux']['target']
+elif os_name == "Linux":
+    targets = build_info["linux"]["target"]
     scribe_texts.append(f"- Ubuntu 18.04 LTS (64bit)")
 release_files = [RELEASES_DIR.joinpath(diritem) for diritem in RELEASES_DIR.glob("*") if Path.is_file(diritem)]
 for target in targets:
     release_file = next((r for r in release_files if target == r.suffix[1:]), None)
     sha256_hash = hashlib.sha256()
-    hash_obj = ''
+    hash_obj = ""
     if release_file:
         with open(release_file, "rb") as f:
             for byte_block in iter(lambda: f.read(4096), b""):

@@ -3,17 +3,18 @@ import os
 import pty
 import select
 import signal
-import subprocess
+
+# import subprocess
 from . import logger
 
 # Set signal handler for SIGINT.
-signal.signal(signal.SIGINT, lambda s,f: print("received SIGINT"))
+signal.signal(signal.SIGINT, lambda s, f: print("received SIGINT"))
 
 
-def unbuffered_Popen(cmd):
+def unbuffered_popen(cmd):
     out_r, out_w = pty.openpty()
     err_r, err_w = pty.openpty()
-    process = subprocess.Popen(cmd, stdout=out_w, stderr=out_w)
+    # process = subprocess.Popen(cmd, stdout=out_w, stderr=out_w)
     os.close(out_w)
     os.close(err_w)
     fds = {OutStream(out_r), OutStream(err_r)}
@@ -44,11 +45,11 @@ class OutStream:
         try:
             output = os.read(self._fileno, 1000)
         except OSError as e:
-            if e.errno != errno.EIO: raise
+            if e.errno != errno.EIO:
+                raise Exception(e)
             output = b""
         lines = output.split(b"\n")
-        lines[0] = self._buffer + lines[0] # prepend previous
-                                           # non-finished line.
+        lines[0] = self._buffer + lines[0]  # prepend previousnon-finished line.
         if output:
             self._buffer = lines[-1]
             finished_lines = lines[:-1]
@@ -60,8 +61,7 @@ class OutStream:
                 lines = []
             finished_lines = lines
             readable = False
-        finished_lines = [line.rstrip(b"\r").decode()
-                          for line in finished_lines]
+        finished_lines = [line.rstrip(b"\r").decode() for line in finished_lines]
         return finished_lines, readable
 
     def fileno(self):

@@ -1,50 +1,56 @@
 import os
 import io
-import string
-import shutil
-import math
-import time
 import subprocess
-import tempfile
-import json
 from pathlib import Path
-from random import choices
-from pprint import pprint
-from urllib.parse import urlparse
-from typing import List, Dict, Tuple
-from datetime import datetime
 from copy import deepcopy
 from heapq import nsmallest
-from typing import Iterator, List, Tuple, Dict
+from typing import List, Tuple
 
-from PIL import Image, ImageChops
-from PIL.GifImagePlugin import GifImageFile
-from apng import APNG, PNG
+from PIL import Image
+from apng import APNG
 
 from .bin_funcs.imager_api import apngdis_split
-from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS, ABS_CACHE_PATH, imager_exec_path
+from .core_funcs.config import (
+    ANIMATED_IMG_EXTS,
+    imager_exec_path,
+)
 from .core_funcs.criterion import SplitCriteria
-from .core_funcs.utility import _mk_temp_dir, _reduce_color, _unoptimize_gif, _log, shout_indices, generate_delay_file
+from .core_funcs.utility import (
+    _mk_temp_dir,
+    _reduce_color,
+    _unoptimize_gif,
+    shout_indices,
+    generate_delay_file,
+)
 from .core_funcs import logger
 
 
-def _get_aimg_delay_ratios(aimg_path: str, aimg_type: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
-    """ Returns a list of dual-valued tuples, first value being the frame numbers of the GIF, second being the ratio of the frame's delay to the lowest delay"""
+def _get_aimg_delay_ratios(aimg_path: Path, aimg_type: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
+    """Returns a list of dual-valued tuples, first value being the frame numbers of the GIF, second being the ratio
+    of the frame's delay to the lowest delay
+    Args:
+        aimg_path: Path to the animated image.
+        aimg_type: Animated image type.
+        duration_sensitive:
+
+    Returns:
+
+    """
     indexed_ratios = []
-    if aimg_type == 'GIF':
+    if aimg_type == "GIF":
         with Image.open(aimg_path) as gif:
             indices = list(range(0, gif.n_frames))
             delays = []
             for i in indices:
                 gif.seek(i)
-                delays.append(gif.info['duration'])
+                delays.append(gif.info["duration"])
             min_delays = min(delays)
             if duration_sensitive:
-                ratios = [d//min_delays for d in delays]
+                ratios = [d // min_delays for d in delays]
             else:
                 ratios = [1 for d in delays]
             indexed_ratios.extend(list(zip(indices, ratios)))
-    elif aimg_type == 'PNG':
+    elif aimg_type == "PNG":
         frames = APNG.open(aimg_path).frames
         indices = list(range(0, len(frames)))
         # Get the delay of every frames. Set zero if frame control chunk f[1] is None (this may occur in some APNGs)
@@ -58,12 +64,11 @@ def _get_aimg_delay_ratios(aimg_path: str, aimg_type: str, duration_sensitive: b
             # raise Exception(actual_min, list(delays))
         min_delays = min(delays)
         if duration_sensitive:
-            ratios = [d//min_delays for d in delays]
+            ratios = [d // min_delays for d in delays]
         else:
             ratios = [1 for d in delays]
         indexed_ratios.extend(list(zip(indices, ratios)))
     return indexed_ratios
-
 
 
 # def _pillow_fragment_gif_frames(unop_gif_path: str, out_dir: str, criteria: SplitCriteria):
@@ -83,6 +88,7 @@ def _get_aimg_delay_ratios(aimg_path: str, aimg_type: str, duration_sensitive: b
 #             gif.save(save_path, "PNG")
 #             sequence += 1
 
+
 def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria) -> List[Image.Image]:
     """
     Split GIF frames and return them as a list of PIL.Image.Images using Gifsicle based on the specified criteria
@@ -90,7 +96,7 @@ def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria
     Args:
         unop_gif_path (Path): Path to unoptimized GIF
         name (str): New name of the sequence
-        criteria (SplitCriteria): Criteria 
+        criteria (SplitCriteria): Criteria
 
     Returns:
         List[Image.Image]: List of the split images as Pillow Image
@@ -100,26 +106,35 @@ def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria
     indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
     total_frames = sum([ir[1] for ir in indexed_ratios])
     cumulative_index = 0
-    gifsicle_path = imager_exec_path('gifsicle')
+    gifsicle_path = imager_exec_path("gifsicle")
     shout_nums = shout_indices(total_frames, 5)
     for index, ratio in indexed_ratios:
         if shout_nums.get(cumulative_index):
-            logger.message(f'Splitting frames... ({shout_nums.get(index)})')
+            logger.message(f"Splitting frames... ({shout_nums.get(index)})")
         selector = f'"#{index}"'
         for n in range(0, ratio):
             logger.message(f"Splitting GIF... ({cumulative_index + 1}/{total_frames})")
-            dir_path = os.path.join(fragment_dir, f'{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png')
-            args = [str(gifsicle_path), f'"{unop_gif_path}"', selector, "--output", f'"{dir_path}"']
-            cmd = ' '.join(args)
+            dir_path = os.path.join(
+                fragment_dir,
+                f"{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png",
+            )
+            args = [
+                str(gifsicle_path),
+                f'"{unop_gif_path}"',
+                selector,
+                "--output",
+                f'"{dir_path}"',
+            ]
+            cmd = " ".join(args)
             subprocess.run(cmd, shell=True)
             cumulative_index += 1
             with Image.open(dir_path).convert("RGBA") as im:
-            # if gif.info.get('transparency'):
-            #     yield {"msg": "Palette has transparency"}
-            #     gif = gif.convert('RGBA')
-            # else:
-            #     yield {"msg": "Palette has no transparency"}
-            #     gif = gif.convert('RGB')
+                # if gif.info.get('transparency'):
+                #     yield {"msg": "Palette has transparency"}
+                #     gif = gif.convert('RGBA')
+                # else:
+                #     yield {"msg": "Palette has no transparency"}
+                #     gif = gif.convert('RGB')
                 frames.append(im)
     # shutil.rmtree(fragment_dir)
     return frames
@@ -160,12 +175,11 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     #     new = gif.convert("RGBA")
     #     new.show()
 
-        # with io.BytesIO() as bytebox:
-        #     gif.save(bytebox, "GIF")
-        #     yield {"bytebox": bytebox.getvalue()}
-        # yield {"GIFINFO": [f"{d} {getattr(gif, d, '')}" for d in gif.__dir__()]}
+    # with io.BytesIO() as bytebox:
+    #     gif.save(bytebox, "GIF")
+    #     yield {"bytebox": bytebox.getvalue()}
+    # yield {"GIFINFO": [f"{d} {getattr(gif, d, '')}" for d in gif.__dir__()]}
     # ===== End test splitting code =====
-
 
     if criteria.is_unoptimized:
         logger.message("Unoptimizing GIF...")
@@ -176,8 +190,8 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
-            logger.message(f'Saving frames... ({shout_nums.get(index)})')
-        save_path = os.path.join(out_dir, f'{save_name}_{str.zfill(str(index), criteria.pad_count)}.png')
+            logger.message(f"Saving frames... ({shout_nums.get(index)})")
+        save_path = os.path.join(out_dir, f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
         fr.save(save_path, "PNG")
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
@@ -196,8 +210,8 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
     Returns:
         List[Image.Image]: List of APNG's image frames, each as a Pillow Image
     """
-# def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
-#     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
+    # def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
+    #     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
     frames = []
     indexed_ratios = _get_aimg_delay_ratios(apng_path, "PNG", duration_sensitive=criteria.is_duration_sensitive)
     logger.message(list(indexed_ratios))
@@ -229,12 +243,12 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
         width = iframes[0][0].width
         height = iframes[0][0].height
         base_alpha = Image.new("RGBA", (width, height))
-        output_buffer = Image.new('RGBA', base_stack_image.size)
+        output_buffer = Image.new("RGBA", base_stack_image.size)
         for index, (png, control) in enumerate(iframes):
             # if control:
             #     out_control(control.__dict__)
             if shout_nums.get(index):
-                logger.message(f'Splitting APNG... ({shout_nums.get(index)})')
+                logger.message(f"Splitting APNG... ({shout_nums.get(index)})")
             with io.BytesIO() as bytebox:
                 png.save(bytebox)
                 with Image.open(bytebox).convert("RGBA") as im:
@@ -252,56 +266,61 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
                     #         separate_buffer = output_buffer.copy()
                     #         separate_buffer.alpha_composite(im, (control.x_offset, control.y_offset))
                     #         frames.append(separate_buffer.copy())
-                        # OLD ALGORITHM 2
-                        # if not control or (control and control.blend_op == 0 and control.depose_op != 1):
-                        #     yield {"MSG": "control blend 0, full overwrite"}
-                        #     if im.size != base_stack_image.size:
-                        #         alpha_pad = Image.new("RGBA", base_stack_image.size)
-                        #         alpha_pad.alpha_composite(im, (control.x_offset if control else 0, control.y_offset if control else 0))
-                        #         frames.append(alpha_pad.copy())
-                        #     else:
-                        #         frames.append(im)
-                        # if control and (control.blend_op == 1 or control.depose_op == 1):
-                        #     yield {"MSG": "control blend 1, managing..."}
-                        #     if control.depose_op in [0, 1]:
-                        #         base_stack_image.paste(im, (control.x_offset if control else 0, control.y_offset if control else 0), im)
-                        #         frames.append(base_stack_image.copy())
-                        #     elif control.depose_op == 2:
-                        #         temp_stack = base_stack_image.copy()
-                        #         temp_stack.paste(im, (control.x_offset if control else 0, control.y_offset if control else 0), im)
-                        #         frames.append(temp_stack.copy())
+                    # OLD ALGORITHM 2
+                    # if not control or (control and control.blend_op == 0 and control.depose_op != 1):
+                    #     yield {"MSG": "control blend 0, full overwrite"}
+                    #     if im.size != base_stack_image.size:
+                    #         alpha_pad = Image.new("RGBA", base_stack_image.size)
+                    #         alpha_pad.alpha_composite(im, (control.x_offset if control else 0, control.y_offset
+                    #         if control else 0))
+                    #         frames.append(alpha_pad.copy())
+                    #     else:
+                    #         frames.append(im)
+                    # if control and (control.blend_op == 1 or control.depose_op == 1):
+                    #     yield {"MSG": "control blend 1, managing..."}
+                    #     if control.depose_op in [0, 1]:
+                    #         base_stack_image.paste(im, (control.x_offset if control else 0, control.y_offset
+                    #         if control else 0), im)
+                    #         frames.append(base_stack_image.copy())
+                    #     elif control.depose_op == 2:
+                    #         temp_stack = base_stack_image.copy()
+                    #         temp_stack.paste(im, (control.x_offset if control else 0, control.y_offset if control
+                    #         else 0), im)
+                    #         frames.append(temp_stack.copy())
 
-                        # OLD Algorithm
-                        # # im = im.convert("RGBA")
-                        # # yield {"CONTROL": control.depose_op}
-                        # if rerender:
-                        #     newplain = Image.new("RGBA", base_stack_image.size)
-                        #     newplain.paste(im, (control.x_offset, control.y_offset), im)
-                        #     frames.append(newplain.copy())
-                        #     rerender = False
-                        # else:
-                        #     if control and (control.depose_op == 2 or control.depose_op == 1):
-                        #         separate_stack = base_stack_image.copy()
-                        #         separate_stack.paste(im, (control.x_offset, control.y_offset), im)
-                        #         frames.append(separate_stack.copy())
-                        #         if index == 0 and control.depose_op == 1:
-                        #             rerender = True
-                        #         # separate_stack.show()
-                        #     # elif control.depose_op == 1:
-                        #     #     frames.append(im.copy())
-                        #     elif not control or control.depose_op == 0:
-                        #         base_stack_image.paste(im, (control.x_offset if control else 0, control.y_offset if control else 0), im)
-                        #         frames.append(base_stack_image.copy())
-                        #     # base_stack_image.show()
+                    # OLD Algorithm
+                    # # im = im.convert("RGBA")
+                    # # yield {"CONTROL": control.depose_op}
+                    # if rerender:
+                    #     newplain = Image.new("RGBA", base_stack_image.size)
+                    #     newplain.paste(im, (control.x_offset, control.y_offset), im)
+                    #     frames.append(newplain.copy())
+                    #     rerender = False
+                    # else:
+                    #     if control and (control.depose_op == 2 or control.depose_op == 1):
+                    #         separate_stack = base_stack_image.copy()
+                    #         separate_stack.paste(im, (control.x_offset, control.y_offset), im)
+                    #         frames.append(separate_stack.copy())
+                    #         if index == 0 and control.depose_op == 1:
+                    #             rerender = True
+                    #         # separate_stack.show()
+                    #     # elif control.depose_op == 1:
+                    #     #     frames.append(im.copy())
+                    #     elif not control or control.depose_op == 0:
+                    #         base_stack_image.paste(im, (control.x_offset if control else 0, control.y_offset if
+                    #         control else 0), im)
+                    #         frames.append(base_stack_image.copy())
+                    #     # base_stack_image.show()
                     # else:
                     frames.append(im)
                     # if control:
-                    #     depose_blend_ops.append(f"blend: {control.blend_op}, depose: {control.depose_op}, x_off: {control.x_offset}, y_off: {control.y_offset}")
+                    #     depose_blend_ops.append(f"blend: {control.blend_op}, depose: {control.depose_op}, x_off:
+                    #     {control.x_offset}, y_off: {control.y_offset}")
                     # else:
                     #     depose_blend_ops.append("NO CONTROL")
         # for fr in frames:
         #     fr.show()
-        logger.message(depose_blend_ops)
+        logger.message(str(depose_blend_ops))
     if not all(ratio == 1 for index, ratio in indexed_ratios):
         logger.message("REORDER RATIOS")
         rationed_frames = []
@@ -311,6 +330,7 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
         frames = deepcopy(rationed_frames)
         del rationed_frames
     return frames
+
 
 # def generate_delay_file()
 
@@ -368,8 +388,6 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
 #     return frames
 
 
-
-
 def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriteria) -> List[Path]:
     """Extracts all of the frames of an animated PNG into a folder
 
@@ -389,8 +407,8 @@ def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriter
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
-            logger.message(f'Saving split frames... ({shout_nums.get(index)})')
-        save_path = os.path.join(out_dir, f"{save_name}_{str.zfill(str(index), pad_count)}.png")
+            logger.message(f"Saving split frames... ({shout_nums.get(index)})")
+        save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
@@ -425,17 +443,18 @@ def split_aimg(image_path: Path, out_dir: Path, criteria: SplitCriteria) -> List
     ext = str.lower(ext[1:])
     # raise Exception(fname, ext)
     if ext not in ANIMATED_IMG_EXTS:
-        raise Exception('Only supported extensions are .gif and .png (for APNG)')
-    if ext == 'gif':
+        raise Exception("Only supported extensions are .gif and .png (for APNG)")
+    if ext == "gif":
         frame_paths = _split_gif(image_path, out_dir, criteria)
-    elif ext == 'png':
+    elif ext == "png":
         frame_paths = _split_apng(image_path, out_dir, name, criteria)
     logger.control("SPL_FINISH")
     return frame_paths
 
+
 # if __name__ == "__main__":
 #     pprint(inspect_sequence(""))
 
-    # gs_split("./test/blobsekiro.gif", "./test/sequence/")
-    # test()
-    # _unoptimize_gif("./test/blobkiro.gif")
+# gs_split("./test/blobsekiro.gif", "./test/sequence/")
+# test()
+# _unoptimize_gif("./test/blobkiro.gif")

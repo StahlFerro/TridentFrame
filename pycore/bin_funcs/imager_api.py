@@ -11,10 +11,16 @@ from typing import Generator, List, Tuple, Iterator
 from PIL import Image
 from apng import APNG
 
-from ..core_funcs.utility import _mk_temp_dir, imager_exec_path, shout_indices, unbuffered_process
-from ..core_funcs.criterion import CriteriaBundle, APNGOptimizationCriteria, ModificationCriteria, GIFOptimizationCriteria
+from ..core_funcs.utility import _mk_temp_dir, imager_exec_path, shout_indices
+from ..core_funcs.criterion import (
+    CriteriaBundle,
+    APNGOptimizationCriteria,
+    ModificationCriteria,
+    GIFOptimizationCriteria,
+)
 from ..core_funcs import logger
 from ..core_funcs.exception import MalformedCommandException
+
 # from ..core_funcs.io_streaming import unbuffered_Popen
 
 
@@ -32,7 +38,7 @@ class GifsicleAPI:
         Returns:
             List[str]: List with the first element being the gifsicle executable path, with the following elements being its needed arguments.
         """
-        gifsicle_path = imager_exec_path('gifsicle')
+        gifsicle_path = imager_exec_path("gifsicle")
         criteria = crbundle.create_aimg_criteria
         gif_opt_criteria = crbundle.gif_opt_criteria
         delay = int(criteria.delay * 100)
@@ -41,11 +47,11 @@ class GifsicleAPI:
         opti_mode = "--unoptimize"
         colorspace_arg = ""
         lossy_arg = ""
-        if (not criteria.loop_count or criteria.loop_count == 0):
+        if not criteria.loop_count or criteria.loop_count == 0:
             loop_arg = "--loopcount"
-        elif (criteria.loop_count == 1):
+        elif criteria.loop_count == 1:
             loop_arg = "--no-loopcount"
-        elif (criteria.loop_count > 1):
+        elif criteria.loop_count > 1:
             loop_arg = f"--loopcount={criteria.loop_count - 1}"
         globstar_path = "*.gif"
         if gif_opt_criteria:
@@ -56,14 +62,26 @@ class GifsicleAPI:
             if gif_opt_criteria.is_reduced_color and gif_opt_criteria.color_space:
                 colorspace_arg = f"--colors={gif_opt_criteria.color_space}"
 
-        args = [str(gifsicle_path), opti_mode, lossy_arg, colorspace_arg, f"--delay={delay}", f"--disposal={disposal}", 
-            loop_arg, globstar_path, "--output", f'"{out_full_path}"']
-        if ';' in " ".join(args):
+        args = [
+            str(gifsicle_path),
+            opti_mode,
+            lossy_arg,
+            colorspace_arg,
+            f"--delay={delay}",
+            f"--disposal={disposal}",
+            loop_arg,
+            globstar_path,
+            "--output",
+            f'"{out_full_path}"',
+        ]
+        if ";" in " ".join(args):
             raise MalformedCommandException("gifsicle")
         return args
 
     @classmethod
-    def _mod_args_builder(cls, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria) -> List[Tuple[str, str]]:
+    def _mod_args_builder(
+        cls, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria
+    ) -> List[Tuple[str, str]]:
         """Get a list of gifsicle arguments from either ModificationCriteria, or GIFOptimizationCriteria
 
         Args:
@@ -77,13 +95,33 @@ class GifsicleAPI:
         if criteria.must_resize():
             args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
         if criteria.orig_delay != criteria.delay:
-            args.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
+            args.append(
+                (
+                    f"--delay={int(criteria.delay * 100)}",
+                    f"Setting per-frame delay to {criteria.delay}",
+                )
+            )
         if gif_criteria.is_optimized and gif_criteria.optimization_level:
-            args.append((f"--optimize={gif_criteria.optimization_level}", f"Optimizing image with level {gif_criteria.optimization_level}..."))
+            args.append(
+                (
+                    f"--optimize={gif_criteria.optimization_level}",
+                    f"Optimizing image with level {gif_criteria.optimization_level}...",
+                )
+            )
         if gif_criteria.is_lossy and gif_criteria.lossy_value:
-            args.append((f"--lossy={gif_criteria.lossy_value}", f"Lossy compressing with value: {gif_criteria.lossy_value}..."))
+            args.append(
+                (
+                    f"--lossy={gif_criteria.lossy_value}",
+                    f"Lossy compressing with value: {gif_criteria.lossy_value}...",
+                )
+            )
         if gif_criteria.is_reduced_color and gif_criteria.color_space:
-            args.append((f"--colors={gif_criteria.color_space}", f"Reducing colors to: {gif_criteria.color_space}..."))
+            args.append(
+                (
+                    f"--colors={gif_criteria.color_space}",
+                    f"Reducing colors to: {gif_criteria.color_space}...",
+                )
+            )
         # if criteria.flip_x:
         #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
         # if criteria.flip_y:
@@ -91,12 +129,12 @@ class GifsicleAPI:
         if criteria.orig_loop_count != criteria.loop_count:
             loop_count = criteria.loop_count
             loop_arg = "--loopcount"
-            if (not loop_count or loop_count == 0):
+            if not loop_count or loop_count == 0:
                 loop_arg = "--loopcount"
-            elif (loop_count == 1):
-                loop_arg = '--no-loopcount'
-            elif (loop_count > 1):
-                loop_arg = f'--loopcount={loop_count - 1}'
+            elif loop_count == 1:
+                loop_arg = "--no-loopcount"
+            elif loop_count > 1:
+                loop_arg = f"--loopcount={loop_count - 1}"
             args.append((loop_arg, f"Changing loop count to {loop_count or 'Infinite'}..."))
         return args
 
@@ -117,11 +155,11 @@ class GifsicleAPI:
         if os.getcwd() != gifragment_dir:
             logger.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")
             os.chdir(gifragment_dir)
-        cmd = ' '.join(args)
+        cmd = " ".join(args)
         logger.message("Combining frames...")
         result = subprocess.run(cmd, shell=True, capture_output=True)
-        stdout_res = result.stdout.decode('utf-8')
-        stderr_res = result.stderr.decode('utf-8')
+        stdout_res = result.stdout.decode("utf-8")
+        stderr_res = result.stderr.decode("utf-8")
         logger.message(stdout_res)
         logger.error(stderr_res)
         os.chdir(ROOT_PATH)
@@ -142,17 +180,24 @@ class GifsicleAPI:
         """
         sicle_args = cls._mod_args_builder(crbundle.modify_aimg_criteria, crbundle.gif_opt_criteria)
         # yield {"sicle_args": sicle_args}
-        gifsicle_path = imager_exec_path('gifsicle')
+        gifsicle_path = imager_exec_path("gifsicle")
         for index, (arg, description) in enumerate(sicle_args, start=1):
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-            cmdlist = [str(gifsicle_path), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
-            cmd = ' '.join(cmdlist)
+            cmdlist = [
+                str(gifsicle_path),
+                arg,
+                f'"{target_path}"',
+                "--output",
+                f'"{out_full_path}"',
+            ]
+            cmd = " ".join(cmdlist)
             # yield {"msg": f"[{index}/{total_ops}] {description}"}
             # yield {"cmd": cmd}
             subprocess.run(cmd)
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
+
 
 class ImageMagickAPI:
     @classmethod
@@ -188,11 +233,17 @@ class ImageMagickAPI:
         """
         magick_args = cls._mod_args_builder(crbundle.gif_opt_criteria)
         # yield {"magick_args": magick_args}
-        imagemagick_path = imager_exec_path('imagemagick')
+        imagemagick_path = imager_exec_path("imagemagick")
         for index, (arg, description) in enumerate(magick_args, start=1):
             logger.message(f"index {index}, arg {arg}, description: {description}")
-            cmdlist = [str(imagemagick_path), arg, f'"{target_path}"', "--output", f'"{out_full_path}"']
-            cmd = ' '.join(cmdlist)
+            cmdlist = [
+                str(imagemagick_path),
+                arg,
+                f'"{target_path}"',
+                "--output",
+                f'"{out_full_path}"',
+            ]
+            cmd = " ".join(cmdlist)
             # logger.message(f"[{shift_index + index}/{total_ops}] {description}")
             # yield {"cmd": cmd}
             subprocess.run(cmd)
@@ -209,7 +260,6 @@ class APNGDisAPI:
 
 
 class APNGOptAPI:
-
     @classmethod
     def _opt_args_builder(cls, apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
         """Get a list apngopt arguments from an APNGOptimizationCriteria
@@ -222,17 +272,27 @@ class APNGOptAPI:
         """
         args = []
         if apngopt_criteria.is_optimized:
-            args.append((f'-z{apngopt_criteria.optimization_level - 1}', f'Optimizing APNG with level {apngopt_criteria.optimization_level} compression...'))
+            args.append(
+                (
+                    f"-z{apngopt_criteria.optimization_level - 1}",
+                    f"Optimizing APNG with level {apngopt_criteria.optimization_level} compression...",
+                )
+            )
         return args
 
     @classmethod
-    def optimize_apng(cls, target_path: Path, out_full_path: Path, apngopt_criteria: APNGOptimizationCriteria) -> Path:
+    def optimize_apng(
+        cls,
+        target_path: Path,
+        out_full_path: Path,
+        apngopt_criteria: APNGOptimizationCriteria,
+    ) -> Path:
         """Use apngopt to optimize an APNG. Returns the output path
 
         Args:
             aopt_args (List[Tuple[str, str]]): apngopt arguments
             target_path (Path): Target path of the animated image to be optimized
-            out_full_path (Path): Destination output path to save the optimized image to 
+            out_full_path (Path): Destination output path to save the optimized image to
             total_ops (int, optional): UNUSED. Defaults to 0.
             shift_index (int, optional): UNUSED. Defaults to 0.
 
@@ -240,8 +300,8 @@ class APNGOptAPI:
             Path: [description]
         """
         aopt_args = cls._opt_args_builder(apngopt_criteria)
-        aopt_dir = _mk_temp_dir(prefix_name='apngopt_dir')
-        opt_exec_path = imager_exec_path('apngopt')
+        aopt_dir = _mk_temp_dir(prefix_name="apngopt_dir")
+        opt_exec_path = imager_exec_path("apngopt")
         filename = target_path.name
         aopt_temp_path = aopt_dir.joinpath(filename)
         logger.message(f"COPY FROM {target_path} TO {aopt_temp_path}")
@@ -251,9 +311,14 @@ class APNGOptAPI:
         target_rel_path = Path(os.path.relpath(target_path, cwd))
         for index, (arg, description) in enumerate(aopt_args, start=1):
             logger.message(f"index {index}, arg {arg}, description: {description}")
-            cmdlist = [str(opt_exec_path), arg, str(target_rel_path) , str(target_rel_path)]
+            cmdlist = [
+                str(opt_exec_path),
+                arg,
+                str(target_rel_path),
+                str(target_rel_path),
+            ]
             # raise Exception(cmdlist, out_full_path)
-            cmd = ' '.join(cmdlist)
+            cmd = " ".join(cmdlist)
             # result = subprocess.check_output(cmd, shell=True)
             logger.message("Starting optimization...")
             process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -261,24 +326,25 @@ class APNGOptAPI:
             while process.poll() is None:
                 output = process.stdout.readline()
                 # if process.poll() is not None:
-                    # break
+                # break
                 if output:
-                    output = output.decode('utf-8')
+                    output = output.decode("utf-8")
                     logger.message(output.capitalize())
-                    if 'saving' in output:
-                        out_words = " ".join(output.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:])[:-1]
+                    if "saving" in output:
+                        out_words = " ".join(
+                            output.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
+                        )[:-1]
                         out_msg = f"Optimizing frame {out_words}..."
                         logger.message(out_msg)
                         index += 1
             # if target_path != out_full_path:
-                # target_path = out_full_path
+            # target_path = out_full_path
         out_full_path = shutil.move(target_path, out_full_path)
         # shutil.rmtree(aopt_dir)
         return out_full_path
 
 
 class PNGQuantAPI:
-
     @classmethod
     def _pngquant_args_builder(cls, apngopt_criteria: APNGOptimizationCriteria) -> List[Tuple[str, str]]:
         """Get a list of pngquant arguments from an APNGOptimizationCriteria
@@ -291,13 +357,23 @@ class PNGQuantAPI:
         """
         args = []
         if apngopt_criteria.is_lossy and apngopt_criteria.lossy_value:
-            args.append((f"--quality={apngopt_criteria.lossy_value}", f"Quantizing PNG with quality value: {apngopt_criteria.lossy_value}"))
+            args.append(
+                (
+                    f"--quality={apngopt_criteria.lossy_value}",
+                    f"Quantizing PNG with quality value: {apngopt_criteria.lossy_value}",
+                )
+            )
         # if criteria.apng_is_lossy:
-            # args.append(())
+        # args.append(())
         return args
 
     @classmethod
-    def quantize_png_images(cls, apngopt_criteria: APNGOptimizationCriteria, image_paths: List[Path], out_dir: Path="") -> List[Path]:
+    def quantize_png_images(
+        cls,
+        apngopt_criteria: APNGOptimizationCriteria,
+        image_paths: List[Path],
+        out_dir: Path = "",
+    ) -> List[Path]:
         """Use pngquant to perform an array of modifications on a sequence of PNG images.
 
         Args:
@@ -319,9 +395,16 @@ class PNGQuantAPI:
         for index, ipath in enumerate(image_paths):
             target_path = out_dir.joinpath(ipath.name)
             if shout_nums.get(index):
-                logger.message(f'Quantizing PNG... ({shout_nums.get(index)})')
-            args = [str(pngquant_exec), ' '.join([arg[0] for arg in pq_args]), str(ipath), "--force", "--output", str(target_path)]
-            cmd = ' '.join(args)
+                logger.message(f"Quantizing PNG... ({shout_nums.get(index)})")
+            args = [
+                str(pngquant_exec),
+                " ".join([arg[0] for arg in pq_args]),
+                str(ipath),
+                "--force",
+                "--output",
+                str(target_path),
+            ]
+            cmd = " ".join(args)
             result = subprocess.check_output(args)
             # Convert back to RGBA image
             with Image.open(target_path).convert("RGBA") as rgba_im:
@@ -330,20 +413,24 @@ class PNGQuantAPI:
         # yield {"ssdsdsssdsd": quantized_frames}
         return quantized_frames
 
+
 class Unbuffered(object):
-   def __init__(self, stream):
-       self.stream = stream
-   def write(self, data):
-       self.stream.write(data)
-       self.stream.flush()
-   def writelines(self, datas):
-       self.stream.writelines(datas)
-       self.stream.flush()
-   def __getattr__(self, attr):
-       return getattr(self.stream, attr)
+    def __init__(self, stream):
+        self.stream = stream
+
+    def write(self, data):
+        self.stream.write(data)
+        self.stream.flush()
+
+    def writelines(self, datas):
+        self.stream.writelines(datas)
+        self.stream.flush()
+
+    def __getattr__(self, attr):
+        return getattr(self.stream, attr)
 
 
-def apngdis_split(target_path: Path, seq_rename: str="", out_dir: Path="") -> Iterator[Path]:
+def apngdis_split(target_path: Path, seq_rename: str = "", out_dir: Path = "") -> Iterator[Path]:
     """Split an APNG image into its individual frames using apngdis
 
     Args:
@@ -354,8 +441,8 @@ def apngdis_split(target_path: Path, seq_rename: str="", out_dir: Path="") -> It
     Returns:
         Iterator[Path]: Iterator of paths to each split image frames of the APNG.
     """
-    split_dir = _mk_temp_dir(prefix_name='apngdis_dir')
-    dis_exec_path = imager_exec_path('apngdis')
+    split_dir = _mk_temp_dir(prefix_name="apngdis_dir")
+    dis_exec_path = imager_exec_path("apngdis")
     filename = target_path.name
     target_path = shutil.copyfile(target_path, split_dir.joinpath(filename))
     cwd = os.getcwd()
@@ -363,11 +450,17 @@ def apngdis_split(target_path: Path, seq_rename: str="", out_dir: Path="") -> It
     args = [str(dis_exec_path), str(target_path)]
     if seq_rename:
         args.append(seq_rename)
-    cmd = ' '.join(args)
+    cmd = " ".join(args)
     # logger.message(f"APNGDIS ARGS: {cmd}")
     fcount = len(APNG.open(target_path).frames)
     shout_nums = shout_indices(fcount, 5)
-    process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
+    process = subprocess.Popen(
+        args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        bufsize=1,
+        universal_newlines=True,
+    )
     # process = subprocess.Popen(cmd, stdout=sys.stdout, stderr=sys.stdout, bufsize=1, universal_newlines=True)
     # unbuffered_Popen(cmd)
     # for line in unbuffered_process(process):
@@ -381,11 +474,11 @@ def apngdis_split(target_path: Path, seq_rename: str="", out_dir: Path="") -> It
         if process.poll() is not None:
             break
         if output and shout_nums.get(index):
-            logger.message(f'Extracting frames... ({shout_nums.get(index)})')
+            logger.message(f"Extracting frames... ({shout_nums.get(index)})")
         # if err:
         #     yield {"apngdis stderr": err.decode('utf-8')}
         index += 1
-        
+
     # while True:
     #     # output = process.stdout.readline()
     #     # logger.message(output)
@@ -401,7 +494,6 @@ def apngdis_split(target_path: Path, seq_rename: str="", out_dir: Path="") -> It
     # for line in iter(process.stdout.readline(), b''):
     #     yield {"msg": line.decode('utf-8')}
     logger.message("Getting splitdir...")
-    fragment_paths = (split_dir.joinpath(f) for f in split_dir.glob("*") if f != filename and f.suffixes[-1] == '.png')
+    fragment_paths = (split_dir.joinpath(f) for f in split_dir.glob("*") if f != filename and f.suffixes[-1] == ".png")
     return fragment_paths
     # Remove generated text file and copied APNG file
-
