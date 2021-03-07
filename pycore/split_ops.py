@@ -105,22 +105,28 @@ def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria
     for index, ratio in indexed_ratios:
         if shout_nums.get(cumulative_index):
             logger.message(f"Splitting frames... ({shout_nums.get(index)})")
-        selector = f'"#{index}"'
+        selector = f'#{index}'
         for n in range(0, ratio):
             logger.message(f"Splitting GIF... ({cumulative_index + 1}/{total_frames})")
-            dir_path = os.path.join(
-                fragment_dir,
-                f"{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png",
-            )
+            dir_path = fragment_dir.joinpath(f"{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png")
             args = [
                 str(gifsicle_path),
-                f'"{unop_gif_path}"',
+                str(unop_gif_path),
                 selector,
                 "--output",
-                f'"{dir_path}"',
+                str(dir_path)
             ]
             cmd = " ".join(args)
-            subprocess.run(cmd, shell=True)
+            logger.message(cmd)
+            subprocess.run(args)
+            # process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            # while process.poll() is None:
+            #     output = process.stdout.readline()
+            #     # if process.poll() is not None:
+            #     # break
+            #     if output:
+            #         output = output.decode("utf-8")
+            #         logger.message(output.capitalize())
             cumulative_index += 1
             with Image.open(dir_path).convert("RGBA") as im:
                 # if gif.info.get('transparency'):
@@ -149,7 +155,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
         List[Path]: Paths to each split images
     """
     frame_paths = []
-    name = gif_path.name
+    name = gif_path.stem
     unop_dir = filehandler.mk_cache_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
     target_path = gif_path
