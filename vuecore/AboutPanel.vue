@@ -2,7 +2,7 @@
   <div id="about_panel" class="container" style="display: none;">
     <div class="about-content">
       <div class="about-info">
-        <img v-bind:src="logo" class="about-logo"/>
+        <img v-bind:src="logo" class="about-logo no-select-drag"/>
         <h1 class="about-software-name">TridentFrame</h1>
         <p class="about-software-version">v1.0.0-beta.5</p>
         <p class="about-software-author">Developed by StahlFerro</p>

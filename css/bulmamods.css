@@ -1560,6 +1560,20 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   line-height: 20px;
 }
 
+.no-select-drag {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+
+.no-drag {
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+
 /* Create Panel */
 /* Color definitions */
 .is-white-d {
