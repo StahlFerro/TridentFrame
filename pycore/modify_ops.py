@@ -36,9 +36,9 @@ from .core_funcs.utility import (
     _unoptimize_gif,
     _log,
     shout_indices,
+    logger,
 )
-from .bin_funcs.imager_api import gifsicle_render, imagemagick_render, APNGOptAPI
-from .bin_funcs.arg_builder import gifsicle_mod_args, imagemagick_args
+from .bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI
 from .create_ops import create_aimg
 from .split_ops import split_aimg, _fragment_gif_frames, _fragment_apng_frames
 
@@ -63,10 +63,9 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     # if mod_criteria.is_reversed:
     #     frames.reverse()
     # pq_args = pngquant_args(apngopt_criteria)
-    if mod_criteria.format == "PNG" and pq_args:
-        yield {"DEBUG": "PNG QUANTIZATION SELECTED"}
+    if mod_criteria.format == "PNG" and apngopt_criteria.is_lossy:
+        logger.message("PNG QUANTIZATION SELECTED")
         frame_paths = pngquant_render(pq_args, frame_paths)
-        yield {"QUANTPATHS": frame_paths}
     ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
     # ds_delay = 1 / ds_fps
     ds_delay = mod_criteria.delay

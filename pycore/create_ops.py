@@ -1,36 +1,17 @@
 import os
-import platform
 import io
-import string
-import shutil
-import shlex
-import math
-import time
-import subprocess
-import tempfile
-import json
-from collections import deque
-from random import choices
-from pprint import pprint
-from typing import List, Dict, Tuple, Generator, Iterator
+from typing import List
 from pathlib import Path
-from datetime import datetime
 
 from PIL import Image
 from apng import APNG, PNG
 
 from .core_funcs import logger
 from .core_funcs.config import (
-    IMG_EXTS,
-    ANIMATED_IMG_EXTS,
     STATIC_IMG_EXTS,
-    get_absolute_cache_path,
-    imager_exec_path,
 )
 from .core_funcs.criterion import (
     CreationCriteria,
-    GIFOptimizationCriteria,
-    APNGOptimizationCriteria,
     CriteriaBundle,
 )
 from .core_funcs.utility import _mk_temp_dir, shout_indices, shift_image_sequence
@@ -42,7 +23,6 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
 
     Args:
         image_paths (List[Path]): List of image paths to be converted into GIF images.
-        out_path (Path): Output directory of the GIF sequences.
         criteria (CreationCriteria): Creation criteria.
     """
     # disposal = 0
@@ -71,7 +51,7 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
                 resize_method_enum = getattr(Image, criteria.resize_method)
                 # yield {"resize_method_enum": resize_method_enum}
                 im = im.resize(
-                    (round(criteria.resize_width), round(criteria.resize_height)),
+                    (round(criteria.width), round(criteria.height)),
                     resample=resize_method_enum,
                 )
             if criteria.must_rotate():
@@ -140,7 +120,7 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     return out_full_path
 
 
-def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: CriteriaBundle) -> APNG:
+def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: CriteriaBundle) -> Path:
     criteria = crbundle.create_aimg_criteria
     aopt_criteria = crbundle.apng_opt_criteria
     # temp_dirs = []
@@ -155,7 +135,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
 
     apng = APNG()
     img_sizes = set(Image.open(i).size for i in image_paths)
-    logger.message([f"({i[0]}, {i[1]})" for i in img_sizes])
+    logger.message(str([f"({i[0]}, {i[1]})" for i in img_sizes]))
     uneven_sizes = len(img_sizes) > 1 or (criteria.width, criteria.height) not in img_sizes
 
     shout_nums = shout_indices(len(image_paths), 1)
