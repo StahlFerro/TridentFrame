@@ -29,11 +29,6 @@ from pycore.core_funcs.criterion import (
     GIFOptimizationCriteria,
     APNGOptimizationCriteria,
 )
-from pycore.core_funcs.utility import (
-    _purge_directory,
-    util_generator,
-    util_generator_shallow,
-)
 from pycore.core_funcs.config import get_absolute_cache_path, get_absolute_temp_path
 
 
@@ -177,15 +172,6 @@ class TridentFrameImager:
             raise Exception("Please choos the output folder")
         criteria = SpritesheetSliceCriteria(vals)
         return _slice_spritesheet(image_path, out_dir, filename, criteria)
-
-    def purge_cache_temp(self):
-        """Remove cache and temp directories"""
-        _purge_directory(get_absolute_temp_path())
-        _purge_directory(get_absolute_cache_path())
-        return "Cache and temp evaporated"
-
-    def test_generator(self):
-        return util_generator()
 
 
 def print_cwd():

@@ -30,14 +30,8 @@ from .core_funcs.criterion import (
     ModificationCriteria,
     APNGOptimizationCriteria,
 )
-from .core_funcs.utility import (
-    _mk_temp_dir,
-    _reduce_color,
-    _unoptimize_gif,
-    _log,
-    shout_indices,
-    logger,
-)
+from .core_funcs import logger
+from .utility import filehandler, imageutils
 from .bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI
 from .create_ops import create_aimg
 from .split_ops import split_aimg, _fragment_gif_frames, _fragment_apng_frames
@@ -46,7 +40,7 @@ from .split_ops import split_aimg, _fragment_gif_frames, _fragment_apng_frames
 def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     mod_criteria = crbundle.modify_aimg
     apngopt_criteria = crbundle.apng_opt_criteria
-    frames_dir = _mk_temp_dir(prefix_name="rebuild_aimg")
+    frames_dir = mk_cache_dir(prefix_name="rebuild_aimg")
     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
     split_criteria = SplitCriteria(
         {
@@ -107,7 +101,7 @@ def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     out_dir = os.path.abspath(out_dir)
     full_name = f"{criteria.name}.{criteria.format.lower()}"
     orig_full_name = f"{criteria.name}.{criteria.orig_format.lower()}"
-    # temp_dir = _mk_temp_dir(prefix_name="temp_mods")
+    # temp_dir = mk_cache_dir(prefix_name="temp_mods")
     # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = os.path.join(out_dir, full_name)
     orig_out_full_path = os.path.join(out_dir, orig_full_name)

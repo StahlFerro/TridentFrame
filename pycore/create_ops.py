@@ -14,7 +14,7 @@ from .core_funcs.criterion import (
     CreationCriteria,
     CriteriaBundle,
 )
-from .core_funcs.utility import _mk_temp_dir, shout_indices, shift_image_sequence
+from .utility import filehandler, imageutils
 from .bin_funcs.imager_api import GifsicleAPI, APNGOptAPI, PNGQuantAPI
 
 
@@ -29,12 +29,12 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
     # if criteria.reverse:
     #     image_paths.reverse()
     # temp_gifs = []
-    out_dir = _mk_temp_dir(prefix_name="tmp_gifrags")
+    out_dir = filehandler.mk_cache_dir(prefix_name="tmp_gifrags")
     fcount = len(image_paths)
     logger.message(f"Criteria start frame {criteria.start_frame}")
     if criteria.start_frame:
-        image_paths = shift_image_sequence(image_paths, criteria.start_frame)
-    shout_nums = shout_indices(fcount, 1)
+        image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
+    shout_nums = imageutils.shout_indices(fcount, 1)
     for index, ipath in enumerate(image_paths):
         if shout_nums.get(index):
             logger.message(f"Processing frames... ({shout_nums.get(index)})")
@@ -126,7 +126,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     # temp_dirs = []
 
     if aopt_criteria.is_lossy:
-        # qtemp_dir = _mk_temp_dir(prefix_name="quant_temp")
+        # qtemp_dir = mk_cache_dir(prefix_name="quant_temp")
         # temp_dirs.append(qtemp_dir)
         image_paths = PNGQuantAPI.quantize_png_images(aopt_criteria, image_paths)
 
@@ -138,7 +138,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     logger.message(str([f"({i[0]}, {i[1]})" for i in img_sizes]))
     uneven_sizes = len(img_sizes) > 1 or (criteria.width, criteria.height) not in img_sizes
 
-    shout_nums = shout_indices(len(image_paths), 1)
+    shout_nums = imageutils.shout_indices(len(image_paths), 1)
     if criteria.flip_x or criteria.flip_y or uneven_sizes or criteria.rotation:
         for index, ipath in enumerate(image_paths):
             if shout_nums.get(index):

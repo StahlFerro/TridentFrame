@@ -13,7 +13,7 @@ from apng import APNG, PNG
 
 from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 from .core_funcs.criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
-from .core_funcs.utility import shout_indices
+from .utility import filehandler, imageutils
 
 
 def _get_boxes(

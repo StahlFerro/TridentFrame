@@ -1,4 +1,4 @@
-from .utility import read_filesize
+from pycore.utility import  filehandler
 
 
 class ImageMetadata:
@@ -39,7 +39,7 @@ class ImageMetadata:
             "category": "general_info",
         }
         self.fsize_hr = {
-            "value": read_filesize(self.fsize["value"]),
+            "value": filehandler.read_filesize(self.fsize["value"]),
             "label": "File size",
             "category": "general_info",
         }

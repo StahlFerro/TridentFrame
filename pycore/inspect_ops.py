@@ -13,7 +13,7 @@ from .core_funcs.exception import (
     ImageNotAnimatedException,
     UnidentifiedImageException,
 )
-from .core_funcs.utility import read_filesize, shout_indices, sequence_nameget
+from .utility import filehandler, imageutils
 from .core_funcs.metadata_builder import ImageMetadata, AnimatedImageMetadata
 
 Image.MAX_IMAGE_PIXELS = None
@@ -112,7 +112,7 @@ def _inspect_simg(image):
     path = im.filename
     filename = str(os.path.basename(path))
     base_fname, ext = os.path.splitext(filename)
-    base_fname = sequence_nameget(base_fname)
+    base_fname = imageutils.sequence_nameget(base_fname)
     fsize = os.stat(path).st_size
     # fsize_hr = read_filesize(fsize)
     color_mode = im.mode
@@ -151,7 +151,7 @@ def _inspect_agif(abspath: Path, gif: Image) -> Dict:
         Dict: Metadata of the animated GIF
     """
     filename = abspath.name
-    base_fname = sequence_nameget(abspath.stem)
+    base_fname = imageutils.sequence_nameget(abspath.stem)
     width, height = gif.size
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
@@ -205,7 +205,7 @@ def _inspect_apng(abspath: Path, apng: APNG) -> Dict:
         Dict: Metadata of the animated PNG
     """
     filename = abspath.name
-    base_fname = sequence_nameget(abspath.stem)
+    base_fname = imageutils.sequence_nameget(abspath.stem)
     frames = apng.frames
     frame_count = len(frames)
     loop_count = apng.num_plays
@@ -252,7 +252,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     """
     abs_image_paths = image_paths
     sequence_info = []
-    shout_nums = shout_indices(len(abs_image_paths), 1)
+    shout_nums = imageutils.shout_indices(len(abs_image_paths), 1)
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
             logger.message(f"Loading images... ({shout_nums.get(index)})")
@@ -268,7 +268,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     # first_img_name = os.path.splitext(os.path.basename(static_img_paths[0]))[0]
     # filename = first_img_name.split('_')[0] if '_' in first_img_name else first_img_name
     sequence_count = len(static_img_paths)
-    sequence_filesize = read_filesize(sum((si["fsize"]["value"] for si in sequence_info)))
+    sequence_filesize = filehandler.read_filesize(sum((si["fsize"]["value"] for si in sequence_info)))
     # im = Image.open(static_img_paths[0])
     # width, height = im.size
     # im.close()
@@ -288,7 +288,7 @@ def _inspect_smart(image_path: Path):
     """Receives a single image, then finds similar images with the same name and then returns the information of those
     sequence"""
     images_dir = image_path.parents[0]
-    filename = sequence_nameget(image_path.stem)
+    filename = imageutils.sequence_nameget(image_path.stem)
     logger.message(f"filename {filename}")
     possible_sequence = [f for f in sorted(images_dir.glob("*")) if filename in f.stem]
     # raise Exception(possible_sequence)

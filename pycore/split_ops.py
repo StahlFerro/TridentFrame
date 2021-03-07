@@ -9,19 +9,13 @@ from typing import List, Tuple
 from PIL import Image
 from apng import APNG
 
-from .bin_funcs.imager_api import apngdis_split
+from .bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGDisAPI
 from .core_funcs.config import (
     ANIMATED_IMG_EXTS,
     imager_exec_path,
 )
 from .core_funcs.criterion import SplitCriteria
-from .core_funcs.utility import (
-    _mk_temp_dir,
-    _reduce_color,
-    _unoptimize_gif,
-    shout_indices,
-    generate_delay_file,
-)
+from .utility import filehandler, imageutils
 from .core_funcs import logger
 
 
@@ -101,13 +95,13 @@ def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria
     Returns:
         List[Image.Image]: List of the split images as Pillow Image
     """
-    fragment_dir = _mk_temp_dir(prefix_name="fragment_dir")
+    fragment_dir = filehandler.mk_cache_dir(prefix_name="fragment_dir")
     frames = []
     indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
     total_frames = sum([ir[1] for ir in indexed_ratios])
     cumulative_index = 0
     gifsicle_path = imager_exec_path("gifsicle")
-    shout_nums = shout_indices(total_frames, 5)
+    shout_nums = imageutils.shout_indices(total_frames, 5)
     for index, ratio in indexed_ratios:
         if shout_nums.get(cumulative_index):
             logger.message(f"Splitting frames... ({shout_nums.get(index)})")
@@ -156,7 +150,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     """
     frame_paths = []
     name = gif_path.name
-    unop_dir = _mk_temp_dir(prefix_name="unop_gif")
+    unop_dir = filehandler.mk_cache_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
     target_path = gif_path
     logger.message(str(target_path))
@@ -165,7 +159,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
             raise Exception("Color space must be between 2 and 256!")
         else:
             logger.message(f"Reducing colors to {color_space}...")
-            target_path = _reduce_color(gif_path, unop_dir, color=color_space)
+            target_path = GifsicleAPI.reduce_gif_color(gif_path, unop_dir, color=color_space)
 
     # ===== Start test splitting code =====
     # gif: GifImageFile = GifImageFile(gif_path)
@@ -183,10 +177,10 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
 
     if criteria.is_unoptimized:
         logger.message("Unoptimizing GIF...")
-        target_path = _unoptimize_gif(gif_path, unop_dir, "imagemagick")
+        target_path = ImageMagickAPI.unoptimize_gif(gif_path, unop_dir)
 
     frames = _fragment_gif_frames(target_path, name, criteria)
-    shout_nums = shout_indices(len(frames), 5)
+    shout_nums = imageutils.shout_indices(len(frames), 5)
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
@@ -196,7 +190,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
         logger.message("Generating delay information file...")
-        generate_delay_file(gif_path, "GIF", out_dir)
+        imageutils.generate_delay_file(gif_path, "GIF", out_dir)
     return frame_paths
 
 
@@ -217,7 +211,7 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
     logger.message(list(indexed_ratios))
     if criteria.is_unoptimized:
         logger.message("Unoptimizing and splitting APNG...")
-        fragment_paths = apngdis_split(apng_path, criteria.new_name)
+        fragment_paths = APNGDisAPI.split_apng(apng_path, criteria.new_name)
         fragment_paths = sorted(list(fragment_paths), key=lambda fragment: str(fragment))
         for fp in fragment_paths:
             logger.message(str(fp))
@@ -227,7 +221,7 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
         iframes = apng.frames
         fcount = len(iframes)
         pad_count = max(len(str(fcount)), 3)
-        shout_nums = shout_indices(fcount, 5)
+        shout_nums = imageutils.shout_indices(fcount, 5)
         first_png = iframes[0][0]
         base_stack_image: Image.Image
         with io.BytesIO() as firstbox:
@@ -332,7 +326,7 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
     return frames
 
 
-# def generate_delay_file()
+# def imageutils.generate_delay_file()
 
 # def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
 #     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
@@ -340,7 +334,7 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
 #     iframes = apng.frames
 #     fcount = len(iframes)
 #     pad_count = max(len(str(fcount)), 3)
-#     shout_nums = shout_indices(fcount, 5)
+#     shout_nums = imageutils.shout_indices(fcount, 5)
 #     first_png = iframes[0][0]
 #     base_stack_image: Image.Image
 #     with io.BytesIO() as firstbox:
@@ -403,7 +397,7 @@ def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriter
     frame_paths = []
     frames = _fragment_apng_frames(apng_path, criteria)
     pad_count = criteria.pad_count
-    shout_nums = shout_indices(len(frames), 5)
+    shout_nums = imageutils.shout_indices(len(frames), 5)
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
@@ -413,7 +407,7 @@ def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriter
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
         logger.message("Generating delay information file...")
-        generate_delay_file(apng_path, "PNG", out_dir)
+        imageutils.generate_delay_file(apng_path, "PNG", out_dir)
     return frame_paths
 
 
