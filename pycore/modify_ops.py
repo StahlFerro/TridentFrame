@@ -34,7 +34,7 @@ from .core_funcs import logger
 from .utility import filehandler, imageutils
 from .bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI
 from .create_ops import create_aimg
-from .split_ops import split_aimg, _fragment_gif_frames, _fragment_apng_frames
+from .split_ops import split_aimg, _fragment_apng_frames
 
 
 def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):

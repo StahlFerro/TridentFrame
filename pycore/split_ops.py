@@ -83,61 +83,61 @@ def _get_aimg_delay_ratios(aimg_path: Path, aimg_type: str, duration_sensitive: 
 #             sequence += 1
 
 
-def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria) -> List[Image.Image]:
-    """
-    Split GIF frames and return them as a list of PIL.Image.Images using Gifsicle based on the specified criteria
+# def _fragment_gif_frames(unop_gif_path: Path, name: str, criteria: SplitCriteria) -> List[Image.Image]:
+#     """
+#     Split GIF frames and return them as a list of PIL.Image.Images using Gifsicle based on the specified criteria
 
-    Args:
-        unop_gif_path (Path): Path to unoptimized GIF
-        name (str): New name of the sequence
-        criteria (SplitCriteria): Criteria
+#     Args:
+#         unop_gif_path (Path): Path to unoptimized GIF
+#         name (str): New name of the sequence
+#         criteria (SplitCriteria): Criteria
 
-    Returns:
-        List[Image.Image]: List of the split images as Pillow Image
-    """
-    fragment_dir = filehandler.mk_cache_dir(prefix_name="fragment_dir")
-    frames = []
-    indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
-    total_frames = sum([ir[1] for ir in indexed_ratios])
-    cumulative_index = 0
-    gifsicle_path = imager_exec_path("gifsicle")
-    shout_nums = imageutils.shout_indices(total_frames, 5)
-    for index, ratio in indexed_ratios:
-        if shout_nums.get(cumulative_index):
-            logger.message(f"Splitting frames... ({shout_nums.get(index)})")
-        selector = f'#{index}'
-        for n in range(0, ratio):
-            logger.message(f"Splitting GIF... ({cumulative_index + 1}/{total_frames})")
-            dir_path = fragment_dir.joinpath(f"{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png")
-            args = [
-                str(gifsicle_path),
-                str(unop_gif_path),
-                selector,
-                "--output",
-                str(dir_path)
-            ]
-            cmd = " ".join(args)
-            logger.message(cmd)
-            subprocess.run(args)
-            # process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            # while process.poll() is None:
-            #     output = process.stdout.readline()
-            #     # if process.poll() is not None:
-            #     # break
-            #     if output:
-            #         output = output.decode("utf-8")
-            #         logger.message(output.capitalize())
-            cumulative_index += 1
-            with Image.open(dir_path).convert("RGBA") as im:
-                # if gif.info.get('transparency'):
-                #     yield {"msg": "Palette has transparency"}
-                #     gif = gif.convert('RGBA')
-                # else:
-                #     yield {"msg": "Palette has no transparency"}
-                #     gif = gif.convert('RGB')
-                frames.append(im)
-    # shutil.rmtree(fragment_dir)
-    return frames
+#     Returns:
+#         List[Image.Image]: List of the split images as Pillow Image
+#     """
+#     fragment_dir = filehandler.mk_cache_dir(prefix_name="fragment_dir")
+#     frames = []
+#     indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
+#     total_frames = sum([ir[1] for ir in indexed_ratios])
+#     cumulative_index = 0
+#     gifsicle_path = imager_exec_path("gifsicle")
+#     shout_nums = imageutils.shout_indices(total_frames, 5)
+#     for index, ratio in indexed_ratios:
+#         if shout_nums.get(cumulative_index):
+#             logger.message(f"Splitting frames... ({shout_nums.get(index)})")
+#         selector = f'#{index}'
+#         for n in range(0, ratio):
+#             logger.message(f"Splitting GIF... ({cumulative_index + 1}/{total_frames})")
+#             dir_path = fragment_dir.joinpath(f"{name}_{str.zfill(str(cumulative_index), criteria.pad_count)}.png")
+#             args = [
+#                 str(gifsicle_path),
+#                 str(unop_gif_path),
+#                 selector,
+#                 "--output",
+#                 str(dir_path)
+#             ]
+#             cmd = " ".join(args)
+#             logger.message(cmd)
+#             subprocess.run(args)
+#             # process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+#             # while process.poll() is None:
+#             #     output = process.stdout.readline()
+#             #     # if process.poll() is not None:
+#             #     # break
+#             #     if output:
+#             #         output = output.decode("utf-8")
+#             #         logger.message(output.capitalize())
+#             cumulative_index += 1
+#             with Image.open(dir_path).convert("RGBA") as im:
+#                 # if gif.info.get('transparency'):
+#                 #     yield {"msg": "Palette has transparency"}
+#                 #     gif = gif.convert('RGBA')
+#                 # else:
+#                 #     yield {"msg": "Palette has no transparency"}
+#                 #     gif = gif.convert('RGB')
+#                 frames.append(im)
+#     # shutil.rmtree(fragment_dir)
+#     return frames
 
 
 def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[Path]:

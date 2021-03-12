@@ -100,13 +100,11 @@ class TridentFrameImager:
             raise FileNotFoundError("All of the image sequences are missing! Check if they are not moved/deleted")
         if not out_dir.exists():
             raise FileNotFoundError(out_dir)
-        crbundle = CriteriaBundle(
-            {
-                "create_aimg_criteria": CreationCriteria(criteria_pack["criteria"]),
-                "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
-                "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
-            }
-        )
+        crbundle = CriteriaBundle({
+            "create_aimg_criteria": CreationCriteria(criteria_pack["criteria"]),
+            "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
+            "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
+        })
         out_path = create_aimg(resolved_paths, out_dir, criteria_pack["criteria"]["name"], crbundle)
         if out_path:
             logger.data(str(out_path))

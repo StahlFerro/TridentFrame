@@ -141,13 +141,17 @@
               </div>
             </td>
             <td width="25%" style="vertical-align: middle;">
-              <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
+              <!-- <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
                 <input v-model="criteria.is_duration_sensitive" type="checkbox" />
                 Duration-sensitive
-              </label>
+              </label> -->
               <label class="checkbox" title="Reconstructs the original image of each frame. Use on optimized GIFs">
                 <input v-model="criteria.is_unoptimized" type="checkbox" />
                 Unoptimize
+              </label>
+              <label class="checkbox" title="Generate a file containing the delay information of each frame">
+                <input v-model="criteria.will_generate_delay_info" type="checkbox" />
+                Generate delay info
               </label>
               <!-- <label class="checkbox">
                 <input v-model="is_reduced_color" type="checkbox" />
@@ -155,10 +159,6 @@
               </label> -->
             </td>
             <td width="25%" style="vertical-align: middle;">
-              <label class="checkbox" title="Generate a file containing the delay information of each frame">
-                <input v-model="criteria.will_generate_delay_info" type="checkbox" />
-                Generate delay info
-              </label>
               <br/>
             </td>
           </tr>

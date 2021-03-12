@@ -858,8 +858,8 @@ function CRTCreateAIMG() {
     data.CRT_IS_CREATING = true;
     let criteria_pack = lodashClonedeep({
       "criteria": data.criteria,
-      "gif_opt_criteria": data.gif_opt,
-      "apng_opt_criteria": data.apng_opt,
+      "gif_opt_criteria": data.gif_opt_criteria,
+      "apng_opt_criteria": data.apng_opt_criteria,
     });
     tridentEngine(["combine_image", data.image_paths, data.outdir, criteria_pack], (error, res) => {
       if (error) {
