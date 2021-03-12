@@ -158,7 +158,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     name = gif_path.stem
     unop_dir = filehandler.mk_cache_dir(prefix_name="unop_gif")
     color_space = criteria.color_space
-    target_path = gif_path
+    target_path = Path(gif_path)
     logger.message(str(target_path))
     if color_space:
         if color_space < 2 or color_space > 256:
@@ -185,14 +185,16 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
         logger.message("Unoptimizing GIF...")
         target_path = ImageMagickAPI.unoptimize_gif(gif_path, unop_dir)
 
-    frames = _fragment_gif_frames(target_path, name, criteria)
+    # frames = _fragment_gif_frames(target_path, name, criteria)
+    frames = GifsicleAPI.extract_gif_frames(target_path, name, criteria)
     shout_nums = imageutils.shout_indices(len(frames), 5)
     save_name = criteria.new_name or name
     for index, fr in enumerate(frames):
         if shout_nums.get(index):
             logger.message(f"Saving frames... ({shout_nums.get(index)})")
-        save_path = os.path.join(out_dir, f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
-        fr.save(save_path, "PNG")
+        save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
+        with Image.open(fr) as im:
+            im.save(save_path, "PNG")
         frame_paths.append(save_path)
     if criteria.will_generate_delay_info:
         logger.message("Generating delay information file...")

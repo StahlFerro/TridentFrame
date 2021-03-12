@@ -13,6 +13,7 @@ from apng import APNG
 
 from pycore.core_funcs.criterion import (
     CriteriaBundle,
+    SplitCriteria,
     APNGOptimizationCriteria,
     ModificationCriteria,
     GIFOptimizationCriteria,
@@ -37,7 +38,8 @@ class GifsicleAPI:
             crbundle (CriteriaBundle): Bundle of image creation criterias to build the arguments around.
 
         Returns:
-            List[str]: List with the first element being the gifsicle executable path, with the following elements being its needed arguments.
+            List[str]: List with the first element being the gifsicle executable path, with the following elements
+            being its needed arguments.
         """
         criteria = crbundle.create_aimg_criteria
         gif_opt_criteria = crbundle.gif_opt_criteria
@@ -89,7 +91,8 @@ class GifsicleAPI:
             gif_criteria (GIFOptimizationCriteria): GIF Optimization criteria
 
         Returns:
-            List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and a status string to echo out on the second value
+            List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and
+            a status string to echo out on the second value
         """
         args = []
         if criteria.must_resize():
@@ -167,7 +170,8 @@ class GifsicleAPI:
 
     @classmethod
     def modify_gif_image(cls, target_path: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
-        """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied arguments.
+        """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied
+        arguments.
 
         Args:
             sicle_args (List[Tuple[str, str]]): gifsicle arguments.
@@ -196,6 +200,30 @@ class GifsicleAPI:
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
+
+    @classmethod
+    def extract_gif_frames(cls, unop_gif_path: Path, name: str, criteria: SplitCriteria) -> List[Path]:
+        fragment_dir = filehandler.mk_cache_dir(prefix_name="fragment_dir")
+        frames = []
+        # indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
+        with Image.open(unop_gif_path) as gif:
+            total_frames = gif.n_frames
+        gifsicle_path = cls.gifsicle_path
+        shout_nums = imageutils.shout_indices(total_frames, 5)
+        for n in range(0, total_frames):
+            split_gif_path: Path = fragment_dir.joinpath(f"{name}_{str.zfill(str(n), criteria.pad_count)}.png")
+            args = [
+                str(gifsicle_path),
+                str(unop_gif_path),
+                f'#{n}',
+                "--output",
+                str(split_gif_path)
+            ]
+            cmd = " ".join(args)
+            logger.message(cmd)
+            subprocess.run(args)
+            frames.append(split_gif_path)
+        return frames
 
     @classmethod
     def reduce_gif_color(cls, gif_path: Path, out_dir: Path, color: int = 256) -> Path:
@@ -306,7 +334,7 @@ class ImageMagickAPI:
         return target_path
 
     @classmethod
-    def unoptimize_gif(cls, gif_path: Path, out_dir: Path, decoder: str) -> Path:
+    def unoptimize_gif(cls, gif_path: Path, out_dir: Path) -> Path:
         """Perform GIF unoptimization using Gifsicle/ImageMagick, in order to obtain the true singular frames for
         Splitting purposes. Returns the path of the unoptimized GIF.
 
@@ -323,12 +351,20 @@ class ImageMagickAPI:
         args = [
             str(cls.imagemagick_path),
             "-coalesce",
-            f'"{gif_path}"',
-            f'"{unop_gif_save_path}"',
+            str(gif_path),
+            str(unop_gif_save_path)
         ]
         cmd = " ".join(args)
-        # print(cmd)
-        subprocess.run(cmd, shell=True)
+        logger.message(cmd)
+        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        index = 0
+        while process.poll() is None:
+            output = process.stdout.readline()
+            # if process.poll() is not None:
+            # break
+            if output:
+                output = output.decode("utf-8")
+                logger.message(output.capitalize())
         return unop_gif_save_path
 
 
