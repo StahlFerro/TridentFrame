@@ -30,6 +30,11 @@ def data(logdata: Any):
     print(json.dumps(msg))
 
 
+def debug(logmsg: str):
+    msg = {"debug": logmsg}
+    print(json.dumps(msg))
+
+
 def message(logmsg: str):
     msg = {"msg": logmsg}
     print(json.dumps(msg))

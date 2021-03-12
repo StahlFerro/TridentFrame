@@ -209,8 +209,10 @@ class GifsicleAPI:
         with Image.open(unop_gif_path) as gif:
             total_frames = gif.n_frames
         gifsicle_path = cls.gifsicle_path
-        shout_nums = imageutils.shout_indices(total_frames, 5)
+        shout_nums = imageutils.shout_indices(total_frames, 1)
         for n in range(0, total_frames):
+            if shout_nums.get(n):
+                logger.message(f"Extracting frames ({n}/{total_frames})")
             split_gif_path: Path = fragment_dir.joinpath(f"{name}_{str.zfill(str(n), criteria.pad_count)}.png")
             args = [
                 str(gifsicle_path),
@@ -220,8 +222,16 @@ class GifsicleAPI:
                 str(split_gif_path)
             ]
             cmd = " ".join(args)
-            logger.message(cmd)
-            subprocess.run(args)
+            logger.debug(cmd)
+            process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            index = 0
+            while process.poll() is None:
+                output = process.stdout.readline()
+                # if process.poll() is not None:
+                # break
+                # if output:
+                #     output = output.decode("utf-8")
+                #     logger.message(output.capitalize())
             frames.append(split_gif_path)
         return frames
 
@@ -355,7 +365,7 @@ class ImageMagickAPI:
             str(unop_gif_save_path)
         ]
         cmd = " ".join(args)
-        logger.message(cmd)
+        logger.debug(cmd)
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         index = 0
         while process.poll() is None:

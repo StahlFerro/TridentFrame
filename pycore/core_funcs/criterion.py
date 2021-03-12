@@ -116,7 +116,8 @@ class SplitCriteria:
         self.color_space: int = int(vals["color_space"] or 0)
         self.is_duration_sensitive: bool = vals["is_duration_sensitive"]
         self.is_unoptimized: bool = vals["is_unoptimized"]
-        self.will_generate_delay_info: bool = vals["will_generate_delay_info"]
+        self.convert_to_rgba: bool = vals["convert_to_rgba"]
+        self.extract_delay_info: bool = vals["extract_delay_info"]
 
 
 class SpritesheetBuildCriteria:

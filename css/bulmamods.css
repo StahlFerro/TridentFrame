@@ -1711,6 +1711,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   flex-grow: inherit;
   width: 55%;
   height: 55vh;
+  overflow: auto;
+}
+.split-panel-root .split-panel-display .split-panel-info::-webkit-scrollbar {
+  height: 10px;
 }
 .split-panel-root .split-panel-display .split-panel-info .spl-info-table table {
   table-layout: fixed !important;
@@ -1726,7 +1730,7 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   word-wrap: break-word !important;
 }
 .split-panel-root .split-panel-display .split-panel-info .spl-info-table td.spl-info-label {
-  width: 123px;
+  width: 135px;
 }
 .split-panel-root .split-panel-display .split-panel-info .spl-info-table table, .split-panel-root .split-panel-display .split-panel-info .spl-info-table tr, .split-panel-root .split-panel-display .split-panel-info .spl-info-table td {
   border-collapse: collapse !important;

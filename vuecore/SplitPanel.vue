@@ -44,13 +44,13 @@
                   <span v-else>-</span>
                 </td>
               </tr>
-              <tr>
+              <!-- <tr>
                 <td class="spl-info-label is-cyan">Total frames (DS)</td>
                 <td class="spl-info-data">
                   <span v-if="frame_count_ds">{{ frame_count_ds }}</span>
                   <span v-else>-</span>
                 </td>
-              </tr>
+              </tr> -->
               <tr>
                 <td class="spl-info-label is-cyan">Frame rate</td>
                 <td class="spl-info-data">
@@ -59,9 +59,16 @@
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Frame delay</td>
+                <td class="spl-info-label is-cyan">Average delay (ms)</td>
                 <td class="spl-info-data">                  
-                  <span v-if="delay">{{ delay }}</span>
+                  <span v-if="average_delay">{{ average_delay }}</span>
+                  <span v-else>-</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Delays</td>
+                <td class="spl-info-data">                  
+                  <span v-if="delays">{{ delays }}</span>
                   <span v-else>-</span>
                 </td>
               </tr>
@@ -114,7 +121,7 @@
       <div class="split-panel-controls">
         <table width="100%">
           <tr>
-            <td width="25%">
+            <td width="20%">
               <div class="field">
                 <label class="label">Rename sequence</label>
                 <div class="control">
@@ -125,7 +132,7 @@
                 </div>
               </div>
             </td>
-            <td width="25%">
+            <td width="20%">
               <div class="field">
                 <label class="label">Pad count</label>
                 <div class="control">
@@ -140,7 +147,7 @@
                 </div>
               </div>
             </td>
-            <td width="25%" style="vertical-align: middle;">
+            <td width="20%" style="vertical-align: middle;">
               <!-- <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
                 <input v-model="criteria.is_duration_sensitive" type="checkbox" />
                 Duration-sensitive
@@ -149,21 +156,30 @@
                 <input v-model="criteria.is_unoptimized" type="checkbox" />
                 Unoptimize
               </label>
+              <br/>
+              <label class="checkbox" title="Convert each frame into a PNG with RGBA color mode">
+                <input v-model="criteria.convert_to_rgba" type="checkbox" />
+                Convert to RGBA
+              </label>
+              <br/>
               <label class="checkbox" title="Generate a file containing the delay information of each frame">
-                <input v-model="criteria.will_generate_delay_info" type="checkbox" />
-                Generate delay info
+                <input v-model="criteria.extract_delay_info" type="checkbox" />
+                Extract frame delays
               </label>
               <!-- <label class="checkbox">
                 <input v-model="is_reduced_color" type="checkbox" />
                 Reduce Colors
               </label> -->
             </td>
-            <td width="25%" style="vertical-align: middle;">
+            <td width="20%" style="vertical-align: middle;">
+              <br/>
+            </td>
+            <td width="20%" style="vertical-align: middle;">
               <br/>
             </td>
           </tr>
           <tr>
-            <td colspan="3">
+            <td colspan="4">
               <div class="field has-addons">
                 <div class="control">
                   <a v-on:click="chooseOutDir" class="button is-neon-cyan">
@@ -190,7 +206,7 @@
             </td>
           </tr>
           <tr>
-            <td colspan="4">
+            <td colspan="5">
               <input
                 v-model="split_msgbox"
                 type="text"
@@ -231,7 +247,8 @@ var defaults = {
   frame_count: "",
   frame_count_ds: "",
   fps: "",
-  delay: "",
+  average_delay: "",
+  delays: "",
   loop_duration: "",
   loop_count: "",
   preview_path: "",
@@ -248,7 +265,8 @@ var data = {
     color_space: "",
     is_duration_sensitive: false,
     is_unoptimized: false,
-    will_generate_delay_info: false,
+    convert_to_rgba: false,
+    extract_delay_info: false,
   },
   dimensions: "",
   file_size: "",
@@ -256,7 +274,8 @@ var data = {
   frame_count: "",
   frame_count_ds: "",
   fps: "",
-  delay: "",
+  average_delay: "",
+  delays: "",
   loop_duration: "",
   loop_count: "",
   preview_path: "",
@@ -311,7 +330,7 @@ function loadImage() {
           data.info_header = `${geninfo.format.value} Information`;
           data.file_size = geninfo.fsize.value;
           data.file_size_hr = geninfo.fsize_hr.value;
-          data.frame_count = `${ainfo.frame_count.value} frames`;;
+          data.frame_count = `${ainfo.frame_count.value} frames`;
           // data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`
           data.fps = `${ainfo.fps.value} fps`;
           // let delay_info = `${ainfo.avg_delay.value} seconds`;
@@ -319,6 +338,8 @@ function loadImage() {
           //   delay_info += ` (even)`;
           // }
           // data.delay = delay_info;
+          data.average_delay = ainfo.average_delay.value;
+          data.delays = ainfo.delays.value;
           data.loop_duration = `${ainfo.loop_duration.value} seconds`;
           data.loop_count = ainfo.loop_count.value;
           data.preview_path = geninfo.absolute_url.value;

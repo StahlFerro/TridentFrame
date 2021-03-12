@@ -193,10 +193,14 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
         if shout_nums.get(index):
             logger.message(f"Saving frames... ({shout_nums.get(index)})")
         save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
-        with Image.open(fr) as im:
-            im.save(save_path, "PNG")
+        if criteria.convert_to_rgba:
+            with Image.open(fr).convert("RGBA") as im:
+                im.save(save_path, "PNG")
+        else:
+            with Image.open(fr) as im:
+                im.save(save_path, "PNG")
         frame_paths.append(save_path)
-    if criteria.will_generate_delay_info:
+    if criteria.extract_delay_info:
         logger.message("Generating delay information file...")
         imageutils.generate_delay_file(gif_path, "GIF", out_dir)
     return frame_paths
@@ -413,7 +417,7 @@ def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriter
         save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path)
         frame_paths.append(save_path)
-    if criteria.will_generate_delay_info:
+    if criteria.extract_delay_info:
         logger.message("Generating delay information file...")
         imageutils.generate_delay_file(apng_path, "PNG", out_dir)
     return frame_paths

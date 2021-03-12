@@ -49,7 +49,7 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
             "is_duration_sensitive": True,
             "is_unoptimized": True,
             "new_name": "",
-            "will_generate_delay_info": False,
+            "extract_delay_info": False,
         }
     )
     frame_paths = yield from split_aimg(img_path, frames_dir, split_criteria)
