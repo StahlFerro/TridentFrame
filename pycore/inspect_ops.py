@@ -35,6 +35,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
     """
     abspath = image_path
     filename = image_path.stem
+    logger.message(str(image_path))
     ext = image_path.suffixes[-1]
     ext = ext.lower()
     if ext == ".gif":
@@ -284,13 +285,14 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     return image_info
 
 
-def _inspect_smart(image_path: Path):
+def _inspect_smart(image_path: Path) -> Dict:
     """Receives a single image, then finds similar images with the same name and then returns the information of those
     sequence"""
     images_dir = image_path.parents[0]
     filename = imageutils.sequence_nameget(image_path.stem)
     logger.message(f"filename {filename}")
-    possible_sequence = [f for f in sorted(images_dir.glob("*")) if filename in f.stem]
+    possible_sequence = [f for f in sorted(images_dir.glob("*")) if filename in f.stem and f.is_file()]
+    # raise Exception(str(possible_sequence))
     # raise Exception(possible_sequence)
     # paths_bufferio = io.StringIO(json.dumps(possible_sequence))
     return inspect_sequence(possible_sequence)
