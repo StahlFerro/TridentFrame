@@ -1,0 +1,32 @@
+/* Modify Panel */
+@import "../components/_globalvars.scss";
+@import "../components/_colors.scss";
+
+
+.modify-panel-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .modify-panel-displays {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: stretch;
+        height: 44vh;
+    }
+    
+    .modify-panel-middlebar {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: center;
+        height: 57px;
+    }
+    
+    .modify-panel-controls {
+        display: flex;
+        // flex-basis: 45vh;
+        height: calc(100vh - 44vh - 57px - #{$root-height-offset});
+        flex-direction: row;
+    }
+}

@@ -1769,6 +1769,37 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   margin: 0px !important;
 }
 
+/* Modify Panel */
+/* Color definitions */
+.is-white-d {
+  color: #cccccc;
+}
+
+.modify-panel-root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.modify-panel-root .modify-panel-displays {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: stretch;
+  height: 44vh;
+}
+.modify-panel-root .modify-panel-middlebar {
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  align-items: center;
+  height: 57px;
+}
+.modify-panel-root .modify-panel-controls {
+  display: flex;
+  height: calc(100vh - 44vh - 57px - calc(10px * 2));
+  flex-direction: row;
+}
+
 /* Inspect Panel */
 /* Color definitions */
 .is-white-d {
@@ -1884,7 +1915,7 @@ div.about-content .about-buttons {
   height: 10vh;
 }
 
-/* Sass variable overrides */
+/* Sass variable overrides on Bulma */
 /*! bulma.io v0.9.2 | MIT License | github.com/jgthms/bulma */
 /* Bulma Utilities */
 .pagination-previous,
