@@ -75,7 +75,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
 const { randString } = require("./Utility.vue");
-const { tridentEngine } = require("./Client.vue");
+const { tridentEngine } = require("./PythonCommander.vue");
 
 let extension_filters = [
   {

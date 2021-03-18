@@ -229,9 +229,9 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+const { client } = require("./PythonCommander.vue");
 const { randString, validateFilename, numConstrain } = require('./Utility.vue');
-const { tridentEngine } = require("./Client.vue");
+const { tridentEngine } = require("./PythonCommander.vue");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];

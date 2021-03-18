@@ -63,7 +63,7 @@
 const { remote, BrowserWindow } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+const { client } = require("./PythonCommander.vue");
 const { PythonShell } = require("python-shell");
 
 function callPython() {

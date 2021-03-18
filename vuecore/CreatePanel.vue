@@ -486,8 +486,8 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
-const { writeImagePathsCache, writeCriterionCache } = require("./Client.vue");
-const { tridentEngine } = require("./Client.vue");
+const { writeImagePathsCache, writeCriterionCache } = require("./PythonCommander.vue");
+const { tridentEngine } = require("./PythonCommander.vue");
 const lodashClonedeep = require('lodash.clonedeep');
 import {
   quintcellLister,
@@ -500,10 +500,10 @@ import {
   fileExists,
   readFilesize,
 } from "./Utility.vue";
-import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
-import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
-import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
-import APNGUnoptimizationRow from "./vueshards/APNGUnoptimizationRow.vue";
+import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
+import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
+import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
+import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import { createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
 

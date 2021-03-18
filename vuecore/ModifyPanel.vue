@@ -409,13 +409,13 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require('./Client.vue');
+const { client } = require('./PythonCommander.vue');
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
         gcd, validateFilename, fileExists } = require("./Utility.vue");
-import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
-import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
-import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
-import APNGUnoptimizationRow from "./vueshards/APNGUnoptimizationRow.vue";
+import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
+import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
+import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
+import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 
 
 var data = {
