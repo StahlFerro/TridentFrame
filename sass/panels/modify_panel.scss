@@ -15,16 +15,36 @@
         align-items: stretch;
         height: 44vh;
         .modify-old-container {
+            display: flex;
             flex-grow: inherit;
             width: 50%;
             height: 44vh;
             overflow: auto;
+            img {
+                max-width: 100%;
+                box-sizing: border-box;
+                max-height: 100%;
+                object-fit: scale-down;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
         .modify-new-container {
+            display: flex;
             flex-grow: inherit;
             width: 50%;
             height: 44vh;
             overflow: auto;
+            img {
+                max-width: 100%;
+                box-sizing: border-box;
+                max-height: 100%;
+                object-fit: scale-down;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
         }
     }
     

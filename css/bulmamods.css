@@ -1847,16 +1847,36 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   height: 44vh;
 }
 .modify-panel-root .modify-panel-displays .modify-old-container {
+  display: flex;
   flex-grow: inherit;
   width: 50%;
   height: 44vh;
   overflow: auto;
 }
+.modify-panel-root .modify-panel-displays .modify-old-container img {
+  max-width: 100%;
+  box-sizing: border-box;
+  max-height: 100%;
+  object-fit: scale-down;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 .modify-panel-root .modify-panel-displays .modify-new-container {
+  display: flex;
   flex-grow: inherit;
   width: 50%;
   height: 44vh;
   overflow: auto;
+}
+.modify-panel-root .modify-panel-displays .modify-new-container img {
+  max-width: 100%;
+  box-sizing: border-box;
+  max-height: 100%;
+  object-fit: scale-down;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 .modify-panel-root .modify-panel-middlebar {
   display: flex;
