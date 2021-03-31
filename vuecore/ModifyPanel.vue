@@ -91,7 +91,7 @@
       </div>
       <div class="modify-panel-middlebar">
         <div class="mpb-load-buttons">
-          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'is-static': buttonIsFrozen}">
+          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
@@ -111,13 +111,13 @@
           </a>
         </div>
         <div class="mpb-preview-buttons">
-          <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'is-static': buttonIsFrozen}">
+          <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-eye"></i>
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="clearPrevImage" class="button is-neon-crimson" v-bind:class="{'is-static': buttonIsFrozen}">
+          <a v-on:click="clearPrevImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-times"></i>
             </span>
@@ -314,7 +314,7 @@
                   </div>
                 </td>
                 <td>
-                  <a v-on:click="modifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'is-static': buttonIsFrozen}">
+                  <a v-on:click="modifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
                     MODIFY</a>
                 </td>
               </tr>
@@ -368,7 +368,7 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require('./PythonCommander.vue');
+const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
         gcd, validateFilename, fileExists } = require("./Utility.vue");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -496,23 +496,32 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
+  dialog.showOpenDialog(mainWindow, options).then((result) => {
+    let chosen_path = result.filePaths;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
     }
     data.MOD_IS_LOADING = true;
-    client.invoke("inspect_one", chosen_path[0], "animated", (error, res) => {
-      if (error) {
-        console.error(error);
-        data.modify_msgbox = error;
-        // mboxError(modify_msgbox, error);
-      } else {
-        loadOrigInfo(res);
-        loadNewInfo(res);
+    tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
+      if (error) {        
+        try {
+          console.error(error);
+          let error_data = JSON.parse(error);
+          data.modify_msgbox = error_data.error;
+        }
+        catch (e) {
+          data.modify_msgbox = error;
+        }
+        // mboxError(split_msgbox, error);
+        data.MOD_IS_LOADING = false;
+      } else if (res) {
+        res = JSON.parse(res);
+        loadOrigInfo(res.data);
+        loadNewInfo(res.data);
         data.modify_msgbox = "";
+        data.MOD_IS_LOADING = false;
       }
-      data.MOD_IS_LOADING = false;
     });
     console.log("registered!");
   });
@@ -526,13 +535,12 @@ function loadOrigInfo(res) {
   data.orig_height = geninfo.height.value;
   data.orig_fps = `${ainfo.fps.value} fps`;
   data.orig_frame_count= ainfo.frame_count.value;
-  data.orig_frame_count_ds= ainfo.frame_count_ds.value;
   data.orig_format = geninfo.format.value;
-  let delay_info = `${ainfo.avg_delay.value} seconds`;
+  let delay_info = `${ainfo.average_delay.value} seconds`;
   if (ainfo.delay_is_even) {
     delay_info += ` (even)`;
   }
-  data.orig_delay = ainfo.avg_delay.value;
+  data.orig_delay = ainfo.average_delay.value;
   data.orig_delay_info = delay_info;
   data.orig_loop_duration = ainfo.loop_duration.value;
   data.orig_loop_count = ainfo.loop_count.value;
@@ -544,11 +552,11 @@ function loadOrigInfo(res) {
 function loadNewInfo(res) {
   var geninfo = res.general_info;
   var ainfo = res.animation_info;
-  data.name = geninfo.base_fname.value;
+  data.name = geninfo.base_filename.value;
   data.format = geninfo.format.value;
   data.width = geninfo.width.value;
   data.height = geninfo.height.value;
-  data.delay = ainfo.avg_delay.value;
+  data.delay = ainfo.average_delay.value;
   data.fps = ainfo.fps.value;
   data.loop_count = ainfo.loop_count.value;
   updateAspectRatio(data.width, data.height);
