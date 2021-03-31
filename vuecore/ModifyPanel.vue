@@ -517,9 +517,13 @@ function loadImage() {
         data.MOD_IS_LOADING = false;
       } else if (res) {
         res = JSON.parse(res);
-        loadOrigInfo(res.data);
-        loadNewInfo(res.data);
-        data.modify_msgbox = "";
+        if (res && res.msg) {
+          data.modify_msgbox = res.msg;
+        } else if (res && res.data) {
+          loadOrigInfo(res.data);
+          loadNewInfo(res.data);
+          data.modify_msgbox = "";
+        }
         data.MOD_IS_LOADING = false;
       }
     });
