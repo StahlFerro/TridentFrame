@@ -1625,8 +1625,9 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   box-shadow: none;
 }
 .input.is-neon-white:disabled {
-  border-color: rgba(204, 204, 204, 0.7);
-  color: rgba(204, 204, 204, 0.7);
+  border-color: #666666;
+  color: #666666;
+  background-color: #31363b;
 }
 .input.is-neon-white::placeholder {
   color: #616877;

@@ -42,7 +42,7 @@
         $text-color: $white-d;
         $border-color: $text-color;
         $border-color-on: lighten($border-color, 20%);
-        $border-color-off: desaturate(rgba($border-color, 0.7), 20%);
+        $border-color-off: darken($border-color, 40%);
     
         background-color: $bg-color;
         color: $text-color;
@@ -58,6 +58,7 @@
         &:disabled {
             border-color: $border-color-off;
             color: $border-color-off;
+            background-color: $bg-color;
         }
         &::placeholder {
             color: $dark-6;
