@@ -8,7 +8,7 @@
             <tr>
               <td class="mod-info-label is-cyan">Name</td>
               <td class="mod-info-data">
-                <span v-if="orig_name">{{ orig_name }}</span>
+                <span v-if="orig_attribute.name">{{ orig_attribute.name }}</span>
                 <span v-else>-</span>
               </td>
             </tr>
@@ -22,51 +22,51 @@
             <tr>
               <td class="mod-info-label is-cyan">File size</td>
               <td class="mod-info-data">
-                <span v-if="orig_file_size_hr">{{ orig_file_size_hr }}</span>
+                <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.file_size_hr }}</span>
                 <span v-else>-</span>
               </td>
             </tr>
             <tr>
               <td class="mod-info-label is-cyan">Format</td>
               <td class="mod-info-data">
-                <span v-if="orig_file_size_hr">{{ orig_format }}</span>
+                <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.format }}</span>
                 <span v-else>-</span>
               </td>
             </tr>
             <tr>
               <td class="mod-info-label is-cyan">Total frames</td>
               <td class="mod-info-data">
-                <span v-if="orig_frame_count">{{ orig_frame_count }} ({{ orig_frame_count_ds }})</span>
+                <span v-if="orig_attribute.frame_count">{{ orig_attribute.frame_count }} ({{ orig_attribute.frame_count_ds }})</span>
                 <span v-else>-</span>
               </td>
             </tr>
             <tr>
               <td class="mod-info-label is-cyan">Frame rate</td>
               <td class="mod-info-data">
-                <span v-if="orig_fps">{{ orig_fps }}</span>
+                <span v-if="orig_attribute.fps">{{ orig_attribute.fps }}</span>
                 <span v-else>-</span>
               </td>
             </tr>
             <tr>
               <td class="mod-info-label is-cyan">Frame delay</td>
               <td class="mod-info-data">
-                <span v-if="orig_fps">{{ orig_delay_info }}</span>
+                <span v-if="orig_attribute.fps">{{ orig_attribute.delay_info }}</span>
                 <span v-else>-</span>
               </td>
             </tr>
             <tr>
               <td class="mod-info-label is-cyan">Loop duration</td>
               <td class="mod-info-data">
-                <span v-if="orig_loop_duration">{{ orig_loop_duration }} seconds</span>
+                <span v-if="orig_attribute.loop_duration">{{ orig_attribute.loop_duration }} seconds</span>
                 <span v-else>-</span>
                 </td>
             </tr>
             <tr>
               <td class="mod-info-label is-cyan">Loop count</td>
               <td class="mod-info-data">
-                <template v-if="orig_path">
-                  <span v-if="orig_loop_count == 0">Infinite</span>
-                  <span v-else>{{ orig_loop_count }}</span>
+                <template v-if="orig_attribute.path">
+                  <span v-if="orig_attribute.loop_count == 0">Infinite</span>
+                  <span v-else>{{ orig_attribute.loop_count }}</span>
                 </template>
                 <template v-else>-</template>
               </td>
@@ -77,7 +77,7 @@
 
       <div class="modify-panel-displays">
         <div class="modify-old-container silver-bordered">
-          <img v-bind:src="orig_path" />
+          <img v-bind:src="orig_attribute.path" />
         </div>
         <div class="modify-new-container silver-bordered-no-left" 
           v-bind:title="preview_info?
@@ -147,7 +147,7 @@
               <li id="MOD_box_gif" class="subtab-menu-item is-cyan"
                 v-bind:class="{'is-selected': mod_menuselection == 1}">
                 <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
-                  v-bind:class="{'is-disabled': format == 'PNG'}">
+                  v-bind:class="{'is-disabled': criteria.format == 'PNG'}">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -157,7 +157,7 @@
               <li id="MOD_box_apng" class="subtab-menu-item"
                 v-bind:class="{'is-selected': mod_menuselection == 2}">
                 <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
-                  v-bind:class="{'is-disabled': format == 'GIF'}">
+                  v-bind:class="{'is-disabled': criteria.format == 'GIF'}">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -175,7 +175,7 @@
                   <div class="field">
                     <label class="label">Name</label>
                     <div class="control">
-                      <input v-model="name" class="input is-neon-white" type="text" />
+                      <input v-model="criteria.name" class="input is-neon-white" type="text" />
                     </div>
                   </div>
                 </td>
@@ -183,7 +183,7 @@
                   <div class="field">
                     <label class="label">Width</label>
                     <div class="control">
-                      <input v-bind:value="width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(width, $event)" 
+                      <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(width, $event)" 
                         class="input is-neon-white" type="number" min="1" step="1"/>
                     </div>
                   </div>
@@ -192,25 +192,25 @@
                   <div class="field">
                     <label class="label">Height</label>
                     <div class="control">
-                      <input v-bind:value="height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(height, $event)"
+                      <input v-bind:value="criteria.height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(height, $event)"
                       class="input is-neon-white" type="number" min="1" step="1"/>
                     </div>
                   </div>
                 </td>
                 <td width="16.7%" class="force-vcenter">
                   <label class="checkbox" title="Flip the image horizontally">
-                    <input v-model="flip_x" type="checkbox" />
+                    <input v-model="criteria.flip_x" type="checkbox" />
                     Flip X
                   </label>
                   <br/>
                   <label class="checkbox" title="Flip the image vertically">
-                    <input v-model="flip_y" type="checkbox" />
+                    <input v-model="criteria.flip_y" type="checkbox" />
                     Flip Y
                   </label>
                 </td>
                 <td width="16.7%" class="force-vcenter">
                   <label class="checkbox" title="Reverse the animation">
-                    <input v-model="is_reversed" type="checkbox" />
+                    <input v-model="criteria.is_reversed" type="checkbox" />
                     Reversed
                   </label>
                   <br/>
@@ -229,7 +229,7 @@
                   <div class="field">
                     <label class="label">FPS</label>
                     <div class="control">
-                      <input v-model="fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                      <input v-model="criteria.fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
                     </div>
                   </div>
                 </td>
@@ -237,7 +237,7 @@
                   <div class="field">
                     <label class="label">Delay</label>
                     <div class="control">
-                      <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                      <input v-model="criteria.delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
                     </div>
                   </div>
                 </td>
@@ -245,7 +245,7 @@
                   <div class="field">
                     <label class="label">Loop count</label>
                     <div class="control">
-                      <input v-model="loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0"/>
+                      <input v-model="criteria.loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0"/>
                     </div>
                   </div>
                 </td>
@@ -253,7 +253,7 @@
                   <div class="field">
                     <label class="label">Rotation</label>
                     <div class="control">
-                      <input v-model="rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
+                      <input v-model="criteria.rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
                     </div>
                   </div>
                 </td>
@@ -270,7 +270,7 @@
                     <label class="label">Format</label>
                     <div class="control">
                       <div class="select is-neon-cyan">
-                        <select v-model="format">
+                        <select v-model="criteria.format">
                           <option value="GIF">GIF</option>
                           <option value="PNG">APNG</option>
                         </select>
@@ -323,35 +323,35 @@
           <div v-show="mod_menuselection == 1">
             <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
               <GIFOptimizationRow
-                :is_optimized.sync="is_optimized"
-                :optimization_level.sync="optimization_level"
-                :is_lossy.sync="is_lossy"
-                :lossy_value.sync="lossy_value"
-                :is_reduced_color.sync="is_reduced_color"
-                :color_space.sync="color_space"
-                :is_unoptimized.sync="is_unoptimized"
+                :is_optimized.sync="gif_opt_criteria.is_optimized"
+                :optimization_level.sync="gif_opt_criteria.optimization_level"
+                :is_lossy.sync="gif_opt_criteria.is_lossy"
+                :lossy_value.sync="gif_opt_criteria.lossy_value"
+                :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
+                :color_space.sync="gif_opt_criteria.color_space"
+                :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
               />
               <GIFUnoptimizationRow
-              :is_optimized.sync="is_optimized"
-              :is_lossy.sync="is_lossy"
-              :is_reduced_color.sync="is_reduced_color"
-              :is_unoptimized.sync="is_unoptimized"
+              :is_optimized.sync="gif_opt_criteria.is_optimized"
+              :is_lossy.sync="gif_opt_criteria.is_lossy"
+              :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
+              :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
               />
             </table>
           </div>
           <div v-show="mod_menuselection == 2">
             <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
               <APNGOptimizationRow
-                :apng_is_optimized.sync="apng_is_optimized"
-                :apng_optimization_level.sync="apng_optimization_level"
-                :apng_is_lossy.sync="apng_is_lossy"
-                :apng_lossy_value.sync="apng_lossy_value"
-                :apng_is_unoptimized.sync="apng_is_unoptimized"
+                :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
+                :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
+                :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
+                :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
               />
               <APNGUnoptimizationRow
-                :apng_is_optimized.sync="apng_is_optimized"
-                :apng_is_lossy.sync="apng_is_lossy"
-                :apng_is_unoptimized.sync="apng_is_unoptimized"
+                :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
+                :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
+                :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
               />
             </table>
           </div>
@@ -378,47 +378,53 @@ import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 
 
 var data = {
-  orig_name: "",
-  orig_width: "",
-  orig_height: "",
-  orig_frame_count: "",
-  orig_frame_count_ds: "",
-  orig_fps: "",
-  orig_delay: "",
-  orig_delay_info: "",
-  orig_loop_duration: "",
-  orig_loop_count: "",
-  orig_file_size: "",
-  orig_file_size_hr: "",
-  orig_format: "",
-  orig_path: "",
-  name: "",
-  old_width: "",
-  width: "",
-  old_height: "",
-  height: "",
-  rotation: "",
-  fps: "",
-  delay: "",
-  loop_count: "",
-  format: "GIF",
-  skip_frame: "",
-  flip_x: false,
-  flip_y: false,
-  is_reversed: false,
-  preserve_alpha: false,
-  is_optimized: false,
-  optimization_level: "1",
-  is_lossy: false,
-  lossy_value: "",
-  is_reduced_color: false,
-  color_space: "",
-  is_unoptimized: false,
-  apng_is_optimized: false,
-  apng_optimization_level: "1",
-  apng_is_lossy: false,
-  apng_lossy_value: "",
-  apng_is_unoptimized: false,
+  orig_attribute: {
+    name: "",
+    width: "",
+    height: "",
+    frame_count: "",
+    frame_count_ds: "",
+    fps: "",
+    delay: "",
+    delay_info: "",
+    loop_duration: "",
+    loop_count: "",
+    file_size: "",
+    file_size_hr: "",
+    format: "",
+    path: "",
+  },
+  criteria: {
+    name: "",
+    width: "",
+    height: "",
+    rotation: "",
+    fps: "",
+    delay: "",
+    loop_count: "",
+    format: "GIF",
+    skip_frame: "",
+    flip_x: false,
+    flip_y: false,
+    is_reversed: false,
+    preserve_alpha: false,
+  },
+  gif_opt_criteria: {
+    is_optimized: false,
+    optimization_level: "1",
+    is_lossy: false,
+    lossy_value: "",
+    is_reduced_color: false,
+    color_space: "",
+    is_unoptimized: false,
+  },
+  apng_opt_criteria: {
+    apng_is_optimized: false,
+    apng_optimization_level: "1",
+    apng_is_lossy: false,
+    apng_lossy_value: "",
+    apng_is_unoptimized: false,
+  },
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",
@@ -437,20 +443,20 @@ var data = {
 };
 
 function clearOrigFields() {
-  data.orig_name = "";
-  data.orig_width = "";
-  data.orig_height = "";
-  data.orig_frame_count = "";
-  data.orig_frame_count_ds = "";
-  data.orig_fps = "";
-  data.orig_delay = "";
-  data.orig_delay_info = "";
-  data.orig_loop_duration = "";
-  data.orig_loop_count = "";
-  data.orig_file_size = "";
-  data.orig_file_size_hr = "";
-  data.orig_format = "";
-  data.orig_path = "";
+  data.orig_attribute.name = "";
+  data.orig_attribute.width = "";
+  data.orig_attribute.height = "";
+  data.orig_attribute.frame_count = "";
+  data.orig_attribute.frame_count_ds = "";
+  data.orig_attribute.fps = "";
+  data.orig_attribute.delay = "";
+  data.orig_attribute.delay_info = "";
+  data.orig_attribute.loop_duration = "";
+  data.orig_attribute.loop_count = "";
+  data.orig_attribute.file_size = "";
+  data.orig_attribute.file_size_hr = "";
+  data.orig_attribute.format = "";
+  data.orig_attribute.path = "";
   data.modify_msgbox = "";
 }
 
@@ -534,35 +540,35 @@ function loadImage() {
 function loadOrigInfo(res) {
   let geninfo = res.general_info;
   let ainfo = res.animation_info;
-  data.orig_name = geninfo.name.value;
-  data.orig_width = geninfo.width.value;
-  data.orig_height = geninfo.height.value;
-  data.orig_fps = `${ainfo.fps.value} fps`;
-  data.orig_frame_count= ainfo.frame_count.value;
-  data.orig_format = geninfo.format.value;
+  data.orig_attribute.name = geninfo.name.value;
+  data.orig_attribute.width = geninfo.width.value;
+  data.orig_attribute.height = geninfo.height.value;
+  data.orig_attribute.fps = `${ainfo.fps.value} fps`;
+  data.orig_attribute.frame_count= ainfo.frame_count.value;
+  data.orig_attribute.format = geninfo.format.value;
   let delay_info = `${ainfo.average_delay.value} seconds`;
   if (ainfo.delay_is_even) {
     delay_info += ` (even)`;
   }
-  data.orig_delay = ainfo.average_delay.value;
-  data.orig_delay_info = delay_info;
-  data.orig_loop_duration = ainfo.loop_duration.value;
-  data.orig_loop_count = ainfo.loop_count.value;
-  data.orig_path = geninfo.absolute_url.value;
-  data.orig_file_size = geninfo.fsize.value;
-  data.orig_file_size_hr = geninfo.fsize_hr.value;
+  data.orig_attribute.delay = ainfo.average_delay.value;
+  data.orig_attribute.delay_info = delay_info;
+  data.orig_attribute.loop_duration = ainfo.loop_duration.value;
+  data.orig_attribute.loop_count = ainfo.loop_count.value;
+  data.orig_attribute.path = geninfo.absolute_url.value;
+  data.orig_attribute.file_size = geninfo.fsize.value;
+  data.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
 }
 
 function loadNewInfo(res) {
   var geninfo = res.general_info;
   var ainfo = res.animation_info;
-  data.name = geninfo.base_filename.value;
-  data.format = geninfo.format.value;
-  data.width = geninfo.width.value;
-  data.height = geninfo.height.value;
-  data.delay = ainfo.average_delay.value;
-  data.fps = ainfo.fps.value;
-  data.loop_count = ainfo.loop_count.value;
+  data.criteria.name = geninfo.base_filename.value;
+  data.criteria.format = geninfo.format.value;
+  data.criteria.width = geninfo.width.value;
+  data.criteria.height = geninfo.height.value;
+  data.criteria.delay = ainfo.average_delay.value;
+  data.criteria.fps = ainfo.fps.value;
+  data.criteria.loop_count = ainfo.loop_count.value;
   updateAspectRatio(data.width, data.height);
 }
 
