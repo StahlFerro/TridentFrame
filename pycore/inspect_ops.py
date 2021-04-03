@@ -145,7 +145,7 @@ def inspect_static_image(image_path: Path) -> Dict:
         "format": fmt,
         "fsize": fsize,
         "creation_datetime": creation_dt.strftime("%Y-%m-%d %H:%M:%S"),
-        "modfiication_dt": modification_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "modification_datetime": modification_dt.strftime("%Y-%m-%d %H:%M:%S"),
         "hash_sha1": checksum,
         "absolute_url": str(image_path),
         "comments": str(comment),
@@ -189,6 +189,9 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> Dict:
     fmt = "GIF"
     full_format = str(gif.info.get("version") or "")
     transparency = gif.info.get("transparency", "-")
+    creation_dt = filehandler.get_creation_time(abspath)
+    modification_dt = filehandler.get_modification_time(abspath)
+    checksum = filehandler.hash_sha1(abspath)
     gif.close()
     metadata = AnimatedImageMetadata({
         "name": filename,
@@ -198,6 +201,9 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> Dict:
         "format": fmt,
         "format_version": full_format,
         "fsize": fsize,
+        "creation_datetime": creation_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "modification_datetime": modification_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "hash_sha1": checksum,
         "absolute_url": str(abspath),
         "comments": comments,
         "transparency": transparency,
@@ -237,6 +243,9 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> Dict:
     #     frame_count_ds = frame_count
     # else:
     #     frame_count_ds = sum([delay//min_duration for delay in delays])
+    creation_dt = filehandler.get_creation_time(abspath)
+    modification_dt = filehandler.get_modification_time(abspath)
+    checksum = filehandler.hash_sha1(abspath)
     metadata = AnimatedImageMetadata({
         "name": filename,
         "base_filename": base_fname,
@@ -244,6 +253,9 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> Dict:
         "height": height,
         "format": fmt,
         "fsize": fsize,
+        "creation_datetime": creation_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "modification_datetime": modification_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "hash_sha1": checksum,
         "absolute_url": str(abspath),
         "is_animated": True,
         "frame_count": frame_count,
