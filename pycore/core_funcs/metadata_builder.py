@@ -48,8 +48,18 @@ class ImageMetadata:
             "label": "Path",
             "category": "general_info",
         }
+        self.creation_datetime = {
+            "value": info.get("creation_datetime"),
+            "label": "Creation Time",
+            "category": "general_info",
+        } 
+        self.modification_datetime = {
+            "value": info.get("creation_datetime"),
+            "label": "Modification Time",
+            "category": "general_info",
+        } 
         self.comments = {
-            "value": info.get("format"),
+            "value": info.get("comments"),
             "label": "Comments",
             "category": "general_info",
         }
@@ -71,6 +81,11 @@ class ImageMetadata:
         self.is_animated = {
             "value": info.get("is_animated"),
             "label": "Is animated",
+            "category": "general_info",
+        }
+        self.hash_sha1 = {
+            "value": info.get("hash_sha1"),
+            "label": "SHA1 Hash",
             "category": "general_info",
         }
 

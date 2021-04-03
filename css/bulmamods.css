@@ -12331,6 +12331,10 @@ label {
   background: #777;
 }
 
+::-webkit-scrollbar-corner {
+  background: #31363b;
+}
+
 /* Draggable element definition */
 .frame-title-bar {
   -webkit-app-region: drag !important;

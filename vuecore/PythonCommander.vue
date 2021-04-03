@@ -164,6 +164,7 @@ module.exports = {
   tridentEngine: tridentEngine,
   writeImagePathsCache: writeImagePathsCache,
   writeCriterionCache: writeCriterionCache,
+  settings: settings,
 };
 
 </script>

@@ -132,6 +132,8 @@ def inspect_static_image(image_path: Path) -> Dict:
     transparency = im.info.get("transparency", "-")
     # alpha = im.getchannel('A')
     comment = im.info.get("comment")
+    creation_dt = filehandler.get_creation_time(image_path)
+    modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
     im.close()
 
@@ -142,6 +144,9 @@ def inspect_static_image(image_path: Path) -> Dict:
         "height": height,
         "format": fmt,
         "fsize": fsize,
+        "creation_datetime": creation_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "modfiication_dt": modification_dt.strftime("%Y-%m-%d %H:%M:%S"),
+        "hash_sha1": checksum,
         "absolute_url": str(image_path),
         "comments": str(comment),
         "color_mode": str(color_mode),

@@ -16,5 +16,37 @@
             "apngdis": "apngdis-2.9-bin-linux/apngdis",
             "pngquant": "pngquant/pngquant"
         }
+    },
+    "image_metadata": {
+        "categories": [
+            "general_info",
+            "animation_info"
+        ],
+        "attributes": {
+            "general_info": [
+                "name",
+                "width",
+                "height",
+                "format",
+                "fsize_hr",
+                "absolute_url",
+                "creation_datetime",
+                "modification_datetime",
+                "comments",
+                "transparency",
+                "color_mode",
+                "exif",
+                "is_animated"
+            ],
+            "animation_info": [
+                "frame_count",
+                "delays",
+                "delays_are_even",
+                "average_delay",
+                "fps",
+                "loop_duration",
+                "loop_count"
+            ]
+        }
     }
 }

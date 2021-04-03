@@ -9,25 +9,31 @@
           <img v-bind:src="img_path" />
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
-          <table class="table ins-info-table is-paddingless" width="100%">
-            <template v-for="(item, key) in info_data">
+          <table v-if="info_data" class="table ins-info-table is-paddingless" width="100%">
+            <template v-for="meta_categ in metadata_settings.categories">
+            <!-- <template v-for="(meta_list, meta_categ) in info_data"> -->
               <!-- <span v-bind:key="key"/> -->
-              <tr v-if="key == 'general_info'" v-bind:key="'general_info_' + key">
+              <tr :key="meta_categ">
+                <td colspan="2" class="is-cyan">{{ headerMetaCategory(meta_categ) }}</td>
+              </tr>
+              <!-- <tr v-if="meta_categ == 'general_info'" :key="'general_info_' + meta_categ">
                 <td colspan="2" class="is-cyan">GENERAL INFO</td>
               </tr>
-              <tr v-if="key == 'animation_info'" v-bind:key="'animation_info_' + key">
+              <tr v-if="meta_categ == 'animation_info'" :key="'animation_info_' + meta_categ">
                 <td colspan="2" class="is-cyan">ANIMATION INFO</td>
-              </tr>
-              <tr v-for="(iprop, ikey, index) in item" v-bind:key="'iprop_' + key + '_' + index">
+              </tr> -->
+              <tr v-for="attribute in metadata_settings.attributes[meta_categ]" 
+                  :key="'iprop_' + meta_categ + '_' + attribute"
+                  :set="metadata_field = info_data[meta_categ][attribute]">
                 <td style="width: 123px">
-                  <strong><span class="is-white-d">{{ iprop.label }}</span></strong>
+                  <strong><span class="is-white-d">{{ metadata_field.label }}</span></strong>
                 </td>
-                <template v-if="ikey == 'loop_count' && iprop.value == 0">
+                <template v-if="attribute == 'loop_count' && metadata_field.value == 0">
                   <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
                 </template>
                 <template v-else>
                   <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)">
-                    {{ iprop.value }}
+                    {{ metadata_field.value }}
                   </td>
                 </template>
               </tr>
@@ -75,7 +81,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
 const { randString } = require("./Utility.vue");
-const { tridentEngine } = require("./PythonCommander.vue");
+const { tridentEngine, settings } = require("./PythonCommander.vue");
 
 let extension_filters = [
   {
@@ -86,6 +92,8 @@ let extension_filters = [
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
+let metadata_order = settings.image_metadata
+
 var data = {
   img_path: "",
   checkerbg_active: false,
@@ -93,6 +101,7 @@ var data = {
   INS_IS_INSPECTING: false,
   info_data: "",
   inspect_msgbox: "",
+  metadata_settings: settings.image_metadata,
   inspect_image_menu_options: [
     {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
     {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
@@ -102,6 +111,8 @@ var data = {
     {'name': "Copy Info", 'callback': copyInfo}
   ]
 };
+
+console.table(data.metadata_settings)
 
 function addExtraCtxOptions(payloads) {
   let combined_payload = data.inspect_image_menu_options.concat(payloads);
@@ -143,6 +154,10 @@ function copyInfo(event) {
 
 function clearMsgBox() {
   data.inspect_msgbox = "";
+}
+
+function headerMetaCategory(meta_categ) {
+  return meta_categ.replace("_", " ").toUpperCase();
 }
 
 function loadImage() {
@@ -213,6 +228,7 @@ export default {
     loadImage: loadImage,
     clearImage: clearImage,
     toggleCheckerBG: toggleCheckerBG,
+    headerMetaCategory: headerMetaCategory,
   },
 };
 </script>

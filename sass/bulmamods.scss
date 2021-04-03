@@ -117,7 +117,9 @@ label { color: $white-d !important; }
 ::-webkit-scrollbar-thumb {
     background: #777; 
 }
-
+::-webkit-scrollbar-corner {
+    background: $dark-3;
+}
 
 
 
