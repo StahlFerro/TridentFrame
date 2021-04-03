@@ -51,7 +51,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                     else:
                         raise ImageNotStaicException(filename, "GIF")
                 else:
-                    return _inspect_agif(image_path, gif)
+                    return inspect_animated_gif(image_path, gif)
             else:
                 if filter_on == "animated":
                     if skip:
@@ -59,7 +59,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                     else:
                         raise ImageNotAnimatedException(filename, "GIF")
                 else:
-                    return _inspect_simg(image_path)
+                    return inspect_static_image(image_path)
     elif ext == ".png":
         try:
             apng: APNG = APNG.open(abspath)
@@ -74,7 +74,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                 else:
                     raise ImageNotStaicException(filename, "APNG")
             else:
-                return _inspect_apng(image_path, apng)
+                return inspect_animated_png(image_path, apng)
         else:
             if filter_on == "animated":
                 if skip:
@@ -82,26 +82,38 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                 else:
                     raise ImageNotAnimatedException(filename, "APNG")
             else:
-                return _inspect_simg(image_path)
+                return inspect_static_image(image_path)
     else:
-        return _inspect_simg(image_path)
+        return inspect_static_image(image_path)
 
 
-def _inspect_simg(image):
-    """Returns general and EXIF info from a static image. Static GIFs will not display EXIF (GIFs don't support it)
+# def inspect_static_image(path: Path):
+#     return _inspect_static_image(Image.open(path))
+#
+#
+# def inspect_static_image(image: Image.Image):
+#     return _inspect_static_image(image)
 
-    Keyword arguments:
-    image -- Path or Pillow Image
+
+def inspect_static_image(image_path: Path) -> Dict:
+    """Returns all information regarding a single static image
+
+    Args:
+        image_path (Path): Path to the image file
+
+    Returns:
+        Dict: Information of the static image file
     """
     # image_info = {}
     # im: Image = None
     try:
-        if image.__class__.__bases__[0] is ImageFile.ImageFile:
-            im = image
-        else:
-            im = Image.open(image)
+        # if image_path.__class__.__bases__[0] is ImageFile.ImageFile:
+        #     im = image_path
+        # else:
+        #     im = Image.open(image)
+        im = Image.open(image_path)
     except Exception as e:
-        print(json.dumps({"error": str(e).replace("\\\\", "/")}), file=sys.stderr)
+        logger.error(str(e).replace("\\\\", "/"))
         return
     fmt = im.format
     exif = "-"
@@ -110,38 +122,37 @@ def _inspect_simg(image):
         if exif_raw:
             exif = {ExifTags.TAGS[k]: v for k, v in exif_raw.items() if k in ExifTags.TAGS}
     width, height = im.size
-    path = im.filename
-    filename = str(os.path.basename(path))
-    base_fname, ext = os.path.splitext(filename)
+    filename = image_path.name
+    base_fname = image_path.stem
+    ext = image_path.suffix
     base_fname = imageutils.sequence_nameget(base_fname)
-    fsize = os.stat(path).st_size
+    fsize = image_path.stat().st_size
     # fsize_hr = read_filesize(fsize)
     color_mode = im.mode
     transparency = im.info.get("transparency", "-")
     # alpha = im.getchannel('A')
     comment = im.info.get("comment")
+    checksum = filehandler.hash_sha1(image_path)
     im.close()
 
-    metadata = ImageMetadata(
-        {
-            "name": filename,
-            "base_filename": base_fname,
-            "width": width,
-            "height": height,
-            "format": fmt,
-            "fsize": fsize,
-            "absolute_url": path,
-            "comments": str(comment),
-            "color_mode": str(color_mode),
-            "transparency": str(transparency),
-            "is_animated": False,
-            "exif": str(exif),
-        }
-    )
+    metadata = ImageMetadata({
+        "name": filename,
+        "base_filename": base_fname,
+        "width": width,
+        "height": height,
+        "format": fmt,
+        "fsize": fsize,
+        "absolute_url": str(image_path),
+        "comments": str(comment),
+        "color_mode": str(color_mode),
+        "transparency": str(transparency),
+        "is_animated": False,
+        "exif": str(exif),
+    })
     return metadata.format_info()
 
 
-def _inspect_agif(abspath: Path, gif: Image) -> Dict:
+def inspect_animated_gif(abspath: Path, gif: Image) -> Dict:
     """Inspect an animated GIF and return its metadata
 
     Args:
@@ -174,28 +185,26 @@ def _inspect_agif(abspath: Path, gif: Image) -> Dict:
     full_format = str(gif.info.get("version") or "")
     transparency = gif.info.get("transparency", "-")
     gif.close()
-    metadata = AnimatedImageMetadata(
-        {
-            "name": filename,
-            "base_filename": base_fname,
-            "width": width,
-            "height": height,
-            "format": fmt,
-            "format_version": full_format,
-            "fsize": fsize,
-            "absolute_url": str(abspath),
-            "comments": comments,
-            "transparency": transparency,
-            "is_animated": True,
-            "frame_count": frame_count,
-            "delays": delays,
-            "loop_count": loop_count,
-        }
-    )
+    metadata = AnimatedImageMetadata({
+        "name": filename,
+        "base_filename": base_fname,
+        "width": width,
+        "height": height,
+        "format": fmt,
+        "format_version": full_format,
+        "fsize": fsize,
+        "absolute_url": str(abspath),
+        "comments": comments,
+        "transparency": transparency,
+        "is_animated": True,
+        "frame_count": frame_count,
+        "delays": delays,
+        "loop_count": loop_count,
+    })
     return metadata.format_info()
 
 
-def _inspect_apng(abspath: Path, apng: APNG) -> Dict:
+def inspect_animated_png(abspath: Path, apng: APNG) -> Dict:
     """Inspect an animated PNG and return its metadata
 
     Args:
@@ -223,21 +232,19 @@ def _inspect_apng(abspath: Path, apng: APNG) -> Dict:
     #     frame_count_ds = frame_count
     # else:
     #     frame_count_ds = sum([delay//min_duration for delay in delays])
-    metadata = AnimatedImageMetadata(
-        {
-            "name": filename,
-            "base_filename": base_fname,
-            "width": width,
-            "height": height,
-            "format": fmt,
-            "fsize": fsize,
-            "absolute_url": str(abspath),
-            "is_animated": True,
-            "frame_count": frame_count,
-            "delays": delays,
-            "loop_count": loop_count,
-        }
-    )
+    metadata = AnimatedImageMetadata({
+        "name": filename,
+        "base_filename": base_fname,
+        "width": width,
+        "height": height,
+        "format": fmt,
+        "fsize": fsize,
+        "absolute_url": str(abspath),
+        "is_animated": True,
+        "frame_count": frame_count,
+        "delays": delays,
+        "loop_count": loop_count,
+    })
     return metadata.format_info()
     # return image_info
 
@@ -285,7 +292,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     return image_info
 
 
-def _inspect_smart(image_path: Path) -> Dict:
+def inspect_sequence_autodetect(image_path: Path) -> Dict:
     """Receives a single image, then finds similar images with the same name and then returns the information of those
     sequence"""
     images_dir = image_path.parents[0]

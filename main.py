@@ -14,7 +14,7 @@ if IS_FROZEN:
 from pycore.core_funcs import logger
 from pycore.core_funcs import exception
 from typing import Dict, List
-from pycore.inspect_ops import inspect_sequence, inspect_general, _inspect_smart
+from pycore.inspect_ops import inspect_sequence, inspect_general, inspect_sequence_autodetect
 from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
 from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
@@ -75,7 +75,7 @@ class TridentFrameImager:
         image_path = Path(image_path).resolve()
         if not image_path.exists():
             raise FileNotFoundError(image_path.name)
-        info = _inspect_smart(image_path)
+        info = inspect_sequence_autodetect(image_path)
         if info:
             logger.data(info)
 
