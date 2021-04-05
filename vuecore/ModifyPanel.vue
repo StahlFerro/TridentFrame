@@ -393,6 +393,8 @@ var data = {
     file_size_hr: "",
     format: "",
     path: "",
+    hash_sha1: "",
+    last_modified_dt: "",
   },
   criteria: {
     name: "",
@@ -457,6 +459,8 @@ function clearOrigFields() {
   data.orig_attribute.file_size_hr = "";
   data.orig_attribute.format = "";
   data.orig_attribute.path = "";
+  data.orig_attribute.hash_sha1 = "";
+  data.orig_attribute.last_modified_dt = "";
   data.modify_msgbox = "";
 }
 
@@ -557,6 +561,8 @@ function loadOrigInfo(res) {
   data.orig_attribute.path = geninfo.absolute_url.value;
   data.orig_attribute.file_size = geninfo.fsize.value;
   data.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
+  data.orig_attribute.last_modified_dt = geninfo.modification_datetime.value;
+  data.orig_attribute.hash_sha1 = geninfo.hash_sha1.value;
 }
 
 function loadNewInfo(res) {
