@@ -17,7 +17,7 @@
         .modify-old-container {
             display: flex;
             flex-grow: inherit;
-            width: 50%;
+            width: 33%;
             height: 44vh;
             overflow: auto;
             img {
@@ -30,10 +30,45 @@
                 margin-right: auto;
             }
         }
+        .modify-image-info {
+            display: flex;
+            flex-grow: inherit;
+            width: 34%;
+            height: 44vh;
+            overflow: auto;
+            
+            .mod-info-table {
+                // td {
+                //     padding: 3px !important;
+                //     padding-bottom: 0px !important;
+                //     padding-left: 5px !important;
+                // }
+                border-collapse: collapse;
+                width: 100%;
+                table-layout: fixed;
+                font-size: calc(0.6vw + 1.2vh);
+                border: 1px solid $dark-9;
+                color: $white-d;
+                th {
+                    width: 34%;
+                    border: 1px solid $dark-9;
+                    color: $white-d;
+                    text-align: center;
+                }
+                td {
+                    width: 34%;
+                    border: 1px solid $dark-9;
+                    padding-left: 3px;
+                }
+                .mod-info-label {
+                    text-align: center;
+                }
+            }
+        }
         .modify-new-container {
             display: flex;
             flex-grow: inherit;
-            width: 50%;
+            width: 33%;
             height: 44vh;
             overflow: auto;
             img {
@@ -56,12 +91,15 @@
         height: 57px;
         .mpb-load-buttons {
             flex-grow: inherit;
-            width: 50%;
+            width: 33%;
             text-align: center;
+        }
+        .mpb-center-buttons {
+            width: 34%;
         }
         .mpb-preview-buttons {
             flex-grow: inherit;
-            width: 50%;
+            width: 33%;
             text-align: center;
         }
     }

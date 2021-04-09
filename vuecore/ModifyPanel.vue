@@ -3,81 +3,108 @@
     <div class="modify-panel-root">
 
       <div class="mod-orig-info-container" style="display: none;">
-        <table class="table mod-orig-info-table is-hpaddingless">
-          <tbody>
-            <tr>
-              <td class="mod-info-label is-cyan">Name</td>
-              <td class="mod-info-data">
-                <span v-if="orig_attribute.name">{{ orig_attribute.name }}</span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">Dimensions</td>
-              <td class="mod-info-data">
-                <span v-if="origDimensions">{{ origDimensions }}</span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">File size</td>
-              <td class="mod-info-data">
-                <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.file_size_hr }}</span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">Format</td>
-              <td class="mod-info-data">
-                <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.format }}</span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">Total frames</td>
-              <td class="mod-info-data">
-                <span v-if="orig_attribute.frame_count">{{ orig_attribute.frame_count }} ({{ orig_attribute.frame_count_ds }})</span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">Frame rate</td>
-              <td class="mod-info-data">
-                <span v-if="orig_attribute.fps">{{ orig_attribute.fps }}</span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">Frame delay</td>
-              <td class="mod-info-data">
-                <span v-if="orig_attribute.fps">{{ orig_attribute.delay_info }}</span>
-                <span v-else>-</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">Loop duration</td>
-              <td class="mod-info-data">
-                <span v-if="orig_attribute.loop_duration">{{ orig_attribute.loop_duration }} seconds</span>
-                <span v-else>-</span>
-                </td>
-            </tr>
-            <tr>
-              <td class="mod-info-label is-cyan">Loop count</td>
-              <td class="mod-info-data">
-                <template v-if="orig_attribute.path">
-                  <span v-if="orig_attribute.loop_count == 0">Infinite</span>
-                  <span v-else>{{ orig_attribute.loop_count }}</span>
-                </template>
-                <template v-else>-</template>
-              </td>
-            </tr>
-          </tbody>
-        </table>
       </div>
 
       <div class="modify-panel-displays">
-        <div class="modify-old-container silver-bordered">
+        <div class="modify-old-container silver-bordered-no-right">
           <img v-bind:src="orig_attribute.path" />
+        </div>
+        <div class="modify-image-info silver-bordered">
+          <table class="mod-info-table is-hpaddingless" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>Original</th>
+                <th>Attribute</th>
+                <th>Modified</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.name">{{ orig_attribute.name }}</span>
+                </td>
+                <td class="mod-info-label is-cyan">Name</td>
+                <td class="mod-info-data">
+                </td>
+              </tr> -->
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="origDimensions">{{ origDimensions }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Dimensions</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.file_size_hr }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">File size</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.format }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Format</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.frame_count">{{ orig_attribute.frame_count }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Total frames</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.fps">{{ orig_attribute.fps }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Frame rate</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.fps">{{ orig_attribute.delay_info }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Frame delay</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.loop_duration">{{ orig_attribute.loop_duration }} seconds</span>
+                  <!-- <span v-else>-</span> -->
+                  </td>
+                <td class="mod-info-label is-cyan">Loop duration</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <template v-if="orig_attribute.path">
+                    <span v-if="orig_attribute.loop_count == 0">Infinite</span>
+                    <span v-else>{{ orig_attribute.loop_count }}</span>
+                  </template>
+                  <!-- <template v-else>-</template> -->
+                </td>
+                <td class="mod-info-label is-cyan">Loop count</td>
+                <td class="mod-info-data">
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
         </div>
         <div class="modify-new-container silver-bordered-no-left" 
           v-bind:title="preview_info?
@@ -95,7 +122,7 @@
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
-            <span>Load GIF/APNG</span>
+            <span>Load Image</span>
           </a>
           <a v-on:click="clearImage" class="button is-neon-crimson">
             <span class="icon is-small">
@@ -110,6 +137,7 @@
             </span>
           </a>
         </div>
+        <div class="mpb-center-buttons"></div>
         <div class="mpb-preview-buttons">
           <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
@@ -316,6 +344,16 @@
                 <td>
                   <a v-on:click="modifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
                     MODIFY</a>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="6">
+                  <input
+                    v-model="modify_msgbox"
+                    type="text"
+                    class="input is-left-paddingless is-border-colorless"
+                    readonly="readonly"
+                  />
                 </td>
               </tr>
             </table>
@@ -770,11 +808,11 @@ function fpsConstrain (event) {
 }
 
 function origDimensions() {
-  if (data.orig_width && data.orig_height) {
-    return `${data.orig_width} x ${data.orig_height}`;
+  if (data.orig_attribute.width && data.orig_attribute.height) {
+    return `${data.orig_attribute.width} x ${data.orig_attribute.height}`;
   }
   else {
-    return "-";
+    return "";
   }
 }
 

@@ -1849,7 +1849,7 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 .modify-panel-root .modify-panel-displays .modify-old-container {
   display: flex;
   flex-grow: inherit;
-  width: 50%;
+  width: 33%;
   height: 44vh;
   overflow: auto;
 }
@@ -1862,10 +1862,39 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   margin-left: auto;
   margin-right: auto;
 }
+.modify-panel-root .modify-panel-displays .modify-image-info {
+  display: flex;
+  flex-grow: inherit;
+  width: 34%;
+  height: 44vh;
+  overflow: auto;
+}
+.modify-panel-root .modify-panel-displays .modify-image-info .mod-info-table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  font-size: calc(0.6vw + 1.2vh);
+  border: 1px solid #9ea2a7;
+  color: #cccccc;
+}
+.modify-panel-root .modify-panel-displays .modify-image-info .mod-info-table th {
+  width: 34%;
+  border: 1px solid #9ea2a7;
+  color: #cccccc;
+  text-align: center;
+}
+.modify-panel-root .modify-panel-displays .modify-image-info .mod-info-table td {
+  width: 34%;
+  border: 1px solid #9ea2a7;
+  padding-left: 3px;
+}
+.modify-panel-root .modify-panel-displays .modify-image-info .mod-info-table .mod-info-label {
+  text-align: center;
+}
 .modify-panel-root .modify-panel-displays .modify-new-container {
   display: flex;
   flex-grow: inherit;
-  width: 50%;
+  width: 33%;
   height: 44vh;
   overflow: auto;
 }
@@ -1887,12 +1916,15 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 }
 .modify-panel-root .modify-panel-middlebar .mpb-load-buttons {
   flex-grow: inherit;
-  width: 50%;
+  width: 33%;
   text-align: center;
+}
+.modify-panel-root .modify-panel-middlebar .mpb-center-buttons {
+  width: 34%;
 }
 .modify-panel-root .modify-panel-middlebar .mpb-preview-buttons {
   flex-grow: inherit;
-  width: 50%;
+  width: 33%;
   text-align: center;
 }
 .modify-panel-root .modify-panel-controls {
@@ -12597,6 +12629,16 @@ input.input.is-border-colorless {
   border-right: 0;
 }
 
+.silver-bordered-left-thin {
+  border: 2px solid #cccccc;
+  border-left: 1px solid #9ea2a7;
+}
+
+.silver-bordered-right-thin {
+  border: 2px solid #cccccc;
+  border-right: 1px solid #9ea2a7;
+}
+
 .silver-bordered-left-thicc {
   border: 2px solid #cccccc !important;
   border-left: 5px solid #cccccc !important;
@@ -12682,16 +12724,6 @@ label.label.is-tight:not(:last-child) {
 .mod-orig-info-container::-webkit-scrollbar {
   width: 7px;
   height: 10px;
-}
-
-.mod-orig-info-table td {
-  padding: 3px !important;
-  padding-bottom: 0px !important;
-  padding-left: 5px !important;
-}
-.mod-orig-info-table td.mod-info-label {
-  max-width: 120px;
-  min-width: 120px;
 }
 
 .mod-aimg-container {
