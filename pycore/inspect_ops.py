@@ -31,7 +31,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
         Dict: Information of the image
     """
     abspath = image_path
-    filename = image_path.stem
+    filename = image_path.name
     logger.message(str(image_path))
     ext = image_path.suffixes[-1]
     ext = ext.lower()
@@ -69,7 +69,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                 if skip:
                     return {}
                 else:
-                    raise ImageNotStaicException(filename, "APNG")
+                    raise ImageNotStaicException(filename, "PNG")
             else:
                 return inspect_animated_png(image_path, apng).format_info()
         else:
@@ -77,7 +77,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                 if skip:
                     return {}
                 else:
-                    raise ImageNotAnimatedException(filename, "APNG")
+                    raise ImageNotAnimatedException(filename, "PNG")
             else:
                 return inspect_static_image(image_path).format_info()
     else:
@@ -278,7 +278,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
             logger.message(f"Loading images... ({shout_nums.get(index)})")
-        info = inspect_general(path, filter_on="static", skip=True).format_info()
+        info = inspect_general(path, filter_on="static", skip=True)
         if info:
             gen_info = info["general_info"]
             sequence_info.append(gen_info)

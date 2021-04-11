@@ -89,17 +89,18 @@ class MalformedCommandException(Exception):
         super().__init__(self.message)
 
 
-def set_exception_handler(debug_flag: bool = True):
-    """Toggle between normal python verbose traceback, or simplified error message depending on the specified DEBUG_FLAG
+def set_exception_handler(json_mode: bool = True):
+    """Toggle between normal python verbose traceback print, or json-serialzied traceback and error prints
 
     Args:
-        debug_flag (bool, optional): True = Normal python traceback; False = Simplified error message. Defaults to True.
+        json_mode (bool, optional): True = JSON python traceback; False = Normal error message. Defaults to True.
     """
 
     def exception_handler(exception_type, exception, traceback, debug_hook=sys.excepthook):
-        if debug_flag:
-            debug_hook(exception_type, exception, traceback)
-        else:
+        if json_mode:
+            logger.error_traceback(traceback)
             logger.error(f"Error: {exception}")
+        else:
+            debug_hook(exception_type, exception, traceback)
 
     sys.excepthook = exception_handler

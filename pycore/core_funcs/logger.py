@@ -1,6 +1,7 @@
 import json
 import sys
 import os
+import traceback
 from typing import Any
 from pathlib import Path
 
@@ -47,6 +48,11 @@ def warn(logmsg: str):
 
 def error(logmsg: str):
     msg = {"error": logmsg}
+    print(json.dumps(msg), file=sys.stderr)
+
+
+def error_traceback(tb):
+    msg = {"traceback": traceback.extract_tb(tb, limit=None).format()}
     print(json.dumps(msg), file=sys.stderr)
 
 

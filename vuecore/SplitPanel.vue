@@ -404,7 +404,7 @@ function splitImage() {
   }
   console.log(data);
   tridentEngine(["split_image", data.preview_path, data.outdir, data.criteria], (error, res) => {
-    if (error) {        
+    if (error) {
       try {
         console.error(error);
         let error_data = JSON.parse(error);

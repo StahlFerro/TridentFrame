@@ -796,7 +796,8 @@ function previewAIMG() {
   tridentEngine(["combine_image", data.image_paths, "./temp", criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
-      data.create_msgbox = error.error;
+      let error_data = JSON.parse(error);
+      data.create_msgbox = error_data.error;
       data.CRT_IS_PREVIEWING = false;
     } else if (res) {
       res = JSON.parse(res);
@@ -836,6 +837,10 @@ function CRTCreateAIMG() {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
+  // if (!data.outdir) {
+  //   data.create_msgbox = "Please specify the output folder!";
+  //   return;
+  // }
   var validator = validateFilename(data.criteria.name);
   if (!validator.valid) {
     console.error(validator.msg);
@@ -863,9 +868,15 @@ function CRTCreateAIMG() {
     });
     tridentEngine(["combine_image", data.image_paths, data.outdir, criteria_pack], (error, res) => {
       if (error) {
-        console.error(error);
-        data.create_msgbox = error.error;
-        data.CRT_IS_CREATING = false;
+        try {
+          console.error(error);
+          let error_data = JSON.parse(error);
+          data.create_msgbox = error_data.error;
+          data.CRT_IS_CREATING = false;
+        }
+        catch (e) {
+          data.split_msgbox = error;
+        }
       } else if (res) {
         res = JSON.parse(res);
         console.log(`res -> ${res}`);
