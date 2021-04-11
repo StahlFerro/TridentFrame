@@ -591,8 +591,8 @@ function loadOrigInfo(res) {
   data.orig_attribute.fps = `${ainfo.fps.value} fps`;
   data.orig_attribute.frame_count= ainfo.frame_count.value;
   data.orig_attribute.format = geninfo.format.value;
-  let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} seconds`;
-  if (ainfo.delay_is_even) {
+  let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
+  if (ainfo.delays_are_even.value) {
     delay_info += ` (even)`;
   }
   else {
