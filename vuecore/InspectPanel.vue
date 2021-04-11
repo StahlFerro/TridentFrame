@@ -32,7 +32,13 @@
                   <template v-if="attribute == 'loop_count' && metadata_field.value == 0">
                     <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
                   </template>
-                  <template v-else-if="attribute == 'is_animated'">
+                  <!-- <template v-else-if="attribute == 'is_animated'">
+                    <td style="max-width: 369px; word-wrap: break-all">{{ metadata_field.value? "Yes" : "No" }}</td>
+                  </template>
+                  <template v-else-if="attribute == 'delays_are_even'">
+                    <td style="max-width: 369px; word-wrap: break-all">{{ delays_are_even.value? "Yes" : "No" }}</td>
+                  </template> -->
+                  <template v-else-if="typeof metadata_field.value == 'boolean'">
                     <td style="max-width: 369px; word-wrap: break-all">{{ metadata_field.value? "Yes" : "No" }}</td>
                   </template>
                   <template v-else>
