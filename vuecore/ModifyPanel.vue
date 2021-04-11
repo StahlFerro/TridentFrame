@@ -294,17 +294,6 @@
                   </div>
                 </td> -->
                 <td width="16.7%">
-                  <div class="field">
-                    <label class="label">Format</label>
-                    <div class="control">
-                      <div class="select is-neon-cyan">
-                        <select v-model="criteria.format">
-                          <option value="GIF">GIF</option>
-                          <option value="PNG">APNG</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
                 </td>
                 <td width="16.7%" class="force-vcenter">
                   <!-- <label class="checkbox">
@@ -321,7 +310,7 @@
               <tr>
               </tr>
               <tr>
-                <td colspan="5">
+                <td colspan="4">
                   <div class="field has-addons">
                     <div class="control">
                       <a v-on:click="chooseOutDir" class="button is-neon-cyan">
@@ -341,7 +330,19 @@
                     </div>
                   </div>
                 </td>
-                <td>
+                <td colspan="1">
+                  <div class="field">
+                    <div class="control">
+                      <div class="select is-neon-cyan">
+                        <select v-model="criteria.format">
+                          <option value="GIF">GIF</option>
+                          <option value="PNG">APNG</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td colspan="1">
                   <a v-on:click="modifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
                     MODIFY</a>
                 </td>

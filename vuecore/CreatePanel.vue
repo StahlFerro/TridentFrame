@@ -410,7 +410,7 @@
                   </div>
                 </td>
                 <td colspan="1" style="padding-top: 15px">
-                  <div class="field has-text-centered">
+                  <div class="field">
                     <div class="control">
                       <a
                         v-on:click="CRTCreateAIMG"
@@ -418,7 +418,7 @@
                         v-bind:class="{
                           'is-loading': CRT_IS_CREATING == true,
                           'non-interactive': isButtonFrozen,
-                        }">Create</a>
+                        }">CREATE</a>
                     </div>
                   </div>
                 </td>
