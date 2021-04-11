@@ -41,6 +41,9 @@
                   <template v-else-if="typeof metadata_field.value == 'boolean'">
                     <td style="max-width: 369px; word-wrap: break-all">{{ metadata_field.value? "Yes" : "No" }}</td>
                   </template>
+                  <template v-else-if="typeof metadata_field.value == 'number'">
+                    <td style="max-width: 369px; word-wrap: break-all">{{ roundPrecise(metadata_field.value, 3) }}</td>
+                  </template>
                   <template v-else>
                     <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)">
                       {{ metadata_field.value }}
@@ -91,7 +94,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
-const { randString } = require("./Utility.vue");
+const { roundPrecise } = require("./Utility.vue");
 const { tridentEngine, settings } = require("./PythonCommander.vue");
 
 let extension_filters = [
@@ -240,6 +243,7 @@ export default {
     clearImage: clearImage,
     toggleCheckerBG: toggleCheckerBG,
     headerMetaCategory: headerMetaCategory,
+    roundPrecise: roundPrecise,
   },
 };
 </script>

@@ -76,6 +76,11 @@ function wholeNumConstrain(event) {
   }
 }
 
+function roundPrecise(number, precision = 0) {
+  let mult = Math.pow(10, precision);
+  return (Math.round(number * mult) / mult);
+}
+
 /***
  * Convert bytes to human-readable file sizes using the biggest possible size unit without having the value smaller than 1
  * @param {int} nbytes - Total amount of bytes
@@ -88,8 +93,7 @@ function readFilesize(nbytes, precision) {
     nbytes /= 1024;
     i += 1;
   }
-  let mult = Math.pow(10, precision);
-  let size = (Math.round(nbytes * mult) / mult);
+  let size = roundPrecise(nbytes, precision);
   // size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
   return `${size} ${size_suffixes[i]}`;
 }
@@ -184,6 +188,7 @@ module.exports = {
   fileExists: fileExists,
   readFilesize: readFilesize,
   isNullOrWhitespace: isNullOrWhitespace,
+  roundPrecise: roundPrecise,
 }
 
 </script>
