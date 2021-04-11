@@ -51,7 +51,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                     else:
                         raise ImageNotStaicException(filename, "GIF")
                 else:
-                    return inspect_animated_gif(image_path, gif)
+                    return inspect_animated_gif(image_path, gif).format_info()
             else:
                 if filter_on == "animated":
                     if skip:
@@ -59,7 +59,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                     else:
                         raise ImageNotAnimatedException(filename, "GIF")
                 else:
-                    return inspect_static_image(image_path)
+                    return inspect_static_image(image_path).format_info()
     elif ext == ".png":
         try:
             apng: APNG = APNG.open(abspath)
@@ -74,7 +74,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                 else:
                     raise ImageNotStaicException(filename, "APNG")
             else:
-                return inspect_animated_png(image_path, apng)
+                return inspect_animated_png(image_path, apng).format_info()
         else:
             if filter_on == "animated":
                 if skip:
@@ -82,9 +82,9 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
                 else:
                     raise ImageNotAnimatedException(filename, "APNG")
             else:
-                return inspect_static_image(image_path)
+                return inspect_static_image(image_path).format_info()
     else:
-        return inspect_static_image(image_path)
+        return inspect_static_image(image_path).format_info()
 
 
 # def inspect_static_image(path: Path):
@@ -95,7 +95,7 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
 #     return _inspect_static_image(image)
 
 
-def inspect_static_image(image_path: Path) -> Dict:
+def inspect_static_image(image_path: Path) -> ImageMetadata:
     """Returns all information regarding a single static image
 
     Args:
@@ -154,10 +154,10 @@ def inspect_static_image(image_path: Path) -> Dict:
         "is_animated": False,
         "exif": str(exif),
     })
-    return metadata.format_info()
+    return metadata
 
 
-def inspect_animated_gif(abspath: Path, gif: Image) -> Dict:
+def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     """Inspect an animated GIF and return its metadata
 
     Args:
@@ -212,10 +212,10 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> Dict:
         "delays": delays,
         "loop_count": loop_count,
     })
-    return metadata.format_info()
+    return metadata
 
 
-def inspect_animated_png(abspath: Path, apng: APNG) -> Dict:
+def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     """Inspect an animated PNG and return its metadata
 
     Args:
@@ -262,7 +262,7 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> Dict:
         "delays": delays,
         "loop_count": loop_count,
     })
-    return metadata.format_info()
+    return metadata
     # return image_info
 
 
@@ -281,7 +281,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
             logger.message(f"Loading images... ({shout_nums.get(index)})")
-        info = inspect_general(path, filter_on="static", skip=True)
+        info = inspect_general(path, filter_on="static", skip=True).format_info()
         if info:
             gen_info = info["general_info"]
             sequence_info.append(gen_info)

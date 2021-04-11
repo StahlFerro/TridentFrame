@@ -616,8 +616,8 @@ function loadNewInfo(res) {
   data.criteria.format = geninfo.format.value;
   data.criteria.width = geninfo.width.value;
   data.criteria.height = geninfo.height.value;
-  data.criteria.delay = ainfo.average_delay.value;
-  data.criteria.fps = ainfo.fps.value;
+  data.criteria.delay = roundPrecise(ainfo.average_delay.value, 3);
+  data.criteria.fps = roundPrecise(ainfo.fps.value, 3);
   data.criteria.loop_count = ainfo.loop_count.value;
   updateAspectRatio(data.width, data.height);
 }
