@@ -408,7 +408,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists } = require("./Utility.vue");
+        gcd, validateFilename, fileExists, roundPrecise } = require("./Utility.vue");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
@@ -590,9 +590,12 @@ function loadOrigInfo(res) {
   data.orig_attribute.fps = `${ainfo.fps.value} fps`;
   data.orig_attribute.frame_count= ainfo.frame_count.value;
   data.orig_attribute.format = geninfo.format.value;
-  let delay_info = `${ainfo.average_delay.value} seconds`;
+  let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} seconds`;
   if (ainfo.delay_is_even) {
     delay_info += ` (even)`;
+  }
+  else {
+    delay_info += ` (not even)`;
   }
   data.orig_attribute.delay = ainfo.average_delay.value;
   data.orig_attribute.delay_info = delay_info;
@@ -871,6 +874,7 @@ export default {
     fpsConstrain: fpsConstrain,
     floatConstrain: floatConstrain,
     numConstrain: numConstrain,
+    roundPrecise: roundPrecise,
   },
   computed: {
     origDimensions: origDimensions,
