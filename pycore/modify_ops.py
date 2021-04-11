@@ -1,33 +1,14 @@
 import os
-import io
-import string
 import shutil
-import math
-import time
-import subprocess
-import tempfile
 from pathlib import Path
-from random import choices
-from pprint import pprint
-from urllib.parse import urlparse
-from typing import List, Dict, Tuple
-from datetime import datetime
 
 from PIL import Image
-from apng import APNG, PNG
 
-from .core_funcs.criterion import (
+from pycore.models.criterion import (
     CriteriaBundle,
-    CreationCriteria,
-    SplitCriteria,
-    ModificationCriteria,
-    APNGOptimizationCriteria,
 )
 from .core_funcs import logger
-from .utility import filehandler, imageutils
-from .bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI
-from .create_ops import create_aimg
-from .split_ops import split_aimg, _fragment_apng_frames
+from .bin_funcs.imager_api import APNGOptAPI
 
 
 # def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):

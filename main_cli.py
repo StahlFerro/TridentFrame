@@ -1,22 +1,15 @@
 from __future__ import print_function
 import sys
-import random
-import string
-from typing import List
 import os
-import signal
-import time
 import click
 import json
 
-from pycore.inspect_ops import inspect_sequence, inspect_general, inspect_sequence_autodetect
-from pycore.create_ops import create_aimg
+from pycore.inspect_ops import inspect_general, inspect_sequence_autodetect
 from pycore.split_ops import split_aimg
 from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
-from pycore.core_funcs.criterion import (
+from pycore.models.criterion import (
     CriteriaBundle,
-    CreationCriteria,
     SplitCriteria,
     ModificationCriteria,
     SpritesheetBuildCriteria,

@@ -19,7 +19,7 @@ from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
 from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
-from pycore.core_funcs.criterion import (
+from pycore.models.criterion import (
     CriteriaBundle,
     CreationCriteria,
     SplitCriteria,
@@ -29,7 +29,6 @@ from pycore.core_funcs.criterion import (
     GIFOptimizationCriteria,
     APNGOptimizationCriteria,
 )
-from pycore.core_funcs.config import get_absolute_cache_path, get_absolute_temp_path
 
 
 class TridentFrameImager:

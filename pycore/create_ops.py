@@ -10,7 +10,7 @@ from .core_funcs import logger
 from .core_funcs.config import (
     STATIC_IMG_EXTS,
 )
-from .core_funcs.criterion import (
+from pycore.models.criterion import (
     CreationCriteria,
     CriteriaBundle,
 )

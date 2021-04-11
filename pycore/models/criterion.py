@@ -59,7 +59,7 @@ class ModificationCriteria(CreationCriteria):
         # self.fps = float(vals["fps"] or 0)
         # self.loop_count = int(vals.get("loop_count") or 0)
         # self.rotation = int(vals.get("rotation") or 0)
-        self.format = vals["format"]
+        # self.format = vals["format"]
         self.hash_sha1 = vals["hash_sha1"]
         self.last_modified_dt = vals["last_modified_dt"]
 

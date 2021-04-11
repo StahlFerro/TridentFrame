@@ -1,17 +1,13 @@
 import os
-import json
 import shutil
 import subprocess
-import sys
-import shlex
 from pathlib import Path
-from subprocess import PIPE
-from typing import Generator, List, Tuple, Iterator
+from typing import List, Tuple, Iterator
 
 from PIL import Image
 from apng import APNG
 
-from pycore.core_funcs.criterion import (
+from pycore.models.criterion import (
     CriteriaBundle,
     SplitCriteria,
     APNGOptimizationCriteria,

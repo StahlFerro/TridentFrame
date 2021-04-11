@@ -1,6 +1,4 @@
-import os
 import io
-import subprocess
 from pathlib import Path
 from copy import deepcopy
 from heapq import nsmallest
@@ -12,9 +10,8 @@ from apng import APNG
 from .bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGDisAPI
 from .core_funcs.config import (
     ANIMATED_IMG_EXTS,
-    imager_exec_path,
 )
-from .core_funcs.criterion import SplitCriteria
+from pycore.models.criterion import SplitCriteria
 from .utility import filehandler, imageutils
 from .core_funcs import logger
 

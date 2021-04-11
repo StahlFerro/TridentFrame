@@ -1,19 +1,12 @@
 import os
 import io
-import string
-import shutil
 import math
-from random import choices
-from pprint import pprint
-from urllib.parse import urlparse
 from typing import List
 
 from PIL import Image
-from apng import APNG, PNG
 
-from .core_funcs.config import IMG_EXTS, ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
-from .core_funcs.criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
-from .utility import filehandler, imageutils
+from .core_funcs.config import ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
+from pycore.models.criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 
 def _get_boxes(

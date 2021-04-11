@@ -1,11 +1,8 @@
 import os
 from pathlib import Path
-import sys
-import json
 from typing import List, Dict
 
-from PIL import Image, ExifTags, ImageFile, UnidentifiedImageError
-from PIL.PngImagePlugin import PngImageFile, PngInfo
+from PIL import Image, ExifTags, UnidentifiedImageError
 from apng import APNG
 from .core_funcs import logger
 from .core_funcs.exception import (
@@ -14,7 +11,7 @@ from .core_funcs.exception import (
     UnidentifiedImageException,
 )
 from .utility import filehandler, imageutils
-from .core_funcs.metadata_builder import ImageMetadata, AnimatedImageMetadata
+from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 
 Image.MAX_IMAGE_PIXELS = None
 
