@@ -409,6 +409,7 @@ const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
         gcd, validateFilename, fileExists } = require("./Utility.vue");
+const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
@@ -448,6 +449,7 @@ var data = {
     flip_y: false,
     is_reversed: false,
     preserve_alpha: false,
+    start_frame: 0,
   },
   gif_opt_criteria: {
     is_optimized: false,
@@ -708,7 +710,13 @@ function modifyImage() {
   
   if (proceed_modify) {
     data.MOD_IS_MODIFYING = true;
-    client.invoke("modify_image", data.orig_path, data.outdir, data, (error, res) => {
+    let criteria_pack = lodashClonedeep({
+      "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
+      "gif_opt_criteria": data.gif_opt_criteria,
+      "apng_opt_criteria": data.apng_opt_criteria,
+    });
+    criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+    tridentEngine(["modify_image", data.orig_path, criteria_pack], (error, res) => {
       if (error) {
         console.error(error);
         data.modify_msgbox = error;
@@ -732,7 +740,13 @@ function modifyImage() {
 
 function previewModImg() {
   data.MOD_IS_PREVIEWING = true;
-  client.invoke("modify_image", data.orig_path, "./temp", data, (error, res) => {
+  let criteria_pack = lodashClonedeep({
+    "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
+    "gif_opt_criteria": data.gif_opt_criteria,
+    "apng_opt_criteria": data.apng_opt_criteria,
+  });
+  criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+  tridentEngine(["modify_image", data.orig_attribute.path, "./temp", criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.modify_msgbox = error;
@@ -750,7 +764,7 @@ function previewModImg() {
         }
         if (res.CONTROL == "MOD_FINISH") {
           console.log(data.preview_path);
-          client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
+          tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
             if (error) {
               console.error(error);
               data.MOD_IS_PREVIEWING = false;

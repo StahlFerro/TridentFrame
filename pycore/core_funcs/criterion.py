@@ -1,5 +1,4 @@
-from typing import Dict
-from os import path
+from typing import Dict, List, Any
 
 
 class TransformativeCriteria:
@@ -31,10 +30,10 @@ class CreationCriteria(TransformativeCriteria):
         self.delay: float = float(vals["delay"] or 0)
         self.extension: str = vals["format"]
         self.reverse: bool = vals["is_reversed"]
-        self.preserve_alpha: bool = vals["preverse_alpha"]
+        self.preserve_alpha: bool = vals["preserve_alpha"]
         self.loop_count = int(vals["loop_count"] or 0)
-        self.start_frame = int(vals["start_frame"] or 0) or 1
-        self.start_frame = self.start_frame - 1 if self.start_frame >= 0 else self.start_frame
+        start_frame_val = int(vals["start_frame"] or 0) or 1
+        self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.skip_frame = vals.get("skip_frame") or 0
 
 
@@ -42,25 +41,27 @@ class ModificationCriteria(CreationCriteria):
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
     def __init__(self, vals):
-        self.orig_name = vals["orig_name"]
-        self.orig_base_name = path.splitext(self.orig_name)[0]
-        self.orig_width = vals["orig_width"]
-        self.orig_height = vals["orig_height"]
-        self.orig_delay = vals["orig_delay"]
-        self.orig_frame_count = vals["orig_frame_count"]
-        self.orig_frame_count_ds = vals["orig_frame_count_ds"]
-        self.orig_loop_duration = vals["orig_loop_duration"]
-        self.orig_loop_count = int(vals["orig_loop_count"] or 0)
-        self.orig_format = vals["orig_format"]
+        # self.orig_name = vals["orig_name"]
+        # self.orig_base_name = path.splitext(self.orig_name)[0]
+        # self.orig_width = vals["orig_width"]
+        # self.orig_height = vals["orig_height"]
+        # self.orig_delay = vals["orig_delay"]
+        # self.orig_frame_count = vals["orig_frame_count"]
+        # self.orig_frame_count_ds = vals["orig_frame_count_ds"]
+        # self.orig_loop_duration = vals["orig_loop_duration"]
+        # self.orig_loop_count = int(vals["orig_loop_count"] or 0)
+        # self.orig_format = vals["orig_format"]
 
-        self.name = vals["name"]
-        self.width = int(vals.get("width") or 0)
-        self.height = int(vals.get("height") or 0)
-        self.delay = float(vals["delay"] or 0)
-        self.fps = float(vals["fps"] or 0)
-        self.loop_count = int(vals.get("loop_count") or 0)
-        self.rotation = int(vals.get("rotation") or 0)
+        # self.name = vals["name"]
+        # self.width = int(vals.get("width") or 0)
+        # self.height = int(vals.get("height") or 0)
+        # self.delay = float(vals["delay"] or 0)
+        # self.fps = float(vals["fps"] or 0)
+        # self.loop_count = int(vals.get("loop_count") or 0)
+        # self.rotation = int(vals.get("rotation") or 0)
         self.format = vals["format"]
+        self.hash_sha1 = vals["hash_sha1"]
+        self.last_modified_dt = vals["last_modified_dt"]
 
         self.flip_x: bool = vals.get("flip_x")
         self.flip_y: bool = vals.get("flip_y")
@@ -68,23 +69,11 @@ class ModificationCriteria(CreationCriteria):
         self.preserve_alpha = vals["preserve_alpha"]
         super(ModificationCriteria, self).__init__(vals)
 
-    def renamed(self) -> bool:
-        return self.orig_base_name != self.name
+    def project_modifications_list(self, image_obj: Any) -> List[Dict]:
+        return [image_obj, self.start_frame]
 
-    def must_redelay(self) -> bool:
-        return self.orig_delay != self.delay
-
-    def must_reloop(self) -> bool:
-        return self.orig_loop_count != self.loop_count
-
-    def must_flip(self) -> bool:
-        return self.flip_x or self.flip_y
-
-    def change_format(self) -> bool:
-        return self.orig_format != self.format
-
-    def gif_mustsplit_alteration(self) -> bool:
-        altered = self.is_reversed or self.must_flip() or self.must_rotate()
+    def gif_must_split(self) -> bool:
+        altered = self.is_reversed or self.flip_x or self.flip_y or self.rotation
         return altered
 
     def apng_mustsplit_alteration(self) -> bool:
@@ -189,8 +178,8 @@ class CriteriaBundle:
 
     def __init__(self, vals):
         self.create_aimg_criteria: CreationCriteria = vals.get("create_aimg_criteria")
-        self.split_aimg_criteria: SplitCriteria = vals.get("split_aimg")
-        self.modify_aimg_criteria: ModificationCriteria = vals.get("modify_aimg")
+        self.split_aimg_criteria: SplitCriteria = vals.get("split_aimg_criteria")
+        self.modify_aimg_criteria: ModificationCriteria = vals.get("modify_aimg_criteria")
         # self.build_spr: SpritesheetBuildCriteria = vals.get('build_spr')
         # self.slice_spr: SpritesheetSliceCriteria = vals.get('slice_spr')
         self.gif_opt_criteria: GIFOptimizationCriteria = vals.get("gif_opt_criteria")

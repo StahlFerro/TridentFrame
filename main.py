@@ -130,7 +130,7 @@ class TridentFrameImager:
         split_aimg(image_path, out_dir, criteria)
         return
 
-    def modify_image(self, image_path, out_dir, criteria_pack):
+    def modify_image(self, image_path: str, out_dir: str, criteria_pack: dict):
         """Modify the criteria and behavior of a GIF/APNG"""
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
@@ -138,11 +138,17 @@ class TridentFrameImager:
             raise Exception("Please load a GIF or APNG!")
         elif not out_dir:
             raise Exception("Please choose an output folder!")
+        image_path = Path(image_path).resolve()
+        out_dir = Path(out_dir).resolve()
+        if not image_path.exists():
+            raise FileNotFoundError(image_path.name)
+        if not out_dir.exists():
+            raise FileNotFoundError(out_dir)
         crbundle = CriteriaBundle(
             {
-                "modify_aimg": ModificationCriteria(criteria_pack["criteria"]),
-                "gif_opt": GIFOptimizationCriteria(criteria_pack["gif_opt"]),
-                "apng_opt": APNGOptimizationCriteria(criteria_pack["apng_opt"]),
+                "modify_aimg_criteria": ModificationCriteria(criteria_pack["criteria"]),
+                "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
+                "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
             }
         )
         return modify_aimg(image_path, out_dir, crbundle)

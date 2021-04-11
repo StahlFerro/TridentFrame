@@ -13,30 +13,35 @@
             <template v-for="meta_categ in metadata_settings.categories">
             <!-- <template v-for="(meta_list, meta_categ) in info_data"> -->
               <!-- <span v-bind:key="key"/> -->
-              <tr :key="meta_categ">
-                <td colspan="2" class="is-cyan">{{ headerMetaCategory(meta_categ) }}</td>
-              </tr>
-              <!-- <tr v-if="meta_categ == 'general_info'" :key="'general_info_' + meta_categ">
-                <td colspan="2" class="is-cyan">GENERAL INFO</td>
-              </tr>
-              <tr v-if="meta_categ == 'animation_info'" :key="'animation_info_' + meta_categ">
-                <td colspan="2" class="is-cyan">ANIMATION INFO</td>
-              </tr> -->
-              <tr v-for="attribute in metadata_settings.attributes[meta_categ]" 
-                  :key="'iprop_' + meta_categ + '_' + attribute"
-                  :set="metadata_field = info_data[meta_categ][attribute]">
-                <td style="width: 123px">
-                  <strong><span class="is-white-d">{{ metadata_field.label }}</span></strong>
-                </td>
-                <template v-if="attribute == 'loop_count' && metadata_field.value == 0">
-                  <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
-                </template>
-                <template v-else>
-                  <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)">
-                    {{ metadata_field.value }}
+              <template v-if="info_data[meta_categ]">
+                <tr :key="meta_categ">
+                  <td colspan="2" class="is-cyan">{{ headerMetaCategory(meta_categ) }}</td>
+                </tr>
+                <!-- <tr v-if="meta_categ == 'general_info'" :key="'general_info_' + meta_categ">
+                  <td colspan="2" class="is-cyan">GENERAL INFO</td>
+                </tr>
+                <tr v-if="meta_categ == 'animation_info'" :key="'animation_info_' + meta_categ">
+                  <td colspan="2" class="is-cyan">ANIMATION INFO</td>
+                </tr> -->
+                <tr v-for="attribute in metadata_settings.attributes[meta_categ]" 
+                    :set="metadata_field = info_data[meta_categ][attribute]"
+                    :key="'iprop_' + meta_categ + '_' + attribute">
+                  <td style="width: 123px">
+                    <strong><span class="is-white-d">{{ metadata_field.label }}</span></strong>
                   </td>
-                </template>
-              </tr>
+                  <template v-if="attribute == 'loop_count' && metadata_field.value == 0">
+                    <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
+                  </template>
+                  <template v-else-if="attribute == 'is_animated'">
+                    <td style="max-width: 369px; word-wrap: break-all">{{ metadata_field.value? "Yes" : "No" }}</td>
+                  </template>
+                  <template v-else>
+                    <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)">
+                      {{ metadata_field.value }}
+                    </td>
+                  </template>
+                </tr>
+              </template>
             </template>
           </table>
         </div>

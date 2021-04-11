@@ -364,7 +364,7 @@
                 </td>
                 <td style="vertical-align: bottom">
                   <label class="checkbox" title="Preserve transparent pixels">
-                    <input v-model="criteria.preverse_alpha" type="checkbox" />
+                    <input v-model="criteria.preserve_alpha" type="checkbox" />
                     Preserve Alpha
                   </label>
                   <br />
@@ -514,7 +514,7 @@ var data = {
     delay: "",
     format: "GIF",
     is_reversed: false,
-    preverse_alpha: false,
+    preserve_alpha: false,
     flip_x: false,
     flip_y: false,
     width: "",

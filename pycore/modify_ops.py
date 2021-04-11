@@ -6,6 +6,7 @@ import math
 import time
 import subprocess
 import tempfile
+from pathlib import Path
 from random import choices
 from pprint import pprint
 from urllib.parse import urlparse
@@ -15,14 +16,6 @@ from datetime import datetime
 from PIL import Image
 from apng import APNG, PNG
 
-from .core_funcs.config import (
-    IMG_EXTS,
-    ANIMATED_IMG_EXTS,
-    STATIC_IMG_EXTS,
-    get_absolute_cache_path,
-    get_absolute_temp_path,
-    imager_exec_path,
-)
 from .core_funcs.criterion import (
     CriteriaBundle,
     CreationCriteria,
@@ -37,82 +30,83 @@ from .create_ops import create_aimg
 from .split_ops import split_aimg, _fragment_apng_frames
 
 
-def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
-    mod_criteria = crbundle.modify_aimg
-    apngopt_criteria = crbundle.apng_opt_criteria
-    frames_dir = mk_cache_dir(prefix_name="rebuild_aimg")
-    # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
-    split_criteria = SplitCriteria(
-        {
-            "pad_count": 6,
-            "color_space": "",
-            "is_duration_sensitive": True,
-            "is_unoptimized": True,
-            "new_name": "",
-            "extract_delay_info": False,
-        }
-    )
-    frame_paths = yield from split_aimg(img_path, frames_dir, split_criteria)
-    yield {"MOD split frames": frame_paths}
-    # if mod_criteria.is_reversed:
-    #     frames.reverse()
-    # pq_args = pngquant_args(apngopt_criteria)
-    if mod_criteria.format == "PNG" and apngopt_criteria.is_lossy:
-        logger.message("PNG QUANTIZATION SELECTED")
-        frame_paths = pngquant_render(pq_args, frame_paths)
-    ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
-    # ds_delay = 1 / ds_fps
-    ds_delay = mod_criteria.delay
-    ds_fps = mod_criteria.fps
-    yield {"NEW DELAY": ds_delay}
-    create_criteria = CreationCriteria(
-        {
-            "name": mod_criteria.name,
-            "fps": ds_fps,
-            "delay": ds_delay,
-            "format": mod_criteria.format,
-            "is_reversed": mod_criteria.is_reversed,
-            "preverse_alpha": True,
-            "flip_x": mod_criteria.flip_x,  # Flipping horizontally is handled by gifsicle
-            "flip_y": mod_criteria.flip_y,  # Flipping vertically is handled by gifsicle
-            "width": mod_criteria.width,
-            "height": mod_criteria.height,
-            "loop_count": mod_criteria.loop_count,
-            "start_frame": 1,
-            "reverse": mod_criteria.is_reversed,
-            "rotation": mod_criteria.rotation,
-        }
-    )
-    yield {"e": create_criteria.name}
-    crbundle = CriteriaBundle({"create_aimg_criteria": create_criteria})
-    new_image_path = yield from create_aimg(frame_paths, out_dir, create_criteria.name, crbundle)
-    yield {"new_image_path": new_image_path}
-    return new_image_path
+# def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
+#     mod_criteria = crbundle.modify_aimg
+#     apngopt_criteria = crbundle.apng_opt_criteria
+#     frames_dir = mk_cache_dir(prefix_name="rebuild_aimg")
+#     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
+#     split_criteria = SplitCriteria(
+#         {
+#             "pad_count": 6,
+#             "color_space": "",
+#             "is_duration_sensitive": True,
+#             "is_unoptimized": True,
+#             "new_name": "",
+#             "extract_delay_info": False,
+#         }
+#     )
+#     frame_paths = yield from split_aimg(img_path, frames_dir, split_criteria)
+#     yield {"MOD split frames": frame_paths}
+#     # if mod_criteria.is_reversed:
+#     #     frames.reverse()
+#     # pq_args = pngquant_args(apngopt_criteria)
+#     if mod_criteria.format == "PNG" and apngopt_criteria.is_lossy:
+#         logger.message("PNG QUANTIZATION SELECTED")
+#         frame_paths = pngquant_render(pq_args, frame_paths)
+#     ds_fps = mod_criteria.orig_frame_count_ds / mod_criteria.orig_loop_duration
+#     # ds_delay = 1 / ds_fps
+#     ds_delay = mod_criteria.delay
+#     ds_fps = mod_criteria.fps
+#     yield {"NEW DELAY": ds_delay}
+#     create_criteria = CreationCriteria(
+#         {
+#             "name": mod_criteria.name,
+#             "fps": ds_fps,
+#             "delay": ds_delay,
+#             "format": mod_criteria.format,
+#             "is_reversed": mod_criteria.is_reversed,
+#             "preverse_alpha": True,
+#             "flip_x": mod_criteria.flip_x,  # Flipping horizontally is handled by gifsicle
+#             "flip_y": mod_criteria.flip_y,  # Flipping vertically is handled by gifsicle
+#             "width": mod_criteria.width,
+#             "height": mod_criteria.height,
+#             "loop_count": mod_criteria.loop_count,
+#             "start_frame": 1,
+#             "reverse": mod_criteria.is_reversed,
+#             "rotation": mod_criteria.rotation,
+#         }
+#     )
+#     yield {"e": create_criteria.name}
+#     crbundle = CriteriaBundle({"create_aimg_criteria": create_criteria})
+#     new_image_path = yield from create_aimg(frame_paths, out_dir, create_criteria.name, crbundle)
+#     yield {"new_image_path": new_image_path}
+#     return new_image_path
+
+def _modify_gif(gif_path: Path, out_dir: Path, crbundle: CriteriaBundle):
+    pass
 
 
-def modify_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
-    criteria = crbundle.modify_aimg
+def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle):
+    criteria = crbundle.modify_aimg_criteria
     gifopt_criteria = crbundle.gif_opt_criteria
     apngopt_criteria = crbundle.apng_opt_criteria
-    img_path = os.path.abspath(img_path)
     # raise Exception(img_path, out_dir, criteria)
     if not os.path.isfile(img_path):
         raise Exception("Cannot Preview/Modify the image. The original file in the system may been removed.")
-    out_dir = os.path.abspath(out_dir)
     full_name = f"{criteria.name}.{criteria.format.lower()}"
     orig_full_name = f"{criteria.name}.{criteria.orig_format.lower()}"
     # temp_dir = mk_cache_dir(prefix_name="temp_mods")
     # temp_save_path = os.path.join(temp_dir, full_name)
-    out_full_path = os.path.join(out_dir, full_name)
-    orig_out_full_path = os.path.join(out_dir, orig_full_name)
-    yield {"OUTFULLPATH": f"{out_full_path}"}
+    out_full_path = out_dir.joinpath(full_name)
+    orig_out_full_path = out_dir.joinpath(orig_full_name)
+    logger.message(Image.open(img_path).format)
     sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)
     magick_args = imagemagick_args(gifopt_criteria)
     pq_args = pngquant_args(apngopt_criteria)
     # yield sicle_args
     target_path = str(img_path)
     total_ops = 0
-    yield {"CHANGE FORMAT???": criteria.change_format()}
+    logger.message(criteria.change_format)
     if criteria.change_format():
         if criteria.format == "PNG":
             # if sicle_args:
