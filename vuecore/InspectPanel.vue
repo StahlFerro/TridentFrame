@@ -3,10 +3,10 @@
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
         <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)">
-          <div class="inspect-panel-msgbox" v-show="inspect_msgbox != false">
+          <div class="inspect-panel-msgbox" v-show="inspect_msgbox !== ''">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
-          <img v-bind:src="img_path" />
+          <img v-bind:src="img_path" v-show="inspect_msgbox === ''"/>
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
           <table v-if="info_data" class="table ins-info-table is-paddingless" width="100%">
@@ -66,7 +66,7 @@
           </span>
           <span>Load Any Image</span>
         </a>
-        <a v-on:click="clearImage" class="button is-neon-crimson"
+        <a v-on:click="clearButton" class="button is-neon-crimson"
           v-bind:class="{ 'is-static': isButtonFrozen }">
           <span class="icon is-small">
             <i class="fas fa-times"></i>
@@ -123,7 +123,7 @@ var data = {
   ],
   inspect_info_menu_options: [
     {'name': "Copy Info", 'callback': copyInfo}
-  ]
+  ],
 };
 
 console.table(data.metadata_settings)
@@ -192,7 +192,9 @@ function loadImage() {
         try {
           // console.error(error);
           let error_data = JSON.parse(error);
-          // data.split_msgbox = error_data.error;
+          data.inspect_msgbox = error_data.error;
+          clearImage(); 
+          clearInfo();
         }
         catch (e) {
           // data.split_msgbox = error;
@@ -203,6 +205,7 @@ function loadImage() {
         res = JSON.parse(res);
         console.log(res);
         if (res.data) {
+          clearMsgBox();
           let res_data = res.data;
           data.info_data = res_data;
           // if (res_data.general_info || res_data.animation_info) {
@@ -222,10 +225,18 @@ function loadImage() {
   });
 }
 
+function clearButton() {
+  clearImage(); 
+  clearInfo();
+  clearMsgBox();
+}
+
+function clearInfo() {
+  data.info_data = "";
+}
+
 function clearImage() {
   data.img_path = "";
-  data.info_data = "";
-  clearMsgBox();
   removeExtraCtxOptions(['format']);
   webFrame.clearCache();
 }
@@ -240,7 +251,9 @@ export default {
   },
   methods: {
     loadImage: loadImage,
-    clearImage: clearImage,
+    // clearImage: clearImage,
+    // clearInfo: clearInfo,
+    clearButton: clearButton,
     toggleCheckerBG: toggleCheckerBG,
     headerMetaCategory: headerMetaCategory,
     roundPrecise: roundPrecise,
