@@ -10,6 +10,10 @@ from apng import APNG
 from pycore.core_funcs import logger
 
 
+PNG_BLOCK_SIZE = 64
+ACTL_CHUNK = b"\x61\x63\x54\x4D"
+
+
 def get_image_delays(image_path: Path, extension: str) -> Iterator[float]:
     """Get the delays of each frame from an animated image
 
@@ -106,3 +110,12 @@ def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:
     """
     mults = 100 // percentage_mult
     return {round(frame_count / mults * mult): f"{mult * percentage_mult}%" for mult in range(0, mults)}
+
+
+def png_is_animated(png_path: Path) -> bool:
+    img_hex = b""
+    with open(png_path, "rb") as png_file:
+        buf = png_file.read(PNG_BLOCK_SIZE)
+        img_hex = buf
+    # print(img_hex)
+    return ACTL_CHUNK in img_hex

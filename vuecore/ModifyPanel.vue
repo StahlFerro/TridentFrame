@@ -211,7 +211,7 @@
                   <div class="field">
                     <label class="label">Width</label>
                     <div class="control">
-                      <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(width, $event)" 
+                      <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(criteria.width, $event)" 
                         class="input is-neon-white" type="number" min="1" step="1"/>
                     </div>
                   </div>
@@ -220,7 +220,7 @@
                   <div class="field">
                     <label class="label">Height</label>
                     <div class="control">
-                      <input v-bind:value="criteria.height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(height, $event)"
+                      <input v-bind:value="criteria.height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(criteria.height, $event)"
                       class="input is-neon-white" type="number" min="1" step="1"/>
                     </div>
                   </div>
@@ -619,7 +619,7 @@ function loadNewInfo(res) {
   data.criteria.delay = roundPrecise(ainfo.average_delay.value, 3);
   data.criteria.fps = roundPrecise(ainfo.fps.value, 3);
   data.criteria.loop_count = ainfo.loop_count.value;
-  updateAspectRatio(data.width, data.height);
+  updateAspectRatio(data.criteria.width, data.criteria.height);
 }
 
 function clearImage() {
@@ -647,35 +647,35 @@ function chooseOutDir() {
 }
 
 function widthHandler(width, event) {
-  data.old_width = parseInt(width);
+  // data.orig_attribute.width = parseInt(width);
   console.log(event);
   let newWidth = event.target.value;
-  data.width = newWidth;
+  data.criteria.width = newWidth;
   if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
     let raHeight = Math.round(newWidth / data.aspect_ratio.w_ratio * data.aspect_ratio.h_ratio);
-    data.height = raHeight > 0? raHeight : "";
+    data.criteria.height = raHeight > 0? raHeight : "";
   }
   else {
-    updateAspectRatio(data.width, data.height);
+    updateAspectRatio(data.criteria.width, data.criteria.height);
   }
 }
 
 function heightHandler(height, event) {
-  data.old_height = parseInt(height);
+  // data.orig_attribute.height = parseInt(height);
   let newHeight = event.target.value;
-  data.height = newHeight;
+  data.criteria.height = newHeight;
   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
     let raWidth = Math.round(newHeight / data.aspect_ratio.h_ratio * data.aspect_ratio.w_ratio);
     console.log(raWidth);
-    data.width = raWidth > 0? raWidth : "";
+    data.criteria.width = raWidth > 0? raWidth : "";
   }
   else {
-    updateAspectRatio(data.width, data.height);
+    updateAspectRatio(data.criteria.width, data.criteria.height);
   }
 }
 
 function updateAspectRatio(width, height) {
-  if (data.width && data.height) {
+  if (data.criteria.width && data.criteria.height) {
     console.log('uAR', width, height);
     let divisor = gcd(width, height);
     let w_ratio = width / divisor;
@@ -726,16 +726,14 @@ function modifyImage() {
         data.modify_msgbox = error;
         data.MOD_IS_MODIFYING = false;
       }
-      else {
-        if (res) {
-          console.log(res);
-          if (res.msg) {
-            data.modify_msgbox = res.msg;
-          }
-          if (res.CONTROL == "MOD_FINISH") {
-            data.modify_msgbox = "Modified and saved!"
-            data.MOD_IS_MODIFYING = false;
-          }
+      else if (res) {
+        console.log(res);
+        if (res.msg) {
+          data.modify_msgbox = res.msg;
+        }
+        if (res.CONTROL == "MOD_FINISH") {
+          data.modify_msgbox = "Modified and saved!"
+          data.MOD_IS_MODIFYING = false;
         }
       }
     });
@@ -743,7 +741,7 @@ function modifyImage() {
 }
 
 function previewModImg() {
-  data.MOD_IS_PREVIEWING = true;
+  // data.MOD_IS_PREVIEWING = true;
   let criteria_pack = lodashClonedeep({
     "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
     "gif_opt_criteria": data.gif_opt_criteria,
@@ -756,33 +754,31 @@ function previewModImg() {
       data.modify_msgbox = error;
       data.MOD_IS_PREVIEWING = false;
     }
-    else {
-      if (res) {
-        console.log(res);
-        if (res.msg) {
-          data.modify_msgbox = res.msg;
-        }
-        if (res.preview_path) {
-          data.preview_path = res.preview_path;
-          previewPathCacheBreaker();
-        }
-        if (res.CONTROL == "MOD_FINISH") {
-          console.log(data.preview_path);
-          tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
-            if (error) {
-              console.error(error);
-              data.MOD_IS_PREVIEWING = false;
-            } else {
-              console.log("preview inspect");
-              console.log(info);
-              data.preview_info = info;
-              data.preview_size = info.general_info.fsize.value;
-              data.preview_size_hr = info.general_info.fsize_hr.value;
-              data.modify_msgbox = "Previewed!"
-              data.MOD_IS_PREVIEWING = false;
-            }
-          });
-        }
+    else if (res) {
+      console.log(res);
+      if (res.msg) {
+        data.modify_msgbox = res.msg;
+      }
+      if (res.preview_path) {
+        data.preview_path = res.preview_path;
+        previewPathCacheBreaker();
+      }
+      if (res.CONTROL == "MOD_FINISH") {
+        console.log(data.preview_path);
+        tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
+          if (error) {
+            console.error(error);
+            data.MOD_IS_PREVIEWING = false;
+          } else {
+            console.log("preview inspect");
+            console.log(info);
+            data.preview_info = info;
+            data.preview_size = info.general_info.fsize.value;
+            data.preview_size_hr = info.general_info.fsize_hr.value;
+            data.modify_msgbox = "Previewed!"
+            data.MOD_IS_PREVIEWING = false;
+          }
+        });
       }
     }
   });

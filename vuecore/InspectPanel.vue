@@ -140,7 +140,7 @@ function removeExtraCtxOptions(ids) {
 
 function formatShouter(event) {
   console.log("formatShouter");
-  let format = data.info_data.general_info.format.value
+  let format = data.info_data.general_info.format.value;
   console.log(format);
 }
 

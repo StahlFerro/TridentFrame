@@ -72,8 +72,6 @@ def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle):
     gifopt_criteria = crbundle.gif_opt_criteria
     apngopt_criteria = crbundle.apng_opt_criteria
     # raise Exception(img_path, out_dir, criteria)
-    if not os.path.isfile(img_path):
-        raise Exception("Cannot Preview/Modify the image. The original file in the system may been removed.")
     full_name = f"{criteria.name}.{criteria.format.lower()}"
     orig_full_name = f"{criteria.name}.{criteria.orig_format.lower()}"
     # temp_dir = mk_cache_dir(prefix_name="temp_mods")
@@ -81,72 +79,73 @@ def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle):
     out_full_path = out_dir.joinpath(full_name)
     orig_out_full_path = out_dir.joinpath(orig_full_name)
     logger.message(Image.open(img_path).format)
-    sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)
-    magick_args = imagemagick_args(gifopt_criteria)
-    pq_args = pngquant_args(apngopt_criteria)
-    # yield sicle_args
-    target_path = str(img_path)
-    total_ops = 0
-    logger.message(criteria.change_format)
-    if criteria.change_format():
-        if criteria.format == "PNG":
-            # if sicle_args:
-            #     target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
-            # if magick_args:
-            #     target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
-            # yield {"preview_path": target_path}
-            yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
-            target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
-            if aopt_args:
-                target_path = yield from APNGOptAPI.optimize_apng(
-                    aopt_args,
-                    target_path,
-                    out_full_path,
-                    total_ops,
-                    len(sicle_args) + len(magick_args),
-                )
-        elif criteria.format == "GIF":
-            yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
-            target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
-            out_full_path = str(target_path)
-            if sicle_args:
-                target_path = yield from gifsicle_render(sicle_args, target_path, out_full_path, total_ops)
-            if magick_args:
-                target_path = yield from imagemagick_render(
-                    magick_args, target_path, out_full_path, total_ops, len(sicle_args)
-                )
-            # yield {"preview_path": target_path}
-    else:
-        if criteria.orig_format == "GIF":
-            if criteria.gif_mustsplit_alteration():
-                target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
-            if sicle_args or criteria.renamed():
-                target_path = yield from gifsicle_render(sicle_args, target_path, orig_out_full_path, total_ops)
-            if magick_args:
-                target_path = yield from imagemagick_render(
-                    magick_args,
-                    target_path,
-                    orig_out_full_path,
-                    total_ops,
-                    len(sicle_args),
-                )
-            # yield {"preview_path": target_path}
-        elif criteria.orig_format == "PNG":
-            if criteria.apng_mustsplit_alteration() or pq_args or apngopt_criteria.is_unoptimized:
-                target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
-            if aopt_args:
-                yield {"MSGGGGGGGGGGGGG": "AOPT ARGS"}
-                target_path = yield from APNGOptAPI.optimize_apng(
-                    aopt_args,
-                    target_path,
-                    out_full_path,
-                    total_ops,
-                    len(sicle_args) + len(magick_args),
-                )
-                # elif criteria.renamed():
-                #     yield {"MSGGGGGGGGGGGGG": "RENAME"}
-                if target_path != out_full_path:
-                    shutil.copy(target_path, out_full_path)
-    yield {"preview_path": target_path}
+    return
 
-    yield {"CONTROL": "MOD_FINISH"}
+    # sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)
+    # magick_args = imagemagick_args(gifopt_criteria)
+    # pq_args = pngquant_args(apngopt_criteria)
+    # # yield sicle_args
+    # target_path = str(img_path)
+    # total_ops = 0
+    # logger.message(criteria.change_format)
+    # if criteria.change_format():
+    #     if criteria.format == "PNG":
+    #         # if sicle_args:
+    #         #     target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
+    #         # if magick_args:
+    #         #     target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))
+    #         # yield {"preview_path": target_path}
+    #         yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
+    #         target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
+    #         if aopt_args:
+    #             target_path = yield from APNGOptAPI.optimize_apng(
+    #                 aopt_args,
+    #                 target_path,
+    #                 out_full_path,
+    #                 total_ops,
+    #                 len(sicle_args) + len(magick_args),
+    #             )
+    #     elif criteria.format == "GIF":
+    #         yield {"msg": f"Changing format ({criteria.orig_format} -> {criteria.format})"}
+    #         target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
+    #         out_full_path = str(target_path)
+    #         if sicle_args:
+    #             target_path = yield from gifsicle_render(sicle_args, target_path, out_full_path, total_ops)
+    #         if magick_args:
+    #             target_path = yield from imagemagick_render(
+    #                 magick_args, target_path, out_full_path, total_ops, len(sicle_args)
+    #             )
+    #         # yield {"preview_path": target_path}
+    # else:
+    #     if criteria.orig_format == "GIF":
+    #         if criteria.gif_mustsplit_alteration():
+    #             target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
+    #         if sicle_args or criteria.renamed():
+    #             target_path = yield from gifsicle_render(sicle_args, target_path, orig_out_full_path, total_ops)
+    #         if magick_args:
+    #             target_path = yield from imagemagick_render(
+    #                 magick_args,
+    #                 target_path,
+    #                 orig_out_full_path,
+    #                 total_ops,
+    #                 len(sicle_args),
+    #             )
+    #         # yield {"preview_path": target_path}
+    #     elif criteria.orig_format == "PNG":
+    #         if criteria.apng_mustsplit_alteration() or pq_args or apngopt_criteria.is_unoptimized:
+    #             target_path = yield from rebuild_aimg(target_path, out_dir, crbundle)
+    #         if aopt_args:
+    #             yield {"MSGGGGGGGGGGGGG": "AOPT ARGS"}
+    #             target_path = yield from APNGOptAPI.optimize_apng(
+    #                 aopt_args,
+    #                 target_path,
+    #                 out_full_path,
+    #                 total_ops,
+    #                 len(sicle_args) + len(magick_args),
+    #             )
+    #             # elif criteria.renamed():
+    #             #     yield {"MSGGGGGGGGGGGGG": "RENAME"}
+    #             if target_path != out_full_path:
+    #                 shutil.copy(target_path, out_full_path)
+    logger.preview_path(target_path)
+    logger.control("MOD_FINISH")
