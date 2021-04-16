@@ -1,4 +1,5 @@
-from pycore.utility import  filehandler
+from typing import List, Dict
+from pycore.utility import filehandler
 
 
 class ImageMetadata:
@@ -52,12 +53,12 @@ class ImageMetadata:
             "value": info.get("creation_datetime"),
             "label": "Creation Time",
             "category": "general_info",
-        } 
+        }
         self.modification_datetime = {
             "value": info.get("creation_datetime"),
             "label": "Modification Time",
             "category": "general_info",
-        } 
+        }
         self.comments = {
             "value": info.get("comments"),
             "label": "Comments",
@@ -89,10 +90,15 @@ class ImageMetadata:
             "category": "general_info",
         }
 
-    def format_info(self):
+    def format_info(self, category_filter=None) -> Dict:
+        if category_filter is None:
+            category_filter = []
+        category_filter = []
         attrs = self.__dict__.items()
         # print(type(attrs))
         categories = {i[1]["category"] for i in attrs}
+        if category_filter:
+            categories = set(c for c in categories if c in category_filter)
         # print(type(categories))
         info = {}
         for category in categories:

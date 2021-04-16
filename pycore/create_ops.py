@@ -47,7 +47,7 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
                 im = im.transpose(Image.FLIP_LEFT_RIGHT)
             if criteria.flip_y:
                 im = im.transpose(Image.FLIP_TOP_BOTTOM)
-            if criteria.must_resize(orig_width, orig_height):
+            if criteria.must_resize(width=orig_width, height=orig_height):
                 resize_method_enum = getattr(Image, criteria.resize_method)
                 # yield {"resize_method_enum": resize_method_enum}
                 im = im.resize(
@@ -147,7 +147,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
                 with Image.open(ipath) as im:
                     im: Image.Image
                     orig_width, orig_height = im.size
-                    if criteria.must_resize(orig_width, orig_height):
+                    if criteria.must_resize(width=orig_width, height=orig_height):
                         resize_method_enum = getattr(Image, criteria.resize_method)
                         # yield {"resize_method_enum": resize_method_enum}
                         im = im.resize(

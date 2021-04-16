@@ -1,12 +1,12 @@
 import os
 from pathlib import Path
-from typing import List, Dict
+from typing import List, Dict, Optional, Union
 
 from PIL import Image, ExifTags, UnidentifiedImageError
 from apng import APNG
 from .core_funcs import logger
 from .core_funcs.exception import (
-    ImageNotStaicException,
+    ImageNotStaticException,
     ImageNotAnimatedException,
     UnidentifiedImageException,
 )
@@ -16,19 +16,24 @@ from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 Image.MAX_IMAGE_PIXELS = None
 
 
-def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -> Dict:
+def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -> \
+        Optional[Union[ImageMetadata, AnimatedImageMetadata]]:
     """Main single image inspection handler function.
 
     Args:
         image_path (Path): Input path
         filter_on (str, optional): "static" = Throws error on detecting an animated image; "animated": Throws error
-        on detecting a static image. Defaults to "". skip (bool, optional): If True, returns an empty dict instead of
-        throwing an error. Used in conjunction with filter_on. Defaults to False.
+        on detecting a static image. Defaults to ""
         skip: (bool): If true, returns an empty Dict, if False, throws an Exception if inspected image does not
         match filter_on argument. Defaults to False.
 
+    Raises:
+        UnidentifiedImageException: If file is not a valid image file.
+        ImageNotStaticException: If filter_on="static", skip=False but the file is an animated image.
+        ImageNotAnimatedException: [If filter_on="animated", skip=False but the file is a static image.
+
     Returns:
-        Dict: Information of the image
+        Optional[ImageMetadata]: ImageMetadata or AnimatedImageMetadata depending on the image.
     """
     abspath = image_path
     filename = image_path.name
@@ -44,19 +49,19 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
             if gif.is_animated:
                 if filter_on == "static":
                     if skip:
-                        return {}
+                        return None
                     else:
-                        raise ImageNotStaicException(filename, "GIF")
+                        raise ImageNotStaticException(filename, "GIF")
                 else:
-                    return inspect_animated_gif(image_path, gif).format_info()
+                    return inspect_animated_gif(image_path, gif)
             else:
                 if filter_on == "animated":
                     if skip:
-                        return {}
+                        return None
                     else:
                         raise ImageNotAnimatedException(filename, "GIF")
                 else:
-                    return inspect_static_image(image_path).format_info()
+                    return inspect_static_image(image_path)
     elif ext == ".png":
         try:
             apng: APNG = APNG.open(abspath)
@@ -67,21 +72,21 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
         if frame_count > 1:
             if filter_on == "static":
                 if skip:
-                    return {}
+                    return None
                 else:
-                    raise ImageNotStaicException(filename, "PNG")
+                    raise ImageNotStaticException(filename, "PNG")
             else:
-                return inspect_animated_png(image_path, apng).format_info()
+                return inspect_animated_png(image_path, apng)
         else:
             if filter_on == "animated":
                 if skip:
-                    return {}
+                    return None
                 else:
                     raise ImageNotAnimatedException(filename, "PNG")
             else:
-                return inspect_static_image(image_path).format_info()
+                return inspect_static_image(image_path)
     else:
-        return inspect_static_image(image_path).format_info()
+        return inspect_static_image(image_path)
 
 
 # def inspect_static_image(path: Path):
@@ -280,8 +285,9 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
             logger.message(f"Loading images... ({shout_nums.get(index)})")
         info = inspect_general(path, filter_on="static", skip=True)
         if info:
-            gen_info = info["general_info"]
+            gen_info = info.format_info()["general_info"]
             sequence_info.append(gen_info)
+    logger.message(sequence_info)
     if not sequence_info:
         logger.error("No images selected. Make sure the path to them are correct and they are not animated images!")
         return {}

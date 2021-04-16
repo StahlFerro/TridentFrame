@@ -50,7 +50,7 @@ class TridentFrameImager:
             raise FileNotFoundError(f"{image_path} not found")
         info = inspect_general(image_path, filter)
         if info:
-            logger.data(info)
+            logger.data(info.format_info())
 
     def inspect_many(self, image_paths: List[str]):
         """Inspect a sequence of images and then return their information.
@@ -148,7 +148,10 @@ class TridentFrameImager:
             "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
             "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
         })
-        modify_aimg(image_path, out_dir, crbundle)
+        out_path = modify_aimg(image_path, out_dir, crbundle)
+        if out_path:
+            logger.preview_path(out_path)
+            logger.control("MOD_FINISH")
         return
 
     def build_spritesheet(self, image_paths, out_dir, filename, vals: dict):

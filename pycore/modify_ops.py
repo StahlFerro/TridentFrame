@@ -7,7 +7,10 @@ from PIL import Image
 from pycore.models.criterion import (
     CriteriaBundle,
 )
+from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI
+from .inspect_ops import inspect_general
 from .core_funcs import logger
+from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from .bin_funcs.imager_api import APNGOptAPI
 
 
@@ -63,23 +66,26 @@ from .bin_funcs.imager_api import APNGOptAPI
 #     yield {"new_image_path": new_image_path}
 #     return new_image_path
 
-def _modify_gif(gif_path: Path, out_dir: Path, crbundle: CriteriaBundle):
-    pass
+def _modify_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle):
+    final_path = GifsicleAPI.modify_gif_image(gif_path, out_path, metadata, crbundle)
+    return final_path
 
 
-def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle):
+def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle) -> Path:
+    orig_metadata = inspect_general(img_path, filter_on="animated")
+    if orig_metadata is None:
+        raise Exception("Error: cannot load image")
+    orig_metadata: AnimatedImageMetadata = orig_metadata
+    logger.message(orig_metadata.format['value'])
     criteria = crbundle.modify_aimg_criteria
-    gifopt_criteria = crbundle.gif_opt_criteria
-    apngopt_criteria = crbundle.apng_opt_criteria
-    # raise Exception(img_path, out_dir, criteria)
     full_name = f"{criteria.name}.{criteria.format.lower()}"
-    orig_full_name = f"{criteria.name}.{criteria.orig_format.lower()}"
-    # temp_dir = mk_cache_dir(prefix_name="temp_mods")
-    # temp_save_path = os.path.join(temp_dir, full_name)
     out_full_path = out_dir.joinpath(full_name)
-    orig_out_full_path = out_dir.joinpath(orig_full_name)
-    logger.message(Image.open(img_path).format)
-    return
+    if orig_metadata.format["value"] == criteria.format:
+        if criteria.format == "GIF":
+            return _modify_gif(img_path, out_full_path, orig_metadata, crbundle)
+    else:
+        pass
+    return False
 
     # sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)
     # magick_args = imagemagick_args(gifopt_criteria)
@@ -90,7 +96,8 @@ def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle):
     # logger.message(criteria.change_format)
     # if criteria.change_format():
     #     if criteria.format == "PNG":
-    #         # if sicle_args:
+    #         # if
+    #         :
     #         #     target_path = yield from _gifsicle_modify(sicle_args, target_path, orig_out_full_path, total_ops)
     #         # if magick_args:
     #         #     target_path = yield from _imagemagick_modify(magick_args, target_path, orig_out_full_path, total_ops, len(sicle_args))

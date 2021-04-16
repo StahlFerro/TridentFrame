@@ -23,7 +23,7 @@ class UnidentifiedImageException(Exception):
         super().__init__(self.message)
 
 
-class ImageNotStaicException(Exception):
+class ImageNotStaticException(Exception):
     """Raised when an image is expected to be static, but is not."""
 
     def __init__(

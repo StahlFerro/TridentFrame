@@ -7,7 +7,7 @@
 
       <div class="modify-panel-displays">
         <div class="modify-old-container silver-bordered-no-right">
-          <img v-bind:src="orig_attribute.path" />
+          <img v-bind:src="orig_metadata.path" />
         </div>
         <div class="modify-image-info silver-bordered">
           <table class="mod-info-table is-hpaddingless" style="width: 100%;">
@@ -21,7 +21,7 @@
             <tbody>
               <!-- <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute.name">{{ orig_attribute.name }}</span>
+                  <span v-if="orig_metadata.name">{{ orig_metadata.name }}</span>
                 </td>
                 <td class="mod-info-label is-cyan">Name</td>
                 <td class="mod-info-data">
@@ -29,77 +29,95 @@
               </tr> -->
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="origDimensions">{{ origDimensions }}</span>
+                  <span v-if="orig_metadata">{{ origDimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Dimensions</td>
                 <td class="mod-info-data">
+                  <span v-if="preview_metadata">{{ previewDimensions }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.file_size_hr }}</span>
+                  <span v-if="orig_metadata">{{ orig_metadata.file_size_hr }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">File size</td>
+                <td class="mod-info-label is-cyan">
+                  File size
+                  <template v-if="preview_metadata">
+                    <br/>
+                    {{ previewSizePercentage }}
+                  </template>
+                </td>
                 <td class="mod-info-data">
+                  <span v-if="preview_metadata">{{ preview_metadata.file_size_hr }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute.file_size_hr">{{ orig_attribute.format }}</span>
+                  <span v-if="orig_metadata">{{ orig_metadata.format }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Format</td>
                 <td class="mod-info-data">
+                  <span v-if="preview_metadata">{{ preview_metadata.format }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute.frame_count">{{ orig_attribute.frame_count }}</span>
+                  <span v-if="orig_metadata">{{ orig_metadata.frame_count }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Total frames</td>
                 <td class="mod-info-data">
+                  <span v-if="preview_info">{{ preview_metadata.frame_count }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute.fps">{{ orig_attribute.fps }}</span>
+                  <span v-if="orig_metadata">{{ orig_metadata.fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Frame rate</td>
                 <td class="mod-info-data">
+                  <span v-if="preview_info">{{ preview_metadata.fps }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute.fps">{{ orig_attribute.delay_info }}</span>
+                  <span v-if="orig_metadata">{{ orig_metadata.delay_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Frame delay</td>
                 <td class="mod-info-data">
+                  <span v-if="preview_metadata">{{ preview_metadata.delay_info }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute.loop_duration">{{ orig_attribute.loop_duration }} seconds</span>
-                  <!-- <span v-else>-</span> -->
-                  </td>
+                  <span v-if="orig_metadata">{{ orig_metadata.loop_duration }}</span>
+                </td>
                 <td class="mod-info-label is-cyan">Loop duration</td>
                 <td class="mod-info-data">
+                  <span v-if="preview_metadata">{{ preview_metadata.loop_duration }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <template v-if="orig_attribute.path">
-                    <span v-if="orig_attribute.loop_count == 0">Infinite</span>
-                    <span v-else>{{ orig_attribute.loop_count }}</span>
+                  <template v-if="orig_metadata">
+                    {{ orig_metadata.loop_count }}
+                    <!-- <span v-if="orig_metadata.loop_count == 0">Infinite</span>
+                    <span v-else>{{ orig_metadata.loop_count }}</span> -->
                   </template>
                   <!-- <template v-else>-</template> -->
                 </td>
                 <td class="mod-info-label is-cyan">Loop count</td>
                 <td class="mod-info-data">
+                  <template v-if="preview_metadata">
+                    {{ preview_metadata.loop_count }}
+                    <!-- <span v-if="preview_metadata.loop_count == 0">Infinite</span>
+                    <span v-else>{{ preview_metadata.loop_count }}</span> -->
+                  </template>
                 </td>
               </tr>
             </tbody>
@@ -145,7 +163,7 @@
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="clearPrevImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
+          <a v-on:click="clearPreviewImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-times"></i>
             </span>
@@ -416,26 +434,46 @@ import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 
+let common_metadata = {
+  name: "",
+  width: "",
+  height: "",
+  frame_count: "",
+  frame_count_ds: "",
+  fps: "",
+  delay: "",
+  delay_info: "",
+  loop_duration: "",
+  loop_count: "",
+  file_size: "",
+  file_size_hr: "",
+  format: "",
+  path: "",
+  hash_sha1: "",
+  last_modified_dt: "",
+};
 
 var data = {
-  orig_attribute: {
-    name: "",
-    width: "",
-    height: "",
-    frame_count: "",
-    frame_count_ds: "",
-    fps: "",
-    delay: "",
-    delay_info: "",
-    loop_duration: "",
-    loop_count: "",
-    file_size: "",
-    file_size_hr: "",
-    format: "",
-    path: "",
-    hash_sha1: "",
-    last_modified_dt: "",
-  },
+  orig_metadata: lodashClonedeep(common_metadata),
+  preview_metadata: lodashClonedeep(common_metadata),
+  // orig_metadata: {
+  //   name: "",
+  //   width: "",
+  //   height: "",
+  //   frame_count: "",
+  //   frame_count_ds: "",
+  //   fps: "",
+  //   delay: "",
+  //   delay_info: "",
+  //   loop_duration: "",
+  //   loop_count: "",
+  //   file_size: "",
+  //   file_size_hr: "",
+  //   format: "",
+  //   path: "",
+  //   hash_sha1: "",
+  //   last_modified_dt: "",
+  // },
   criteria: {
     name: "",
     width: "",
@@ -485,38 +523,58 @@ var data = {
   modify_msgbox: "",
 };
 
-function clearOrigFields() {
-  data.orig_attribute.name = "";
-  data.orig_attribute.width = "";
-  data.orig_attribute.height = "";
-  data.orig_attribute.frame_count = "";
-  data.orig_attribute.frame_count_ds = "";
-  data.orig_attribute.fps = "";
-  data.orig_attribute.delay = "";
-  data.orig_attribute.delay_info = "";
-  data.orig_attribute.loop_duration = "";
-  data.orig_attribute.loop_count = "";
-  data.orig_attribute.file_size = "";
-  data.orig_attribute.file_size_hr = "";
-  data.orig_attribute.format = "";
-  data.orig_attribute.path = "";
-  data.orig_attribute.hash_sha1 = "";
-  data.orig_attribute.last_modified_dt = "";
+function clearOrigMetadata() {
+  data.orig_metadata.name = "";
+  data.orig_metadata.width = "";
+  data.orig_metadata.height = "";
+  data.orig_metadata.frame_count = "";
+  data.orig_metadata.frame_count_ds = "";
+  data.orig_metadata.fps = "";
+  data.orig_metadata.delay = "";
+  data.orig_metadata.delay_info = "";
+  data.orig_metadata.loop_duration = "";
+  data.orig_metadata.loop_count = "";
+  data.orig_metadata.file_size = "";
+  data.orig_metadata.file_size_hr = "";
+  data.orig_metadata.format = "";
+  data.orig_metadata.path = "";
+  data.orig_metadata.hash_sha1 = "";
+  data.orig_metadata.last_modified_dt = "";
   data.modify_msgbox = "";
 }
 
-function clearNewFields() {
-  data.name = "";
-  data.old_width = "";
-  data.width = "";
-  data.old_height = "";
-  data.height = "";
-  data.rotation = "";
-  data.fps = "";
-  data.delay = "";
-  data.loop_count = "";
-  data.skip_frame = "";
+function clearPreiewMetadata() {
+  data.preview_metadata.name = "";
+  data.preview_metadata.width = "";
+  data.preview_metadata.height = "";
+  data.preview_metadata.frame_count = "";
+  data.preview_metadata.frame_count_ds = "";
+  data.preview_metadata.fps = "";
+  data.preview_metadata.delay = "";
+  data.preview_metadata.delay_info = "";
+  data.preview_metadata.loop_duration = "";
+  data.preview_metadata.loop_count = "";
+  data.preview_metadata.file_size = "";
+  data.preview_metadata.file_size_hr = "";
+  data.preview_metadata.format = "";
+  data.preview_metadata.path = "";
+  data.preview_metadata.hash_sha1 = "";
+  data.preview_metadata.last_modified_dt = "";
   data.modify_msgbox = "";
+}
+
+function clearCriteriaFields() {
+  data.criteria.name = "";
+  data.criteria.old_width = "";
+  data.criteria.width = "";
+  data.criteria.old_height = "";
+  data.criteria.height = "";
+  data.criteria.rotation = "";
+  data.criteria.fps = "";
+  data.criteria.delay = "";
+  data.criteria.loop_count = "";
+  data.criteria.skip_frame = "";
+  data.criteria.modify_msgbox = "";
   let ARData = {
     "w_ratio": "",
     "h_ratio": "",
@@ -571,7 +629,7 @@ function loadImage() {
         if (res && res.msg) {
           data.modify_msgbox = res.msg;
         } else if (res && res.data) {
-          loadOrigInfo(res.data);
+          loadOrigMetadata(res.data);
           loadNewInfo(res.data);
           data.modify_msgbox = "";
         }
@@ -582,15 +640,47 @@ function loadImage() {
   });
 }
 
-function loadOrigInfo(res) {
+function loadOrigMetadata(res) {
   let geninfo = res.general_info;
   let ainfo = res.animation_info;
-  data.orig_attribute.name = geninfo.name.value;
-  data.orig_attribute.width = geninfo.width.value;
-  data.orig_attribute.height = geninfo.height.value;
-  data.orig_attribute.fps = `${ainfo.fps.value} fps`;
-  data.orig_attribute.frame_count= ainfo.frame_count.value;
-  data.orig_attribute.format = geninfo.format.value;
+  data.orig_metadata.name = geninfo.name.value;
+  data.orig_metadata.width = geninfo.width.value;
+  data.orig_metadata.height = geninfo.height.value;
+  data.orig_metadata.fps = `${ainfo.fps.value} FPS`;
+  data.orig_metadata.frame_count= ainfo.frame_count.value;
+  data.orig_metadata.format = geninfo.format.value;
+  let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
+  if (ainfo.delays_are_even.value) {
+    delay_info += ` (even)`;
+  }
+  else {
+    delay_info += ` (uneven)`;
+  }
+  data.orig_metadata.delay = ainfo.average_delay.value;
+  data.orig_metadata.delay_info = delay_info;
+  data.orig_metadata.loop_duration = `${ainfo.loop_duration.value} seconds`;
+  if (ainfo.loop_count.value == 0) {
+    data.orig_metadata.loop_count = "Infinite"
+  }
+  else {
+    data.orig_metadata.loop_count = ainfo.loop_count.value;
+  }
+  data.orig_metadata.path = geninfo.absolute_url.value;
+  data.orig_metadata.file_size = geninfo.fsize.value;
+  data.orig_metadata.file_size_hr = geninfo.fsize_hr.value;
+  data.orig_metadata.last_modified_dt = geninfo.modification_datetime.value;
+  data.orig_metadata.hash_sha1 = geninfo.hash_sha1.value;
+}
+
+function loadPreviewMetadata(res) {
+  let geninfo = res.general_info;
+  let ainfo = res.animation_info;
+  data.preview_metadata.name = geninfo.name.value;
+  data.preview_metadata.width = geninfo.width.value;
+  data.preview_metadata.height = geninfo.height.value;
+  data.preview_metadata.fps = `${ainfo.fps.value} FPS`;
+  data.preview_metadata.frame_count= ainfo.frame_count.value;
+  data.preview_metadata.format = geninfo.format.value;
   let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
   if (ainfo.delays_are_even.value) {
     delay_info += ` (even)`;
@@ -598,15 +688,20 @@ function loadOrigInfo(res) {
   else {
     delay_info += ` (not even)`;
   }
-  data.orig_attribute.delay = ainfo.average_delay.value;
-  data.orig_attribute.delay_info = delay_info;
-  data.orig_attribute.loop_duration = ainfo.loop_duration.value;
-  data.orig_attribute.loop_count = ainfo.loop_count.value;
-  data.orig_attribute.path = geninfo.absolute_url.value;
-  data.orig_attribute.file_size = geninfo.fsize.value;
-  data.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
-  data.orig_attribute.last_modified_dt = geninfo.modification_datetime.value;
-  data.orig_attribute.hash_sha1 = geninfo.hash_sha1.value;
+  data.preview_metadata.delay = ainfo.average_delay.value;
+  data.preview_metadata.delay_info = delay_info;
+  data.preview_metadata.loop_duration = `${ainfo.loop_duration.value} seconds`;
+  if (ainfo.loop_count.value == 0) {
+    data.preview_metadata.loop_count = "Infinite"
+  }
+  else {
+    data.preview_metadata.loop_count = ainfo.loop_count.value;
+  }
+  data.preview_metadata.path = geninfo.absolute_url.value;
+  data.preview_metadata.file_size = geninfo.fsize.value;
+  data.preview_metadata.file_size_hr = geninfo.fsize_hr.value;
+  data.preview_metadata.last_modified_dt = geninfo.modification_datetime.value;
+  data.preview_metadata.hash_sha1 = geninfo.hash_sha1.value;
 }
 
 function loadNewInfo(res) {
@@ -624,16 +719,17 @@ function loadNewInfo(res) {
 
 function clearImage() {
   console.log(data);
-  clearOrigFields();
-  clearNewFields();
-  clearPrevImage();
+  clearOrigMetadata();
+  clearCriteriaFields();
+  clearPreviewImage();
 }
 
-function clearPrevImage() {
+function clearPreviewImage() {
   data.preview_path = "";
   data.preview_path_cb = "";
   data.preview_size = "";
   data.preview_size_hr = "";
+  clearPreiewMetadata();
 }
 
 function chooseOutDir() {
@@ -647,7 +743,7 @@ function chooseOutDir() {
 }
 
 function widthHandler(width, event) {
-  // data.orig_attribute.width = parseInt(width);
+  // data.orig_metadata.width = parseInt(width);
   console.log(event);
   let newWidth = event.target.value;
   data.criteria.width = newWidth;
@@ -661,7 +757,7 @@ function widthHandler(width, event) {
 }
 
 function heightHandler(height, event) {
-  // data.orig_attribute.height = parseInt(height);
+  // data.orig_metadata.height = parseInt(height);
   let newHeight = event.target.value;
   data.criteria.height = newHeight;
   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
@@ -715,7 +811,7 @@ function modifyImage() {
   if (proceed_modify) {
     data.MOD_IS_MODIFYING = true;
     let criteria_pack = lodashClonedeep({
-      "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
+      "criteria": { ...data.criteria, "hash_sha1": data.orig_metadata.hash_sha1, "last_modified_dt": data.orig_metadata.last_modified_dt },
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
@@ -743,19 +839,20 @@ function modifyImage() {
 function previewModImg() {
   // data.MOD_IS_PREVIEWING = true;
   let criteria_pack = lodashClonedeep({
-    "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
+    "criteria": { ...data.criteria, "hash_sha1": data.orig_metadata.hash_sha1, "last_modified_dt": data.orig_metadata.last_modified_dt },
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-  tridentEngine(["modify_image", data.orig_attribute.path, "./temp", criteria_pack], (error, res) => {
+  tridentEngine(["modify_image", data.orig_metadata.path, "./temp", criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.modify_msgbox = error;
       data.MOD_IS_PREVIEWING = false;
     }
     else if (res) {
-      console.log(res);
+      res = JSON.parse(res);
+      console.log(`res -> ${res}`);
       if (res.msg) {
         data.modify_msgbox = res.msg;
       }
@@ -768,15 +865,19 @@ function previewModImg() {
         tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
           if (error) {
             console.error(error);
-            data.MOD_IS_PREVIEWING = false;
-          } else {
-            console.log("preview inspect");
-            console.log(info);
-            data.preview_info = info;
-            data.preview_size = info.general_info.fsize.value;
-            data.preview_size_hr = info.general_info.fsize_hr.value;
-            data.modify_msgbox = "Previewed!"
-            data.MOD_IS_PREVIEWING = false;
+            data.modify_msgbox = error;
+          } else if (res) {
+            res = JSON.parse(res);
+            if (res.data) {
+              let preview_data = res.data;
+              console.log(`res -> ${res}`);
+              console.log("preview inspect");
+              loadPreviewMetadata(preview_data);
+              data.preview_info = preview_data;
+              data.preview_size = preview_data.general_info.fsize.value;
+              data.preview_size_hr = preview_data.general_info.fsize_hr.value;
+              data.modify_msgbox = "Previewed!"
+            }
           }
         });
       }
@@ -821,9 +922,19 @@ function fpsConstrain (event) {
   }
 }
 
+
 function origDimensions() {
-  if (data.orig_attribute.width && data.orig_attribute.height) {
-    return `${data.orig_attribute.width} x ${data.orig_attribute.height}`;
+  if (data.orig_metadata.width && data.orig_metadata.height) {
+    return `${data.orig_metadata.width} x ${data.orig_metadata.height}`;
+  }
+  else {
+    return "";
+  }
+}
+
+function previewDimensions() {
+  if (data.preview_metadata.width && data.preview_metadata.height) {
+    return `${data.preview_metadata.width} x ${data.preview_metadata.height}`;
   }
   else {
     return "";
@@ -831,16 +942,19 @@ function origDimensions() {
 }
 
 function previewSizePercentage() {
-  let oldsize = data.orig_file_size
-  let prevsize = data.preview_size;
-  console.log(oldsize, prevsize);
-  let redux = Math.round((prevsize / oldsize) * 100);
-  return redux;
+  if (data.orig_metadata.path && data.preview_metadata.path) {
+    let oldsize = data.orig_metadata.file_size
+    let prevsize = data.preview_metadata.file_size;
+    console.log(oldsize, prevsize);
+    let redux = `${Math.round((prevsize / oldsize) * 100)}%`;
+    return redux;
+  }
+  else return "";
 }
 
 
 function previewPathCacheBreaker() {
-  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  let cb_url = `${data.preview_path}`;
   console.log("Cache breaker url", cb_url);
   data.preview_path_cb = cb_url;
 }
@@ -859,7 +973,7 @@ export default {
   methods: {
     loadImage: loadImage,
     clearImage: clearImage,
-    clearPrevImage: clearPrevImage,
+    clearPreviewImage: clearPreviewImage,
     chooseOutDir: chooseOutDir,
     previewModImg: previewModImg,
     modifyImage: modifyImage,
@@ -875,6 +989,7 @@ export default {
   },
   computed: {
     origDimensions: origDimensions,
+    previewDimensions: previewDimensions,
     buttonIsFrozen: buttonIsFrozen,
     previewSizePercentage: previewSizePercentage,
   }

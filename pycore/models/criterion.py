@@ -1,4 +1,5 @@
-from typing import Dict, List, Any
+from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
+from typing import Dict, List, Any, Optional
 
 
 class TransformativeCriteria:
@@ -10,8 +11,12 @@ class TransformativeCriteria:
         self.flip_y: bool = vals.get("flip_y", False)
         self.rotation = int(vals["rotation"] or 0)
 
-    def must_resize(self, orig_width: int, orig_height: int) -> bool:
-        return self.width != orig_width or self.height != orig_height
+    def must_resize(self, metadata: Optional[ImageMetadata] = None, width: Optional[int] = 0,
+                    height: Optional[int] = 0) -> bool:
+        if metadata:
+            return self.width != metadata.width["value"] or self.height != metadata.height["value"]
+        else:
+            return self.width != width or self.height != height
 
     # def must_transform(orig_width: int, orig_height: int) -> Bool:
     #     return self.must_resize() or self.flip_x or self.flip_y or self.must_rotate()
@@ -41,33 +46,27 @@ class ModificationCriteria(CreationCriteria):
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
     def __init__(self, vals):
-        # self.orig_name = vals["orig_name"]
-        # self.orig_base_name = path.splitext(self.orig_name)[0]
-        # self.orig_width = vals["orig_width"]
-        # self.orig_height = vals["orig_height"]
-        # self.orig_delay = vals["orig_delay"]
-        # self.orig_frame_count = vals["orig_frame_count"]
-        # self.orig_frame_count_ds = vals["orig_frame_count_ds"]
-        # self.orig_loop_duration = vals["orig_loop_duration"]
-        # self.orig_loop_count = int(vals["orig_loop_count"] or 0)
-        # self.orig_format = vals["orig_format"]
-
-        # self.name = vals["name"]
-        # self.width = int(vals.get("width") or 0)
-        # self.height = int(vals.get("height") or 0)
-        # self.delay = float(vals["delay"] or 0)
-        # self.fps = float(vals["fps"] or 0)
-        # self.loop_count = int(vals.get("loop_count") or 0)
-        # self.rotation = int(vals.get("rotation") or 0)
-        # self.format = vals["format"]
+        self.format = vals["format"]
         self.hash_sha1 = vals["hash_sha1"]
         self.last_modified_dt = vals["last_modified_dt"]
 
-        self.flip_x: bool = vals.get("flip_x")
-        self.flip_y: bool = vals.get("flip_y")
-        self.is_reversed = vals["is_reversed"]
         self.preserve_alpha = vals["preserve_alpha"]
         super(ModificationCriteria, self).__init__(vals)
+
+    def must_redelay(self, metadata: Optional[AnimatedImageMetadata] = None, delays: Optional[List[float]] = None,
+                     delay: Optional[float] = None):
+        if metadata:
+            return metadata.average_delay["value"] != self.delay
+        elif delays:
+            return sum(delays) / len(delays) != self.delay
+        elif delay:
+            return delay != self.delay
+
+    def must_reloop(self, metadata: Optional[AnimatedImageMetadata] = None, loop_count: Optional[int] = 0):
+        if metadata:
+            return metadata.loop_count["value"] != self.loop_count
+        else:
+            return loop_count != self.loop_count
 
     def project_modifications_list(self, image_obj: Any) -> List[Dict]:
         return [image_obj, self.start_frame]
@@ -78,12 +77,12 @@ class ModificationCriteria(CreationCriteria):
 
     def apng_mustsplit_alteration(self) -> bool:
         altered = (
-            self.must_resize()
-            or self.must_rotate()
-            or self.must_redelay()
-            or self.must_reloop()
-            or self.must_flip()
-            or self.is_reversed
+                self.must_resize()
+                or self.must_rotate()
+                or self.must_redelay()
+                or self.must_reloop()
+                or self.must_flip()
+                or self.is_reversed
         )
         return altered
 

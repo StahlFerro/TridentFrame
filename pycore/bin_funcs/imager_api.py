@@ -14,6 +14,7 @@ from pycore.models.criterion import (
     ModificationCriteria,
     GIFOptimizationCriteria,
 )
+from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.core_funcs import logger
 from pycore.core_funcs import config
 from pycore.core_funcs.exception import MalformedCommandException
@@ -78,7 +79,7 @@ class GifsicleAPI:
 
     @classmethod
     def _mod_args_builder(
-        cls, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria
+        cls, metadata: AnimatedImageMetadata, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria
     ) -> List[Tuple[str, str]]:
         """Get a list of gifsicle arguments from either ModificationCriteria, or GIFOptimizationCriteria
 
@@ -91,41 +92,23 @@ class GifsicleAPI:
             a status string to echo out on the second value
         """
         args = []
-        if criteria.must_resize():
+        if criteria.must_resize(metadata):
             args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
-        if criteria.orig_delay != criteria.delay:
-            args.append(
-                (
-                    f"--delay={int(criteria.delay * 100)}",
-                    f"Setting per-frame delay to {criteria.delay}",
-                )
-            )
+        if criteria.must_redelay(metadata):
+            args.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
         if gif_criteria.is_optimized and gif_criteria.optimization_level:
-            args.append(
-                (
-                    f"--optimize={gif_criteria.optimization_level}",
-                    f"Optimizing image with level {gif_criteria.optimization_level}...",
-                )
-            )
+            args.append((f"--optimize={gif_criteria.optimization_level}",
+                         f"Optimizing image with level {gif_criteria.optimization_level}..."))
         if gif_criteria.is_lossy and gif_criteria.lossy_value:
-            args.append(
-                (
-                    f"--lossy={gif_criteria.lossy_value}",
-                    f"Lossy compressing with value: {gif_criteria.lossy_value}...",
-                )
-            )
+            args.append((f"--lossy={gif_criteria.lossy_value}",
+                         f"Lossy compressing with value: {gif_criteria.lossy_value}..."))
         if gif_criteria.is_reduced_color and gif_criteria.color_space:
-            args.append(
-                (
-                    f"--colors={gif_criteria.color_space}",
-                    f"Reducing colors to: {gif_criteria.color_space}...",
-                )
-            )
+            args.append((f"--colors={gif_criteria.color_space}", f"Reducing colors to: {gif_criteria.color_space}..."))
         # if criteria.flip_x:
         #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
         # if criteria.flip_y:
         #     args.append((f"--flip-vertical", "Flipping image vertically..."))
-        if criteria.orig_loop_count != criteria.loop_count:
+        if criteria.must_reloop(metadata):
             loop_count = criteria.loop_count
             loop_arg = "--loopcount"
             if not loop_count or loop_count == 0:
@@ -165,20 +148,20 @@ class GifsicleAPI:
         return out_full_path
 
     @classmethod
-    def modify_gif_image(cls, target_path: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
+    def modify_gif_image(cls, target_path: Path, out_full_path: Path, original_metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
         """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied
         arguments.
 
         Args:
-            sicle_args (List[Tuple[str, str]]): gifsicle arguments.
             target_path (Path): Target path of the existing GIF image.
             out_full_path (Path): Output full path to save the GIF to.
-            total_ops (int): UNUSED
+            original_metadata (AnimatedImageMetadata): Original GIF metadata
+            crbundle (CriteriaBundle): Criteria bundle object
 
         Returns:
             Path: Resulting path of the new modified GIF image.
         """
-        sicle_args = cls._mod_args_builder(crbundle.modify_aimg_criteria, crbundle.gif_opt_criteria)
+        sicle_args = cls._mod_args_builder(original_metadata, crbundle.modify_aimg_criteria, crbundle.gif_opt_criteria)
         # yield {"sicle_args": sicle_args}
         for index, (arg, description) in enumerate(sicle_args, start=1):
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
@@ -253,7 +236,7 @@ class GifsicleAPI:
             str(redux_gif_path),
         ]
         cmd = " ".join(args)
-        subprocess.run(cmd, shell=True)
+        subprocess.run(args)
         return redux_gif_path
 
     @classmethod

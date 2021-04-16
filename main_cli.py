@@ -57,7 +57,7 @@ def inspect_one(image_path, filter=""):
     print(image_path)
     info = inspect_general(image_path, filter)
     if info:
-        info = json.dumps({"data": info})
+        info = json.dumps({"data": info.format_info()})
         print(info)
 
 
