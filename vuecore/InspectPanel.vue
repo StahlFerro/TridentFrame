@@ -212,7 +212,10 @@ function loadImage() {
           // data.img_path = `${
           //   res_data.general_info.absolute_url.value
           // }?timestamp=${randString()}`;
-          data.img_path = res_data.general_info.absolute_url.value;
+          let localPath = res_data.general_info.absolute_url.value;
+          // To allow loading images with percent signs on their name.
+          localPath = localPath.replace("%", "%25");
+          data.img_path = localPath;
           // }
           addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
         }
