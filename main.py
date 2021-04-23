@@ -50,6 +50,7 @@ class TridentFrameImager:
             raise FileNotFoundError(f"{image_path} not found")
         info = inspect_general(image_path, filter)
         if info:
+            # print(info.__dict__)
             logger.data(info.format_info())
 
     def inspect_many(self, image_paths: List[str]):
@@ -205,7 +206,7 @@ def main():
         try:
             data = json.loads(sys.stdin.read())
         except Exception as e:
-            logger.message(str(e))
+            raise Exception(e)
         if not data:
             raise Exception("No data received from stdin!")
         pyimager = TridentFrameImager()

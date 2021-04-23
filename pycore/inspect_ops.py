@@ -118,7 +118,7 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         logger.error(str(e).replace("\\\\", "/"))
         return
     fmt = im.format
-    exif = "-"
+    exif = ""
     if fmt.upper() != "GIF":
         exif_raw = im._getexif()
         if exif_raw:
@@ -131,9 +131,9 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     fsize = image_path.stat().st_size
     # fsize_hr = read_filesize(fsize)
     color_mode = im.mode
-    transparency = im.info.get("transparency", "-")
+    transparency = im.info.get("transparency", "")
     # alpha = im.getchannel('A')
-    comment = im.info.get("comment")
+    comment = im.info.get("comment", "")
     creation_dt = filehandler.get_creation_time(image_path)
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
@@ -187,7 +187,16 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     for f in range(0, gif.n_frames):
         gif.seek(f)
         delays.append(gif.info["duration"])
-        comments.append(gif.info.get("comment", ""))
+        frame_comment = gif.info.get("comment", "")
+        try:
+            frame_comment = frame_comment.decode('utf-8')
+        except (UnicodeDecodeError, AttributeError):
+            pass
+        comments.append(frame_comment)
+    if len(set(comments)) == 1:
+        comments = comments[0]
+    elif len(comments) == 0:
+        comments = ""
     fmt = "GIF"
     full_format = str(gif.info.get("version") or "")
     transparency = gif.info.get("transparency", "-")
