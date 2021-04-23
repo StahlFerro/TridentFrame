@@ -72,17 +72,17 @@ def _modify_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata,
 
 
 def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle) -> Path:
-    orig_metadata = inspect_general(img_path, filter_on="animated")
-    if orig_metadata is None:
+    orig_attribute = inspect_general(img_path, filter_on="animated")
+    if orig_attribute is None:
         raise Exception("Error: cannot load image")
-    orig_metadata: AnimatedImageMetadata = orig_metadata
-    logger.message(orig_metadata.format['value'])
+    orig_attribute: AnimatedImageMetadata = orig_attribute
+    logger.message(orig_attribute.format['value'])
     criteria = crbundle.modify_aimg_criteria
     full_name = f"{criteria.name}.{criteria.format.lower()}"
     out_full_path = out_dir.joinpath(full_name)
-    if orig_metadata.format["value"] == criteria.format:
+    if orig_attribute.format["value"] == criteria.format:
         if criteria.format == "GIF":
-            return _modify_gif(img_path, out_full_path, orig_metadata, crbundle)
+            return _modify_gif(img_path, out_full_path, orig_attribute, crbundle)
     else:
         pass
     return False

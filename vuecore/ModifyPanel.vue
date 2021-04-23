@@ -7,7 +7,7 @@
 
       <div class="modify-panel-displays">
         <div class="modify-old-container silver-bordered-no-right">
-          <img v-bind:src="orig_metadata.path" />
+          <img v-bind:src="orig_attribute.path" />
         </div>
         <div class="modify-image-info silver-bordered">
           <table class="mod-info-table is-hpaddingless" style="width: 100%;">
@@ -21,7 +21,7 @@
             <tbody>
               <!-- <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata.name">{{ orig_metadata.name }}</span>
+                  <span v-if="orig_attribute.name">{{ orig_attribute.name }}</span>
                 </td>
                 <td class="mod-info-label is-cyan">Name</td>
                 <td class="mod-info-data">
@@ -29,94 +29,94 @@
               </tr> -->
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata">{{ origDimensions }}</span>
+                  <span v-if="orig_attribute">{{ origDimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Dimensions</td>
                 <td class="mod-info-data">
-                  <span v-if="preview_metadata">{{ previewDimensions }}</span>
+                  <span v-if="preview_attribute">{{ previewDimensions }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata">{{ orig_metadata.file_size_hr }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.file_size_hr }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
                   File size
-                  <template v-if="preview_metadata">
+                  <template v-if="preview_attribute">
                     <br/>
                     {{ previewSizePercentage }}
                   </template>
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_metadata">{{ preview_metadata.file_size_hr }}</span>
+                  <span v-if="preview_attribute">{{ preview_attribute.file_size_hr }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata">{{ orig_metadata.format }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.format }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Format</td>
                 <td class="mod-info-data">
-                  <span v-if="preview_metadata">{{ preview_metadata.format }}</span>
+                  <span v-if="preview_attribute">{{ preview_attribute.format }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata">{{ orig_metadata.frame_count }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.frame_count }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Total frames</td>
                 <td class="mod-info-data">
-                  <span v-if="preview_info">{{ preview_metadata.frame_count }}</span>
+                  <span v-if="preview_info">{{ preview_attribute.frame_count }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata">{{ orig_metadata.fps }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Frame rate</td>
                 <td class="mod-info-data">
-                  <span v-if="preview_info">{{ preview_metadata.fps }}</span>
+                  <span v-if="preview_info">{{ preview_attribute.fps }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata">{{ orig_metadata.delay_info }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.delay_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">Frame delay</td>
                 <td class="mod-info-data">
-                  <span v-if="preview_metadata">{{ preview_metadata.delay_info }}</span>
+                  <span v-if="preview_attribute">{{ preview_attribute.delay_info }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_metadata">{{ orig_metadata.loop_duration }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.loop_duration }}</span>
                 </td>
                 <td class="mod-info-label is-cyan">Loop duration</td>
                 <td class="mod-info-data">
-                  <span v-if="preview_metadata">{{ preview_metadata.loop_duration }}</span>
+                  <span v-if="preview_attribute">{{ preview_attribute.loop_duration }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <template v-if="orig_metadata">
-                    {{ orig_metadata.loop_count }}
-                    <!-- <span v-if="orig_metadata.loop_count == 0">Infinite</span>
-                    <span v-else>{{ orig_metadata.loop_count }}</span> -->
+                  <template v-if="orig_attribute">
+                    {{ orig_attribute.loop_count }}
+                    <!-- <span v-if="orig_attribute.loop_count == 0">Infinite</span>
+                    <span v-else>{{ orig_attribute.loop_count }}</span> -->
                   </template>
                   <!-- <template v-else>-</template> -->
                 </td>
                 <td class="mod-info-label is-cyan">Loop count</td>
                 <td class="mod-info-data">
-                  <template v-if="preview_metadata">
-                    {{ preview_metadata.loop_count }}
-                    <!-- <span v-if="preview_metadata.loop_count == 0">Infinite</span>
-                    <span v-else>{{ preview_metadata.loop_count }}</span> -->
+                  <template v-if="preview_attribute">
+                    {{ preview_attribute.loop_count }}
+                    <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
+                    <span v-else>{{ preview_attribute.loop_count }}</span> -->
                   </template>
                 </td>
               </tr>
@@ -454,9 +454,9 @@ let common_metadata = {
 };
 
 var data = {
-  orig_metadata: lodashClonedeep(common_metadata),
-  preview_metadata: lodashClonedeep(common_metadata),
-  // orig_metadata: {
+  orig_attribute: lodashClonedeep(common_metadata),
+  preview_attribute: lodashClonedeep(common_metadata),
+  // orig_attribute: {
   //   name: "",
   //   width: "",
   //   height: "",
@@ -524,42 +524,42 @@ var data = {
 };
 
 function clearOrigMetadata() {
-  data.orig_metadata.name = "";
-  data.orig_metadata.width = "";
-  data.orig_metadata.height = "";
-  data.orig_metadata.frame_count = "";
-  data.orig_metadata.frame_count_ds = "";
-  data.orig_metadata.fps = "";
-  data.orig_metadata.delay = "";
-  data.orig_metadata.delay_info = "";
-  data.orig_metadata.loop_duration = "";
-  data.orig_metadata.loop_count = "";
-  data.orig_metadata.file_size = "";
-  data.orig_metadata.file_size_hr = "";
-  data.orig_metadata.format = "";
-  data.orig_metadata.path = "";
-  data.orig_metadata.hash_sha1 = "";
-  data.orig_metadata.last_modified_dt = "";
+  data.orig_attribute.name = "";
+  data.orig_attribute.width = "";
+  data.orig_attribute.height = "";
+  data.orig_attribute.frame_count = "";
+  data.orig_attribute.frame_count_ds = "";
+  data.orig_attribute.fps = "";
+  data.orig_attribute.delay = "";
+  data.orig_attribute.delay_info = "";
+  data.orig_attribute.loop_duration = "";
+  data.orig_attribute.loop_count = "";
+  data.orig_attribute.file_size = "";
+  data.orig_attribute.file_size_hr = "";
+  data.orig_attribute.format = "";
+  data.orig_attribute.path = "";
+  data.orig_attribute.hash_sha1 = "";
+  data.orig_attribute.last_modified_dt = "";
   data.modify_msgbox = "";
 }
 
 function clearPreiewMetadata() {
-  data.preview_metadata.name = "";
-  data.preview_metadata.width = "";
-  data.preview_metadata.height = "";
-  data.preview_metadata.frame_count = "";
-  data.preview_metadata.frame_count_ds = "";
-  data.preview_metadata.fps = "";
-  data.preview_metadata.delay = "";
-  data.preview_metadata.delay_info = "";
-  data.preview_metadata.loop_duration = "";
-  data.preview_metadata.loop_count = "";
-  data.preview_metadata.file_size = "";
-  data.preview_metadata.file_size_hr = "";
-  data.preview_metadata.format = "";
-  data.preview_metadata.path = "";
-  data.preview_metadata.hash_sha1 = "";
-  data.preview_metadata.last_modified_dt = "";
+  data.preview_attribute.name = "";
+  data.preview_attribute.width = "";
+  data.preview_attribute.height = "";
+  data.preview_attribute.frame_count = "";
+  data.preview_attribute.frame_count_ds = "";
+  data.preview_attribute.fps = "";
+  data.preview_attribute.delay = "";
+  data.preview_attribute.delay_info = "";
+  data.preview_attribute.loop_duration = "";
+  data.preview_attribute.loop_count = "";
+  data.preview_attribute.file_size = "";
+  data.preview_attribute.file_size_hr = "";
+  data.preview_attribute.format = "";
+  data.preview_attribute.path = "";
+  data.preview_attribute.hash_sha1 = "";
+  data.preview_attribute.last_modified_dt = "";
   data.modify_msgbox = "";
 }
 
@@ -643,12 +643,12 @@ function loadImage() {
 function loadOrigMetadata(res) {
   let geninfo = res.general_info;
   let ainfo = res.animation_info;
-  data.orig_metadata.name = geninfo.name.value;
-  data.orig_metadata.width = geninfo.width.value;
-  data.orig_metadata.height = geninfo.height.value;
-  data.orig_metadata.fps = `${ainfo.fps.value} FPS`;
-  data.orig_metadata.frame_count= ainfo.frame_count.value;
-  data.orig_metadata.format = geninfo.format.value;
+  data.orig_attribute.name = geninfo.name.value;
+  data.orig_attribute.width = geninfo.width.value;
+  data.orig_attribute.height = geninfo.height.value;
+  data.orig_attribute.fps = `${ainfo.fps.value} FPS`;
+  data.orig_attribute.frame_count= ainfo.frame_count.value;
+  data.orig_attribute.format = geninfo.format.value;
   let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
   if (ainfo.delays_are_even.value) {
     delay_info += ` (even)`;
@@ -656,31 +656,31 @@ function loadOrigMetadata(res) {
   else {
     delay_info += ` (uneven)`;
   }
-  data.orig_metadata.delay = ainfo.average_delay.value;
-  data.orig_metadata.delay_info = delay_info;
-  data.orig_metadata.loop_duration = `${ainfo.loop_duration.value} seconds`;
+  data.orig_attribute.delay = ainfo.average_delay.value;
+  data.orig_attribute.delay_info = delay_info;
+  data.orig_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
   if (ainfo.loop_count.value == 0) {
-    data.orig_metadata.loop_count = "Infinite"
+    data.orig_attribute.loop_count = "Infinite"
   }
   else {
-    data.orig_metadata.loop_count = ainfo.loop_count.value;
+    data.orig_attribute.loop_count = ainfo.loop_count.value;
   }
-  data.orig_metadata.path = escapeLocalPath(geninfo.absolute_url.value);
-  data.orig_metadata.file_size = geninfo.fsize.value;
-  data.orig_metadata.file_size_hr = geninfo.fsize_hr.value;
-  data.orig_metadata.last_modified_dt = geninfo.modification_datetime.value;
-  data.orig_metadata.hash_sha1 = geninfo.hash_sha1.value;
+  data.orig_attribute.path = escapeLocalPath(geninfo.absolute_url.value);
+  data.orig_attribute.file_size = geninfo.fsize.value;
+  data.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
+  data.orig_attribute.last_modified_dt = geninfo.modification_datetime.value;
+  data.orig_attribute.hash_sha1 = geninfo.hash_sha1.value;
 }
 
 function loadPreviewMetadata(res) {
   let geninfo = res.general_info;
   let ainfo = res.animation_info;
-  data.preview_metadata.name = geninfo.name.value;
-  data.preview_metadata.width = geninfo.width.value;
-  data.preview_metadata.height = geninfo.height.value;
-  data.preview_metadata.fps = `${ainfo.fps.value} FPS`;
-  data.preview_metadata.frame_count= ainfo.frame_count.value;
-  data.preview_metadata.format = geninfo.format.value;
+  data.preview_attribute.name = geninfo.name.value;
+  data.preview_attribute.width = geninfo.width.value;
+  data.preview_attribute.height = geninfo.height.value;
+  data.preview_attribute.fps = `${ainfo.fps.value} FPS`;
+  data.preview_attribute.frame_count= ainfo.frame_count.value;
+  data.preview_attribute.format = geninfo.format.value;
   let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
   if (ainfo.delays_are_even.value) {
     delay_info += ` (even)`;
@@ -688,20 +688,20 @@ function loadPreviewMetadata(res) {
   else {
     delay_info += ` (not even)`;
   }
-  data.preview_metadata.delay = ainfo.average_delay.value;
-  data.preview_metadata.delay_info = delay_info;
-  data.preview_metadata.loop_duration = `${ainfo.loop_duration.value} seconds`;
+  data.preview_attribute.delay = ainfo.average_delay.value;
+  data.preview_attribute.delay_info = delay_info;
+  data.preview_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
   if (ainfo.loop_count.value == 0) {
-    data.preview_metadata.loop_count = "Infinite"
+    data.preview_attribute.loop_count = "Infinite"
   }
   else {
-    data.preview_metadata.loop_count = ainfo.loop_count.value;
+    data.preview_attribute.loop_count = ainfo.loop_count.value;
   }
-  data.preview_metadata.path = escapeLocalPath(geninfo.absolute_url.value);
-  data.preview_metadata.file_size = geninfo.fsize.value;
-  data.preview_metadata.file_size_hr = geninfo.fsize_hr.value;
-  data.preview_metadata.last_modified_dt = geninfo.modification_datetime.value;
-  data.preview_metadata.hash_sha1 = geninfo.hash_sha1.value;
+  data.preview_attribute.path = escapeLocalPath(geninfo.absolute_url.value);
+  data.preview_attribute.file_size = geninfo.fsize.value;
+  data.preview_attribute.file_size_hr = geninfo.fsize_hr.value;
+  data.preview_attribute.last_modified_dt = geninfo.modification_datetime.value;
+  data.preview_attribute.hash_sha1 = geninfo.hash_sha1.value;
 }
 
 function loadNewInfo(res) {
@@ -743,7 +743,7 @@ function chooseOutDir() {
 }
 
 function widthHandler(width, event) {
-  // data.orig_metadata.width = parseInt(width);
+  // data.orig_attribute.width = parseInt(width);
   console.log(event);
   let newWidth = event.target.value;
   data.criteria.width = newWidth;
@@ -757,7 +757,7 @@ function widthHandler(width, event) {
 }
 
 function heightHandler(height, event) {
-  // data.orig_metadata.height = parseInt(height);
+  // data.orig_attribute.height = parseInt(height);
   let newHeight = event.target.value;
   data.criteria.height = newHeight;
   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
@@ -811,7 +811,7 @@ function modifyImage() {
   if (proceed_modify) {
     data.MOD_IS_MODIFYING = true;
     let criteria_pack = lodashClonedeep({
-      "criteria": { ...data.criteria, "hash_sha1": data.orig_metadata.hash_sha1, "last_modified_dt": data.orig_metadata.last_modified_dt },
+      "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
@@ -839,12 +839,12 @@ function modifyImage() {
 function previewModImg() {
   // data.MOD_IS_PREVIEWING = true;
   let criteria_pack = lodashClonedeep({
-    "criteria": { ...data.criteria, "hash_sha1": data.orig_metadata.hash_sha1, "last_modified_dt": data.orig_metadata.last_modified_dt },
+    "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-  tridentEngine(["modify_image", data.orig_metadata.path, "./temp", criteria_pack], (error, res) => {
+  tridentEngine(["modify_image", data.orig_attribute.path, "./temp", criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.modify_msgbox = error;
@@ -924,8 +924,8 @@ function fpsConstrain (event) {
 
 
 function origDimensions() {
-  if (data.orig_metadata.width && data.orig_metadata.height) {
-    return `${data.orig_metadata.width} x ${data.orig_metadata.height}`;
+  if (data.orig_attribute.width && data.orig_attribute.height) {
+    return `${data.orig_attribute.width} x ${data.orig_attribute.height}`;
   }
   else {
     return "";
@@ -933,8 +933,8 @@ function origDimensions() {
 }
 
 function previewDimensions() {
-  if (data.preview_metadata.width && data.preview_metadata.height) {
-    return `${data.preview_metadata.width} x ${data.preview_metadata.height}`;
+  if (data.preview_attribute.width && data.preview_attribute.height) {
+    return `${data.preview_attribute.width} x ${data.preview_attribute.height}`;
   }
   else {
     return "";
@@ -942,9 +942,9 @@ function previewDimensions() {
 }
 
 function previewSizePercentage() {
-  if (data.orig_metadata.path && data.preview_metadata.path) {
-    let oldsize = data.orig_metadata.file_size
-    let prevsize = data.preview_metadata.file_size;
+  if (data.orig_attribute.path && data.preview_attribute.path) {
+    let oldsize = data.orig_attribute.file_size
+    let prevsize = data.preview_attribute.file_size;
     console.log(oldsize, prevsize);
     let redux = `${Math.round((prevsize / oldsize) * 100)}%`;
     return redux;
