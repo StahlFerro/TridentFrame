@@ -6,7 +6,7 @@
           <div class="inspect-panel-msgbox" v-show="inspect_msgbox !== ''">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
-          <img v-bind:src="img_path" v-show="inspect_msgbox === ''"/>
+          <img v-bind:src="escapeLocalPath(img_path)" v-show="inspect_msgbox === ''"/>
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
           <table v-if="info_data" class="table ins-info-table is-paddingless" width="100%">
@@ -212,7 +212,7 @@ function loadImage() {
           // data.img_path = `${
           //   res_data.general_info.absolute_url.value
           // }?timestamp=${randString()}`;
-          let localPath = escapeLocalPath(res_data.general_info.absolute_url.value);
+          let localPath = res_data.general_info.absolute_url.value;
           // To allow loading images with percent signs on their name.
           data.img_path = localPath;
           // }
@@ -259,6 +259,7 @@ export default {
     toggleCheckerBG: toggleCheckerBG,
     headerMetaCategory: headerMetaCategory,
     roundPrecise: roundPrecise,
+    escapeLocalPath: escapeLocalPath,
   },
 };
 </script>

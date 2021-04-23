@@ -7,7 +7,7 @@
 
       <div class="modify-panel-displays">
         <div class="modify-old-container silver-bordered-no-right">
-          <img v-bind:src="orig_attribute.path" />
+          <img v-bind:src="escapeLocalPath(orig_attribute.path)" />
         </div>
         <div class="modify-image-info silver-bordered">
           <table class="mod-info-table is-hpaddingless" style="width: 100%;">
@@ -131,7 +131,7 @@
             `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
             `Format: ${preview_info.general_info.format.value}` : ''
           ">
-          <img v-bind:src="preview_path_cb" />
+          <img v-bind:src="escapeLocalPath(preview_path_cb)" />
         </div>
       </div>
       <div class="modify-panel-middlebar">
@@ -665,7 +665,7 @@ function loadOrigMetadata(res) {
   else {
     data.orig_attribute.loop_count = ainfo.loop_count.value;
   }
-  data.orig_attribute.path = escapeLocalPath(geninfo.absolute_url.value);
+  data.orig_attribute.path = geninfo.absolute_url.value;
   data.orig_attribute.file_size = geninfo.fsize.value;
   data.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
   data.orig_attribute.last_modified_dt = geninfo.modification_datetime.value;
@@ -697,7 +697,7 @@ function loadPreviewMetadata(res) {
   else {
     data.preview_attribute.loop_count = ainfo.loop_count.value;
   }
-  data.preview_attribute.path = escapeLocalPath(geninfo.absolute_url.value);
+  data.preview_attribute.path = geninfo.absolute_url.value;
   data.preview_attribute.file_size = geninfo.fsize.value;
   data.preview_attribute.file_size_hr = geninfo.fsize_hr.value;
   data.preview_attribute.last_modified_dt = geninfo.modification_datetime.value;
@@ -986,6 +986,7 @@ export default {
     floatConstrain: floatConstrain,
     numConstrain: numConstrain,
     roundPrecise: roundPrecise,
+    escapeLocalPath: escapeLocalPath,
   },
   computed: {
     origDimensions: origDimensions,

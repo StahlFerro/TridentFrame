@@ -56,7 +56,7 @@
             `Format: ${preview_info.general_info.format.value}` : ''
           ">
           <!-- <div v-if="preview_info" class="crt-aimg-container"> -->
-          <img v-if="preview_info" v-bind:src="preview_path_cb" />
+          <img v-if="preview_info" v-bind:src="escapeLocalPath(preview_path_cb)" />
           <!-- </div> -->
         </div>
       </div>
@@ -807,7 +807,7 @@ function previewAIMG() {
         data.create_msgbox = res.msg;
       }
       if (res.preview_path) {
-        data.preview_path = escapeLocalPath(res.preview_path);
+        data.preview_path = res.preview_path;
         previewPathCacheBreaker();
       }
       if (res.CONTROL == "CRT_FINISH") {

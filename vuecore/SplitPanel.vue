@@ -4,7 +4,7 @@
       <div class="split-panel-display">
         <div class="split-panel-image silver-bordered" 
           v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
-          <img v-bind:src="preview_path_cb" />
+          <img v-bind:src="escapeLocalPath(preview_path_cb)" />
         </div>
         <div class="split-panel-info silver-bordered-no-left">
           <table class="table spl-info-table" width="100%">
@@ -341,7 +341,7 @@ function loadImage() {
           data.delays = ainfo.delays.value;
           data.loop_duration = `${ainfo.loop_duration.value} seconds`;
           data.loop_count = ainfo.loop_count.value;
-          data.preview_path = escapeLocalPath(geninfo.absolute_url.value);
+          data.preview_path = geninfo.absolute_url.value;
           data.criteria.pad_count = 3;
           if (data.is_reduced_color) {
             data.criteria.color_space - 256;
@@ -447,6 +447,7 @@ export default {
     chooseOutDir: chooseOutDir,
     splitImage: splitImage,
     numConstrain: numConstrain,
+    escapeLocalPath: escapeLocalPath,
   }
 };
 </script>
