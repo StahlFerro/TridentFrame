@@ -427,7 +427,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise } = require("./Utility.vue");
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath } = require("./Utility.vue");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
@@ -665,7 +665,7 @@ function loadOrigMetadata(res) {
   else {
     data.orig_metadata.loop_count = ainfo.loop_count.value;
   }
-  data.orig_metadata.path = geninfo.absolute_url.value;
+  data.orig_metadata.path = escapeLocalPath(geninfo.absolute_url.value);
   data.orig_metadata.file_size = geninfo.fsize.value;
   data.orig_metadata.file_size_hr = geninfo.fsize_hr.value;
   data.orig_metadata.last_modified_dt = geninfo.modification_datetime.value;
@@ -697,7 +697,7 @@ function loadPreviewMetadata(res) {
   else {
     data.preview_metadata.loop_count = ainfo.loop_count.value;
   }
-  data.preview_metadata.path = geninfo.absolute_url.value;
+  data.preview_metadata.path = escapeLocalPath(geninfo.absolute_url.value);
   data.preview_metadata.file_size = geninfo.fsize.value;
   data.preview_metadata.file_size_hr = geninfo.fsize_hr.value;
   data.preview_metadata.last_modified_dt = geninfo.modification_datetime.value;

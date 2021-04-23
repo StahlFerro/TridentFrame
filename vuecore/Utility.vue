@@ -47,6 +47,10 @@ function ticks() {
   return epoch
 }
 
+function escapeLocalPath(path) {
+  return path.replace("%", "%25");
+}
+
 function randString(length) {
    let result = '';
    let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -189,6 +193,7 @@ module.exports = {
   readFilesize: readFilesize,
   isNullOrWhitespace: isNullOrWhitespace,
   roundPrecise: roundPrecise,
+  escapeLocalPath: escapeLocalPath,
 }
 
 </script>

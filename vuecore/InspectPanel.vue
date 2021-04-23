@@ -94,7 +94,7 @@ const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
-const { roundPrecise } = require("./Utility.vue");
+const { roundPrecise, escapeLocalPath } = require("./Utility.vue");
 const { tridentEngine, settings } = require("./PythonCommander.vue");
 
 let extension_filters = [
@@ -212,9 +212,8 @@ function loadImage() {
           // data.img_path = `${
           //   res_data.general_info.absolute_url.value
           // }?timestamp=${randString()}`;
-          let localPath = res_data.general_info.absolute_url.value;
+          let localPath = escapeLocalPath(res_data.general_info.absolute_url.value);
           // To allow loading images with percent signs on their name.
-          localPath = localPath.replace("%", "%25");
           data.img_path = localPath;
           // }
           addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])

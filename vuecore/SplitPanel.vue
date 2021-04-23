@@ -229,7 +229,7 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { randString, validateFilename, numConstrain } = require('./Utility.vue');
+const { randString, validateFilename, numConstrain, escapeLocalPath } = require('./Utility.vue');
 const { tridentEngine } = require("./PythonCommander.vue");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
@@ -341,7 +341,7 @@ function loadImage() {
           data.delays = ainfo.delays.value;
           data.loop_duration = `${ainfo.loop_duration.value} seconds`;
           data.loop_count = ainfo.loop_count.value;
-          data.preview_path = geninfo.absolute_url.value;
+          data.preview_path = escapeLocalPath(geninfo.absolute_url.value);
           data.criteria.pad_count = 3;
           if (data.is_reduced_color) {
             data.criteria.color_space - 256;

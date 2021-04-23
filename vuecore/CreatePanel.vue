@@ -12,7 +12,7 @@
                 `Mode: ${item.color_mode.value}\n` +
                 `Comment: ${item.comments.value || 'None'}` : ''
               ">
-              <img v-bind:src="item.absolute_url.value" />
+              <img v-bind:src="escapeLocalPath(item.absolute_url.value)" />
               <span class="index-anchor is-white-d">
                 {{ parseInt(index) + 1 }}
               </span>
@@ -499,6 +499,7 @@ import {
   numConstrain,
   fileExists,
   readFilesize,
+  escapeLocalPath,
 } from "./Utility.vue";
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
@@ -806,7 +807,7 @@ function previewAIMG() {
         data.create_msgbox = res.msg;
       }
       if (res.preview_path) {
-        data.preview_path = res.preview_path;
+        data.preview_path = escapeLocalPath(res.preview_path);
         previewPathCacheBreaker();
       }
       if (res.CONTROL == "CRT_FINISH") {
@@ -1042,6 +1043,7 @@ export default {
     delayConstrain: delayConstrain,
     fpsConstrain: fpsConstrain,
     removeFrame: removeFrame,
+    escapeLocalPath: escapeLocalPath,
   },
   computed: {
     CRTQuintcellLister: CRTQuintcellLister,
