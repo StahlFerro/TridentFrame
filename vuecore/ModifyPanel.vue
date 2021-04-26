@@ -711,7 +711,7 @@ function loadNewInfo(res) {
   data.criteria.format = geninfo.format.value;
   data.criteria.width = geninfo.width.value;
   data.criteria.height = geninfo.height.value;
-  data.criteria.delay = roundPrecise(ainfo.average_delay.value, 3);
+  data.criteria.delay = roundPrecise(ainfo.average_delay.value, 3) / 1000;
   data.criteria.fps = roundPrecise(ainfo.fps.value, 3);
   data.criteria.loop_count = ainfo.loop_count.value;
   updateAspectRatio(data.criteria.width, data.criteria.height);
@@ -890,35 +890,38 @@ function buttonIsFrozen() {
   else return false;
 }
 
-function delayConstrain (event) {
+function delayConstrain(event) {
   console.log("delay event", event);
   let value = event.target.value;
   if (value && value.includes(".")) {
     let numdec = value.split(".");
     console.log("numdec", numdec);
     let precision = 2;
-    if (data.format == 'GIF') {
+    if (data.criteria.format == "GIF") {
       precision = GIF_DELAY_DECIMAL_PRECISION;
-    }
-    else if (data.format == 'PNG') {
+    } else if (data.criteria.format == "PNG") {
       precision = APNG_DELAY_DECIMAL_PRECISION;
     }
     if (numdec[1].length > precision) {
       let decs = numdec[1].substring(0, precision);
       console.log("decs limit triggered", decs);
-      data.delay = `${numdec[0]}.${decs}`;
+      data.criteria.delay = `${numdec[0]}.${decs}`;
     }
   }
-  data.fps = Math.round(1000 / data.delay) / 1000;
+  data.criteria.fps = Math.round(1000 / data.criteria.delay) / 1000;
 }
-function fpsConstrain (event) {
+
+function fpsConstrain(event) {
   console.log("fps event", event);
   let value = event.target.value;
   if (value) {
-    let mult = 100
-    if (data.format == 'GIF') { mult = 100; }
-    else if (data.format == 'PNG') { mult = 1000; }
-    data.delay = Math.round(mult / data.fps) / mult;
+    let mult = 100;
+    if (data.criteria.format == "GIF") {
+      mult = 100;
+    } else if (data.criteria.format == "PNG") {
+      mult = 1000;
+    }
+    data.criteria.delay = Math.round(mult / data.criteria.fps) / mult;
   }
 }
 

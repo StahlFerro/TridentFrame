@@ -133,6 +133,7 @@ class GifsicleAPI:
             Path: Path of the created GIF.
         """
         args = cls._combine_cmd_builder(out_full_path, crbundle)
+        logger.message(f"ARGS::::: {args}")
         ROOT_PATH = str(os.getcwd())
         if os.getcwd() != gifragment_dir:
             logger.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")

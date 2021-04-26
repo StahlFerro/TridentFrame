@@ -52,6 +52,15 @@ class ModificationCriteria(CreationCriteria):
 
         self.preserve_alpha = vals["preserve_alpha"]
         super(ModificationCriteria, self).__init__(vals)
+    
+    def must_rebuild(self) -> bool:
+        """Determine whether the modification needs the animated image to be split and rebuilt with the required modifications, or not
+
+        Returns:
+            bool: True or False
+        """
+        return self.flip_x or self.flip_y or self.reverse
+        pass
 
     def must_redelay(self, metadata: Optional[AnimatedImageMetadata] = None, delays: Optional[List[float]] = None,
                      delay: Optional[float] = None):
@@ -72,7 +81,7 @@ class ModificationCriteria(CreationCriteria):
         return [image_obj, self.start_frame]
 
     def gif_must_split(self) -> bool:
-        altered = self.is_reversed or self.flip_x or self.flip_y or self.rotation
+        altered = self.reverse or self.flip_x or self.flip_y or self.rotation
         return altered
 
     def apng_mustsplit_alteration(self) -> bool:
@@ -102,7 +111,7 @@ class SplitCriteria:
             raise Exception("You should not rename the file as spaces!")
         self.pad_count: int = min(int(vals["pad_count"] or 0), 15)
         self.color_space: int = int(vals["color_space"] or 0)
-        self.is_duration_sensitive: bool = vals["is_duration_sensitive"]
+        # self.is_duration_sensitive: bool = vals["is_duration_sensitive"]
         self.is_unoptimized: bool = vals["is_unoptimized"]
         self.convert_to_rgba: bool = vals["convert_to_rgba"]
         self.extract_delay_info: bool = vals["extract_delay_info"]

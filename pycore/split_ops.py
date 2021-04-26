@@ -216,8 +216,8 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
     # def _fragment_apng_frames(apng: APNG, criteria: SplitCriteria) -> List[Image.Image]:
     #     """ Accepts an APNG, and then returns a list of PIL.Image.Images for each of the frames. """
     frames = []
-    indexed_ratios = _get_aimg_delay_ratios(apng_path, "PNG", duration_sensitive=criteria.is_duration_sensitive)
-    logger.message(list(indexed_ratios))
+    # indexed_ratios = _get_aimg_delay_ratios(apng_path, "PNG", duration_sensitive=criteria.is_duration_sensitive)
+    # logger.message(list(indexed_ratios))
     if criteria.is_unoptimized:
         logger.message("Unoptimizing and splitting APNG...")
         fragment_paths = APNGDisAPI.split_apng(apng_path, criteria.new_name)
@@ -324,14 +324,14 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
         # for fr in frames:
         #     fr.show()
         logger.message(str(depose_blend_ops))
-    if not all(ratio == 1 for index, ratio in indexed_ratios):
-        logger.message("REORDER RATIOS")
-        rationed_frames = []
-        for index, ratio in indexed_ratios:
-            for n in range(0, ratio):
-                rationed_frames.append(frames[index])
-        frames = deepcopy(rationed_frames)
-        del rationed_frames
+    # if not all(ratio == 1 for index, ratio in indexed_ratios):
+    #     logger.message("REORDER RATIOS")
+    #     rationed_frames = []
+    #     for index, ratio in indexed_ratios:
+    #         for n in range(0, ratio):
+    #             rationed_frames.append(frames[index])
+    #     frames = deepcopy(rationed_frames)
+    #     del rationed_frames
     return frames
 
 
