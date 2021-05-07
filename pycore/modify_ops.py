@@ -17,7 +17,7 @@ from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
 
 
-def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
+def rebuild_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle):
     mod_criteria = crbundle.modify_aimg_criteria
     frames_dir = filehandler.mk_cache_dir(prefix_name="rebuild_aimg")
     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
@@ -45,29 +45,27 @@ def rebuild_aimg(img_path: str, out_dir: str, crbundle: CriteriaBundle):
     # ds_fps = mod_criteria.fps
     # yield {"NEW DELAY": ds_delay}
     logger.message(f"FPS on modify_ops is::::: {mod_criteria.fps}")
-    create_criteria = CreationCriteria(
-        {
-            "name": mod_criteria.name,
-            "fps": mod_criteria.fps,
-            "delay": mod_criteria.delay,
-            "format": mod_criteria.format,
-            "preserve_alpha": True,
-            "flip_x": mod_criteria.flip_x, 
-            "flip_y": mod_criteria.flip_y,
-            "width": mod_criteria.width,
-            "height": mod_criteria.height,
-            "loop_count": mod_criteria.loop_count,
-            "start_frame": 1,
-            "is_reversed": mod_criteria.reverse,
-            "rotation": mod_criteria.rotation,
-        }
-    )
+    create_criteria = CreationCriteria({
+        # "name": mod_criteria.name,
+        "fps": mod_criteria.fps,
+        "delay": mod_criteria.delay,
+        "format": mod_criteria.new_format,
+        "preserve_alpha": True,
+        "flip_x": mod_criteria.flip_x,
+        "flip_y": mod_criteria.flip_y,
+        "width": mod_criteria.width,
+        "height": mod_criteria.height,
+        "loop_count": mod_criteria.loop_count,
+        "start_frame": 1,
+        "is_reversed": mod_criteria.reverse,
+        "rotation": mod_criteria.rotation,
+    })
     creation_crbundle = CriteriaBundle({
         "create_aimg_criteria": create_criteria,
         "gif_opt_criteria": crbundle.gif_opt_criteria,
         "apng_opt_criteria": crbundle.apng_opt_criteria,
     })
-    new_image_path = create_aimg(frame_paths, out_dir, create_criteria.name, creation_crbundle)
+    new_image_path = create_aimg(frame_paths, out_path, creation_crbundle)
     return new_image_path
 
 

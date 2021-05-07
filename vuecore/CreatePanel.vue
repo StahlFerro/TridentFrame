@@ -54,7 +54,8 @@
             `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
             `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
             `Format: ${preview_info.general_info.format.value}` : ''
-          ">
+          "
+          v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
           <!-- <div v-if="preview_info" class="crt-aimg-container"> -->
           <img v-if="preview_info" v-bind:src="escapeLocalPath(preview_path_cb)" />
           <!-- </div> -->
@@ -64,7 +65,7 @@
       <div class="create-panel-middlebar">
         <div id="crtLoadPopper" class="context-menu" ref="popper" v-show="popperIsVisible" tabindex="-1" style="display: block;">
           <ul class="context-menu-options">
-            <li class="context-menu-option" @click="loadImages('insert')">
+            <li class="context-menu-option" @click="btnLoadImages('insert')">
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small"><i class="fas fa-plus"></i></span>
@@ -72,7 +73,7 @@
                 <div class="ctxmenu-text"><span>Image</span></div>
               </div>
             </li>
-            <li class="context-menu-option" @click="loadImages('replace')">
+            <li class="context-menu-option" @click="btnLoadImages('replace')">
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small"><i class="fas fa-plus-square"></i></span>
@@ -80,7 +81,7 @@
                 <div class="ctxmenu-text">Multiple images</div>
               </div>
             </li>
-            <li class="context-menu-option" @click="loadImages('smart_insert')">
+            <li class="context-menu-option" @click="btnLoadImages('smart_insert')">
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small"><i class="fas fa-plus-circle"></i></span>
@@ -108,7 +109,7 @@
               title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving this field empty is the default operation (append the new sequence after the last frame)"/>
           </div>
           <div class="cpb-sequence-btn">
-            <a v-on:click="CRTClearAIMG" class="button is-neon-crimson" v-bind:class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence">
+            <a v-on:click="btnClearAll" class="button is-neon-crimson" v-bind:class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence">
               <span class="icon is-small">
                 <i class="fas fa-times"></i>
               </span>
@@ -131,7 +132,7 @@
           </a> -->
         </div>
         <div class="cpb-preview-buttons">
-          <a v-on:click="previewAIMG" class="button is-neon-cyan"
+          <a v-on:click="btnPreviewAIMG" class="button is-neon-cyan"
             v-bind:class="{
               'is-loading': CRT_IS_PREVIEWING,
               'non-interactive': isButtonFrozen,
@@ -141,7 +142,7 @@
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="CRTToggleCheckerBG" class="button is-neon-white"
+          <a v-on:click="btnToggleCheckerBG" class="button is-neon-white"
             v-bind:class="{'is-active': checkerbg_active}">
             <span class="icon is-medium">
               <i class="fas fa-chess-board"></i>
@@ -189,14 +190,14 @@
           <div v-show="crt_menuselection == 0">
             <table class="" width="100%">
               <tr>
-                <td width="16.7%">
+                <!-- <td width="16.7%">
                   <div class="field">
                     <label class="label" title="The name of the GIF/APNG">Name</label>
                     <div class="control">
                       <input v-model="criteria.name" class="input is-neon-white" type="text" />
                     </div>
                   </div>
-                </td>
+                </td> -->
                 <td width="16.7%">
                   <div class="field">
                     <label class="label" title="The width of the GIF/APNG">Width</label>
@@ -255,6 +256,15 @@
                           <option value="LANCZOS">Lanczos</option>
                         </select>
                       </div>
+                    </div>
+                  </div>
+                </td>
+                <td width="16.7%">
+                  <div class="field">
+                    <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
+                    <div class="control">
+                      <input v-model="criteria.start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" 
+                        type="number" min="0" step="1"/>
                     </div>
                   </div>
                 </td>
@@ -333,23 +343,6 @@
                   </div>
                 </td>
                 <td>
-                  <div class="field">
-                    <label
-                      class="label"
-                      title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
-                      >Start at frame</label
-                    >
-                    <div class="control">
-                      <input
-                        v-model="criteria.start_frame"
-                        v-on:keydown="numConstrain($event, true, true)"
-                        class="input is-neon-white"
-                        type="number"
-                        min="0"
-                        step="1"
-                      />
-                    </div>
-                  </div>
                 </td>
                 <td style="vertical-align: bottom">
                   <label class="checkbox" title="Flip the image horizontally">
@@ -378,7 +371,7 @@
                 <td colspan="4" style="padding-top: 15px">
                   <div class="field has-addons">
                     <div class="control">
-                      <a class="button is-neon-cyan" v-on:click="chooseOutDir">
+                      <a class="button is-neon-cyan" v-on:click="btnSetSavePath">
                         <span class="icon is-small">
                           <i class="fas fa-folder-open"></i>
                         </span>
@@ -387,7 +380,7 @@
                     </div>
                     <div class="control is-expanded">
                       <input
-                        v-model="outdir"
+                        v-model="save_path"
                         class="input is-neon-white"
                         type="text"
                         placeholder="Output folder"
@@ -413,7 +406,7 @@
                   <div class="field">
                     <div class="control">
                       <a
-                        v-on:click="CRTCreateAIMG"
+                        v-on:click="btnCreateAIMG"
                         class="button is-neon-cyan"
                         v-bind:class="{
                           'is-loading': CRT_IS_CREATING == true,
@@ -489,6 +482,7 @@ const mainWindow = remote.getCurrentWindow();
 const { writeImagePathsCache, writeCriterionCache } = require("./PythonCommander.vue");
 const { tridentEngine } = require("./PythonCommander.vue");
 const lodashClonedeep = require('lodash.clonedeep');
+const path = require("path");
 import {
   quintcellLister,
   validateFilename,
@@ -510,7 +504,7 @@ import ClickOutside from 'vue-click-outside';
 
 var data = {
   criteria: {
-    name: "",
+    // name: "",
     fps: "",
     delay: "",
     format: "GIF",
@@ -544,6 +538,8 @@ var data = {
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
+  sequence_name: "",
+  save_path: "",
   insert_index: "",
   total_size: "",
   orig_width: "",
@@ -610,7 +606,7 @@ function closeLoadPopper(event) {
   }
 }
 
-function loadImages(ops) {
+function btnLoadImages(ops) {
   console.log("crt load image with ops:", ops);
   let props = ops == "replace" ? imgs_dialog_props : img_dialog_props;
   let cmd_args = [];
@@ -666,7 +662,7 @@ function loadImages(ops) {
           console.log(info);
           renderSequence(info, { operation: ops });
           data.total_size = `Total size: ${info.total_size}`;
-          data.criteria.name = data.criteria.name || info.name;
+          data.sequence_name = data.sequence_name || info.name;
           data.criteria.width = data.criteria.width || info.width;
           data.criteria.height = data.criteria.height || info.height;
           data.criteria.fps = data.criteria.fps || 50;
@@ -725,65 +721,85 @@ function removeFrame(index) {
   data.sequence_info.splice(index, 1);
 }
 
-function chooseOutDir() {
-  var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
-    let img_paths = result.filePaths;
-    console.log(img_paths);
-    if (img_paths && img_paths.length > 0) {
-      console.log("folder selected");
-      data.outdir = img_paths[0];
-      data.create_msgbox = "";
-    }
-  });
-  // mboxClear(create_msgbox);
+function singleSaveOption() {
+  return {
+    title: `Save As`,
+    defaultPath: data.sequence_name,
+    filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
+    properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
+  }
 }
 
-function CRTClearAIMG() {
+function btnSetSavePath() {
+  dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+    if (result.canceled) return;
+    let save_path = result.filePath;
+    data.save_path = save_path;
+  });
+}
+
+
+function btnClearAll() {
+  clearSequence();
+  clearPreviewAIMG();
+  clearAuxInfo();
+  clearFields();
+}
+
+function clearSequence() {
   data.image_paths = [];
   data.sequence_info = [];
+  data.sequence_name = "";
+}
+
+function clearPreviewAIMG() {
   data.preview_path = "";
   data.preview_path_cb = "";
   data.preview_info = "";
+}
+
+function clearAuxInfo() {
   data.total_size = "";
   data.orig_width = "";
   data.old_width = "";
   data.orig_height = "";
   data.old_height = "";
+  data.create_msgbox = "";
+  let empty_aspect_ratio = {
+    w_ratio: "",
+    h_ratio: "",
+    text: "",
+  };
+  data.aspect_ratio = empty_aspect_ratio;
+}
+
+function clearFields() {
   data.criteria.name = "";
   data.criteria.delay = "";
   data.criteria.fps = "";
   data.criteria.loop_count = "";
   data.criteria.width = "";
   data.criteria.height = "";
-  // data.CRT_sequence_counter = "";
-  data.create_msgbox = "";
-  // data.sequence_counter = "";
-  let ARData = {
-    w_ratio: "",
-    h_ratio: "",
-    text: "",
-  };
-  data.aspect_ratio = ARData;
-  // mboxClear(create_msgbox);
-  // deleteTempAIMG();
-  // session.clearCache(testcallback);
+}
+
+function btnPreviewAIMG() {
+  previewAIMG();
 }
 
 function previewAIMG() {
-  setMinimalDimensions();
   console.log("preview called");
   data.create_msgbox = "";
   if (data.sequence_info.length < 2) {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
-  let validator = validateFilename(data.criteria.name);
-  if (!validator.valid) {
-    console.error(validator.msg);
-    data.create_msgbox = validator.msg;
-    return;
-  }
+  setMinimalDimensions();
+  // let validator = validateFilename(data.criteria.name);
+  // if (!validator.valid) {
+  //   console.error(validator.msg);
+  //   data.create_msgbox = validator.msg;
+  //   return;
+  // }
   data.CRT_IS_PREVIEWING = true;
   console.log(data);
   // writeImagePathsCache(data.image_paths);
@@ -793,8 +809,10 @@ function previewAIMG() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-  tridentEngine(["combine_image", data.image_paths, "./temp", criteria_pack], (error, res) => {
+  let temp_filename = `${data.sequence_name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let temp_savepath = path.join(process.cwd(), "./temp/", temp_filename);
+  console.log(temp_savepath);
+  tridentEngine(["combine_image", data.image_paths, temp_savepath, criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       let error_data = JSON.parse(error);
@@ -830,35 +848,38 @@ function previewAIMG() {
   });
 }
 
-function CRTCreateAIMG() {
-  setMinimalDimensions();
-  let proceed_create = true;
-  data.create_msgbox = "";
+function btnCreateAIMG() {
   if (data.sequence_info.length < 2) {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
-  // if (!data.outdir) {
-  //   data.create_msgbox = "Please specify the output folder!";
-  //   return;
-  // }
-  var validator = validateFilename(data.criteria.name);
-  if (!validator.valid) {
-    console.error(validator.msg);
-    data.create_msgbox = validator.msg;
-    return;
+  if (data.save_path) {
+    createAnimatedImage();
   }
+  else {
+    dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+      if (result.canceled) return;
+      let save_path = result.filePath;
+      data.save_path = save_path;
+      createAnimatedImage();
+    });
+  }
+}
 
-  if (fileExists(data.outdir, `${data.criteria.name}.${data.criteria.format.toLowerCase()}`)) {
-    let WINDOW = remote.getCurrentWindow();
-    let options = {
-      buttons: ["Yes", "Cancel"],
-      message:
-        "A file with the same name already exists in the output folder. Do you want to override it?",
-    };
-    let response = dialog.showMessageBoxSync(WINDOW, options);
-    if (response == 1) proceed_create = false;
-  }
+function createAnimatedImage() {
+  let proceed_create = true;
+  data.create_msgbox = "";
+  setMinimalDimensions();
+  // if (fileExists(data.save_path)) {
+  //   let WINDOW = remote.getCurrentWindow();
+  //   let options = {
+  //     buttons: ["Yes", "Cancel"],
+  //     message:
+  //       "A file with the same name already exists in the output folder. Do you want to override it?",
+  //   };
+  //   let response = dialog.showMessageBoxSync(WINDOW, options);
+  //   if (response == 1) proceed_create = false;
+  // }
 
   if (proceed_create) {
     data.CRT_IS_CREATING = true;
@@ -867,7 +888,7 @@ function CRTCreateAIMG() {
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
-    tridentEngine(["combine_image", data.image_paths, data.outdir, criteria_pack], (error, res) => {
+    tridentEngine(["combine_image", data.image_paths, data.save_path, criteria_pack], (error, res) => {
       if (error) {
         try {
           console.error(error);
@@ -902,7 +923,7 @@ function computeTotalSequenceSize() {
   return readFilesize(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
 }
 
-function CRTToggleCheckerBG() {
+function btnToggleCheckerBG() {
   data.checkerbg_active = !data.checkerbg_active;
   console.log("now checkerbg is", data.checkerbg_active);
 }
@@ -1030,13 +1051,13 @@ export default {
   methods: {
     toggleLoadPopper: toggleLoadPopper,
     closeLoadPopper: closeLoadPopper,
-    loadImages: loadImages,
+    btnLoadImages: btnLoadImages,
     removeFrame: removeFrame,
-    CRTClearAIMG: CRTClearAIMG,
-    chooseOutDir: chooseOutDir,
-    previewAIMG: previewAIMG,
-    CRTCreateAIMG: CRTCreateAIMG,
-    CRTToggleCheckerBG: CRTToggleCheckerBG,
+    btnClearAll: btnClearAll,
+    btnPreviewAIMG: btnPreviewAIMG,
+    btnSetSavePath: btnSetSavePath,
+    btnCreateAIMG: btnCreateAIMG,
+    btnToggleCheckerBG: btnToggleCheckerBG,
     numConstrain: numConstrain,
     widthHandler: widthHandler,
     heightHandler: heightHandler,

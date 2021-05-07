@@ -161,8 +161,8 @@ function posWholeNumConstrain(event) {
   }
 }
 
-function fileExists(out_dir, name) {
-  let full_path = path.join(out_dir, name);
+function fileExists(full_path) {
+  // let full_path = path.join(out_dir, name);
   console.log("full path", full_path);
   return fs.existsSync(full_path);
 }

@@ -79,33 +79,34 @@ class TridentFrameImager:
         if info:
             logger.data(info)
 
-    def combine_image(self, image_paths: List[str], out_dir: str, criteria_pack: Dict):
-        """Combine multiple static images into a single animated image file"""
+    # def combine_image(self, image_paths: List[str], out_dir: str, criteria_pack: Dict):
+    def combine_image(self, image_paths: List[str], out_path: str, criteria_pack: Dict):
         """Combine a sequence of images into a GIF/APNG"""
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
-        if not image_paths and not out_dir:
-            raise Exception("Please load the images and choose the output folder!")
+        if not image_paths and not out_path:
+            raise Exception("Please load the images and choose the output file!")
         elif not image_paths:
             raise Exception("Please load the images!")
-        elif not out_dir:
-            raise Exception("Please choose the output folder!")
+        elif not out_path:
+            raise Exception("Please choose the output file!")
         resolved_paths = []
         for ipath in image_paths:
             resolved_path = Path(ipath).resolve()
             if resolved_path.exists():
                 resolved_paths.append(resolved_path)
         missing_paths = set(image_paths) - set((str(rp) for rp in resolved_paths))
-        out_dir = Path(out_dir).resolve()
+        out_path = Path(out_path).resolve()
+        # out_dir = Path(out_dir).resolve()
         if len(missing_paths) == len(image_paths):
             raise FileNotFoundError("All of the image sequences are missing! Check if they are not moved/deleted")
-        if not out_dir.exists():
-            raise FileNotFoundError(out_dir)
+        if not out_path.parent.exists():
+            raise FileNotFoundError(str(out_path.parent))
         crbundle = CriteriaBundle({
             "create_aimg_criteria": CreationCriteria(criteria_pack["criteria"]),
             "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
             "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
         })
-        out_path = create_aimg(resolved_paths, out_dir, criteria_pack["criteria"]["name"], crbundle)
+        out_path = create_aimg(resolved_paths, out_path, crbundle)
         if out_path:
             logger.data(str(out_path))
         if len(missing_paths) > 0:

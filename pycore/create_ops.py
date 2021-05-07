@@ -182,28 +182,28 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     return out_full_path
 
 
-def create_aimg(image_paths: List[Path], out_dir: Path, filename: str, crbundle: CriteriaBundle):
+def create_aimg(image_paths: List[Path], out_path: Path, crbundle: CriteriaBundle):
     """ Umbrella generator for creating animated images from a sequence of images """
     # abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in image_paths if str.lower(f.suffix[1:]) in STATIC_IMG_EXTS]
     # workpath = os.path.dirname(img_paths[0])
     # Test if inputted filename has extension, then remove it from the filename
-    img_format = crbundle.create_aimg_criteria.extension
+    img_format = crbundle.create_aimg_criteria.format
     if len(img_paths) < 2:
         raise Exception(f"At least 2 images is needed for an animated {img_format}!")
-    fname, ext = os.path.splitext(filename)
-    if ext:
-        filename = fname
     # if not out_dir:
     #     raise Exception("No output folder selected, please select it first")
     # out_dir = os.path.abspath(out_dir)
     # if not os.path.exists(out_dir):
     #     raise Exception(f"The specified absolute out_dir does not exist!\n{out_dir}")
+
     if img_format == "GIF":
-        out_full_path = out_dir.joinpath(f"{filename}.gif")
-        filename = f"{filename}.gif"
-        return _build_gif(img_paths, out_full_path, crbundle)
+        # out_full_path = out_dir.joinpath(f"{filename}.gif")
+        # filename = f"{filename}.gif"
+        return _build_gif(img_paths, out_path, crbundle)
+        # return _build_gif(img_paths, out_full_path, crbundle)
 
     elif img_format == "PNG":
-        out_full_path = out_dir.joinpath(f"{filename}.png")
-        return _build_apng(img_paths, out_full_path, crbundle)
+        # out_full_path = out_dir.joinpath(f"{filename}.png")
+        return _build_apng(img_paths, out_path, crbundle)
+        # return _build_apng(img_paths, out_full_path, crbundle)

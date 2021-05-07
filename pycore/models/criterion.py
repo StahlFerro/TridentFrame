@@ -30,10 +30,10 @@ class CreationCriteria(TransformativeCriteria):
 
     def __init__(self, vals):
         super(CreationCriteria, self).__init__(vals)
-        self.name: str = vals["name"]
+        # self.name: str = vals["name"]
         self.fps: float = float(vals["fps"] or 0)
         self.delay: float = float(vals["delay"] or 0)
-        self.extension: str = vals["format"]
+        self.format: str = vals["format"]
         self.reverse: bool = vals["is_reversed"]
         self.preserve_alpha: bool = vals["preserve_alpha"]
         self.loop_count = int(vals["loop_count"] or 0)
@@ -46,7 +46,7 @@ class ModificationCriteria(CreationCriteria):
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
     def __init__(self, vals):
-        self.format = vals["format"]
+        self.new_format = vals["new_format"]
         self.hash_sha1 = vals["hash_sha1"]
         self.last_modified_dt = vals["last_modified_dt"]
 

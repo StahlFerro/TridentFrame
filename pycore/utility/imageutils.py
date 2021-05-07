@@ -1,4 +1,5 @@
 import json
+import re
 from collections import deque
 from collections import OrderedDict
 from pathlib import Path
@@ -119,3 +120,12 @@ def png_is_animated(png_path: Path) -> bool:
         img_hex = buf
     # print(img_hex)
     return ACTL_CHUNK in img_hex
+
+
+# def validate_image_name(filename: str, extension: str) -> str:
+#     name_path = Path(filename)
+#     if name_path.suffixes:
+#         last_suffix = name_path.suffixes[-1]
+#         extension_re = re.compile(extension.upper(), re.IGNORECASE)
+#         if extension_re.match(filename):
+#             filename = 
