@@ -93,7 +93,7 @@
         </div>
         <div class="cpb-sequence-buttons">
           <div class="cpb-sequence-btn">
-            <a id="addPopperBtn" v-on:click="toggleLoadPopper" v-click-outside="closeLoadPopper" class="button is-neon-emerald"
+            <a id="addPopperBtn" v-on:click="btnToggleLoadPopper" v-click-outside="closeLoadPopper" class="button is-neon-emerald"
               v-bind:class="{'is-loading': CRT_IS_LOADING, 'non-interactive': isButtonFrozen }" title="Open image loading dialog">
               <span class="icon is-small">
                 <i class="fas fa-plus"></i>
@@ -581,7 +581,7 @@ function toggleLoadButtonAnim(ops, state = false) {
   }
 }
 
-function toggleLoadPopper() {
+function btnToggleLoadPopper() {
   if (!data.popperIsVisible) {
   let popper = document.querySelector("#crtLoadPopper");
   let button = document.querySelector("#addPopperBtn");
@@ -590,7 +590,7 @@ function toggleLoadPopper() {
     modifiers: {
     },
   });
-  console.log("toggleLoadPopper");
+  console.log("btnToggleLoadPopper");
   data.popperIsVisible = true;
   }
   else {
@@ -1049,7 +1049,7 @@ export default {
     APNGUnoptimizationRow,
   },
   methods: {
-    toggleLoadPopper: toggleLoadPopper,
+    btnToggleLoadPopper: btnToggleLoadPopper,
     closeLoadPopper: closeLoadPopper,
     btnLoadImages: btnLoadImages,
     removeFrame: removeFrame,
