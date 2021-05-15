@@ -1780,7 +1780,6 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 }
 .split-panel-root .split-panel-display .split-panel-info .spl-info-table tr, .split-panel-root .split-panel-display .split-panel-info .spl-info-table td {
   border-bottom: 1px solid #9ea2a7 !important;
-  border-right: 1px solid #9ea2a7 !important;
 }
 .split-panel-root .split-panel-display .split-panel-info .spl-info-table td {
   padding-top: 2px;
@@ -1790,6 +1789,7 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 }
 .split-panel-root .split-panel-display .split-panel-info .spl-info-table td.spl-info-label {
   width: 135px;
+  border-right: 1px solid #9ea2a7;
 }
 .split-panel-root .split-panel-display .split-panel-info .spl-info-table table, .split-panel-root .split-panel-display .split-panel-info .spl-info-table tr, .split-panel-root .split-panel-display .split-panel-info .spl-info-table td {
   border-collapse: collapse !important;
