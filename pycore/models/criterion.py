@@ -40,6 +40,8 @@ class CreationCriteria(TransformativeCriteria):
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.skip_frame = vals.get("skip_frame") or 0
+        self.convert_color_mode = vals["convert_color_mode"]
+        self.new_color_mode = vals.get("new_color_mode") or ""
 
 
 class ModificationCriteria(CreationCriteria):
