@@ -69,6 +69,11 @@ class ImageMetadata:
             "label": "Color mode",
             "category": "general_info",
         }
+        self.color_profile = {
+            "value": info.get("color_profile"),
+            "label": "Color profile",
+            "category": "general_info",
+        }
         self.transparency = {
             "value": info.get("transparency"),
             "label": "Transparency info",

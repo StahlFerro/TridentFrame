@@ -6,13 +6,18 @@ verify_ssl = true
 [dev-packages]
 pyinstaller = "*"
 apng = "*"
-pillow = "*"
 pywin32 = {version = "*", sys_platform = "== 'win32'"}
 black = "*"
 pylint = "*"
+Pillow = "==8.2.0"
 
 [requires]
 python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
+
+[packages]
+apng = "*"
+pyinstaller = "*"
+Pillow = "*"

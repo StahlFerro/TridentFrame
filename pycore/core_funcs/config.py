@@ -16,7 +16,7 @@ class ApplicationConfig:
         self.temp_dir = temp_dir
 
 
-logger.message(f"On config.py, {os.getcwd()}")
+# logger.message(f"On config.py, {os.getcwd()}")
 
 with open("./config/settings.json") as f:
     SETTINGS = json.loads(f.read())

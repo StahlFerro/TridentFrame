@@ -1,8 +1,9 @@
 import os
+import io
 from pathlib import Path
 from typing import List, Dict, Optional, Union
 
-from PIL import Image, ExifTags, UnidentifiedImageError
+from PIL import Image, ImageCms, ExifTags, UnidentifiedImageError
 from apng import APNG
 from .core_funcs import logger
 from .core_funcs.exception import (
@@ -134,6 +135,13 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     transparency = im.info.get("transparency", "")
     # alpha = im.getchannel('A')
     comment = im.info.get("comment", "")
+    icc = im.info.get("icc_profile")
+    color_profile = ""
+    if icc: 
+        f = io.BytesIO(icc)
+        color_profile = ImageCms.getOpenProfile(f).profile
+        print(color_profile.profile_description)
+        color_profile = color_profile.profile_description
     creation_dt = filehandler.get_creation_time(image_path)
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
@@ -152,6 +160,7 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         "absolute_url": str(image_path),
         "comments": str(comment),
         "color_mode": str(color_mode),
+        "color_profile": color_profile,
         "transparency": str(transparency),
         "is_animated": False,
         "exif": str(exif),

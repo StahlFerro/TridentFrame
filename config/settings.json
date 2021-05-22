@@ -35,6 +35,7 @@
                 "comments",
                 "transparency",
                 "color_mode",
+                "color_profile",
                 "exif",
                 "is_animated"
             ],
