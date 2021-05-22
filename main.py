@@ -219,7 +219,7 @@ def main():
         globalvar_overrides = data.get("globalvar_overrides", None)
         if globalvar_overrides:
             debug = globalvar_overrides.get("debug", None)
-            if debug is not None:
+            if debug:
                 exception.set_exception_handler(debug)
         args = data["args"]
         method(*args)

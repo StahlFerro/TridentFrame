@@ -460,6 +460,8 @@
                 :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
                 :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
                 :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
+                :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
                 :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
               />
               <!-- <APNGUnoptimizationRow
@@ -467,27 +469,6 @@
                       :apng_is_lossy.sync="apng_is_lossy"
                       :apng_is_unoptimized.sync="apng_is_unoptimized"
                     /> -->
-              <tr>
-                <td class="force-vcenter" width="35%">
-                  <label class="checkbox" title="Change color mode of image sequence before combinging them into APNG">
-                    <input v-model="criteria.convert_color_mode" type="checkbox" />
-                    Change Color Mode
-                  </label>
-                </td>
-                <td class="force-vcenter" width="65%">
-                  <div class="field">
-                    <div class="control">
-                      <div class="select is-neon-cyan">
-                        <select v-model="criteria.new_color_mode" v-bind:disabled="!criteria.convert_color_mode">
-                          <option value="RGBA" title="RGB + Alpha color mode">RGBA</option>
-                          <option value="RGB" title="RGB color mode">RGB</option>
-                          <option value="P" title="Palette color mode">Palette</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </td>
-              </tr>
             </table>
           </div>
         </div>
@@ -539,8 +520,6 @@ var data = {
     loop_count: "",
     start_frame: "",
     rotation: 0,
-    convert_color_mode: false,
-    new_color_mode: "RGBA",
   },
   gif_opt_criteria: {
     is_optimized: false,
@@ -558,6 +537,8 @@ var data = {
     apng_lossy_value: "",
     apng_is_unoptimized: false,
     apng_preconvert_rgba: false,
+    apng_convert_color_mode: false,
+    apng_new_color_mode: "RGBA",
   },
   crt_menuselection: 0,
   image_paths: [],

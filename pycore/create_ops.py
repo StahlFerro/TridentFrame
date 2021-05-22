@@ -139,7 +139,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     uneven_sizes = len(img_sizes) > 1 or (criteria.width, criteria.height) not in img_sizes
 
     shout_nums = imageutils.shout_indices(len(image_paths), 1)
-    if criteria.flip_x or criteria.flip_y or uneven_sizes or criteria.rotation or criteria.convert_color_mode:
+    if criteria.flip_x or criteria.flip_y or uneven_sizes or criteria.rotation or aopt_criteria.convert_color_mode:
         for index, ipath in enumerate(image_paths):
             if shout_nums.get(index):
                 logger.message(f"Processing frames... ({shout_nums.get(index)})")
@@ -160,8 +160,8 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
                         im = im.transpose(Image.FLIP_TOP_BOTTOM)
                     if criteria.rotation:
                         im = im.rotate(criteria.rotation, expand=True)
-                    if criteria.convert_color_mode:
-                        im = im.convert(criteria.new_color_mode)
+                    if aopt_criteria.convert_color_mode:
+                        im = im.convert(aopt_criteria.new_color_mode)
                     im.save(bytebox, "PNG")
                 apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
         logger.message("Saving APNG....")

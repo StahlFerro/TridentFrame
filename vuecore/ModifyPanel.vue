@@ -505,6 +505,8 @@ var data = {
     apng_is_lossy: false,
     apng_lossy_value: "",
     apng_is_unoptimized: false,
+    apng_convert_color_mode: false,
+    apng_new_color_mode: "RGBA",
   },
   preview_path: "",
   preview_path_cb: "",

@@ -53,7 +53,30 @@
         </div>
       </td>
     </tr>
-    
+    <tr>
+      
+      <td class="force-vcenter" width="35%">
+        <label class="checkbox" title="Change color mode of image sequence before combinging them into APNG">
+          <input v-model="apng_convert_color_mode" type="checkbox" 
+              @change="$emit('update:apng_convert_color_mode', apng_convert_color_mode)"/>
+          Change Color Mode
+        </label>
+      </td>
+      <td class="force-vcenter" width="65%">
+        <div class="field">
+          <div class="control">
+            <div class="select is-neon-cyan">
+              <select v-model="apng_new_color_mode" v-bind:disabled="!apng_convert_color_mode"
+                @change="$emit('update:apng_new_color_mode', apng_new_color_mode)">
+                <option value="RGBA" title="RGB + Alpha color mode">RGBA</option>
+                <option value="RGB" title="RGB color mode">RGB</option>
+                <option value="P" title="Palette color mode">Palette</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
     <!-- <tr>
       <td class="force-vcenter">
         <label class="checkbox" title="Unoptimizes the APNG">
@@ -76,6 +99,8 @@ var data = {
   apng_optimization_level: "1",
   apng_is_lossy: false,
   apng_lossy_value: "",
+  apng_convert_color_mode: false,
+  apng_new_color_mode: "RGBA",
   // apng_is_unoptimized: false,
 };
 

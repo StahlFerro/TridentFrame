@@ -21,16 +21,14 @@ def rebuild_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle):
     mod_criteria = crbundle.modify_aimg_criteria
     frames_dir = filehandler.mk_cache_dir(prefix_name="rebuild_aimg")
     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
-    split_criteria = SplitCriteria(
-        {
-            "pad_count": 6,
-            "color_space": "",
-            "is_unoptimized": True,
-            "new_name": "",
-            "extract_delay_info": False,
-            "convert_to_rgba": False,
-        }
-    )
+    split_criteria = SplitCriteria({
+        "pad_count": 6,
+        "color_space": "",
+        "is_unoptimized": True,
+        "new_name": "",
+        "extract_delay_info": False,
+        "convert_to_rgba": False,
+    })
     frame_paths = split_aimg(img_path, frames_dir, split_criteria)
     # yield {"MOD split frames": frame_paths}
     # if mod_criteria.is_reversed:
@@ -49,7 +47,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle):
         # "name": mod_criteria.name,
         "fps": mod_criteria.fps,
         "delay": mod_criteria.delay,
-        "format": mod_criteria.new_format,
+        "format": mod_criteria.format,
         "preserve_alpha": True,
         "flip_x": mod_criteria.flip_x,
         "flip_y": mod_criteria.flip_y,

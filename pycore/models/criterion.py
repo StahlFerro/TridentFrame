@@ -40,19 +40,15 @@ class CreationCriteria(TransformativeCriteria):
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.skip_frame = vals.get("skip_frame") or 0
-        self.convert_color_mode = vals["convert_color_mode"]
-        self.new_color_mode = vals.get("new_color_mode") or ""
 
 
 class ModificationCriteria(CreationCriteria):
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
     def __init__(self, vals):
-        self.new_format = vals["new_format"]
         self.hash_sha1 = vals["hash_sha1"]
         self.last_modified_dt = vals["last_modified_dt"]
 
-        self.preserve_alpha = vals["preserve_alpha"]
         super(ModificationCriteria, self).__init__(vals)
     
     def must_rebuild(self) -> bool:
@@ -178,6 +174,8 @@ class APNGOptimizationCriteria:
         self.is_lossy = vals["apng_is_lossy"]
         self.lossy_value = int(vals.get("apng_lossy_value") or 0)
         self.is_unoptimized = vals["apng_is_unoptimized"]
+        self.convert_color_mode = vals["apng_convert_color_mode"]
+        self.new_color_mode = vals.get("apng_new_color_mode") or ""
 
     def must_opt(self) -> bool:
         return (self.is_optimized and self.optimization_level) or (self.is_lossy and self.lossy_value)
