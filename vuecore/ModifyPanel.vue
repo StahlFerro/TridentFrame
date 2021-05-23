@@ -403,6 +403,8 @@
                 :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
                 :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
                 :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
+                :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
                 :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
               />
               <APNGUnoptimizationRow
@@ -428,6 +430,7 @@ const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
         gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath } = require("./Utility.vue");
+const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
@@ -475,7 +478,6 @@ var data = {
   //   last_modified_dt: "",
   // },
   criteria: {
-    name: "",
     width: "",
     height: "",
     rotation: "",
@@ -566,7 +568,6 @@ function clearPreiewMetadata() {
 }
 
 function clearCriteriaFields() {
-  data.criteria.name = "";
   data.criteria.old_width = "";
   data.criteria.width = "";
   data.criteria.old_height = "";
@@ -709,7 +710,6 @@ function loadPreviewMetadata(res) {
 function loadNewInfo(res) {
   var geninfo = res.general_info;
   var ainfo = res.animation_info;
-  data.criteria.name = geninfo.base_filename.value;
   data.criteria.format = geninfo.format.value;
   data.criteria.width = geninfo.width.value;
   data.criteria.height = geninfo.height.value;
@@ -817,7 +817,7 @@ function modifyImage() {
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
-    criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+    // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
     tridentEngine(["modify_image", data.orig_path, criteria_pack], (error, res) => {
       if (error) {
         console.error(error);
@@ -845,8 +845,10 @@ function previewModImg() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-  tridentEngine(["modify_image", data.orig_attribute.path, "./temp", criteria_pack], (error, res) => {
+  let temp_filename = `${data.criteria.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let temp_savepath = path.join(process.cwd(), "./temp/", temp_filename);
+  // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+  tridentEngine(["modify_image", data.orig_attribute.path, temp_savepath, criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.modify_msgbox = error;

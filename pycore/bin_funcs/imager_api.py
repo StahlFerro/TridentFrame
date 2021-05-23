@@ -166,6 +166,7 @@ class GifsicleAPI:
         # yield {"sicle_args": sicle_args}
         for index, (arg, description) in enumerate(sicle_args, start=1):
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
+            logger.message(description)
             cmdlist = [
                 str(cls.gifsicle_path),
                 arg,

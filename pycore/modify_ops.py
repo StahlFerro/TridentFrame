@@ -76,22 +76,22 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
     pass
 
 
-def modify_aimg(img_path: Path, out_dir: Path, crbundle: CriteriaBundle) -> Path:
+def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Path:
     orig_attribute = inspect_general(img_path, filter_on="animated")
     if orig_attribute is None:
         raise Exception("Error: cannot load image")
     orig_attribute: AnimatedImageMetadata = orig_attribute
     # logger.message(orig_attribute.format['value'])
     criteria = crbundle.modify_aimg_criteria
-    full_name = f"{criteria.name}.{criteria.format.lower()}"
-    out_full_path = out_dir.joinpath(full_name)
+    # full_name = f"{criteria.name}.{criteria.format.lower()}"
+    # out_full_path = out_dir.joinpath(full_name)
     if orig_attribute.format["value"] == criteria.format and not criteria.must_rebuild():
         if criteria.format == "GIF":
-            return _modify_gif(img_path, out_full_path, orig_attribute, crbundle)
+            return _modify_gif(img_path, out_path, orig_attribute, crbundle)
         elif criteria.format == "PNG":
-            return _modify_apng(img_path, out_full_path, orig_attribute, crbundle)
+            return _modify_apng(img_path, out_path, orig_attribute, crbundle)
     else:
-        return rebuild_aimg(img_path, out_dir, crbundle)
+        return rebuild_aimg(img_path, out_path, crbundle)
     return False
 
     # sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)
