@@ -195,6 +195,7 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     comments = []
     for f in range(0, gif.n_frames):
         gif.seek(f)
+        logger.debug(f"Frame #{f}: Disposal: {gif.disposal_method}")
         delays.append(gif.info["duration"])
         frame_comment = gif.info.get("comment", "")
         try:

@@ -304,9 +304,7 @@ function loadImage() {
     tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
       if (error) {        
         try {
-          console.error(error);
-          let error_data = JSON.parse(error);
-          data.split_msgbox = error_data.error;
+          data.split_msgbox = error;
         }
         catch (e) {
           data.split_msgbox = error;
@@ -314,10 +312,6 @@ function loadImage() {
         // mboxError(split_msgbox, error);
         data.SPL_IS_LOADING = false;
       } else if (res) {
-        res = JSON.parse(res);
-        console.log("--- SPLIT RES START ---");
-        console.log(res);
-        console.log("--- SPLIT RES END ---");
         if (res && res.msg) {
           data.split_msgbox = res.msg;
         } else if (res && res.data) {
@@ -406,17 +400,13 @@ function splitImage() {
   tridentEngine(["split_image", data.preview_path, data.outdir, data.criteria], (error, res) => {
     if (error) {
       try {
-        console.error(error);
-        let error_data = JSON.parse(error);
-        data.split_msgbox = error_data.error;
+        data.split_msgbox = error;
       }
       catch (e) {
         data.split_msgbox = error;
       }
       data.SPL_IS_SPLITTING = false;
     } else if (res) {
-      res = JSON.parse(res);
-      console.log("res", res);
       if (res.msg) {
         data.split_msgbox = res.msg;
       }

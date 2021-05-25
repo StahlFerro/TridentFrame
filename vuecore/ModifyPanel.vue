@@ -217,14 +217,6 @@
           <div v-show="mod_menuselection == 0">
             <table class="" width="100%">
               <tr>
-                <td width="33.33333%" colspan="2">
-                  <div class="field">
-                    <label class="label">Name</label>
-                    <div class="control">
-                      <input v-model="criteria.name" class="input is-neon-white" type="text" />
-                    </div>
-                  </div>
-                </td>
                 <td width="16.7%">
                   <div class="field">
                     <label class="label">Width</label>
@@ -242,6 +234,12 @@
                       class="input is-neon-white" type="number" min="1" step="1"/>
                     </div>
                   </div>
+                </td>
+                <td width="16.7%">
+                  
+                </td>
+                <td width="16.7%">
+                  
                 </td>
                 <td width="16.7%" class="force-vcenter">
                   <label class="checkbox" title="Flip the image horizontally">
@@ -618,9 +616,7 @@ function loadImage() {
     tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
       if (error) {        
         try {
-          console.error(error);
-          let error_data = JSON.parse(error);
-          data.modify_msgbox = error_data.error;
+          data.modify_msgbox = error;
         }
         catch (e) {
           data.modify_msgbox = error;
@@ -628,7 +624,6 @@ function loadImage() {
         // mboxError(split_msgbox, error);
         data.MOD_IS_LOADING = false;
       } else if (res) {
-        res = JSON.parse(res);
         if (res && res.msg) {
           data.modify_msgbox = res.msg;
         } else if (res && res.data) {
@@ -855,8 +850,6 @@ function previewModImg() {
       data.MOD_IS_PREVIEWING = false;
     }
     else if (res) {
-      res = JSON.parse(res);
-      console.log(`res -> ${res}`);
       if (res.msg) {
         data.modify_msgbox = res.msg;
       }
@@ -871,7 +864,6 @@ function previewModImg() {
             console.error(error);
             data.modify_msgbox = error;
           } else if (res) {
-            res = JSON.parse(res);
             if (res.data) {
               let preview_data = res.data;
               console.log(`res -> ${res}`);

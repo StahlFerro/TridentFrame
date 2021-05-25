@@ -73,20 +73,43 @@ function tridentEngine(args, outCallback) {
     });
     pyshell.on("message", (res) => {
       if (!(isNullOrWhitespace(res))) {
-        console.log("[PYTHON STDOUT RAW MSG RES]")
-        console.log(res);
-        outCallback("", res);
+        console.log("pycommander stdout >>>");
+        try {
+          let data = JSON.parse(res);
+          if (data.debug) {
+            console.log(data.debug);
+          }
+          else {
+            outCallback("", data);
+          }
+        }
+        catch (parseException) {
+          console.log("[NOT JSON]");
+          console.log(res);
+        }
       }
     });
     pyshell.on("stderr", (err) => {
       if (!(isNullOrWhitespace(err))) {
-        console.log("[PYTHON STDOUT RAW ERR RES]");
+        console.log("pycommander stderr >>>");
         console.log(err);
-        outCallback(err, "");
+        try {
+          let errdata = JSON.parse(err);
+          if (errdata.traceback)
+            console.error(errdata.traceback.join())
+          else if (errdata.error) {
+            console.error(errdata.error);
+            outCallback(errdata.error, "");
+          }
+        }
+        catch (parseErr) {
+          console.error(err);
+        }
       }
     });
     pyshell.send(json_command);
     pyshell.end(function (err,code,signal) {
+      console.log("pycommander end >>>");
       if (err) {
         console.error(err);
       }

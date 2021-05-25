@@ -646,9 +646,7 @@ function btnLoadImages(ops) {
     tridentEngine(cmd_args, (error, res) => {
       if (error) {
         try {
-          console.error(error);
-          let error_data = JSON.parse(error);
-          data.create_msgbox = error_data.error;
+          data.create_msgbox = error;
         }
         catch (e) {
           data.create_msgbox = error;
@@ -656,8 +654,6 @@ function btnLoadImages(ops) {
         data.CRT_IS_LOADING = false;
         toggleLoadButtonAnim(ops, false);
       } else if (res) {
-        console.log(`[res]\n${res}`);
-        res = JSON.parse(res);
         if (res && res.msg) {
           data.create_msgbox = res.msg;
         } else if (res && res.data) {
@@ -819,12 +815,11 @@ function previewAIMG() {
   console.log(temp_savepath);
   tridentEngine(["combine_image", data.image_paths, temp_savepath, criteria_pack], (error, res) => {
     if (error) {
-      console.error(error);
-      let error_data = JSON.parse(error);
-      data.create_msgbox = error_data.error;
+      // console.error(error);
+      // let error_data = JSON.parse(error);
+      data.create_msgbox = error;
       data.CRT_IS_PREVIEWING = false;
     } else if (res) {
-      res = JSON.parse(res);
       console.log(`res -> ${res}`);
       if (res.msg) {
         data.create_msgbox = res.msg;
@@ -835,15 +830,14 @@ function previewAIMG() {
       }
       if (res.CONTROL == "CRT_FINISH") {
         tridentEngine(["inspect_one", data.preview_path], (err, info) => {
-          if (err) {
-            let err_data = JSON.parse(err);
-            console.error(err_data);
+          if (error) {
+            console.error(error);
             data.CRT_IS_PREVIEWING = false;
           } else if (info) {
-            info = JSON.parse(info).data;
+            let inspectionData = info.data;
             console.log("preview inspect");
-            console.log(info);
-            data.preview_info = info;
+            console.log(inspectionData);
+            data.preview_info = inspectionData;
             data.create_msgbox = "Previewed!";
             data.CRT_IS_PREVIEWING = false;
           }
@@ -896,16 +890,13 @@ function createAnimatedImage() {
     tridentEngine(["combine_image", data.image_paths, data.save_path, criteria_pack], (error, res) => {
       if (error) {
         try {
-          console.error(error);
-          let error_data = JSON.parse(error);
-          data.create_msgbox = error_data.error;
+          data.create_msgbox = error;
           data.CRT_IS_CREATING = false;
         }
         catch (e) {
           data.split_msgbox = error;
         }
       } else if (res) {
-        res = JSON.parse(res);
         console.log(`res -> ${res}`);
         if (res) {
           console.log(res);

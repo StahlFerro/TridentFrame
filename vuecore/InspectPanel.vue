@@ -190,9 +190,7 @@ function loadImage() {
     tridentEngine(["inspect_one", chosen_paths[0]], (error, res) => {
       if (error) {
         try {
-          // console.error(error);
-          let error_data = JSON.parse(error);
-          data.inspect_msgbox = error_data.error;
+          data.inspect_msgbox = error;
           clearImage(); 
           clearInfo();
         }
@@ -201,9 +199,6 @@ function loadImage() {
         }
       }
       else {
-        console.log(res);
-        res = JSON.parse(res);
-        console.log(res);
         if (res.data) {
           clearMsgBox();
           let res_data = res.data;
