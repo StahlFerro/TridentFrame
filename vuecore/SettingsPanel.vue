@@ -11,21 +11,22 @@
           </a>
         </td>
         <td>
-          <a v-on:click="purgeCacheTemp" class="button is-large is-neon-cyan">
-            <span class="icon is-large">
-              <i class="fas fa-ban"></i>
-            </span>
-            <span>Purge Cache</span>
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td>
           <a v-on:click="openInspector" class="button is-large is-neon-cyan">
             <span class="icon is-large">
               <i class="fas fa-bug"></i>
             </span>
             <span>Open Inspector</span>
+          </a>
+        </td>
+      </tr>
+
+      <!-- <tr>
+        <td>
+          <a v-on:click="purgeCacheTemp" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fas fa-ban"></i>
+            </span>
+            <span>Purge Cache</span>
           </a>
         </td>
         <td>
@@ -54,7 +55,8 @@
             <span>TestExec</span>
           </a>
         </td>
-      </tr>
+      </tr> -->
+
     </table>
   </div>
 </template>
