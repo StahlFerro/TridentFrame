@@ -481,11 +481,10 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
-const { writeImagePathsCache, writeCriterionCache } = require("./PythonCommander.vue");
 const { tridentEngine } = require("./PythonCommander.vue");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
-import {
+const {
   quintcellLister,
   validateFilename,
   GIF_DELAY_DECIMAL_PRECISION,
@@ -496,7 +495,8 @@ import {
   fileExists,
   readFilesize,
   escapeLocalPath,
-} from "./Utility.vue";
+  TEMP_PATH,
+} = require("./Utility.vue");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
@@ -803,15 +803,13 @@ function previewAIMG() {
   // }
   data.CRT_IS_PREVIEWING = true;
   console.log(data);
-  // writeImagePathsCache(data.image_paths);
-  // writeCriterionCache(data);
   let criteria_pack = lodashClonedeep({
     "criteria": data.criteria,
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let temp_filename = `${data.sequence_name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let temp_savepath = path.join(process.cwd(), "./temp/", temp_filename);
+  let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
   console.log(temp_savepath);
   tridentEngine(["combine_image", data.image_paths, temp_savepath, criteria_pack], (error, res) => {
     if (error) {
@@ -820,7 +818,6 @@ function previewAIMG() {
       data.create_msgbox = error;
       data.CRT_IS_PREVIEWING = false;
     } else if (res) {
-      console.log(`res -> ${res}`);
       if (res.msg) {
         data.create_msgbox = res.msg;
       }

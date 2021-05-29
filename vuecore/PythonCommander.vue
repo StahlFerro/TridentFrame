@@ -22,28 +22,6 @@ else if (process.platform == "linux") {
   engine_exec_path = "./resources/app/engine/linux/main";
 }
 
-function writeImagePathsCache(paths) {
-  if (!fs.existsSync(cache_path)){
-      fs.mkdirSync(cache_path);
-      fs.writeFileSync(`${cache_path}/.include`, "");
-  }
-  fs.writeFileSync(bufferfile, JSON.stringify(paths));
-}
-
-function writeCriterionCache(vals) {
-  if (!fs.existsSync(cache_path)){
-      fs.mkdirSync(cache_path);
-      fs.writeFileSync(`${cache_path}/.include`, "");
-  }
-  fs.writeFileSync(criterionfile, JSON.stringify(vals));
-}
-
-/**
- * @callback pyOutCallback
- * @param {string} error - Python STDOUT
- * @param {string} res - Python STDIN
- */
-
 /**
  * Perform call to python console application.
  * @param {Array} args - Array of arguments. First element of the array must be the name of the python method on the PythonImager class. The rest are the respective method parameters.
@@ -74,37 +52,15 @@ function tridentEngine(args, outCallback) {
     pyshell.on("message", (res) => {
       if (!(isNullOrWhitespace(res))) {
         console.log("pycommander stdout >>>");
-        try {
-          let data = JSON.parse(res);
-          if (data.debug) {
-            console.log(data.debug);
-          }
-          else {
-            outCallback("", data);
-          }
-        }
-        catch (parseException) {
-          console.log("[NOT JSON]");
-          console.log(res);
-        }
+        console.log(res);
+        parseStdOutAndCall(res, outCallback);
       }
     });
     pyshell.on("stderr", (err) => {
       if (!(isNullOrWhitespace(err))) {
         console.log("pycommander stderr >>>");
         console.log(err);
-        try {
-          let errdata = JSON.parse(err);
-          if (errdata.traceback)
-            console.error(errdata.traceback.join())
-          else if (errdata.error) {
-            console.error(errdata.error);
-            outCallback(errdata.error, "");
-          }
-        }
-        catch (parseErr) {
-          console.error(err);
-        }
+        parseStdErrAndCall(err, outCallback);
       }
     });
     pyshell.send(json_command);
@@ -170,23 +126,50 @@ function receiveInternal(emitType, data, outCallback){
   parts[0] = (_remaining || '') + parts[0];
   // keep the remaining for the next iteration of 'receive'
   _remaining = lastLine;
-
   parts.forEach(function (part) {
     if(emitType == 'message') {
       console.log(part);
-      outCallback("", part);
+      parseStdOutAndCall(part, outCallback);
     }
     else if(emitType == 'stderr') {
       console.log(part);
-      outCallback(part, "");
+      parseStdErrAndCall(part, outCallback);
     }
   });
 }
 
+function parseStdOutAndCall(outstream, callback) {
+  try {
+    let json = JSON.parse(outstream);
+    if (json.debug) {
+      console.log(json.debug);
+    }
+    else {
+      callback("", json);
+    }
+  }
+  catch (parseException) {
+    console.error("[NOT JSON]");
+  }
+}
+
+function parseStdErrAndCall(errStream, callback) {
+  try {
+    let err = JSON.parse(errStream);
+    if (err.traceback)
+      console.error(err.traceback.join())
+    else if (err.error) {
+      console.error(err.error);
+      callback(err.error, "");
+    }
+  }
+  catch (parseErr) {
+    console.error(parseErr);
+  }
+}
+
 module.exports = {
   tridentEngine: tridentEngine,
-  writeImagePathsCache: writeImagePathsCache,
-  writeCriterionCache: writeCriterionCache,
   settings: settings,
 };
 

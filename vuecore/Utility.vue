@@ -1,6 +1,8 @@
 <script>
 const path = require('path');
 const fs = require('fs');
+const deploy_env = process.env.DEPLOY_ENV;
+const TEMP_PATH = deploy_env == "DEV"? "./temp/" : "./resources/app/engine/windows/temp";
 
 // function imageTableGenerator(sequence_infos) {
 
@@ -194,6 +196,7 @@ module.exports = {
   isNullOrWhitespace: isNullOrWhitespace,
   roundPrecise: roundPrecise,
   escapeLocalPath: escapeLocalPath,
+  TEMP_PATH: TEMP_PATH,
 }
 
 </script>

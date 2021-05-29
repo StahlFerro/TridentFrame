@@ -88,7 +88,7 @@
                   <span v-if="orig_attribute">{{ orig_attribute.delay_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Frame delay</td>
+                <td class="mod-info-label is-cyan">Avg. Delay</td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ preview_attribute.delay_info }}</span>
                 </td>
@@ -427,7 +427,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath } = require("./Utility.vue");
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH } = require("./Utility.vue");
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -841,7 +841,7 @@ function previewModImg() {
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let temp_filename = `${data.criteria.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let temp_savepath = path.join(process.cwd(), "./temp/", temp_filename);
+  let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["modify_image", data.orig_attribute.path, temp_savepath, criteria_pack], (error, res) => {
     if (error) {
@@ -942,11 +942,12 @@ function previewDimensions() {
 
 function previewSizePercentage() {
   if (data.orig_attribute.path && data.preview_attribute.path) {
-    let oldsize = data.orig_attribute.file_size
-    let prevsize = data.preview_attribute.file_size;
-    console.log(oldsize, prevsize);
-    let redux = `${Math.round((prevsize / oldsize) * 100)}%`;
-    return redux;
+    let oldSize = data.orig_attribute.file_size
+    let previewSize = data.preview_attribute.file_size;
+    console.log(oldSize, previewSize);
+    let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
+    let text = `${newSizePercentage}%`;
+    return text;
   }
   else return "";
 }
