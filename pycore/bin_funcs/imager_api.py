@@ -422,7 +422,7 @@ class APNGOptAPI:
             # raise Exception(cmdlist, out_full_path)
             cmd = " ".join(cmdlist)
             # result = subprocess.check_output(cmd, shell=True)
-            logger.message("Starting optimization...")
+            logger.message("Performing optimization...")
             process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             index = 0
             while process.poll() is None:
@@ -572,15 +572,17 @@ class PNGQuantAPI:
         pq_args = cls._pngquant_args_builder(apngopt_criteria)
         quantized_frames = []
         logger.message(pq_args)
+        quantization_args = " ".join([arg[0] for arg in pq_args])
+        descriptions = " ".join([arg[1] for arg in pq_args])
         # quant_dir = mk_cache_dir(prefix_name="quant_dir")
         shout_nums = imageutils.shout_indices(len(image_paths), 1)
         for index, ipath in enumerate(image_paths):
             target_path = out_dir.joinpath(ipath.name)
             if shout_nums.get(index):
-                logger.message(f"Quantizing PNG... ({shout_nums.get(index)})")
+                logger.message(f"{descriptions} ({shout_nums.get(index)})")
             args = [
                 str(cls.pngquant_path),
-                " ".join([arg[0] for arg in pq_args]),
+                quantization_args,
                 str(ipath),
                 "--force",
                 "--output",
