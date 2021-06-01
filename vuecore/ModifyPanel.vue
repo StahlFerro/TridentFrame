@@ -329,7 +329,7 @@
                 <td colspan="4">
                   <div class="field has-addons">
                     <div class="control">
-                      <a v-on:click="chooseOutDir" class="button is-neon-cyan">
+                      <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
                         <span class="icon is-small">
                           <i class="fas fa-folder-open"></i>
                         </span>
@@ -337,7 +337,7 @@
                       </a>
                     </div>
                     <div class="control is-expanded">
-                      <input v-model="outdir"
+                      <input v-model="save_path"
                         class="input is-neon-white"
                         type="text"
                         placeholder="Output folder"
@@ -359,7 +359,7 @@
                   </div>
                 </td>
                 <td colspan="1">
-                  <a v-on:click="modifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
+                  <a v-on:click="btnModifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
                     MODIFY</a>
                 </td>
               </tr>
@@ -512,6 +512,7 @@ var data = {
   preview_path_cb: "",
   preview_info: "",
   outdir: "",
+  save_path: "",
   preview_size: "",
   preview_size_hr: "",
   aspect_ratio: "",
@@ -739,6 +740,30 @@ function chooseOutDir() {
   });
 }
 
+function singleSaveOption() {
+  return {
+    title: `Save As`,
+    defaultPath: data.sequence_name,
+    filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
+    properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
+  }
+}
+
+function setSavePath(afterSaveCallback) {
+  dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+    if (result.canceled) return;
+    let save_path = result.filePath;
+    data.save_path = save_path;
+    if (afterSaveCallback) {
+      afterSaveCallback();
+    }
+  });
+}
+
+function btnSetSavePath() {
+  setSavePath();
+}
+
 function widthHandler(width, event) {
   // data.orig_attribute.width = parseInt(width);
   console.log(event);
@@ -783,27 +808,21 @@ function updateAspectRatio(width, height) {
   }
 }
 
+function btnModifyImage() {
+  if (!data.orig_attribute.path) {
+    data.modify_msgbox = "Please load the animated image to be modified!";
+    return;
+  }
+  if (data.save_path)
+    modifyImage();
+  else
+    setSavePath(modifyImage);
+}
+
 
 function modifyImage() {
   let proceed_modify = true;
-
   data.modify_msgbox = "";
-  var validator = validateFilename(data.name);
-  if (!validator.valid) {
-    console.error(validator.msg);
-    data.modify_msgbox = validator.msg;
-    return;
-  }
-
-  if (fileExists(data.outdir, `${data.name}.${data.format.toLowerCase()}`)) {
-    let WINDOW = remote.getCurrentWindow();
-    let options = {
-      buttons: ["Yes", "Cancel"],
-      message: "A file with the same name exists in the output folder. Do you want to override it?"
-    };
-    let response = dialog.showMessageBoxSync(WINDOW, options);
-    if (response == 1) proceed_modify = false;
-  }
   
   if (proceed_modify) {
     data.MOD_IS_MODIFYING = true;
@@ -813,7 +832,7 @@ function modifyImage() {
       "apng_opt_criteria": data.apng_opt_criteria,
     });
     // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-    tridentEngine(["modify_image", data.orig_path, criteria_pack], (error, res) => {
+    tridentEngine(["modify_image", data.orig_attribute.path, data.save_path, criteria_pack], (error, res) => {
       if (error) {
         console.error(error);
         data.modify_msgbox = error;
@@ -840,7 +859,7 @@ function previewModImg() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  let temp_filename = `${data.criteria.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let temp_filename = `${data.orig_attribute.name}_preview_${Date.now()}_${randString(7)}.${data.orig_.format.toLowerCase()}`;
   let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["modify_image", data.orig_attribute.path, temp_savepath, criteria_pack], (error, res) => {
@@ -974,9 +993,11 @@ export default {
     loadImage: loadImage,
     clearImage: clearImage,
     clearPreviewImage: clearPreviewImage,
-    chooseOutDir: chooseOutDir,
+    btnSetSavePath: btnSetSavePath,
+    // chooseOutDir: chooseOutDir,
     previewModImg: previewModImg,
-    modifyImage: modifyImage,
+    btnModifyImage: btnModifyImage,
+    // modifyImage: modifyImage,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     toggleOrigCheckerBG: toggleOrigCheckerBG,

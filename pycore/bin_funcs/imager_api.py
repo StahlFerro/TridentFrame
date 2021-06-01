@@ -177,7 +177,11 @@ class GifsicleAPI:
             cmd = " ".join(cmdlist)
             # yield {"msg": f"[{index}/{total_ops}] {description}"}
             # yield {"cmd": cmd}
-            subprocess.run(cmd)
+            result = subprocess.run(cmd, shell=False, capture_output=True)
+            stdout_res = result.stdout.decode("utf-8")
+            stderr_res = result.stderr.decode("utf-8")
+            logger.message(stdout_res)
+            logger.error(stderr_res)
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
@@ -266,7 +270,7 @@ class GifsicleAPI:
         ]
         cmd = " ".join(args)
         # print(cmd)
-        subprocess.run(cmd, shell=True)
+        subprocess.run(cmd, shell=False)
         return unop_gif_save_path
 
 

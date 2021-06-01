@@ -731,12 +731,19 @@ function singleSaveOption() {
   }
 }
 
-function btnSetSavePath() {
+function setSavePath(afterSaveCallback) {
   dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
     if (result.canceled) return;
     let save_path = result.filePath;
     data.save_path = save_path;
+    if (afterSaveCallback) {
+      afterSaveCallback();
+    }
   });
+}
+
+function btnSetSavePath() {
+  setSavePath();
 }
 
 
@@ -853,12 +860,7 @@ function btnCreateAIMG() {
     createAnimatedImage();
   }
   else {
-    dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
-      if (result.canceled) return;
-      let save_path = result.filePath;
-      data.save_path = save_path;
-      createAnimatedImage();
-    });
+    btnSetSavePath(createAnimatedImage);
   }
 }
 
