@@ -63,7 +63,7 @@
             title="Limits the number for all frames of the GIF. Ranging from 2 colors (monochrome) to 256 (maximum for GIFs). Warning: this will also eliminate local/per-frame color tables, setting just one global color table for every frame.">
             <input type="checkbox" v-model="is_reduced_color" v-bind:disabled="is_unoptimized"
               @change="$emit('update:is_reduced_color', is_reduced_color)" />
-            Color space
+            Color space (lossy-compression)
           </label>
         </td>
         <td class="force-vcenter">

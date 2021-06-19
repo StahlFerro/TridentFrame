@@ -149,7 +149,7 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         color_counts = np.array(im.getcolors())
         logger.debug(color_counts)
         logger.debug(color_counts.sum(axis=0)[0])
-        imageutils.get_palette_image(im).show()
+        # imageutils.get_palette_image(im).show()
     creation_dt = filehandler.get_creation_time(image_path)
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
