@@ -236,7 +236,40 @@
                   </div>
                 </td>
                 <td width="16.7%">
-                  
+                  <div class="field">
+                    <label
+                      class="label"
+                      title="Which algorithm to use when resizing the image. Default is Bicubic"
+                      >Resize Method</label
+                    >
+                    <div class="control">
+                      <div class="select is-neon-cyan">
+                        <select v-model="criteria.resize_method">
+                          <option
+                            value="BICUBIC"
+                            title="General-use resizing algorithm for most images"
+                          >
+                            Bicubic
+                          </option>
+                          <option
+                            value="NEAREST"
+                            title="Preserve sharp edges. Ideal for pixel art"
+                          >
+                            Nearest
+                          </option>
+                          <option
+                            value="BILINEAR"
+                            title="Similar to Bicubic, but not as smooth"
+                          >
+                            Bilinear
+                          </option>
+                          <option value="BOX">Box</option>
+                          <option value="HAMMING">Hamming</option>
+                          <option value="LANCZOS">Lanczos</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
                 </td>
                 <td width="16.7%">
                   
@@ -294,12 +327,12 @@
                   </div>
                 </td>
                 <td width="16.7%">
-                  <div class="field">
+                  <!-- <div class="field">
                     <label class="label">Rotation</label>
                     <div class="control">
                       <input v-model="criteria.rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
                     </div>
-                  </div>
+                  </div> -->
                 </td>
                 <!-- <td width="20%">
                   <div class="field">
@@ -478,6 +511,7 @@ var data = {
   criteria: {
     width: "",
     height: "",
+    resize_method: "BICUBIC",
     rotation: "",
     fps: "",
     delay: "",
@@ -859,7 +893,7 @@ function previewModImg() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  let temp_filename = `${data.orig_attribute.name}_preview_${Date.now()}_${randString(7)}.${data.orig_.format.toLowerCase()}`;
+  let temp_filename = `${data.orig_attribute.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
   let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["modify_image", data.orig_attribute.path, temp_savepath, criteria_pack], (error, res) => {

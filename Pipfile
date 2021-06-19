@@ -21,3 +21,4 @@ allow_prereleases = true
 apng = "*"
 pyinstaller = "*"
 Pillow = "*"
+numpy = "*"

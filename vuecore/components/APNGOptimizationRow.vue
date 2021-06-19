@@ -1,14 +1,14 @@
 <template>
   <Fragment>
     <tr>
-      <td class="force-vcenter" width="35%">
+      <td class="force-vcenter" width="25%">
         <label class="checkbox" title="Optimize APNG to decrease file size without affecting quality">
           <input v-model="apng_is_optimized" v-bind:disabled="apng_is_unoptimized"
            @change="$emit('update:apng_is_optimized', apng_is_optimized)" type="checkbox" />
           Optimize
         </label>
       </td>
-      <td class="force-vcenter" width="65%">
+      <td class="force-vcenter" width="25%">
         <div class="field">
           <div class="control">
             <div class="select is-neon-cyan">
@@ -21,22 +21,26 @@
           </div>
         </div>
       </td>
+      <td class="force-vcenter" width="25%"></td>
+      <td class="force-vcenter" width="25%"></td>
     </tr>
     <tr>
       <td class="force-vcenter">
         <label
           class="checkbox"
-          title="Performs significant file size reduction at a slight cost of quality (artifacts and noise).\n
-          The smaller the value, the stronger the compression will be and the lower the quality will be."
+          title="Limits the number of colors for all frames of the APNG. Ranging from 2 colors (monochrome) to 256 (maximum for PNG palettes)."
         >
           <input v-model="apng_is_lossy" type="checkbox" v-bind:disabled="apng_is_unoptimized"
             @change="$emit('update:apng_is_lossy', apng_is_lossy)" />
-          Lossy-compression
+          Color space
         </label>
       </td>
+    </tr>
+    <tr>
       <td class="force-vcenter">
         <div class="field">
           <!-- <label class="label">Color space</label> -->
+          <label class="label" title="Quantization quality, defaults to 80">Quality</label>
           <div class="control">
             <input
               v-model="apng_lossy_value"
@@ -45,24 +49,41 @@
               type="number"
               min="10"
               max="100"
-              placeholder="10 - 100"
+              placeholder="1 - 100"
               v-bind:disabled="!apng_is_lossy"
               v-on:keydown="numConstrain($event, true, true)"
             />
           </div>
         </div>
       </td>
+      <!-- <td class="force-vcenter">
+        <div class="field">
+          <label class="label" title="Speed/quality tradeoff, defaults to 3. Speed 10 has 5% lower quality, but is 8 times faster than the default.">Speed</label>
+          <div class="control">
+            <input
+              v-model="apng_speed_value"
+              @change="$emit('update:apng_speed_value', apng_speed_value)"
+              class="input is-neon-white"
+              type="number"
+              min="10"
+              max="100"
+              placeholder="1- 10"
+              v-bind:disabled="!apng_is_lossy"
+              v-on:keydown="numConstrain($event, true, true)"
+            />
+          </div>
+        </div>
+      </td> -->
     </tr>
     <tr>
-      
-      <td class="force-vcenter" width="35%">
+      <td class="force-vcenter">
         <label class="checkbox" title="Change color mode of image sequence before combinging them into APNG">
           <input v-model="apng_convert_color_mode" type="checkbox" 
               @change="$emit('update:apng_convert_color_mode', apng_convert_color_mode)"/>
           Change Color Mode
         </label>
       </td>
-      <td class="force-vcenter" width="65%">
+      <td class="force-vcenter">
         <div class="field">
           <div class="control">
             <div class="select is-neon-cyan">
@@ -99,6 +120,7 @@ var data = {
   apng_optimization_level: "1",
   apng_is_lossy: false,
   apng_lossy_value: "",
+  apng_speed_value: "",
   apng_convert_color_mode: false,
   apng_new_color_mode: "RGBA",
   // apng_is_unoptimized: false,

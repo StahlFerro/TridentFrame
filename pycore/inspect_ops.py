@@ -1,5 +1,6 @@
 import os
 import io
+import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional, Union
 
@@ -132,7 +133,7 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     fsize = image_path.stat().st_size
     # fsize_hr = read_filesize(fsize)
     color_mode = im.mode
-    transparency = im.info.get("transparency", "")
+    transparency = im.info.get("transparency")
     # alpha = im.getchannel('A')
     comment = im.info.get("comment", "")
     icc = im.info.get("icc_profile")
@@ -142,6 +143,13 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         color_profile = ImageCms.getOpenProfile(f).profile
         print(color_profile.profile_description)
         color_profile = color_profile.profile_description
+    palette = im.getpalette()
+    if palette:
+        logger.debug(imageutils.reshape_palette(palette))
+        color_counts = np.array(im.getcolors())
+        logger.debug(color_counts)
+        logger.debug(color_counts.sum(axis=0)[0])
+        imageutils.get_palette_image(im).show()
     creation_dt = filehandler.get_creation_time(image_path)
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
@@ -195,7 +203,14 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     comments = []
     for f in range(0, gif.n_frames):
         gif.seek(f)
-        logger.debug(f"Frame #{f}: Disposal: {gif.disposal_method}")
+        # if f in range(0, 3):
+        #     logger.debug(f"Frame #{f}\nDisposal: {gif.disposal_method}\nBackground: {gif.info.get('background', '')}\n"
+        #         f"Transparency: {gif.info.get('transparency', '')}")
+            # gif.show()
+            # palette = np.array(gif.getpalette(), dtype=np.uint8).reshape(16, 16, 3)
+            # if f == 0:
+                # Image.fromarray(palette, "RGB").resize((256, 256), resample=Image.NEAREST).show()
+            # logger.debug(gif.getpalette())
         delays.append(gif.info["duration"])
         frame_comment = gif.info.get("comment", "")
         try:
@@ -209,10 +224,17 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
         comments = ""
     fmt = "GIF"
     full_format = str(gif.info.get("version") or "")
-    transparency = gif.info.get("transparency", "-")
+    transparency = gif.info.get("transparency")
     creation_dt = filehandler.get_creation_time(abspath)
     modification_dt = filehandler.get_modification_time(abspath)
     checksum = filehandler.hash_sha1(abspath)
+    palette = gif.getpalette()
+    if palette:
+        logger.debug(f"Palette: {imageutils.reshape_palette(palette)}")
+        color_counts = np.array(gif.getcolors())
+        logger.debug(f"Color counts: {color_counts}")
+        logger.debug(f"Total colors: {color_counts.shape[1]}")
+        # imageutils.get_palette_image(gif).show()
     gif.close()
     metadata = AnimatedImageMetadata({
         "name": filename,
@@ -267,6 +289,8 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     creation_dt = filehandler.get_creation_time(abspath)
     modification_dt = filehandler.get_modification_time(abspath)
     checksum = filehandler.hash_sha1(abspath)
+    for index, (png, control) in enumerate(apng.frames):
+        logger.debug(f"blend_op: {control.blend_op}, depose_op: {control.depose_op}")
     metadata = AnimatedImageMetadata({
         "name": filename,
         "base_filename": base_fname,

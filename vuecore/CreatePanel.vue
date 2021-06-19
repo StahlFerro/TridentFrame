@@ -50,6 +50,7 @@
           v-bind:title="preview_info? 
             `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
             `File size: ${preview_info.general_info.fsize_hr.value}\n` +
+            `Total frames: ${preview_info.animation_info.frame_count.value}\n` +
             `FPS: ${preview_info.animation_info.fps.value}\n` +
             `Duration: ${preview_info.animation_info.loop_duration.value} seconds\n` +
             `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +

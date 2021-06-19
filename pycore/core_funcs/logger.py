@@ -1,4 +1,6 @@
 import json
+from json import JSONEncoder
+import numpy
 import sys
 import os
 import traceback
@@ -22,6 +24,17 @@ class UnbufferedStream(object):
         return getattr(self.stream, attr)
 
 
+class JSONEncoderTrident(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, bytes):
+            return obj.hex()
+        if isinstance(obj, numpy.ndarray):
+            return obj.tolist()
+        if isinstance(obj, numpy.int32):
+            return int(obj)
+        return JSONEncoder.default(self, obj)
+
+
 sys.stdout = UnbufferedStream(sys.stdout)
 os.environ["PYTHONUNBUFFERED"] = "1"
 
@@ -31,14 +44,14 @@ def data(logdata: Any):
     print(json.dumps(msg))
 
 
-def debug(logmsg: str):
+def debug(logmsg):
     msg = {"debug": logmsg}
-    print(json.dumps(msg))
+    print(json.dumps(msg, cls=JSONEncoderTrident))
 
 
-def message(logmsg: str):
+def message(logmsg):
     msg = {"msg": logmsg}
-    print(json.dumps(msg))
+    print(json.dumps(msg, cls=JSONEncoderTrident))
 
 
 def warn(logmsg: str):

@@ -1,14 +1,16 @@
 import os
+import io
 import shutil
 from pathlib import Path
 
 from PIL import Image
+from apng import APNG, PNG
 
 from pycore.models.criterion import (
     CriteriaBundle,
 )
 from pycore.utility import filehandler
-from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI
+from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.models.criterion import CreationCriteria, SplitCriteria
 from pycore.core_funcs import logger
@@ -17,9 +19,9 @@ from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
 
 
-def rebuild_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle):
+def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle):
     mod_criteria = crbundle.modify_aimg_criteria
-    frames_dir = filehandler.mk_cache_dir(prefix_name="rebuild_aimg")
+    frames_dir = filehandler.mk_cache_dir(prefix_name="presplit_images")
     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
     split_criteria = SplitCriteria({
         "pad_count": 6,
@@ -42,7 +44,6 @@ def rebuild_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle):
     # ds_delay = mod_criteria.delay
     # ds_fps = mod_criteria.fps
     # yield {"NEW DELAY": ds_delay}
-    logger.message(f"FPS on modify_ops is::::: {mod_criteria.fps}")
     create_criteria = CreationCriteria({
         # "name": mod_criteria.name,
         "fps": mod_criteria.fps,
@@ -58,6 +59,13 @@ def rebuild_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle):
         "is_reversed": mod_criteria.reverse,
         "rotation": mod_criteria.rotation,
     })
+    has_transparency = metadata.transparency is not None
+    if create_criteria.format == "PNG":
+        crbundle.apng_opt_criteria.convert_color_mode = True
+        if has_transparency:
+            crbundle.apng_opt_criteria.new_color_mode = "RGBA"
+        else:
+            crbundle.apng_opt_criteria.new_color_mode = "RGB"
     creation_crbundle = CriteriaBundle({
         "create_aimg_criteria": create_criteria,
         "gif_opt_criteria": crbundle.gif_opt_criteria,
@@ -67,32 +75,71 @@ def rebuild_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle):
     return new_image_path
 
 
-def _modify_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle):
+def _modify_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
+    if crbundle.gif_opt_criteria.is_unoptimized:
+        logger.message("Unoptimizing GIF...")
+        # ImageMagick is used to unoptimized rather than Gifsicle's unoptimizer because Gifsicle doesn't support
+        # unoptimization of GIFs with local color table
+        gif_path = ImageMagickAPI.unoptimize_gif(gif_path, out_path)
     final_path = GifsicleAPI.modify_gif_image(gif_path, out_path, metadata, crbundle)
     return final_path
 
 
-def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle):
-    pass
+def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
+    logger.message("Modifying APNG...")
+    mod_criteria = crbundle.modify_aimg_criteria
+    aopt_criteria = crbundle.apng_opt_criteria
+    apng_im: APNG = APNG.open(apng_path)
+    # Reiterate through the frames if matching certain conditions, or per-frame lossy compression is required
+    if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_lossy:
+        logger.debug(f"REITERATE APNG")
+        new_apng: APNG = APNG()
+        for index, (png, control) in enumerate(apng_im.frames):
+            # logger.debug(png.chunks)
+            delay = int(mod_criteria.delay * 1000)
+            control.delay = delay
+            if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode:
+                with io.BytesIO() as img_buf:
+                    png.save(img_buf)
+                    with Image.open(img_buf) as im:
+                        im = im.resize((mod_criteria.width, mod_criteria.height),
+                           resample=getattr(Image, mod_criteria.resize_method))
+                        if aopt_criteria.is_lossy:
+                            im = im.quantize(
+                                aopt_criteria.lossy_value, method=Image.FASTOCTREE, dither=1).convert("RGBA")
+                        if aopt_criteria.convert_color_mode:
+                            im = im.convert(aopt_criteria.new_color_mode)
+                        with io.BytesIO() as new_buf:
+                            im.save(new_buf, "PNG")
+                            new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=delay)
+        logger.debug(f"NEW FRAMES COUNT: {len(new_apng.frames)}")
+        if len(new_apng.frames) > 0:
+            apng_im = new_apng
+    apng_im.num_plays = mod_criteria.loop_count
+    apng_im.save(out_path)
+    logger.message(f"Optimizing APNG...")
+    if aopt_criteria.is_optimized:
+        APNGOptAPI.optimize_apng(out_path, out_path, aopt_criteria)
+    logger.error(Image.open(out_path).mode)
+    return out_path
 
 
 def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Path:
     orig_attribute = inspect_general(img_path, filter_on="animated")
     if orig_attribute is None:
         raise Exception("Error: cannot load image")
-    orig_attribute: AnimatedImageMetadata = orig_attribute
-    # logger.message(orig_attribute.format['value'])
     criteria = crbundle.modify_aimg_criteria
-    # full_name = f"{criteria.name}.{criteria.format.lower()}"
-    # out_full_path = out_dir.joinpath(full_name)
-    if orig_attribute.format["value"] == criteria.format and not criteria.must_rebuild():
+    change_format = criteria.change_format(orig_attribute)
+
+    if change_format or criteria.gif_must_rebuild():
+        logger.message("Rebuilding im...")
+        return rebuild_aimg(img_path, out_path, orig_attribute, crbundle)
+    else:
+        logger.message("Modifying im...")
         if criteria.format == "GIF":
             return _modify_gif(img_path, out_path, orig_attribute, crbundle)
         elif criteria.format == "PNG":
             return _modify_apng(img_path, out_path, orig_attribute, crbundle)
-    else:
-        return rebuild_aimg(img_path, out_path, crbundle)
-    return False
 
     # sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)
     # magick_args = imagemagick_args(gifopt_criteria)
@@ -161,5 +208,5 @@ def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Pat
     #             #     yield {"MSGGGGGGGGGGGGG": "RENAME"}
     #             if target_path != out_full_path:
     #                 shutil.copy(target_path, out_full_path)
-    logger.preview_path(target_path)
-    logger.control("MOD_FINISH")
+    # logger.preview_path(target_path)
+    # logger.control("MOD_FINISH")

@@ -2,7 +2,7 @@
   <!-- <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%"> -->
     <Fragment>
     <tr>
-      <td colspan="2" class="force-vcenter" width="100%">
+      <td colspan="2" class="force-vcenter">
         <label
           class="checkbox"
           title="Unoptimize each frame of the GIF to fully define their original look. Allows editing of each frame on any other application at the cost of increased file size.">

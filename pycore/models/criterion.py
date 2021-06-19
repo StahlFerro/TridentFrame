@@ -18,11 +18,14 @@ class TransformativeCriteria:
         else:
             return self.width != width or self.height != height
 
+    def must_flip(self):
+        return self.flip_x or self.flip_y
+
     # def must_transform(orig_width: int, orig_height: int) -> Bool:
     #     return self.must_resize() or self.flip_x or self.flip_y or self.must_rotate()
 
-    def must_rotate(self) -> bool:
-        return self.rotation != 0
+    # def must_rotate(self) -> bool:
+    #     return self.rotation != 0
 
 
 class CreationCriteria(TransformativeCriteria):
@@ -50,15 +53,27 @@ class ModificationCriteria(CreationCriteria):
         self.last_modified_dt = vals["last_modified_dt"]
 
         super(ModificationCriteria, self).__init__(vals)
+
+    def change_format(self, metadata: ImageMetadata):
+        return metadata.format["value"] != self.format
+
+    def must_resize(self, metadata: Optional[AnimatedImageMetadata] = None, width: Optional[int] = 0,
+                    height: Optional[int] = 0) -> bool:
+        return super(ModificationCriteria, self).must_resize(metadata, width, height)
+
+    def must_transform(self, metadata: AnimatedImageMetadata) -> bool:
+        return self.must_resize(metadata) or self.must_flip()
+
+    def apng_must_reiterate(self, metadata: AnimatedImageMetadata) -> bool:
+        return self.must_resize(metadata) or self.must_flip() or self.must_redelay(metadata)
     
-    def must_rebuild(self) -> bool:
-        """Determine whether the modification needs the animated image to be split and rebuilt with the required modifications, or not
+    def gif_must_rebuild(self) -> bool:
+        """Determine whether the modification needs the animated GIF to be split and rebuilt with the required modifications,
 
         Returns:
             bool: True or False
         """
-        return self.flip_x or self.flip_y or self.reverse
-        pass
+        return self.format == "GIF" and (self.flip_x or self.flip_y or self.reverse)
 
     def must_redelay(self, metadata: Optional[AnimatedImageMetadata] = None, delays: Optional[List[float]] = None,
                      delay: Optional[float] = None):
@@ -80,17 +95,6 @@ class ModificationCriteria(CreationCriteria):
 
     def gif_must_split(self) -> bool:
         altered = self.reverse or self.flip_x or self.flip_y or self.rotation
-        return altered
-
-    def apng_mustsplit_alteration(self) -> bool:
-        altered = (
-                self.must_resize()
-                or self.must_rotate()
-                or self.must_redelay()
-                or self.must_reloop()
-                or self.must_flip()
-                or self.is_reversed
-        )
         return altered
 
     def orig_dimensions(self) -> str:
@@ -173,6 +177,7 @@ class APNGOptimizationCriteria:
         self.optimization_level = int(vals.get("apng_optimization_level") or 0)
         self.is_lossy = vals["apng_is_lossy"]
         self.lossy_value = int(vals.get("apng_lossy_value") or 0)
+        self.speed_value = int(vals.get("apng_speed_value") or 0)
         self.is_unoptimized = vals["apng_is_unoptimized"]
         self.convert_color_mode = vals["apng_convert_color_mode"]
         self.new_color_mode = vals.get("apng_new_color_mode") or ""
