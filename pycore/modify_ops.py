@@ -22,6 +22,13 @@ from pycore.split_ops import split_aimg
 def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle):
     mod_criteria = crbundle.modify_aimg_criteria
     frames_dir = filehandler.mk_cache_dir(prefix_name="presplit_images")
+    has_transparency = metadata.transparency is not None
+    if mod_criteria.format == "PNG":
+        crbundle.apng_opt_criteria.convert_color_mode = True
+        if has_transparency:
+            crbundle.apng_opt_criteria.new_color_mode = "RGBA"
+        else:
+            crbundle.apng_opt_criteria.new_color_mode = "RGB"
     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
     split_criteria = SplitCriteria({
         "pad_count": 6,
@@ -29,7 +36,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "is_unoptimized": True,
         "new_name": "",
         "extract_delay_info": False,
-        "convert_to_rgba": False,
+        "convert_to_rgba": True,
     })
     frame_paths = split_aimg(img_path, frames_dir, split_criteria)
     # yield {"MOD split frames": frame_paths}
@@ -59,13 +66,6 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "is_reversed": mod_criteria.reverse,
         "rotation": mod_criteria.rotation,
     })
-    has_transparency = metadata.transparency is not None
-    if create_criteria.format == "PNG":
-        crbundle.apng_opt_criteria.convert_color_mode = True
-        if has_transparency:
-            crbundle.apng_opt_criteria.new_color_mode = "RGBA"
-        else:
-            crbundle.apng_opt_criteria.new_color_mode = "RGB"
     creation_crbundle = CriteriaBundle({
         "create_aimg_criteria": create_criteria,
         "gif_opt_criteria": crbundle.gif_opt_criteria,

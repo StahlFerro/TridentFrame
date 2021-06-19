@@ -232,6 +232,7 @@ def _fragment_apng_frames(apng_path: Path, criteria: SplitCriteria) -> List[Imag
             logger.message(str(fp))
             frames.append(Image.open(fp))
     else:
+        logger.message("Splitting APNG...")
         apng = APNG.open(apng_path)
         iframes = apng.frames
         fcount = len(iframes)

@@ -186,11 +186,11 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
                     im = im.transpose(Image.FLIP_TOP_BOTTOM)
                 # if criteria.rotation:
                 #     im = im.rotate(criteria.rotation, expand=True)
+                logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
                 if aopt_criteria.is_lossy:
                     im = im.quantize(aopt_criteria.lossy_value, method=Image.FASTOCTREE, dither=1).convert("RGBA")
                 if aopt_criteria.convert_color_mode:
                     im = im.convert(aopt_criteria.new_color_mode)
-                logger.debug(f"FINAL color mode: {aopt_criteria.new_color_mode}")
                 logger.debug(f"SAVE PATH IS: {save_path}")
                 im.save(save_path, "PNG")
                 # if aopt_criteria.is_lossy:
