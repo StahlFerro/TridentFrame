@@ -174,8 +174,6 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
         with Image.open(ipath) as im:
             im: Image.Image
             orig_width, orig_height = im.size
-            if im.mode == "P":
-                im = im.convert("RGBA")
             if criteria.must_resize(width=orig_width, height=orig_height):
                 resize_method_enum = getattr(Image, criteria.resize_method)
                 # yield {"resize_method_enum": resize_method_enum}
@@ -183,6 +181,8 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
                     (round(criteria.width), round(criteria.height)),
                     resize_method_enum,
                 )
+            if im.mode == "P":
+                im = im.convert("RGBA")
             if criteria.flip_x:
                 im = im.transpose(Image.FLIP_LEFT_RIGHT)
             if criteria.flip_y:
