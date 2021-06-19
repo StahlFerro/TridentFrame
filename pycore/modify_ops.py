@@ -21,14 +21,15 @@ from pycore.split_ops import split_aimg
 
 def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle):
     mod_criteria = crbundle.modify_aimg_criteria
+    aopt_criteria = crbundle.apng_opt_criteria
     frames_dir = filehandler.mk_cache_dir(prefix_name="presplit_images")
     has_transparency = metadata.transparency is not None
-    if mod_criteria.format == "PNG":
-        crbundle.apng_opt_criteria.convert_color_mode = True
-        if has_transparency:
-            crbundle.apng_opt_criteria.new_color_mode = "RGBA"
-        else:
-            crbundle.apng_opt_criteria.new_color_mode = "RGB"
+    # if mod_criteria.format == "PNG" and not aopt_criteria.convert_color_mode:
+    #     aopt_criteria.convert_color_mode = True
+    #     if has_transparency:
+    #         aopt_criteria.new_color_mode = "RGBA"
+    #     else:
+    #         aopt_criteria.new_color_mode = "RGB"
     # is_unoptimized = mod_criteria.is_unoptimized or mod_criteria.apng_is_unoptimized or mod_criteria.change_format()
     split_criteria = SplitCriteria({
         "pad_count": 6,
@@ -65,6 +66,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "start_frame": 1,
         "is_reversed": mod_criteria.reverse,
         "rotation": mod_criteria.rotation,
+        "resize_method": mod_criteria.resize_method
     })
     creation_crbundle = CriteriaBundle({
         "create_aimg_criteria": create_criteria,
@@ -103,7 +105,9 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
                     png.save(img_buf)
                     with Image.open(img_buf) as im:
                         im = im.resize((mod_criteria.width, mod_criteria.height),
-                           resample=getattr(Image, mod_criteria.resize_method))
+                                       resample=getattr(Image, mod_criteria.resize_method))
+                        if im.mode == "P":
+                            im = im.convert("RGBA")
                         if aopt_criteria.is_lossy:
                             im = im.quantize(
                                 aopt_criteria.lossy_value, method=Image.FASTOCTREE, dither=1).convert("RGBA")

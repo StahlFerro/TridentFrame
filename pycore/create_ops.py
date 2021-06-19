@@ -155,58 +155,60 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     uneven_sizes = len(img_sizes) > 1 or (criteria.width, criteria.height) not in img_sizes
 
     shout_nums = imageutils.shout_indices(len(image_paths), 1)
-    if criteria.flip_x or criteria.flip_y or uneven_sizes or aopt_criteria.is_lossy\
-            or aopt_criteria.convert_color_mode:
-        out_dir = filehandler.mk_cache_dir(prefix_name="tmp_apngfrags")
-        preprocessed_paths = []
-        for index, ipath in enumerate(image_paths):
-            fragment_name = str(ipath.name)
-            if criteria.reverse:
-                reverse_index = len(image_paths) - (index + 1)
-                fragment_name = f"rev_{str.zfill(str(reverse_index), 6)}_{fragment_name}"
-            else:
-                fragment_name = f"{str.zfill(str(index), 6)}_{fragment_name}"
-            save_path = out_dir.joinpath(f"{fragment_name}.png")
-            if shout_nums.get(index):
-                logger.message(f"Processing frames... ({shout_nums.get(index)})")
-            # with io.BytesIO() as bytebox:
-            with Image.open(ipath) as im:
-                im: Image.Image
-                orig_width, orig_height = im.size
-                if criteria.must_resize(width=orig_width, height=orig_height):
-                    resize_method_enum = getattr(Image, criteria.resize_method)
-                    # yield {"resize_method_enum": resize_method_enum}
-                    im = im.resize(
-                        (round(criteria.width), round(criteria.height)),
-                        resize_method_enum,
-                    )
-                if criteria.flip_x:
-                    im = im.transpose(Image.FLIP_LEFT_RIGHT)
-                if criteria.flip_y:
-                    im = im.transpose(Image.FLIP_TOP_BOTTOM)
-                # if criteria.rotation:
-                #     im = im.rotate(criteria.rotation, expand=True)
-                logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
-                if aopt_criteria.is_lossy:
-                    im = im.convert("RGBA")
-                    im = im.quantize(aopt_criteria.lossy_value, method=Image.FASTOCTREE, dither=1).convert("RGBA")
-                if aopt_criteria.convert_color_mode:
-                    im = im.convert(aopt_criteria.new_color_mode)
-                logger.debug(f"SAVE PATH IS: {save_path}")
-                im.save(save_path, "PNG")
-                # if aopt_criteria.is_lossy:
-                #     save_path = PNGQuantAPI.quantize_png_image(aopt_criteria, save_path)
-                preprocessed_paths.append(save_path)
-                # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
-        logger.message("Saving APNG....")
-        apng = APNG.from_files(preprocessed_paths, delay=int(criteria.delay * 1000))
-        apng.num_plays = criteria.loop_count
-        apng.save(out_full_path)
-    else:
-        logger.message("Saving APNG....")
-        apng = APNG.from_files(image_paths, delay=int(criteria.delay * 1000))
-        apng.num_plays = criteria.loop_count
-        apng.save(out_full_path)
+    # if criteria.flip_x or criteria.flip_y or uneven_sizes or aopt_criteria.is_lossy\
+    #         or aopt_criteria.convert_color_mode:
+    out_dir = filehandler.mk_cache_dir(prefix_name="tmp_apngfrags")
+    preprocessed_paths = []
+    # logger.debug(crbundle.create_aimg_criteria.__dict__)
+    for index, ipath in enumerate(image_paths):
+        fragment_name = str(ipath.name)
+        if criteria.reverse:
+            reverse_index = len(image_paths) - (index + 1)
+            fragment_name = f"rev_{str.zfill(str(reverse_index), 6)}_{fragment_name}"
+        else:
+            fragment_name = f"{str.zfill(str(index), 6)}_{fragment_name}"
+        save_path = out_dir.joinpath(f"{fragment_name}.png")
+        if shout_nums.get(index):
+            logger.message(f"Processing frames... ({shout_nums.get(index)})")
+        # with io.BytesIO() as bytebox:
+        with Image.open(ipath) as im:
+            im: Image.Image
+            orig_width, orig_height = im.size
+            if im.mode == "P":
+                im = im.convert("RGBA")
+            if criteria.must_resize(width=orig_width, height=orig_height):
+                resize_method_enum = getattr(Image, criteria.resize_method)
+                # yield {"resize_method_enum": resize_method_enum}
+                im = im.resize(
+                    (round(criteria.width), round(criteria.height)),
+                    resize_method_enum,
+                )
+            if criteria.flip_x:
+                im = im.transpose(Image.FLIP_LEFT_RIGHT)
+            if criteria.flip_y:
+                im = im.transpose(Image.FLIP_TOP_BOTTOM)
+            # if criteria.rotation:
+            #     im = im.rotate(criteria.rotation, expand=True)
+            # logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
+            if aopt_criteria.is_lossy:
+                im = im.quantize(aopt_criteria.lossy_value, method=Image.FASTOCTREE, dither=1).convert("RGBA")
+            if aopt_criteria.convert_color_mode:
+                im = im.convert(aopt_criteria.new_color_mode)
+            # logger.debug(f"SAVE PATH IS: {save_path}")
+            im.save(save_path, "PNG")
+            # if aopt_criteria.is_lossy:
+            #     save_path = PNGQuantAPI.quantize_png_image(aopt_criteria, save_path)
+            preprocessed_paths.append(save_path)
+            # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
+    logger.message("Saving APNG....")
+    apng = APNG.from_files(preprocessed_paths, delay=int(criteria.delay * 1000))
+    apng.num_plays = criteria.loop_count
+    apng.save(out_full_path)
+    # else:
+    #     logger.message("Saving APNG....")
+    #     apng = APNG.from_files(image_paths, delay=int(criteria.delay * 1000))
+    #     apng.num_plays = criteria.loop_count
+    #     apng.save(out_full_path)
 
     if aopt_criteria.is_optimized:
         out_full_path = APNGOptAPI.optimize_apng(out_full_path, out_full_path, aopt_criteria)

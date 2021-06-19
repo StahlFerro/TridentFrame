@@ -371,7 +371,6 @@ class ImageMagickAPI:
         logger.debug(cmd)
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         index = 0
-        logger.debug("EEEEEEE")
         while process.poll() is None:
             output = process.stdout.readline()
             err = ""
