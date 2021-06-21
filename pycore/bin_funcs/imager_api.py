@@ -431,21 +431,22 @@ class APNGOptAPI:
             Path: [description]
         """
         aopt_args = cls._opt_args_builder(apngopt_criteria)
-        aopt_dir = filehandler.mk_cache_dir(prefix_name="apngopt_dir")
+        # aopt_dir = filehandler.mk_cache_dir(prefix_name="apngopt_dir")
         filename = target_path.name
-        aopt_temp_path = aopt_dir.joinpath(filename)
-        logger.message(f"COPY FROM {target_path} TO {aopt_temp_path}")
-        target_path = shutil.copy(target_path, aopt_temp_path, follow_symlinks=False)
+        # aopt_temp_path = aopt_dir.joinpath(filename)
+        # logger.message(f"COPY FROM {target_path} TO {aopt_temp_path}")
+        # target_path = shutil.copy(target_path, aopt_temp_path, follow_symlinks=False)
         cwd = os.getcwd()
         # common_path = os.path.commonpath([opt_exec_path, target_path])
-        target_rel_path = Path(os.path.relpath(target_path, cwd))
+        # target_rel_path = Path(os.path.relpath(target_path, cwd))
+        # out_rel_path = Path(os.path.relpath(out_full_path, cwd))
         for index, (arg, description) in enumerate(aopt_args, start=1):
             logger.message(f"index {index}, arg {arg}, description: {description}")
             cmdlist = [
                 str(cls.opt_exec_path),
                 arg,
-                str(target_rel_path),
-                str(target_rel_path),
+                str(target_path),
+                str(out_full_path),
             ]
             # raise Exception(cmdlist, out_full_path)
             cmd = " ".join(cmdlist)
@@ -469,8 +470,8 @@ class APNGOptAPI:
                         index += 1
             # if target_path != out_full_path:
             # target_path = out_full_path
-        out_full_path = shutil.move(target_path, out_full_path)
-        shutil.rmtree(aopt_dir)
+        # out_full_path = shutil.move(target_path, out_full_path)
+        # shutil.rmtree(aopt_dir)
         # shutil.rmtree(aopt_dir)
         return out_full_path
 
