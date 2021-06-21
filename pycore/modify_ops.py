@@ -134,7 +134,6 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
     logger.message(f"Optimizing APNG...")
     if aopt_criteria.is_optimized:
         APNGOptAPI.optimize_apng(out_path, out_path, aopt_criteria)
-    logger.error(Image.open(out_path).mode)
     return out_path
 
 

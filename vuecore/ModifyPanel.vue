@@ -663,7 +663,7 @@ function loadImage() {
           data.modify_msgbox = res.msg;
         } else if (res && res.data) {
           loadOrigMetadata(res.data);
-          loadNewInfo(res.data);
+          populateForm(res.data);
           data.modify_msgbox = "";
         }
         data.MOD_IS_LOADING = false;
@@ -737,7 +737,7 @@ function loadPreviewMetadata(res) {
   data.preview_attribute.hash_sha1 = geninfo.hash_sha1.value;
 }
 
-function loadNewInfo(res) {
+function populateForm(res) {
   var geninfo = res.general_info;
   var ainfo = res.animation_info;
   data.criteria.format = geninfo.format.value;
@@ -887,7 +887,11 @@ function modifyImage() {
 }
 
 function previewModImg() {
-  // data.MOD_IS_PREVIEWING = true;
+  if (data.orig_attribute.path == "") {
+    data.modify_msgbox = "Please load an animated image first!";
+    return;
+  }
+  data.MOD_IS_PREVIEWING = true;
   let criteria_pack = lodashClonedeep({
     "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
     "gif_opt_criteria": data.gif_opt_criteria,
@@ -926,6 +930,7 @@ function previewModImg() {
               data.preview_size = preview_data.general_info.fsize.value;
               data.preview_size_hr = preview_data.general_info.fsize_hr.value;
               data.modify_msgbox = "Previewed!"
+              data.MOD_IS_PREVIEWING = false;
             }
           }
         });
