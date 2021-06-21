@@ -174,7 +174,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
         with Image.open(ipath) as im:
             im: Image.Image
             orig_width, orig_height = im.size
-            has_transparency = im.info.get("transparency") is not None
+            has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
             logger.debug(f"Color mode im: {im.mode}")
             if criteria.must_resize(width=orig_width, height=orig_height):
                 resize_method_enum = getattr(Image, criteria.resize_method)
@@ -197,8 +197,8 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
             # logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
             quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
             if aopt_criteria.is_lossy:
-                logger.debug(f"Frame #{index}, has transparency: {has_transparency}, quantization method: "
-                             f"{quant_method}")
+                logger.debug(f"Frame #{index}, has transparency: {has_transparency}, transparency: "
+                             f"{im.info.get('transparency')}, quantization method: {quant_method}")
                 im = im.quantize(aopt_criteria.lossy_value, method=quant_method).convert("RGBA")
             if aopt_criteria.convert_color_mode:
                 im = im.convert(aopt_criteria.new_color_mode)
