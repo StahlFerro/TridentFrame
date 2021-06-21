@@ -63,7 +63,7 @@
             title="Limits the number for all frames of the GIF. Ranging from 2 colors (monochrome) to 256 (maximum for GIFs). Warning: this will also eliminate local/per-frame color tables, setting just one global color table for every frame.">
             <input type="checkbox" v-model="is_reduced_color" v-bind:disabled="is_unoptimized"
               @change="$emit('update:is_reduced_color', is_reduced_color)" />
-            Color space (lossy-compression)
+            Color space
           </label>
         </td>
         <td class="force-vcenter">
@@ -105,16 +105,7 @@
 // import { Plugin } from 'vue'
 import { Fragment }  from 'vue-fragment';
 const { numConstrain } = require("../Utility.vue");
-
-var data = {
-  preserve_alpha: false,
-  is_optimized: false,
-  optimization_level: "1",
-  is_lossy: false,
-  lossy_value: "",
-  is_reduced_color: false,
-  color_space: "",
-};
+const lodashClonedeep = require('lodash.clonedeep');
 
 let props = ['is_unoptimized']
 
@@ -123,7 +114,15 @@ export default {
   props: props,
   name: "GIFOptimizationRow",
   data: function() {
-    return data;
+    return {
+      preserve_alpha: false,
+      is_optimized: false,
+      optimization_level: "1",
+      is_lossy: false,
+      lossy_value: "",
+      is_reduced_color: false,
+      color_space: "",
+    };
   },
   methods: {
     numConstrain: numConstrain,

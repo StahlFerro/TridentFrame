@@ -192,7 +192,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     gif = Image.open(gif_path)
     for index, fpath in enumerate(fr_paths):
         gif.seek(index)
-        print(gif.info)
+        # print(gif.info)
         if shout_nums.get(index):
             logger.message(f"Saving frames... ({shout_nums.get(index)})")
         # save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")

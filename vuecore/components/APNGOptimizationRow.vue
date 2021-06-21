@@ -35,12 +35,10 @@
           Color space
         </label>
       </td>
-    </tr>
-    <tr>
       <td class="force-vcenter">
+        
         <div class="field">
           <!-- <label class="label">Color space</label> -->
-          <label class="label" title="Quantization quality, defaults to 80">Quality</label>
           <div class="control">
             <input
               v-model="apng_lossy_value"
@@ -56,24 +54,6 @@
           </div>
         </div>
       </td>
-      <!-- <td class="force-vcenter">
-        <div class="field">
-          <label class="label" title="Speed/quality tradeoff, defaults to 3. Speed 10 has 5% lower quality, but is 8 times faster than the default.">Speed</label>
-          <div class="control">
-            <input
-              v-model="apng_speed_value"
-              @change="$emit('update:apng_speed_value', apng_speed_value)"
-              class="input is-neon-white"
-              type="number"
-              min="10"
-              max="100"
-              placeholder="1- 10"
-              v-bind:disabled="!apng_is_lossy"
-              v-on:keydown="numConstrain($event, true, true)"
-            />
-          </div>
-        </div>
-      </td> -->
     </tr>
     <tr>
       <td class="force-vcenter">
@@ -115,17 +95,6 @@
 import { Fragment } from 'vue-fragment';
 const { numConstrain } = require("../Utility.vue");
 
-var data = {
-  apng_is_optimized: false,
-  apng_optimization_level: "1",
-  apng_is_lossy: false,
-  apng_lossy_value: "",
-  apng_speed_value: "",
-  apng_convert_color_mode: false,
-  apng_new_color_mode: "RGBA",
-  // apng_is_unoptimized: false,
-};
-
 let props = ['apng_is_unoptimized'];
 
 export default {
@@ -133,7 +102,16 @@ export default {
   props: props,
   components: { Fragment },
   data: function() {
-    return data;
+    return {
+      apng_is_optimized: false,
+      apng_optimization_level: "1",
+      apng_is_lossy: false,
+      apng_lossy_value: "",
+      apng_speed_value: "",
+      apng_convert_color_mode: false,
+      apng_new_color_mode: "RGBA",
+      // apng_is_unoptimized: false,
+    };
   },
   methods: {
     numConstrain: numConstrain,

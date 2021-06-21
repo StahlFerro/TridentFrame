@@ -141,7 +141,7 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     if icc: 
         f = io.BytesIO(icc)
         color_profile = ImageCms.getOpenProfile(f).profile
-        print(color_profile.profile_description)
+        # print(color_profile.profile_description)
         color_profile = color_profile.profile_description
     palette = im.getpalette()
     if palette:

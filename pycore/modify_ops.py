@@ -100,17 +100,27 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             # logger.debug(png.chunks)
             delay = int(mod_criteria.delay * 1000)
             control.delay = delay
+            has_transparency = im.info.get("transparency") is not None
             if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode:
                 with io.BytesIO() as img_buf:
                     png.save(img_buf)
                     with Image.open(img_buf) as im:
+                        if im.mode == "P":
+                            if im.info.get("transparency") is not None:
+                                im = im.convert("RGBA")
+                            else:
+                                im = im.convert("RGB")
                         im = im.resize((mod_criteria.width, mod_criteria.height),
                                        resample=getattr(Image, mod_criteria.resize_method))
                         if im.mode == "P":
-                            im = im.convert("RGBA")
+                            if has_transparency:
+                                im = im.convert("RGBA")
+                            else:
+                                im = im.convert("RGB")
+                        quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
                         if aopt_criteria.is_lossy:
                             im = im.quantize(
-                                aopt_criteria.lossy_value, method=Image.FASTOCTREE, dither=1).convert("RGBA")
+                                aopt_criteria.lossy_value, method=quant_method, dither=1).convert("RGBA")
                         if aopt_criteria.convert_color_mode:
                             im = im.convert(aopt_criteria.new_color_mode)
                         with io.BytesIO() as new_buf:

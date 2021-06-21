@@ -505,7 +505,7 @@ import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import { createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
 
-var data = {
+let data = {
   criteria: {
     // name: "",
     fps: "",
