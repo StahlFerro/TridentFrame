@@ -100,7 +100,7 @@ class TridentFrameImager:
         if len(missing_paths) == len(image_paths):
             raise FileNotFoundError("All of the image sequences are missing! Check if they are not moved/deleted")
         if not out_path.parent.exists():
-            raise FileNotFoundError(str(out_path.parent))
+            raise FileNotFoundError(f"The directory {str(out_path.parent)} is not found!")
         crbundle = CriteriaBundle({
             "create_aimg_criteria": CreationCriteria(criteria_pack["criteria"]),
             "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
