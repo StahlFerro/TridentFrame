@@ -17,14 +17,14 @@
               <span>Github</span>
             </a>
           </p>
-          <p class="control">
+          <!-- <p class="control">
             <a v-on:click="warpDonate" class="button is-neon-cyan is-medium">
               <span class="icon">
                 <i class="fas fa-heart"></i>
               </span>
               <span>Donate</span>
             </a>
-          </p>
+          </p> -->
         </div>
       </div>
     </div>

@@ -2,7 +2,9 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)">
+        <!-- <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)" -->
+        <div class="inspect-panel-image silver-bordered"
+           v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
           <div class="inspect-panel-msgbox" v-show="inspect_msgbox !== ''">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
@@ -39,13 +41,18 @@
                     <td style="max-width: 369px; word-wrap: break-all">{{ delays_are_even.value? "Yes" : "No" }}</td>
                   </template> -->
                   <template v-else-if="typeof metadata_field.value == 'boolean'">
-                    <td style="max-width: 369px; word-wrap: break-all">{{ metadata_field.value? "Yes" : "No" }}</td>
+                    <td style="max-width: 369px; word-wrap: break-all">
+                      {{ metadata_field.value? "Yes" : "No" }}
+                    </td>
                   </template>
                   <template v-else-if="typeof metadata_field.value == 'number'">
-                    <td style="max-width: 369px; word-wrap: break-all">{{ roundPrecise(metadata_field.value, 3) }}</td>
+                    <td style="max-width: 369px; word-wrap: break-all">
+                      {{ roundPrecise(metadata_field.value, 3) }}
+                      </td>
                   </template>
                   <template v-else>
-                    <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)">
+                    <!-- <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)"> -->
+                    <td style="max-width: 369px; word-wrap: break-all">
                       {{ metadata_field.value }}
                     </td>
                   </template>

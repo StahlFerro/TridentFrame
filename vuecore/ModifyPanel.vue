@@ -6,7 +6,8 @@
       </div>
 
       <div class="modify-panel-displays">
-        <div class="modify-old-container silver-bordered-no-right">
+        <div class="modify-old-container silver-bordered-no-right"
+          v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active }">
           <img v-bind:src="escapeLocalPath(orig_attribute.path)" />
         </div>
         <div class="modify-image-info silver-bordered">
@@ -130,7 +131,8 @@
             `File size: ${preview_info.general_info.fsize_hr.value}\n` +
             `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
             `Format: ${preview_info.general_info.format.value}` : ''
-          ">
+          "
+          v-bind:class="{'has-checkerboard-bg': new_checkerbg_active }">
           <img v-bind:src="escapeLocalPath(preview_path_cb)" />
         </div>
       </div>

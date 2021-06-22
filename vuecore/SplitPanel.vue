@@ -289,6 +289,7 @@ var data = {
   frame_count_ds: "",
   fps: "",
   average_delay: "",
+  delays_are_even: "",
   delays: "",
   loop_duration: "",
   loop_count: "",
