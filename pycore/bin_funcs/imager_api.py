@@ -452,6 +452,7 @@ class APNGOptAPI:
             cmd = " ".join(cmdlist)
             # result = subprocess.check_output(cmd, shell=True)
             logger.message("Performing optimization...")
+            logger.debug(cmdlist)
             process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             index = 0
             while process.poll() is None:
