@@ -144,7 +144,7 @@ class AnimatedImageMetadata(ImageMetadata):
         }
         self.fps = {
             "value": round(1000.0 / self.average_delay["value"], 3) if self.average_delay["value"] != 0 else 0,
-            "label": "FPS",
+            "label": "Frame rate (FPS)",
             "category": "animation_info",
         }
         self.loop_duration = {

@@ -28,15 +28,32 @@ COLOR_MODE_BIT_DEPTH = {
     "LAB": 24,
     "HSV": 24,
     "I": 32,
-    "F": 32
+    "F": 32,
+    "I;16": 16,
+    "I;16B": 16,
+    "I;16L": 16,
+    "I;16S": 16,
+    "I;16BS": 16,
+    "I;16LS": 16,
+    "I;32": 32,
+    "I;32B": 32,
+    "I;32L": 32,
+    "I;32S": 32,
+    "I;32BS": 32,
+    "I;32LS": 32
 }
 
 COLOR_MODE_FULL_NAME = {
     "RGBA": "RGBA",
     "RGB": "RGB",
     "P": "Palette/Indexed",
+    "PA": "Palette/Indexed + Alpha",
     "L": "Grayscale",
-    "1": "Bitmap"
+    "LA": "Greyscale + Alpha",
+    "La": "Greyscale + Premultiplied Alpha",
+    "1": "Bitmap",
+    "I": "Integer Pixels",
+    "F": "Floating-point Pixels",
 }
 
 

@@ -142,7 +142,7 @@
             </span>
             <span>Load Image</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-crimson">
+          <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-times"></i>
             </span>

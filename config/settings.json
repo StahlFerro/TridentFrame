@@ -42,9 +42,9 @@
             ],
             "animation_info": [
                 "frame_count",
-                "delays",
-                "delays_are_even",
                 "average_delay",
+                "delays_are_even",
+                "delays",
                 "fps",
                 "loop_duration",
                 "loop_count"

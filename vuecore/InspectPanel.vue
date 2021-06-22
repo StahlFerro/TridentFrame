@@ -100,7 +100,7 @@ const { tridentEngine, settings } = require("./PythonCommander.vue");
 let extension_filters = [
   {
     name: "Images",
-    extensions: ["png", "gif", "jpg"],
+    extensions: ["png", "gif", "jpg", "webp"],
   },
 ];
 let file_dialog_props = ["openfile"];

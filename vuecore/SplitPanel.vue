@@ -38,6 +38,13 @@
                 </td>
               </tr>
               <tr>
+                <td class="spl-info-label is-cyan">Has Transparency</td>
+                <td class="spl-info-data">
+                  <span v-if="has_transparency">{{ has_transparency? "Yes" : "No" }}</span>
+                  <span v-else>-</span>
+                </td>
+              </tr>
+              <tr>
                 <td class="spl-info-label is-cyan">Total frames</td>
                 <td class="spl-info-data">
                   <span v-if="frame_count">{{ frame_count }}</span>
@@ -52,13 +59,6 @@
                 </td>
               </tr> -->
               <tr>
-                <td class="spl-info-label is-cyan">Frame rate</td>
-                <td class="spl-info-data">
-                  <span v-if="fps">{{ fps }}</span>
-                  <span v-else>-</span>
-                </td>
-              </tr>
-              <tr>
                 <td class="spl-info-label is-cyan">Average delay (ms)</td>
                 <td class="spl-info-data">                  
                   <span v-if="average_delay">{{ average_delay }}</span>
@@ -66,9 +66,23 @@
                 </td>
               </tr>
               <tr>
+                <td class="spl-info-label is-cyan">Delays are even</td>
+                <td class="spl-info-data">                  
+                  <span v-if="delays_are_even">{{ delays_are_even? "Yes" : "No" }}</span>
+                  <span v-else>-</span>
+                </td>
+              </tr>
+              <tr>
                 <td class="spl-info-label is-cyan">Delays</td>
                 <td class="spl-info-data">                  
                   <span v-if="delays">{{ delays }}</span>
+                  <span v-else>-</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="spl-info-label is-cyan">Frame rate (FPS)</td>
+                <td class="spl-info-data">
+                  <span v-if="fps">{{ fps }}</span>
                   <span v-else>-</span>
                 </td>
               </tr>
@@ -250,6 +264,7 @@ var defaults = {
   delays: "",
   loop_duration: "",
   loop_count: "",
+  has_transparency: "",
   preview_path: "",
   preview_path_cb: "",
   split_msgbox: ""
@@ -277,6 +292,7 @@ var data = {
   delays: "",
   loop_duration: "",
   loop_count: "",
+  has_transparency: "",
   preview_path: "",
   preview_path_cb: "",
   checkerbg_active: false,
@@ -323,6 +339,7 @@ function loadImage() {
           data.info_header = `${geninfo.format.value} Information`;
           data.file_size = geninfo.fsize.value;
           data.file_size_hr = geninfo.fsize_hr.value;
+          data.has_transparency = geninfo.has_transparency.value;
           data.frame_count = `${ainfo.frame_count.value} frames`;
           // data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`
           data.fps = `${ainfo.fps.value} fps`;
@@ -332,6 +349,7 @@ function loadImage() {
           // }
           // data.delay = delay_info;
           data.average_delay = ainfo.average_delay.value;
+          data.delays_are_even = ainfo.delays_are_even.value;
           data.delays = ainfo.delays.value;
           data.loop_duration = `${ainfo.loop_duration.value} seconds`;
           data.loop_count = ainfo.loop_count.value;
