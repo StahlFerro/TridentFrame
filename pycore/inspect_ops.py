@@ -17,6 +17,28 @@ from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 
 Image.MAX_IMAGE_PIXELS = None
 
+COLOR_MODE_BIT_DEPTH = {
+    "1": 1,
+    "L": 8,
+    "P": 8,
+    "RGB": 24,
+    "RGBA": 32,
+    "CMYK": 32,
+    "YCbCr": 24,
+    "LAB": 24,
+    "HSV": 24,
+    "I": 32,
+    "F": 32
+}
+
+COLOR_MODE_FULL_NAME = {
+    "RGBA": "RGBA",
+    "RGB": "RGB",
+    "P": "Palette/Indexed",
+    "L": "Grayscale",
+    "1": "Bitmap"
+}
+
 
 def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -> \
         Optional[Union[ImageMetadata, AnimatedImageMetadata]]:
@@ -132,8 +154,8 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     base_fname = imageutils.sequence_nameget(base_fname)
     fsize = image_path.stat().st_size
     # fsize_hr = read_filesize(fsize)
-    color_mode = im.mode
-    transparency = im.info.get("transparency")
+    color_mode = COLOR_MODE_FULL_NAME.get(im.mode) or im.mode
+    has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
     # alpha = im.getchannel('A')
     comment = im.info.get("comment", "")
     icc = im.info.get("icc_profile")
@@ -144,15 +166,16 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         # print(color_profile.profile_description)
         color_profile = color_profile.profile_description
     palette = im.getpalette()
-    if palette:
-        logger.debug(imageutils.reshape_palette(palette))
-        color_counts = np.array(im.getcolors())
-        logger.debug(color_counts)
-        logger.debug(color_counts.sum(axis=0)[0])
+    # if palette:
+    #     logger.debug(imageutils.reshape_palette(palette))
+    #     color_counts = np.array(im.getcolors())
+    #     logger.debug(color_counts)
+    #     logger.debug(color_counts.sum(axis=0)[0])
         # imageutils.get_palette_image(im).show()
     creation_dt = filehandler.get_creation_time(image_path)
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
+    logger.debug({"im.info": im.info, "icc": icc, "palette": imageutils.reshape_palette(palette) if palette else None})
     im.close()
 
     metadata = ImageMetadata({
@@ -169,7 +192,8 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         "comments": str(comment),
         "color_mode": str(color_mode),
         "color_profile": color_profile,
-        "transparency": str(transparency),
+        "bit_depth": COLOR_MODE_BIT_DEPTH.get(im.mode),
+        "has_transparency": has_transparency,
         "is_animated": False,
         "exif": str(exif),
     })
@@ -224,17 +248,19 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
         comments = ""
     fmt = "GIF"
     full_format = str(gif.info.get("version") or "")
-    transparency = gif.info.get("transparency")
+    has_transparency = gif.info.get("transparency") is not None
     creation_dt = filehandler.get_creation_time(abspath)
     modification_dt = filehandler.get_modification_time(abspath)
     checksum = filehandler.hash_sha1(abspath)
     palette = gif.getpalette()
-    if palette:
-        logger.debug(f"Palette: {imageutils.reshape_palette(palette)}")
-        color_counts = np.array(gif.getcolors())
-        logger.debug(f"Color counts: {color_counts}")
-        logger.debug(f"Total colors: {color_counts.shape[1]}")
+    # if palette:
+    #     logger.debug(f"Palette: {imageutils.reshape_palette(palette)}")
+    #     color_counts = np.array(gif.getcolors())
+    #     logger.debug(f"Color counts: {color_counts}")
+    #     logger.debug(f"Total colors: {color_counts.shape[1]}")
         # imageutils.get_palette_image(gif).show()
+    color_mode = COLOR_MODE_FULL_NAME.get(gif.mode) or gif.mode
+    logger.debug({"gif.info": gif.info, "palette": imageutils.reshape_palette(palette) if palette else None})
     gif.close()
     metadata = AnimatedImageMetadata({
         "name": filename,
@@ -249,7 +275,9 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
         "hash_sha1": checksum,
         "absolute_url": str(abspath),
         "comments": comments,
-        "transparency": transparency,
+        "color_mode": color_mode,
+        "bit_depth": COLOR_MODE_BIT_DEPTH.get(gif.mode),
+        "has_transparency": has_transparency,
         "is_animated": True,
         "frame_count": frame_count,
         "delays": delays,
@@ -281,6 +309,14 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     height = png_one.height
     # raise Exception(frames)
     delays = [f[1].delay if f[1] else 0 for f in frames]
+    im = Image.open(abspath)
+    logger.debug(im.default_image)
+    for index in range(0, im.n_frames):
+        logger.debug(im.info)
+        logger.debug(im.mode)
+        im.seek(index)
+    color_mode = COLOR_MODE_FULL_NAME.get(im.mode) or im.mode
+    has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
     # min_duration = min(delays)
     # if min_duration == 0:
     #     frame_count_ds = frame_count
@@ -306,6 +342,9 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
         "frame_count": frame_count,
         "delays": delays,
         "loop_count": loop_count,
+        "color_mode": color_mode,
+        "bit_depth": COLOR_MODE_BIT_DEPTH.get(im.mode),
+        "has_transparency": has_transparency,
     })
     return metadata
     # return image_info

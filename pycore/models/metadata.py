@@ -74,9 +74,14 @@ class ImageMetadata:
             "label": "Color profile",
             "category": "general_info",
         }
-        self.transparency = {
-            "value": info.get("transparency"),
-            "label": "Transparency info",
+        self.bit_depth = {
+            "value": info.get("bit_depth"),
+            "label": "Bit Depth",
+            "category": "general_info"
+        }
+        self.has_transparency = {
+            "value": info.get("has_transparency"),
+            "label": "Has Transparency",
             "category": "general_info",
         }
         self.exif = {

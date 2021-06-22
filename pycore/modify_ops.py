@@ -23,7 +23,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
     mod_criteria = crbundle.modify_aimg_criteria
     aopt_criteria = crbundle.apng_opt_criteria
     frames_dir = filehandler.mk_cache_dir(prefix_name="presplit_images")
-    has_transparency = metadata.transparency is not None
+    has_transparency = metadata.has_transparency
     # if mod_criteria.format == "PNG" and not aopt_criteria.convert_color_mode:
     #     aopt_criteria.convert_color_mode = True
     #     if has_transparency:

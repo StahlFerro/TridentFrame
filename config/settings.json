@@ -33,9 +33,10 @@
                 "creation_datetime",
                 "modification_datetime",
                 "comments",
-                "transparency",
+                "has_transparency",
                 "color_mode",
                 "color_profile",
+                "bit_depth",
                 "exif",
                 "is_animated"
             ],
