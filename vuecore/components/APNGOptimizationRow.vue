@@ -45,9 +45,9 @@
               @change="$emit('update:apng_lossy_value', apng_lossy_value)"
               class="input is-neon-white"
               type="number"
-              min="10"
-              max="100"
-              placeholder="1 - 100"
+              min="2"
+              max="256"
+              placeholder="2 - 256"
               v-bind:disabled="!apng_is_lossy"
               v-on:keydown="numConstrain($event, true, true)"
             />
@@ -55,6 +55,7 @@
         </div>
       </td>
     </tr>
+<!--     
     <tr>
       <td class="force-vcenter">
         <label class="checkbox" title="Change color mode of image sequence before combinging them into APNG">
@@ -77,7 +78,7 @@
           </div>
         </div>
       </td>
-    </tr>
+    </tr> -->
     <!-- <tr>
       <td class="force-vcenter">
         <label class="checkbox" title="Unoptimizes the APNG">
