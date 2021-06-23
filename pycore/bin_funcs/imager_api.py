@@ -150,10 +150,10 @@ class GifsicleAPI:
         logger.message("Combining frames...")
         result = subprocess.run(cmd, shell=True, capture_output=True)
         stdout_res = result.stdout.decode("utf-8")
-        stderr_res = result.stderr.decode("utf-8")
+        # stderr_res = result.stderr.decode("utf-8")
         logger.message(stdout_res)
-        if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
-            logger.error(stderr_res)
+        # if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
+        #     logger.error(stderr_res)
         os.chdir(ROOT_PATH)
         return out_full_path
 
@@ -188,10 +188,10 @@ class GifsicleAPI:
             # yield {"cmd": cmd}
             result = subprocess.run(cmd, shell=False, capture_output=True)
             stdout_res = result.stdout.decode("utf-8")
-            stderr_res = result.stderr.decode("utf-8")
+            # stderr_res = result.stderr.decode("utf-8")
             logger.message(stdout_res)
-            if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
-                logger.error(stderr_res)
+            # if stderr_res and "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
+            #     logger.error({"jackpot": stderr_res})
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
@@ -243,29 +243,29 @@ class GifsicleAPI:
         return fr_paths
 
     @classmethod
-    def reduce_gif_color(cls, gif_path: Path, out_dir: Path, color: int = 256) -> Path:
+    def reduce_gif_color(cls, gif_path: Path, out_path: Path, color: int = 256) -> Path:
         """Reduce the color of a GIF image.
 
         Args:
             gif_path (Path): Path to the GIF.
-            out_dir (Path): Output directory to save the color-reduced GIF to.
+            unop_gif_path (Path): Output path to save the color-reduced GIF as.
             color (int, optional): Amount of color to reduce to. Defaults to 256.
 
         Returns:
             Path: Absolute path of the color-reduced GIF.
         """
         logger.message("Performing color reduction...")
-        redux_gif_path = out_dir.joinpath(gif_path.name)
+        # redux_gif_path = out_dir.joinpath(gif_path.name)
         args = [
             str(cls.gifsicle_path),
             f"--colors={color}",
             str(gif_path),
             "--output",
-            str(redux_gif_path),
+            str(out_path),
         ]
         cmd = " ".join(args)
         subprocess.run(args)
-        return redux_gif_path
+        return out_path
 
     @classmethod
     def unoptimize_gif(cls, gif_path: Path, out_dir: Path) -> Path:

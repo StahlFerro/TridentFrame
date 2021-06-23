@@ -1,4 +1,5 @@
 import io
+import shutil
 from pathlib import Path
 from copy import deepcopy
 from heapq import nsmallest
@@ -163,7 +164,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
             raise Exception("Color space must be between 2 and 256!")
         else:
             logger.message(f"Reducing colors to {color_space}...")
-            target_path = GifsicleAPI.reduce_gif_color(gif_path, unop_dir, color=color_space)
+            target_path = GifsicleAPI.reduce_gif_color(gif_path, unop_gif_path, color=color_space)
 
     # ===== Start test splitting code =====
     # gif: GifImageFile = GifImageFile(gif_path)
@@ -206,6 +207,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     if criteria.extract_delay_info:
         logger.message("Generating delay information file...")
         imageutils.generate_delay_file(gif_path, "GIF", out_dir)
+    shutil.rmtree(unop_dir)
     return frame_paths
 
 

@@ -59,7 +59,7 @@ def warn(logmsg: str):
     print(json.dumps(msg))
 
 
-def error(logmsg: str):
+def error(logmsg: Any):
     msg = {"error": logmsg}
     print(json.dumps(msg), file=sys.stderr)
 

@@ -117,7 +117,7 @@
           </a>
         </div>
         <div class="spl-control-btn">
-          <a v-on:click="clearImage" class="button is-neon-crimson">
+          <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': isButtonFrozen}">
             <span class="icon is-small">
               <i class="fas fa-times"></i>
             </span>
