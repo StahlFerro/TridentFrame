@@ -36,6 +36,9 @@ const createWindow = () => {
 		// Development environment
 		console.log('------ DEVELOPMENT VERSION ------');
 		mainWindow.loadURL('http://localhost:8080/');
+		mainWindow.webContents.openDevTools({
+			mode: 'detach'
+		});
 	} else {
 		console.log('------ PRODUCTION VERSION ------');
 		// Production environment
@@ -47,9 +50,6 @@ const createWindow = () => {
 			})
 		);
 	}
-	mainWindow.webContents.openDevTools({
-		mode: 'detach'
-	});
 	mainWindow.focus();
 	mainWindow.on('closed', () => {
 		mainWindow = null;
