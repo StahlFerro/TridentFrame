@@ -1,54 +1,152 @@
 <template>
-  <div id="modify_panel" class="container" style="display: none; padding:10px;">
-    <!-- <div class="content"> -->
-    <table class="table is-borderless" style="padding: 5px;" width="100%">
-      <tr>
-        <!-- <td width="3%"></td> -->
-        <td width="35%"
-          colspan="3"
-          class="silver-bordered force-center is-paddingless"
-          v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active}"
-          style="height: 250px;">
-          <div class="mod-aimg-container">
-            <img v-bind:src="orig_path" />
-          </div>
-          <!-- <input id="MOD_orig_path" name="MOD_orig_path_field" type="hidden" value /> -->
-        </td>
-        <!-- <td width="3%"></td> -->
+  <div id="modify_panel">
+    <div class="modify-panel-root">
 
-        <td width="6%"></td>
-        <td width="9%"></td>
-        <td width="35%"
-          class="silver-bordered force-center is-paddingless"
-          v-bind:class="{'has-checkerboard-bg': new_checkerbg_active}"
-          style="height: 250px;">
-            <div v-if="preview_info" class="mod-aimg-container" v-bind:title="
-              `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
-              `File size: ${preview_info.general_info.fsize_hr.value}\n` +
-              `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
-              `Format: ${preview_info.general_info.format.value}`
-            ">
-              <img v-bind:src="preview_path_cb" />
-            </div>
-        </td>
-        <td colspan="2" width="15%">
-          <span v-if="preview_size">
-            Preview size:<br/>{{ preview_size_hr }}<br/>
-            ({{ previewSizePercentage }}% of original)
-            </span>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="3" class="has-text-centered is-hpaddingless">
-          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'is-static': buttonIsFrozen}">
+      <div class="mod-orig-info-container" style="display: none;">
+      </div>
+
+      <div class="modify-panel-displays">
+        <div class="modify-old-container silver-bordered-no-right"
+          v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active }">
+          <img v-bind:src="escapeLocalPath(orig_attribute.path)" />
+        </div>
+        <div class="modify-image-info silver-bordered">
+          <table class="mod-info-table is-hpaddingless" style="width: 100%;">
+            <thead>
+              <tr>
+                <th>Original</th>
+                <th>Attribute</th>
+                <th>Modified</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute.name">{{ orig_attribute.name }}</span>
+                </td>
+                <td class="mod-info-label is-cyan">Name</td>
+                <td class="mod-info-data">
+                </td>
+              </tr> -->
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute">{{ origDimensions }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Dimensions</td>
+                <td class="mod-info-data">
+                  <span v-if="preview_attribute">{{ previewDimensions }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute">{{ orig_attribute.file_size_hr }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">
+                  File size
+                  <template v-if="preview_attribute">
+                    <br/>
+                    {{ previewSizePercentage }}
+                  </template>
+                </td>
+                <td class="mod-info-data">
+                  <span v-if="preview_attribute">{{ preview_attribute.file_size_hr }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute">{{ orig_attribute.format }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Format</td>
+                <td class="mod-info-data">
+                  <span v-if="preview_attribute">{{ preview_attribute.format }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute">{{ orig_attribute.frame_count }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Total frames</td>
+                <td class="mod-info-data">
+                  <span v-if="preview_info">{{ preview_attribute.frame_count }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute">{{ orig_attribute.fps }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Frame rate</td>
+                <td class="mod-info-data">
+                  <span v-if="preview_info">{{ preview_attribute.fps }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute">{{ orig_attribute.delay_info }}</span>
+                  <!-- <span v-else>-</span> -->
+                </td>
+                <td class="mod-info-label is-cyan">Avg. Delay</td>
+                <td class="mod-info-data">
+                  <span v-if="preview_attribute">{{ preview_attribute.delay_info }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <span v-if="orig_attribute">{{ orig_attribute.loop_duration }}</span>
+                </td>
+                <td class="mod-info-label is-cyan">Loop duration</td>
+                <td class="mod-info-data">
+                  <span v-if="preview_attribute">{{ preview_attribute.loop_duration }}</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="mod-info-data">
+                  <template v-if="orig_attribute">
+                    {{ orig_attribute.loop_count }}
+                    <!-- <span v-if="orig_attribute.loop_count == 0">Infinite</span>
+                    <span v-else>{{ orig_attribute.loop_count }}</span> -->
+                  </template>
+                  <!-- <template v-else>-</template> -->
+                </td>
+                <td class="mod-info-label is-cyan">Loop count</td>
+                <td class="mod-info-data">
+                  <template v-if="preview_attribute">
+                    {{ preview_attribute.loop_count }}
+                    <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
+                    <span v-else>{{ preview_attribute.loop_count }}</span> -->
+                  </template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+        <div class="modify-new-container silver-bordered-no-left" 
+          v-bind:title="preview_info?
+            `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
+            `File size: ${preview_info.general_info.fsize_hr.value}\n` +
+            `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
+            `Format: ${preview_info.general_info.format.value}` : ''
+          "
+          v-bind:class="{'has-checkerboard-bg': new_checkerbg_active }">
+          <img v-bind:src="escapeLocalPath(preview_path_cb)" />
+        </div>
+      </div>
+      <div class="modify-panel-middlebar">
+        <div class="mpb-load-buttons">
+          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-plus"></i>
             </span>
-            <span>Load GIF/APNG</span>
+            <span>Load Image</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-crimson">
+          <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>
@@ -58,19 +156,18 @@
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
-        </td>
-        <td colspan="2">
-        </td>
-        <td class="has-text-centered is-hpaddingless">
-          <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'is-static': buttonIsFrozen}">
+        </div>
+        <div class="mpb-center-buttons"></div>
+        <div class="mpb-preview-buttons">
+          <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
               <i class="fas fa-eye"></i>
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="clearPrevImage" class="button is-neon-white" v-bind:class="{'is-static': buttonIsFrozen}">
+          <a v-on:click="clearPreviewImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>
@@ -80,325 +177,279 @@
               <i class="fas fa-chess-board"></i>
             </span>
           </a>
-        </td>
-        <td colspan="2">
-        </td>
-      </tr>
-      <tr>
-        <td style="width: 288px; height: 275px;" colspan="3" class="is-paddingless silver-bordered">
-          <div class="mod-orig-info-container">
-            <table class="table mod-orig-info-table is-hpaddingless">
-              <tbody>
-                <tr>
-                  <td class="mod-info-label is-cyan">Name</td>
-                  <td class="mod-info-data">
-                    <span v-if="orig_name">{{ orig_name }}</span>
-                    <span v-else>-</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Dimensions</td>
-                  <td class="mod-info-data">
-                    <span v-if="origDimensions">{{ origDimensions }}</span>
-                    <span v-else>-</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">File size</td>
-                  <td class="mod-info-data">
-                    <span v-if="orig_file_size_hr">{{ orig_file_size_hr }}</span>
-                    <span v-else>-</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Format</td>
-                  <td class="mod-info-data">
-                    <span v-if="orig_file_size_hr">{{ orig_format }}</span>
-                    <span v-else>-</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Total frames</td>
-                  <td class="mod-info-data">
-                    <span v-if="orig_frame_count">{{ orig_frame_count }} ({{ orig_frame_count_ds }})</span>
-                    <span v-else>-</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Frame rate</td>
-                  <td class="mod-info-data">
-                    <span v-if="orig_fps">{{ orig_fps }}</span>
-                    <span v-else>-</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Frame delay</td>
-                  <td class="mod-info-data">
-                    <span v-if="orig_fps">{{ orig_delay_info }}</span>
-                    <span v-else>-</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Loop duration</td>
-                  <td class="mod-info-data">
-                    <span v-if="orig_loop_duration">{{ orig_loop_duration }} seconds</span>
-                    <span v-else>-</span>
-                    </td>
-                </tr>
-                <tr>
-                  <td class="mod-info-label is-cyan">Loop count</td>
-                  <td class="mod-info-data">
-                    <template v-if="orig_path">
-                      <span v-if="orig_loop_count == 0">Infinite</span>
-                      <span v-else>{{ orig_loop_count }}</span>
-                    </template>
-                    <template v-else>-</template>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </td>
-        <td style="width: 532px; height: 275px;" colspan="5"
-          class="has-text-centered is-paddingless silver-bordered-left-thicc">
-          <div class="mod-aimg-control-container">
-            <table class="table is-paddingless is-marginless" width="100%">
+        </div>
+      </div>
+      <div class="modify-panel-controls">
+        <div class="mpc-left-panel">
+          <aside class="menu has-text-centered" style="margin: 0;">
+            <ul class="menu-list">
+              <li id="MOD_box_general" class="subtab-menu-item"
+                v-bind:class="{'is-selected': mod_menuselection == 0}">
+                <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
+                  <span class="icon is-large">
+                    <i class="fas fa-image fa-2x fa-inverse"></i>
+                  </span>
+                  <p class="is-white-d">General</p>
+                </a>
+              </li>
+              <li id="MOD_box_gif" class="subtab-menu-item is-cyan"
+                v-bind:class="{'is-selected': mod_menuselection == 1}">
+                <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
+                  v-bind:class="{'is-disabled': criteria.format == 'PNG'}">
+                  <span class="icon is-large">
+                    <i class="far fa-images fa-2x fa-inverse"></i>
+                  </span>
+                  <p class="is-white-d is-large">GIF</p>
+                </a>
+              </li>
+              <li id="MOD_box_apng" class="subtab-menu-item"
+                v-bind:class="{'is-selected': mod_menuselection == 2}">
+                <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
+                  v-bind:class="{'is-disabled': criteria.format == 'GIF'}">
+                  <span class="icon is-large">
+                    <i class="far fa-images fa-2x fa-inverse"></i>
+                  </span>
+                  <p class="is-white-d is-large">APNG</p>
+                </a>
+              </li>
+            </ul>
+          </aside>
+        </div>
+        <div class="mpc-right-panel">
+          <div v-show="mod_menuselection == 0">
+            <table class="" width="100%">
               <tr>
-                <td width="10%" class="mod-menu-subtab is-paddingless">
-                  <div class="mod-left-menu">
-                    <aside class="menu has-text-centered" style="margin: 0;">
-                      <ul class="menu-list">
-                        <li id="MOD_box_general" class="subtab-menu-item"
-                          v-bind:class="{'is-selected': mod_menuselection == 0}">
-                          <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
-                            <span class="icon is-large">
-                              <i class="fas fa-image fa-2x fa-inverse"></i>
-                            </span>
-                            <p class="is-white-d">General</p>
-                          </a>
-                        </li>
-                        <li id="MOD_box_gif" class="subtab-menu-item is-cyan"
-                          v-bind:class="{'is-selected': mod_menuselection == 1}">
-                          <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
-                            v-bind:class="{'is-disabled': format == 'PNG'}">
-                            <span class="icon is-large">
-                              <i class="far fa-images fa-2x fa-inverse"></i>
-                            </span>
-                            <p class="is-white-d is-large">GIF</p>
-                          </a>
-                        </li>
-                        <li id="MOD_box_apng" class="subtab-menu-item"
-                          v-bind:class="{'is-selected': mod_menuselection == 2}">
-                          <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
-                            v-bind:class="{'is-disabled': format == 'GIF'}">
-                            <span class="icon is-large">
-                              <i class="far fa-images fa-2x fa-inverse"></i>
-                            </span>
-                            <p class="is-white-d is-large">APNG</p>
-                          </a>
-                        </li>
-                      </ul>
-                    </aside>
+                <td width="16.7%">
+                  <div class="field">
+                    <label class="label">Width</label>
+                    <div class="control">
+                      <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(criteria.width, $event)" 
+                        class="input is-neon-white" type="number" min="1" step="1"/>
+                    </div>
                   </div>
                 </td>
-                <td width="90%" class="is-paddingless">
-                  <div v-show="mod_menuselection == 0">
-                    <table class="table mod-new-control-table is-hpaddingless" width="100%">
-                      <tr>
-                        <td width="40%" colspan="2">
-                          <div class="field">
-                            <label class="label">Name</label>
-                            <div class="control">
-                              <input v-model="name" class="input is-neon-white" type="text" />
-                            </div>
-                          </div>
-                        </td>
-                        <td width="20%">
-                          <div class="field">
-                            <label class="label">Width</label>
-                            <div class="control">
-                              <input v-bind:value="width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(width, $event)" 
-                                class="input is-neon-white" type="number" min="1" step="1"/>
-                            </div>
-                          </div>
-                        </td>
-                        <td width="20%">
-                          <div class="field">
-                            <label class="label">Height</label>
-                            <div class="control">
-                              <input v-bind:value="height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(height, $event)"
-                              class="input is-neon-white" type="number" min="1" step="1"/>
-                            </div>
-                          </div>
-                        </td>
-                        <td width="20%">
-                          <div class="field">
-                            <label class="label">Rotation</label>
-                            <div class="control">
-                              <input v-model="rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td width="20%">
-                          <div class="field">
-                            <label class="label">FPS</label>
-                            <div class="control">
-                              <input v-model="fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
-                            </div>
-                          </div>
-                        </td>
-                        <td width="20%">
-                          <div class="field">
-                            <label class="label">Delay</label>
-                            <div class="control">
-                              <input v-model="delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
-                            </div>
-                          </div>
-                        </td>
-                        <td width="20%">
-                          <div class="field">
-                            <label class="label">Loop count</label>
-                            <div class="control">
-                              <input v-model="loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0"/>
-                            </div>
-                          </div>
-                        </td>
-                        <!-- <td width="20%">
-                          <div class="field">
-                            <label class="label">Skip Frames</label>
-                            <div class="control">
-                              <input v-model="skip_frame" class="input is-neon-white" type="number" min="0"/>
-                            </div>
-                          </div>
-                        </td> -->
-                        <td width="20%">
-                          <div class="field">
-                            <label class="label">Format</label>
-                            <div class="control">
-                              <div class="select is-neon-cyan">
-                                <select v-model="format">
-                                  <option value="GIF">GIF</option>
-                                  <option value="PNG">APNG</option>
-                                </select>
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td width="20%" class="force-vcenter">
-                          <label class="checkbox" title="Flip the image horizontally">
-                            <input v-model="flip_x" type="checkbox" />
-                            Flip X
-                          </label>
-                          <label class="checkbox" title="Flip the image vertically">
-                            <input v-model="flip_y" type="checkbox" />
-                            Flip Y
-                          </label>
-                        </td>
-                        <td width="40%" class="force-vcenter" colspan="2">
-                          <label class="checkbox" title="Reverse the animation">
-                            <input v-model="is_reversed" type="checkbox" />
-                            Reversed
-                          </label>
-                          <!-- <label class="checkbox" title="Preserve transparent pixels">
-                            <input v-model="preserve_alpha" type="checkbox" />
-                            Preserve Alpha
-                          </label> -->
-                          <label class="checkbox">
-                            <input v-model="lock_aspect_ratio" type="checkbox"/>
-                            Lock aspect ratio
-                          </label>
-                        </td>
-                        <td width="40%" class="force-vcenter" colspan="2">
-                          <!-- <label class="checkbox">
-                            <input v-model="lock_aspect_ratio" type="checkbox"/>
-                            Lock aspect ratio
-                          </label> -->
-                          <br/>
-                          <template v-if="aspect_ratio && aspect_ratio.text">
-                            <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
-                          </template>
-                          <template v-else>&nbsp;</template>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td colspan="4">
-                          <div class="field has-addons">
-                            <div class="control">
-                              <a v-on:click="chooseOutDir" class="button is-neon-cyan">
-                                <span class="icon is-small">
-                                  <i class="fas fa-folder-open"></i>
-                                </span>
-                                <span>Save to</span>
-                              </a>
-                            </div>
-                            <div class="control is-expanded">
-                              <input v-model="outdir"
-                                class="input is-neon-white"
-                                type="text"
-                                placeholder="Output folder"
-                                readonly
-                              />
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          <a v-on:click="modifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'is-static': buttonIsFrozen}">
-                            MODIFY</a>
-                        </td>
-                      </tr>
-                    </table>
+                <td width="16.7%">
+                  <div class="field">
+                    <label class="label">Height</label>
+                    <div class="control">
+                      <input v-bind:value="criteria.height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(criteria.height, $event)"
+                      class="input is-neon-white" type="number" min="1" step="1"/>
+                    </div>
                   </div>
-                  <div v-show="mod_menuselection == 1">
-                    <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
-                      <GIFOptimizationRow
-                        :is_optimized.sync="is_optimized"
-                        :optimization_level.sync="optimization_level"
-                        :is_lossy.sync="is_lossy"
-                        :lossy_value.sync="lossy_value"
-                        :is_reduced_color.sync="is_reduced_color"
-                        :color_space.sync="color_space"
-                        :is_unoptimized.sync="is_unoptimized"
-                      />
-                      <GIFUnoptimizationRow
-                      :is_optimized.sync="is_optimized"
-                      :is_lossy.sync="is_lossy"
-                      :is_reduced_color.sync="is_reduced_color"
-                      :is_unoptimized.sync="is_unoptimized"
-                      />
-                    </table>
+                </td>
+                <td width="16.7%">
+                  <div class="field">
+                    <label
+                      class="label"
+                      title="Which algorithm to use when resizing the image. Default is Bicubic"
+                      >Resize Method</label
+                    >
+                    <div class="control">
+                      <div class="select is-neon-cyan">
+                        <select v-model="criteria.resize_method">
+                          <option
+                            value="BICUBIC"
+                            title="General-use resizing algorithm for most images"
+                          >
+                            Bicubic
+                          </option>
+                          <option
+                            value="NEAREST"
+                            title="Preserve sharp edges. Ideal for pixel art"
+                          >
+                            Nearest
+                          </option>
+                          <option
+                            value="BILINEAR"
+                            title="Similar to Bicubic, but not as smooth"
+                          >
+                            Bilinear
+                          </option>
+                          <option value="BOX">Box</option>
+                          <option value="HAMMING">Hamming</option>
+                          <option value="LANCZOS">Lanczos</option>
+                        </select>
+                      </div>
+                    </div>
                   </div>
-                  <div v-show="mod_menuselection == 2">
-                    <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
-                      <APNGOptimizationRow
-                        :apng_is_optimized.sync="apng_is_optimized"
-                        :apng_optimization_level.sync="apng_optimization_level"
-                        :apng_is_lossy.sync="apng_is_lossy"
-                        :apng_lossy_value.sync="apng_lossy_value"
-                        :apng_is_unoptimized.sync="apng_is_unoptimized"
-                      />
-                      <APNGUnoptimizationRow
-                        :apng_is_optimized.sync="apng_is_optimized"
-                        :apng_is_lossy.sync="apng_is_lossy"
-                        :apng_is_unoptimized.sync="apng_is_unoptimized"
-                      />
-                    </table>
+                </td>
+                <td width="16.7%">
+                  
+                </td>
+                <td width="16.7%" class="force-vcenter">
+                  <label class="checkbox" title="Flip the image horizontally">
+                    <input v-model="criteria.flip_x" type="checkbox" />
+                    Flip X
+                  </label>
+                  <br/>
+                  <label class="checkbox" title="Flip the image vertically">
+                    <input v-model="criteria.flip_y" type="checkbox" />
+                    Flip Y
+                  </label>
+                </td>
+                <td width="16.7%" class="force-vcenter">
+                  <label class="checkbox" title="Reverse the animation">
+                    <input v-model="criteria.is_reversed" type="checkbox" />
+                    Reversed
+                  </label>
+                  <br/>
+                  <!-- <label class="checkbox" title="Preserve transparent pixels">
+                    <input v-model="preserve_alpha" type="checkbox" />
+                    Preserve Alpha
+                  </label> -->
+                  <label class="checkbox">
+                    <input v-model="lock_aspect_ratio" type="checkbox"/>
+                    Lock aspect ratio
+                  </label>
+                </td>
+              </tr>
+              <tr>
+                <td width="16.7%">
+                  <div class="field">
+                    <label class="label">FPS</label>
+                    <div class="control">
+                      <input v-model="criteria.fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                    </div>
                   </div>
+                </td>
+                <td width="16.7%">
+                  <div class="field">
+                    <label class="label">Delay</label>
+                    <div class="control">
+                      <input v-model="criteria.delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                    </div>
+                  </div>
+                </td>
+                <td width="16.7%">
+                  <div class="field">
+                    <label class="label">Loop count</label>
+                    <div class="control">
+                      <input v-model="criteria.loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0"/>
+                    </div>
+                  </div>
+                </td>
+                <td width="16.7%">
+                  <!-- <div class="field">
+                    <label class="label">Rotation</label>
+                    <div class="control">
+                      <input v-model="criteria.rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
+                    </div>
+                  </div> -->
+                </td>
+                <!-- <td width="20%">
+                  <div class="field">
+                    <label class="label">Skip Frames</label>
+                    <div class="control">
+                      <input v-model="skip_frame" class="input is-neon-white" type="number" min="0"/>
+                    </div>
+                  </div>
+                </td> -->
+                <td width="16.7%">
+                </td>
+                <td width="16.7%" class="force-vcenter">
+                  <!-- <label class="checkbox">
+                    <input v-model="lock_aspect_ratio" type="checkbox"/>
+                    Lock aspect ratio
+                  </label> -->
+                  <br/>
+                  <template v-if="aspect_ratio && aspect_ratio.text">
+                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                  </template>
+                  <template v-else>&nbsp;</template>
+                </td>
+              </tr>
+              <tr>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <div class="field has-addons">
+                    <div class="control">
+                      <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
+                        <span class="icon is-small">
+                          <i class="fas fa-save"></i>
+                        </span>
+                        <span>Save to</span>
+                      </a>
+                    </div>
+                    <div class="control is-expanded">
+                      <input v-model="save_path"
+                        class="input is-neon-white"
+                        type="text"
+                        placeholder="Output folder"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </td>
+                <td colspan="1">
+                  <div class="field">
+                    <div class="control">
+                      <div class="select is-neon-cyan">
+                        <select v-model="criteria.format">
+                          <option value="GIF">GIF</option>
+                          <option value="PNG">APNG</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td colspan="1">
+                  <a v-on:click="btnModifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
+                    MODIFY</a>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="6">
+                  <input
+                    v-model="modify_msgbox"
+                    type="text"
+                    class="input is-left-paddingless is-border-colorless"
+                    readonly="readonly"
+                  />
                 </td>
               </tr>
             </table>
           </div>
-        </td>
-      </tr>
-      <tr>
-        <td colspan="8" class="is-paddingless" style="vertical-align: middle;">
-          <input v-model="modify_msgbox" type="text" class="input is-paddingless is-border-colorless" readonly="readonly"/>
-        </td>
-      </tr>
-    </table>
+          <div v-show="mod_menuselection == 1">
+            <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+              <GIFOptimizationRow
+                :is_optimized.sync="gif_opt_criteria.is_optimized"
+                :optimization_level.sync="gif_opt_criteria.optimization_level"
+                :is_lossy.sync="gif_opt_criteria.is_lossy"
+                :lossy_value.sync="gif_opt_criteria.lossy_value"
+                :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
+                :color_space.sync="gif_opt_criteria.color_space"
+                :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+              />
+              <GIFUnoptimizationRow
+              :is_optimized.sync="gif_opt_criteria.is_optimized"
+              :is_lossy.sync="gif_opt_criteria.is_lossy"
+              :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
+              :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+              />
+            </table>
+          </div>
+          <div v-show="mod_menuselection == 2">
+            <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
+              <APNGOptimizationRow
+                :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
+                :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
+                :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
+                :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
+                :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
+                :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+              />
+              <APNGUnoptimizationRow
+                :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
+                :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
+                :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+              />
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
     <!-- </div> -->
   </div>
 </template>
@@ -409,61 +460,95 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require('./Client.vue');
+const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists } = require("./Utility.vue");
-import GIFOptimizationRow from "./vueshards/GIFOptimizationRow.vue";
-import GIFUnoptimizationRow from "./vueshards/GIFUnoptimizationRow.vue";
-import APNGOptimizationRow from "./vueshards/APNGOptimizationRow.vue";
-import APNGUnoptimizationRow from "./vueshards/APNGUnoptimizationRow.vue";
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH } = require("./Utility.vue");
+const path = require("path");
+const lodashClonedeep = require('lodash.clonedeep');
+import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
+import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
+import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
+import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 
-
-var data = {
-  orig_name: "",
-  orig_width: "",
-  orig_height: "",
-  orig_frame_count: "",
-  orig_frame_count_ds: "",
-  orig_fps: "",
-  orig_delay: "",
-  orig_delay_info: "",
-  orig_loop_duration: "",
-  orig_loop_count: "",
-  orig_file_size: "",
-  orig_file_size_hr: "",
-  orig_format: "",
-  orig_path: "",
+let common_metadata = {
   name: "",
-  old_width: "",
   width: "",
-  old_height: "",
   height: "",
-  rotation: "",
+  frame_count: "",
+  frame_count_ds: "",
   fps: "",
   delay: "",
+  delay_info: "",
+  loop_duration: "",
   loop_count: "",
-  format: "GIF",
-  skip_frame: "",
-  flip_x: false,
-  flip_y: false,
-  is_reversed: false,
-  preserve_alpha: false,
-  is_optimized: false,
-  optimization_level: "1",
-  is_lossy: false,
-  lossy_value: "",
-  is_reduced_color: false,
-  color_space: "",
-  is_unoptimized: false,
-  apng_is_optimized: false,
-  apng_optimization_level: "1",
-  apng_is_lossy: false,
-  apng_lossy_value: "",
-  apng_is_unoptimized: false,
+  file_size: "",
+  file_size_hr: "",
+  format: "",
+  path: "",
+  hash_sha1: "",
+  last_modified_dt: "",
+};
+
+var data = {
+  orig_attribute: lodashClonedeep(common_metadata),
+  preview_attribute: lodashClonedeep(common_metadata),
+  // orig_attribute: {
+  //   name: "",
+  //   width: "",
+  //   height: "",
+  //   frame_count: "",
+  //   frame_count_ds: "",
+  //   fps: "",
+  //   delay: "",
+  //   delay_info: "",
+  //   loop_duration: "",
+  //   loop_count: "",
+  //   file_size: "",
+  //   file_size_hr: "",
+  //   format: "",
+  //   path: "",
+  //   hash_sha1: "",
+  //   last_modified_dt: "",
+  // },
+  criteria: {
+    width: "",
+    height: "",
+    resize_method: "BICUBIC",
+    rotation: "",
+    fps: "",
+    delay: "",
+    loop_count: "",
+    format: "GIF",
+    skip_frame: "",
+    flip_x: false,
+    flip_y: false,
+    is_reversed: false,
+    preserve_alpha: false,
+    start_frame: 0,
+  },
+  gif_opt_criteria: {
+    is_optimized: false,
+    optimization_level: "1",
+    is_lossy: false,
+    lossy_value: "",
+    is_reduced_color: false,
+    color_space: "",
+    is_unoptimized: false,
+  },
+  apng_opt_criteria: {
+    apng_is_optimized: false,
+    apng_optimization_level: "1",
+    apng_is_lossy: false,
+    apng_lossy_value: "",
+    apng_is_unoptimized: false,
+    apng_convert_color_mode: false,
+    apng_new_color_mode: "RGBA",
+  },
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",
-  outdir: "",
+  save_path: "",
+  save_fname: "",
   preview_size: "",
   preview_size_hr: "",
   aspect_ratio: "",
@@ -477,36 +562,57 @@ var data = {
   modify_msgbox: "",
 };
 
-function clearOrigFields() {
-  data.orig_name = "";
-  data.orig_width = "";
-  data.orig_height = "";
-  data.orig_frame_count = "";
-  data.orig_frame_count_ds = "";
-  data.orig_fps = "";
-  data.orig_delay = "";
-  data.orig_delay_info = "";
-  data.orig_loop_duration = "";
-  data.orig_loop_count = "";
-  data.orig_file_size = "";
-  data.orig_file_size_hr = "";
-  data.orig_format = "";
-  data.orig_path = "";
+function clearOrigMetadata() {
+  data.orig_attribute.name = "";
+  data.orig_attribute.width = "";
+  data.orig_attribute.height = "";
+  data.orig_attribute.frame_count = "";
+  data.orig_attribute.frame_count_ds = "";
+  data.orig_attribute.fps = "";
+  data.orig_attribute.delay = "";
+  data.orig_attribute.delay_info = "";
+  data.orig_attribute.loop_duration = "";
+  data.orig_attribute.loop_count = "";
+  data.orig_attribute.file_size = "";
+  data.orig_attribute.file_size_hr = "";
+  data.orig_attribute.format = "";
+  data.orig_attribute.path = "";
+  data.orig_attribute.hash_sha1 = "";
+  data.orig_attribute.last_modified_dt = "";
   data.modify_msgbox = "";
 }
 
-function clearNewFields() {
-  data.name = "";
-  data.old_width = "";
-  data.width = "";
-  data.old_height = "";
-  data.height = "";
-  data.rotation = "";
-  data.fps = "";
-  data.delay = "";
-  data.loop_count = "";
-  data.skip_frame = "";
+function clearPreiewMetadata() {
+  data.preview_attribute.name = "";
+  data.preview_attribute.width = "";
+  data.preview_attribute.height = "";
+  data.preview_attribute.frame_count = "";
+  data.preview_attribute.frame_count_ds = "";
+  data.preview_attribute.fps = "";
+  data.preview_attribute.delay = "";
+  data.preview_attribute.delay_info = "";
+  data.preview_attribute.loop_duration = "";
+  data.preview_attribute.loop_count = "";
+  data.preview_attribute.file_size = "";
+  data.preview_attribute.file_size_hr = "";
+  data.preview_attribute.format = "";
+  data.preview_attribute.path = "";
+  data.preview_attribute.hash_sha1 = "";
+  data.preview_attribute.last_modified_dt = "";
   data.modify_msgbox = "";
+}
+
+function clearCriteriaFields() {
+  data.criteria.old_width = "";
+  data.criteria.width = "";
+  data.criteria.old_height = "";
+  data.criteria.height = "";
+  data.criteria.rotation = "";
+  data.criteria.fps = "";
+  data.criteria.delay = "";
+  data.criteria.loop_count = "";
+  data.criteria.skip_frame = "";
+  data.criteria.modify_msgbox = "";
   let ARData = {
     "w_ratio": "",
     "h_ratio": "",
@@ -537,118 +643,185 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
+  dialog.showOpenDialog(mainWindow, options).then((result) => {
+    let chosen_path = result.filePaths;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
     }
     data.MOD_IS_LOADING = true;
-    client.invoke("inspect_one", chosen_path[0], "animated", (error, res) => {
-      if (error) {
-        console.error(error);
-        data.modify_msgbox = error;
-        // mboxError(modify_msgbox, error);
-      } else {
-        loadOrigInfo(res);
-        loadNewInfo(res);
-        data.modify_msgbox = "";
+    tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
+      if (error) {        
+        try {
+          data.modify_msgbox = error;
+        }
+        catch (e) {
+          data.modify_msgbox = error;
+        }
+        // mboxError(split_msgbox, error);
+        data.MOD_IS_LOADING = false;
+      } else if (res) {
+        if (res && res.msg) {
+          data.modify_msgbox = res.msg;
+        } else if (res && res.data) {
+          loadOrigMetadata(res.data);
+          populateForm(res.data);
+          data.save_fname = res.data.general_info.name.value;
+          data.modify_msgbox = "";
+        }
+        data.MOD_IS_LOADING = false;
       }
-      data.MOD_IS_LOADING = false;
     });
     console.log("registered!");
   });
 }
 
-function loadOrigInfo(res) {
+function loadOrigMetadata(res) {
   let geninfo = res.general_info;
   let ainfo = res.animation_info;
-  data.orig_name = geninfo.name.value;
-  data.orig_width = geninfo.width.value;
-  data.orig_height = geninfo.height.value;
-  data.orig_fps = `${ainfo.fps.value} fps`;
-  data.orig_frame_count= ainfo.frame_count.value;
-  data.orig_frame_count_ds= ainfo.frame_count_ds.value;
-  data.orig_format = geninfo.format.value;
-  let delay_info = `${ainfo.avg_delay.value} seconds`;
-  if (ainfo.delay_is_uneven) {
+  data.orig_attribute.name = geninfo.name.value;
+  data.orig_attribute.width = geninfo.width.value;
+  data.orig_attribute.height = geninfo.height.value;
+  data.orig_attribute.fps = `${ainfo.fps.value} FPS`;
+  data.orig_attribute.frame_count= ainfo.frame_count.value;
+  data.orig_attribute.format = geninfo.format.value;
+  let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
+  if (ainfo.delays_are_even.value) {
+    delay_info += ` (even)`;
+  }
+  else {
     delay_info += ` (uneven)`;
   }
-  data.orig_delay = ainfo.avg_delay.value;
-  data.orig_delay_info = delay_info;
-  data.orig_loop_duration = ainfo.loop_duration.value;
-  data.orig_loop_count = ainfo.loop_count.value;
-  data.orig_path = geninfo.absolute_url.value;
-  data.orig_file_size = geninfo.fsize.value;
-  data.orig_file_size_hr = geninfo.fsize_hr.value;
+  data.orig_attribute.delay = ainfo.average_delay.value;
+  data.orig_attribute.delay_info = delay_info;
+  data.orig_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
+  if (ainfo.loop_count.value == 0) {
+    data.orig_attribute.loop_count = "Infinite"
+  }
+  else {
+    data.orig_attribute.loop_count = ainfo.loop_count.value;
+  }
+  data.orig_attribute.path = geninfo.absolute_url.value;
+  data.orig_attribute.file_size = geninfo.fsize.value;
+  data.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
+  data.orig_attribute.last_modified_dt = geninfo.modification_datetime.value;
+  data.orig_attribute.hash_sha1 = geninfo.hash_sha1.value;
 }
 
-function loadNewInfo(res) {
+function loadPreviewMetadata(res) {
+  let geninfo = res.general_info;
+  let ainfo = res.animation_info;
+  data.preview_attribute.name = geninfo.name.value;
+  data.preview_attribute.width = geninfo.width.value;
+  data.preview_attribute.height = geninfo.height.value;
+  data.preview_attribute.fps = `${ainfo.fps.value} FPS`;
+  data.preview_attribute.frame_count= ainfo.frame_count.value;
+  data.preview_attribute.format = geninfo.format.value;
+  let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
+  if (ainfo.delays_are_even.value) {
+    delay_info += ` (even)`;
+  }
+  else {
+    delay_info += ` (not even)`;
+  }
+  data.preview_attribute.delay = ainfo.average_delay.value;
+  data.preview_attribute.delay_info = delay_info;
+  data.preview_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
+  if (ainfo.loop_count.value == 0) {
+    data.preview_attribute.loop_count = "Infinite"
+  }
+  else {
+    data.preview_attribute.loop_count = ainfo.loop_count.value;
+  }
+  data.preview_attribute.path = geninfo.absolute_url.value;
+  data.preview_attribute.file_size = geninfo.fsize.value;
+  data.preview_attribute.file_size_hr = geninfo.fsize_hr.value;
+  data.preview_attribute.last_modified_dt = geninfo.modification_datetime.value;
+  data.preview_attribute.hash_sha1 = geninfo.hash_sha1.value;
+}
+
+function populateForm(res) {
   var geninfo = res.general_info;
   var ainfo = res.animation_info;
-  data.name = geninfo.base_fname.value;
-  data.format = geninfo.format.value;
-  data.width = geninfo.width.value;
-  data.height = geninfo.height.value;
-  data.delay = ainfo.avg_delay.value;
-  data.fps = ainfo.fps.value;
-  data.loop_count = ainfo.loop_count.value;
-  updateAspectRatio(data.width, data.height);
+  data.criteria.format = geninfo.format.value;
+  data.criteria.width = geninfo.width.value;
+  data.criteria.height = geninfo.height.value;
+  data.criteria.delay = roundPrecise(ainfo.average_delay.value, 3) / 1000;
+  data.criteria.fps = roundPrecise(ainfo.fps.value, 3);
+  data.criteria.loop_count = ainfo.loop_count.value;
+  updateAspectRatio(data.criteria.width, data.criteria.height);
 }
 
 function clearImage() {
   console.log(data);
-  clearOrigFields();
-  clearNewFields();
-  clearPrevImage();
+  clearOrigMetadata();
+  clearCriteriaFields();
+  clearPreviewImage();
 }
 
-function clearPrevImage() {
+function clearPreviewImage() {
   data.preview_path = "";
   data.preview_path_cb = "";
   data.preview_size = "";
   data.preview_size_hr = "";
+  clearPreiewMetadata();
 }
 
-function chooseOutDir() {
-  var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options, (chosen_dir) => {
-    console.log(chosen_dir);
-    if (chosen_dir && chosen_dir.length > 0) { 
-      data.outdir = chosen_dir[0];
+function singleSaveOption() {
+  return {
+    title: `Save As`,
+    defaultPath: data.save_fname,
+    filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
+    properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
+  }
+}
+
+function setSavePath(afterSaveCallback) {
+  dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+    if (result.canceled) return;
+    let save_path = result.filePath;
+    data.save_path = save_path;
+    data.save_fname = path.basename(save_path);
+    if (afterSaveCallback) {
+      afterSaveCallback();
     }
   });
 }
 
+function btnSetSavePath() {
+  setSavePath();
+}
+
 function widthHandler(width, event) {
-  data.old_width = parseInt(width);
+  // data.orig_attribute.width = parseInt(width);
   console.log(event);
   let newWidth = event.target.value;
-  data.width = newWidth;
+  data.criteria.width = newWidth;
   if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
     let raHeight = Math.round(newWidth / data.aspect_ratio.w_ratio * data.aspect_ratio.h_ratio);
-    data.height = raHeight > 0? raHeight : "";
+    data.criteria.height = raHeight > 0? raHeight : "";
   }
   else {
-    updateAspectRatio(data.width, data.height);
+    updateAspectRatio(data.criteria.width, data.criteria.height);
   }
 }
 
 function heightHandler(height, event) {
-  data.old_height = parseInt(height);
+  // data.orig_attribute.height = parseInt(height);
   let newHeight = event.target.value;
-  data.height = newHeight;
+  data.criteria.height = newHeight;
   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
     let raWidth = Math.round(newHeight / data.aspect_ratio.h_ratio * data.aspect_ratio.w_ratio);
     console.log(raWidth);
-    data.width = raWidth > 0? raWidth : "";
+    data.criteria.width = raWidth > 0? raWidth : "";
   }
   else {
-    updateAspectRatio(data.width, data.height);
+    updateAspectRatio(data.criteria.width, data.criteria.height);
   }
 }
 
 function updateAspectRatio(width, height) {
-  if (data.width && data.height) {
+  if (data.criteria.width && data.criteria.height) {
     console.log('uAR', width, height);
     let divisor = gcd(width, height);
     let w_ratio = width / divisor;
@@ -663,46 +836,44 @@ function updateAspectRatio(width, height) {
   }
 }
 
+function btnModifyImage() {
+  if (!data.orig_attribute.path) {
+    data.modify_msgbox = "Please load the animated image to be modified!";
+    return;
+  }
+  if (data.save_path)
+    modifyImage();
+  else
+    setSavePath(modifyImage);
+}
+
 
 function modifyImage() {
   let proceed_modify = true;
-
   data.modify_msgbox = "";
-  var validator = validateFilename(data.name);
-  if (!validator.valid) {
-    console.error(validator.msg);
-    data.modify_msgbox = validator.msg;
-    return;
-  }
-
-  if (fileExists(data.outdir, `${data.name}.${data.format.toLowerCase()}`)) {
-    let WINDOW = remote.getCurrentWindow();
-    let options = {
-      buttons: ["Yes", "Cancel"],
-      message: "A file with the same name exists in the output folder. Do you want to override it?"
-    };
-    let response = dialog.showMessageBoxSync(WINDOW, options);
-    if (response == 1) proceed_modify = false;
-  }
   
   if (proceed_modify) {
     data.MOD_IS_MODIFYING = true;
-    client.invoke("modify_image", data.orig_path, data.outdir, data, (error, res) => {
+    let criteria_pack = lodashClonedeep({
+      "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
+      "gif_opt_criteria": data.gif_opt_criteria,
+      "apng_opt_criteria": data.apng_opt_criteria,
+    });
+    // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+    tridentEngine(["modify_image", data.orig_attribute.path, data.save_path, criteria_pack], (error, res) => {
       if (error) {
         console.error(error);
         data.modify_msgbox = error;
         data.MOD_IS_MODIFYING = false;
       }
-      else {
-        if (res) {
-          console.log(res);
-          if (res.msg) {
-            data.modify_msgbox = res.msg;
-          }
-          if (res.CONTROL == "MOD_FINISH") {
-            data.modify_msgbox = "Modified and saved!"
-            data.MOD_IS_MODIFYING = false;
-          }
+      else if (res) {
+        console.log(res);
+        if (res.msg) {
+          data.modify_msgbox = res.msg;
+        }
+        if (res.CONTROL == "MOD_FINISH") {
+          data.modify_msgbox = "Modified and saved!"
+          data.MOD_IS_MODIFYING = false;
         }
       }
     });
@@ -710,40 +881,53 @@ function modifyImage() {
 }
 
 function previewModImg() {
+  if (data.orig_attribute.path == "") {
+    data.modify_msgbox = "Please load an animated image first!";
+    return;
+  }
   data.MOD_IS_PREVIEWING = true;
-  client.invoke("modify_image", data.orig_path, "./temp", data, (error, res) => {
+  let criteria_pack = lodashClonedeep({
+    "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
+    "gif_opt_criteria": data.gif_opt_criteria,
+    "apng_opt_criteria": data.apng_opt_criteria,
+  });
+  let temp_filename = `${data.orig_attribute.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
+  // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+  tridentEngine(["modify_image", data.orig_attribute.path, temp_savepath, criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.modify_msgbox = error;
       data.MOD_IS_PREVIEWING = false;
     }
-    else {
-      if (res) {
-        console.log(res);
-        if (res.msg) {
-          data.modify_msgbox = res.msg;
-        }
-        if (res.preview_path) {
-          data.preview_path = res.preview_path;
-          previewPathCacheBreaker();
-        }
-        if (res.CONTROL == "MOD_FINISH") {
-          console.log(data.preview_path);
-          client.invoke("inspect_one", data.preview_path, "animated", (error, info) => {
-            if (error) {
-              console.error(error);
-              data.MOD_IS_PREVIEWING = false;
-            } else {
+    else if (res) {
+      if (res.msg) {
+        data.modify_msgbox = res.msg;
+      }
+      if (res.preview_path) {
+        data.preview_path = res.preview_path;
+        previewPathCacheBreaker();
+      }
+      if (res.CONTROL == "MOD_FINISH") {
+        console.log(data.preview_path);
+        tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
+          if (error) {
+            console.error(error);
+            data.modify_msgbox = error;
+          } else if (res) {
+            if (res.data) {
+              let preview_data = res.data;
+              console.log(`res -> ${res}`);
               console.log("preview inspect");
-              console.log(info);
-              data.preview_info = info;
-              data.preview_size = info.general_info.fsize.value;
-              data.preview_size_hr = info.general_info.fsize_hr.value;
+              loadPreviewMetadata(preview_data);
+              data.preview_info = preview_data;
+              data.preview_size = preview_data.general_info.fsize.value;
+              data.preview_size_hr = preview_data.general_info.fsize_hr.value;
               data.modify_msgbox = "Previewed!"
               data.MOD_IS_PREVIEWING = false;
             }
-          });
-        }
+          }
+        });
       }
     }
   });
@@ -754,58 +938,75 @@ function buttonIsFrozen() {
   else return false;
 }
 
-function delayConstrain (event) {
+function delayConstrain(event) {
   console.log("delay event", event);
   let value = event.target.value;
   if (value && value.includes(".")) {
     let numdec = value.split(".");
     console.log("numdec", numdec);
     let precision = 2;
-    if (data.format == 'GIF') {
+    if (data.criteria.format == "GIF") {
       precision = GIF_DELAY_DECIMAL_PRECISION;
-    }
-    else if (data.format == 'PNG') {
+    } else if (data.criteria.format == "PNG") {
       precision = APNG_DELAY_DECIMAL_PRECISION;
     }
     if (numdec[1].length > precision) {
       let decs = numdec[1].substring(0, precision);
       console.log("decs limit triggered", decs);
-      data.delay = `${numdec[0]}.${decs}`;
+      data.criteria.delay = `${numdec[0]}.${decs}`;
     }
   }
-  data.fps = Math.round(1000 / data.delay) / 1000;
+  data.criteria.fps = Math.round(1000 / data.criteria.delay) / 1000;
 }
-function fpsConstrain (event) {
+
+function fpsConstrain(event) {
   console.log("fps event", event);
   let value = event.target.value;
   if (value) {
-    let mult = 100
-    if (data.format == 'GIF') { mult = 100; }
-    else if (data.format == 'PNG') { mult = 1000; }
-    data.delay = Math.round(mult / data.fps) / mult;
+    let mult = 100;
+    if (data.criteria.format == "GIF") {
+      mult = 100;
+    } else if (data.criteria.format == "PNG") {
+      mult = 1000;
+    }
+    data.criteria.delay = Math.round(mult / data.criteria.fps) / mult;
   }
 }
 
+
 function origDimensions() {
-  if (data.orig_width && data.orig_height) {
-    return `${data.orig_width} x ${data.orig_height}`;
+  if (data.orig_attribute.width && data.orig_attribute.height) {
+    return `${data.orig_attribute.width} x ${data.orig_attribute.height}`;
   }
   else {
-    return "-";
+    return "";
+  }
+}
+
+function previewDimensions() {
+  if (data.preview_attribute.width && data.preview_attribute.height) {
+    return `${data.preview_attribute.width} x ${data.preview_attribute.height}`;
+  }
+  else {
+    return "";
   }
 }
 
 function previewSizePercentage() {
-  let oldsize = data.orig_file_size
-  let prevsize = data.preview_size;
-  console.log(oldsize, prevsize);
-  let redux = Math.round((prevsize / oldsize) * 100);
-  return redux;
+  if (data.orig_attribute.path && data.preview_attribute.path) {
+    let oldSize = data.orig_attribute.file_size
+    let previewSize = data.preview_attribute.file_size;
+    console.log(oldSize, previewSize);
+    let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
+    let text = `${newSizePercentage}%`;
+    return text;
+  }
+  else return "";
 }
 
 
 function previewPathCacheBreaker() {
-  let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+  let cb_url = `${data.preview_path}`;
   console.log("Cache breaker url", cb_url);
   data.preview_path_cb = cb_url;
 }
@@ -824,10 +1025,12 @@ export default {
   methods: {
     loadImage: loadImage,
     clearImage: clearImage,
-    clearPrevImage: clearPrevImage,
-    chooseOutDir: chooseOutDir,
+    clearPreviewImage: clearPreviewImage,
+    btnSetSavePath: btnSetSavePath,
+    // chooseOutDir: chooseOutDir,
     previewModImg: previewModImg,
-    modifyImage: modifyImage,
+    btnModifyImage: btnModifyImage,
+    // modifyImage: modifyImage,
     widthHandler: widthHandler,
     heightHandler: heightHandler,
     toggleOrigCheckerBG: toggleOrigCheckerBG,
@@ -836,9 +1039,12 @@ export default {
     fpsConstrain: fpsConstrain,
     floatConstrain: floatConstrain,
     numConstrain: numConstrain,
+    roundPrecise: roundPrecise,
+    escapeLocalPath: escapeLocalPath,
   },
   computed: {
     origDimensions: origDimensions,
+    previewDimensions: previewDimensions,
     buttonIsFrozen: buttonIsFrozen,
     previewSizePercentage: previewSizePercentage,
   }

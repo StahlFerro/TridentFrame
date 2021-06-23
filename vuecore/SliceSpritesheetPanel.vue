@@ -97,7 +97,7 @@
           </a>
           <a v-on:click="clearSheet" class="button is-neon-crimson">
             <span class="icon is-small">
-              <i class="fas fa-trash-alt"></i>
+              <i class="fas fa-times"></i>
             </span>
             <span>Clear</span>
           </a>
@@ -163,7 +163,7 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+const { client } = require("./PythonCommander.vue");
 const { randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./Utility.vue");
 
 let extension_filters = [{ name: "Spritesheet image", extensions: ["png", "jpg"] }];

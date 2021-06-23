@@ -267,5 +267,5 @@ cache/*
 !cache/.placeholder
 release/*
 engine/*
-package_json_spitter.py
 writer/markdown/*
+jsconfig.json

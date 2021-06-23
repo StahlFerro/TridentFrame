@@ -1,25 +1,21 @@
-@charset "utf-8";
-// @use 'colors' as chromas;
-// @import './colors.scss';
 @import "../node_modules/bulma/sass/utilities/_all.sass";
+@import "../node_modules/bulma/sass/elements/button.sass";
+@import "components/_globalvars.scss";
+@import "components/_colors.scss";
+@import "components/button.scss";
+@import "components/contextmenu.scss";
+@import "components/rtable.scss";
+@import "components/text.scss";
+@import "components/interaction.scss";
+@import "components/input.scss";
+@import "panels/create_panel.scss";
+@import "panels/split_panel.scss";
+@import "panels/modify_panel.scss";
+@import "panels/inspect_panel.scss";
+@import "panels/about_panel.scss";
 
 
-/* Color definitions */
-$cyan: #34caf8;
-$cyan-bright: #98e7ff;
-$emerald: #33cc33;
-$crimson: #e03d3d;
-$white-d: #cccccc;
-$dark-2: #232629;
-$dark-3: #31363b;
-$dark-4: #444851;
-$dark-5: #565b69;
-$dark-6: #616877;
-$dark-9: #93a0ad;
-$white-a: #aaaaaa;
-
-
-/* Sass variable overrides */
+/* Sass variable overrides on Bulma */
 $navbar-breakpoint: 0;
 $body-background-color: $dark-3;
 
@@ -53,8 +49,8 @@ body {
     // -webkit-app-region: drag;
     font-family: 'Share Tech', 'sans-serif' !important;
     font-size: 18px;
-    width: 950px !important;
-    height: 700px !important;
+    // width: 1000px !important;
+    // height: 750px !important;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select:none;
@@ -63,10 +59,15 @@ body {
 }
 
 table.root-table {
-    width: 950px;
-    height: 700px;
-    table-layout: fixed;
+    // table-layout: fixed;
     margin: 0px !important;
+}
+thead.frame-title-bar {
+    height: 40px;
+}
+
+.column.left-panel {
+    width: 50px;
 }
 
 a.is-disabled {
@@ -116,7 +117,9 @@ label { color: $white-d !important; }
 ::-webkit-scrollbar-thumb {
     background: #777; 
 }
-
+::-webkit-scrollbar-corner {
+    background: $dark-3;
+}
 
 
 
@@ -160,9 +163,22 @@ a.exit-button {
 }
 
 
+aside.menu {
+    height: 100% !important;
+}
+
+/* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
+div.left-menu {
+    // height: 640px;
+    height: 100%;
+    overflow: scroll;
+}
+div.left-menu::-webkit-scrollbar { width: 0px; }
+
 /* Selected menu box */
 .menu-item {
     border: 2px solid $dark-2;
+    background-color: $dark-2;
     a { padding: 0.3em 0em; }
     &:hover { border: 2px solid $dark-4; }
 }
@@ -172,9 +188,7 @@ a.exit-button {
 }
 // .menu-item.is-selected 
 
-.button.square-button {
-    border-radius: 0;
-}
+
 
 
 .crt-menu-subtab {
@@ -195,12 +209,78 @@ a.exit-button {
 .menu-list a:active { background-color: $dark-5 !important; border-color: $dark-5 !important; }
 .subtab-menu-item.is-selected p, .subtab-menu-item.is-selected i { color: $cyan !important; }
 
-/* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
-div.left-menu {
-    height: 640px;
-    overflow: auto;
+
+/* Neon-white buttons. */
+// .button.is-neon-white {
+//     background-color: $dark-3;
+//     color: $white-d;
+//     border: 2px solid $white-d;
+//     &:hover, .is-neon-white.is-hovered {
+//         border-color: lighten($white-d, 20%);
+//         color: lighten($white-d, 20%);
+//     }
+//     &:active, .is-neon-white.is-active {
+//         background-color: $white-d;
+//         border-color: $white-d;
+//         color: $dark-3;
+//     }
+// }
+
+.root-container {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex: 1;
+    width: 100vw;
+    height: 100vh;
+    z-index: 0;
+    transition: flex-basis 400ms ease;
+    .root-panel {
+        height: 100vh;
+        flex-grow: 1;
+        flex-shrink: 1;
+        flex-basis: 700px;
+        order: 2;
+        overflow-x: hidden;
+        transition: flex-basis 400ms ease;
+        padding: $root-panel-padding;
+    }
+    .root-sidebar {
+        flex-basis: 90px;   
+        // background: #3D4F58;
+        color: #fff;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 0;
+        flex-shrink: 0;
+        margin: 0;
+        overflow: hidden;
+        transition: flex-basis 400ms ease;
+        height: 100vh;
+        background-color: $dark-2;
+    }
 }
-div.left-menu::-webkit-scrollbar { width: 0px; }
+
+.root-left-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.root-footer {
+    position: relative;
+    user-select: auto;
+    width: 100%;
+    height: 24px;
+    max-height: 800px;
+    min-height: 24px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    background-color: $cyan-bright;
+}
+
+
+
+
 
 
 div.crt-left-menu {
@@ -216,11 +296,6 @@ div.mod-left-menu {
 div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 
 
-.button.flex-expand {
-    display: flex;
-    width: 100%;
-    height: 100%;
-}
 
 /* Borderless table helper css */
 .table.is-borderless td, th {
@@ -243,6 +318,7 @@ input.input.is-border-colorless {
 }
 
 .is-left-paddingless { padding-left: 0 !important;}
+.is-right-paddingless { padding-right: 0 !important;}
 .is-bottom-paddingless { padding-bottom: 0 !important;}
 .is-bottomleft-paddingless { padding-bottom: 0 !important; padding-left: 0 !important; }
 
@@ -275,39 +351,31 @@ input.input.is-border-colorless {
 .silver-bordered {
     border: 2px solid $white-d !important;
 }
+.silver-bordered-no-left {
+    border: 2px solid $white-d;
+    border-left: 0;
+}
 .silver-bordered-no-right {
-    border: 2px solid $white-d !important;
-    border-width: 2px 0px 2px 2px;
+    border: 2px solid $white-d;
+    border-right: 0;
+}
+.silver-bordered-left-thin {
+    border: 2px solid $white-d;
+    border-left: 1px solid $dark-9;
+}
+.silver-bordered-right-thin {
+    border: 2px solid $white-d;
+    border-right: 1px solid $dark-9;
 }
 .silver-bordered-left-thicc {
     border: 2px solid $white-d !important;
     border-left: 5px solid $white-d !important;
 }
 
-/* Image sequences scrollable grid-like table in Create panel */
-.sequence-grid { 
-    tbody {
-        height:320px;
-        // border: 2px solid rebeccapurple !important;
-        border-collapse: collapse;
-        overflow: auto;
-        display: block;
-    }
-    tr {
-        display: block;
-        // border: 2px solid rebeccapurple !important;
-        // border-collapse: collapse;
-    }
-    td {
-        border-right: 2px solid $white-d !important;
-        border-bottom: 2px solid $white-d !important;
-        border-collapse: collapse;
-        padding: 0 !important;
-        width: 98px !important;
-        height: 98px !important;
-        // vertical-align: middle !important;
-    }
+.grey-bordered {
+    border: 2px solid $dark-9 !important;
 }
+
 
 table.intracell-table {
     width: 96px !important;
@@ -354,58 +422,13 @@ label.label.is-tight:not(:last-child) {
         max-height: 90px;
     }
 }
-.index-anchor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0.8;
-}
-.del-anchor {
-    position: absolute;
-    top: 0;
-    right: 0;
-    &:hover i {
-        opacity: 1.0;
-    }
-    &:active i {
-        opacity: 1.0;
-        color: lighten($danger, 20%);
-    }
-    i {
-        opacity: 0.3;
-        color: $danger;
-        &:hover {
-            opacity: 1.0;
-        }
-        &:active {
-            opacity: 1.0;
-            color: lighten($danger, 20%);
-        }
-    }
-}
+
 
 
 /* Animated image (GIF/PNG) preview container in Create Panel */
-.crt-aimg-container {
-    width: 310px;
-    height: 310px;
-    overflow: hidden;
-    // text-align: center;
-    display: block;
-    img {
-        max-width: 310px !important;
-        max-height: 310px !important;
-        display: block;
-        position: relative;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        // display: inline-block;
-    }
-}
 .crt-aimg-control-container {
     padding-right: 7px;
-    height: 248px;
+    // height: 248px;
 }
 .bspr-control-container {
     padding-right: 7px;
@@ -435,25 +458,25 @@ label.label.is-tight:not(:last-child) {
 
 
 
-.spl-aimg-info-table { 
-    td {
-        padding-top: 4px !important;
-        padding-bottom: 4px !important;
-        padding: 3px !important;
-        padding-left: 10px !important;
-        &.spl-info-label { width: 140px; }
-        &.spl-info-data { max-width: 300px; }
-    }
-    tbody {
-        border-collapse: collapse;
-        overflow: auto;
-        display: block;
-        &::-webkit-scrollbar {
-            height: 7px;
-        }
-    }
-    tr { display: block; }
-}
+// .spl-aimg-info-table { 
+//     td {
+//         padding-top: 4px !important;
+//         padding-bottom: 4px !important;
+//         padding: 3px !important;
+//         padding-left: 10px !important;
+//         &.spl-info-label { width: 140px; }
+//         &.spl-info-data { max-width: 300px; }
+//     }
+//     tbody {
+//         border-collapse: collapse;
+//         overflow: auto;
+//         display: block;
+//         &::-webkit-scrollbar {
+//             height: 7px;
+//         }
+//     }
+//     tr { display: block; }
+// }
 
 
 
@@ -476,17 +499,6 @@ label.label.is-tight:not(:last-child) {
 // .mod-orig-info-table tbody::-webkit-scrollbar {
 
 // }
-.mod-orig-info-table {
-    td {
-        padding: 3px !important;
-        padding-bottom: 0px !important;
-        padding-left: 5px !important;
-        &.mod-info-label {
-            max-width: 120px;
-            min-width: 120px;
-        }
-    }
-}
 // .mod-orig-info-table tr { display: block; }
 // .mod-orig-info-table td.mod-info-data { max-width: 600px; }
 
@@ -513,24 +525,7 @@ label.label.is-tight:not(:last-child) {
 }
 
 
-.ins-info-table { 
-    table {
-        table-layout: fixed !important;
-    }
-    tr, td {
-        border-bottom: 1px solid $dark-9 !important;
-        border-right: 1px solid $dark-9!important;
-    }
-    td {
-        padding-top: 2px;
-        padding-bottom: 2px;
-        font-size: 16px;
-        word-wrap: break-word !important;
-    }
-    table, tr, td {
-        border-collapse: collapse !important;
-    }
-}
+
 // .grey-bordered-right-only {
 //     border-right: 1px solid $dark-9 !important
 // }
@@ -599,19 +594,50 @@ table.spr-control-table {
     }
 }
 
-.ins-img-container {
-    height: 320px;
-    width: 320px;
-    overflow: hidden;
-    display: block;
-    img {
-        max-height: 320px !important;
-        max-width: 320px !important;
+.tile.trident-tile {
+    padding: 3px;
+}
+.tile {
+    margin: 0 !important;
+    padding: 3px !important;
+    background-color: transparent !important;
+    .tile.is-child {  
+        border: 2px solid $white-d;
+        border-radius: 0px !important;
+        padding: 4px !important;
+    }
+    article.tile .figure {
         display: block;
-        position: relative;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
+        margin-left: auto;
+        margin-right: auto;
+        width: 50%;
+    }
+}
+
+.ins-img-container {
+    // height: 320px;
+    // width: 320px;
+    width: 100%;
+    height: 100%;
+    // max-width: 100%;
+    // max-height: 100%;
+    overflow: hidden;
+    // display: block;
+    img {
+        // flex: 0 0 0px;
+        // box-sizing: border-box;
+        // object-fit: cover;
+        width: 100%;
+        height: 100%;
+        // max-width: 100%;
+        // max-height: 100%;
+        // max-height: 320px !important;
+        // max-width: 320px !important;
+        display: block;
+        // position: relative;
+        // left: 50%;
+        // top: 50%;
+        // transform: translate(-50%, -50%);
     }
 }
 
@@ -678,107 +704,6 @@ canvas.slicegrid-canvas {
     z-index:20;
 }
 
-/* Neon-cyan buttons. $cyan outlines with $dark-3 BG to match the global $dark-3 BG color */
-.button.is-neon-cyan {
-    background-color: $dark-3;
-    color: $cyan;
-    border: 2px solid $cyan;
-    &:hover, .is-hovered {
-        border-color: lighten($cyan, 20%);
-        color: lighten($cyan, 20%);
-    }
-    &:active, .is-active {
-        background-color: $cyan;
-        border-color: $cyan;
-        color: $dark-3;
-    }
-}
-
-
-/* Neon-cyan buttons. $emerald outlines with $dark-3 BG to match the global $dark-3 BG color */
-.button.is-neon-emerald {
-    background-color: $dark-3;
-    color: $emerald;
-    border: 2px solid $emerald;
-    &:hover, .is-hovered {
-        border-color: lighten($emerald, 20%);
-        color: lighten($emerald, 20%);
-    }
-    &:active, .is-neon-emerald.is-active {
-        background-color: $emerald;
-        border-color: $emerald;
-        color: $dark-3;
-    }
-}
-
-/* Neon-crimson buttons. $crimson outlines with $dark-3 BG to match the global $dark-3 BG color */
-.button.is-neon-crimson {
-    background-color: $dark-3;
-    color: $crimson;
-    border: 2px solid $crimson;
-    &:hover, .is-neon-crimson.is-hovered {
-        border-color: lighten($crimson, 20%);
-        color: lighten($crimson, 20%);
-    }
-    &:active, .is-neon-crimson.is-active {
-        background-color: $crimson;
-        border-color: $crimson;
-        color: $dark-3;
-    }
-}
-
-.button.neon-borderless {
-    border: none;
-}
-
-/* Neon-white buttons. */
-.button.is-neon-white {
-    background-color: $dark-3;
-    color: $white-d;
-    border: 2px solid $white-d;
-    &:hover, .is-neon-white.is-hovered {
-        border-color: lighten($white-d, 20%);
-        color: lighten($white-d, 20%);
-    }
-    &:active, .is-neon-white.is-active {
-        background-color: $white-d;
-        border-color: $white-d;
-        color: $dark-3;
-    }
-}
-
-
-/* Grey-block inputs. */
-.input.is-block-grey {
-    background-color: $dark-4;
-    color: $white-d;
-    box-shadow: none;
-    border: 0 !important;
-    &::placeholder {
-        color: $dark-9;
-    }
-}
-
-/* Neon-white inputs. */
-.input.is-neon-white {
-    background-color: $dark-3;
-    color: $white-d;
-    box-shadow: none;
-    border: 2px solid $white-d;
-    &:hover {
-        border-color: lighten($white-d, 10%);
-    }
-    &:focus {
-        border: 2px solid $white;
-    }
-    &:disabled {
-        border-color: darken($white-d, 40%);
-        color: darken($white-d, 40%);
-    }
-    &::placeholder {
-        color: $dark-6;
-    }
-}
 
 .select.is-neon-cyan { 
     select {
@@ -802,8 +727,3 @@ canvas.slicegrid-canvas {
     }
 }
 
-
-div.about-content {
-    h1 { color: $white-d; }
-    p { color: $white-d; }
-}

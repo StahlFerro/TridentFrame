@@ -1,0 +1,73 @@
+/* Inspect Panel */
+@import "../components/globalvars.scss";
+@import "../components/_colors.scss";
+
+.inspect-panel-root {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .inspect-panel-display {
+        display: flex;
+        flex-direction: row;
+        flex-grow: 1;
+        align-items: stretch;
+        flex: 1;
+        height: 88vh;
+        .inspect-panel-image {
+            display: flex;
+            flex-grow: inherit;
+            width: 60%;
+            height: 88vh;
+            justify-content: center;
+            align-items: center;
+            .inspect-panel-msgbox {
+                padding: 7px;
+                display: block;
+                flex-grow: 1;
+            }
+            img {
+                max-width: 100%;
+                box-sizing: border-box;
+                max-height: 100%;
+                object-fit: scale-down;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+        .inspect-panel-info {
+            flex-grow: inherit;
+            width: 40%;
+            height: 88vh;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
+            &::-webkit-scrollbar {
+                height: 10px;
+            }
+            .ins-info-table { 
+                table {
+                    table-layout: fixed !important;
+                }
+                tr, td {
+                    border-bottom: 1px solid $dark-9 !important;
+                    border-right: 1px solid $dark-9!important;
+                }
+                td {
+                    padding-top: 2px;
+                    padding-bottom: 2px;
+                    font-size: 16px;
+                    word-wrap: break-word !important;
+                    // user-select: text !important;
+                }
+                table, tr, td {
+                    border-collapse: collapse !important;
+                }
+            }
+        }
+    }
+    .inspect-panel-controls {
+        flex-basis: calc(10vh - #{$root-height-offset});
+        padding-top: 10px;
+    }
+}

@@ -1,67 +1,119 @@
-from __future__ import print_function
 import sys
-import random
-import string
-from typing import List
 import os
-import signal
-import time
+import json
+from pathlib import Path
 
-import zerorpc
 
-from pycore.inspect_ops import inspect_sequence, inspect_general, _inspect_smart
+IS_FROZEN = getattr(sys, "frozen", False)
+if IS_FROZEN:
+    frozen_dir = Path(sys.executable).resolve().parents[0]
+    # print(json.dumps({"msg": f"Detected frozen dir: {frozen_dir}"}))
+    os.chdir(frozen_dir)
+
+
+from pycore.core_funcs import logger
+from pycore.core_funcs import exception
+from typing import Dict, List
+from pycore.inspect_ops import inspect_sequence, inspect_general, inspect_sequence_autodetect
 from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
 from pycore.sprite_ops import _build_spritesheet, _slice_spritesheet
 from pycore.modify_ops import modify_aimg
-from pycore.core_funcs.criterion import CriteriaBundle, CreationCriteria, SplitCriteria, ModificationCriteria, SpritesheetBuildCriteria, SpritesheetSliceCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
-from pycore.core_funcs.utility import _purge_directory, util_generator, util_generator_shallow
-from pycore.core_funcs.config import ABS_CACHE_PATH, ABS_TEMP_PATH
+from pycore.models.criterion import (
+    CriteriaBundle,
+    CreationCriteria,
+    SplitCriteria,
+    ModificationCriteria,
+    SpritesheetBuildCriteria,
+    SpritesheetSliceCriteria,
+    GIFOptimizationCriteria,
+    APNGOptimizationCriteria,
+)
 
 
-IS_FROZEN = getattr(sys, 'frozen', False)
-
-class API(object):
-    
+class TridentFrameImager:
     def echo(self, msg):
+        print(msg)
         return f"{msg} echoed"
 
-    def inspect_one(self, image_path, fitler_on=""):
+    def echostream(self, stdin_data):
+        print(type(stdin_data))
+        if type(stdin_data) != str:
+            print(stdin_data.read())
+        else:
+            print(stdin_data)
+
+    def inspect_one(self, image_path: str, filter: str = ""):
         """Inspect a single image and then return its information"""
-        return inspect_general(image_path, filter_on=fitler_on)
-    
-    @zerorpc.stream
-    def inspect_many(self, image_paths):
-        """Inspect a sequence of images and then return their information"""
-        info = inspect_sequence(image_paths)
-        return info
+        image_path = Path(image_path).resolve()
+        if not image_path.exists():
+            raise FileNotFoundError(f"{image_path} not found")
+        info = inspect_general(image_path, filter)
+        if info:
+            # print(info.__dict__)
+            logger.data(info.format_info())
 
-    @zerorpc.stream
-    def inspect_smart(self, image_path):
-        """Inspect a sequence of images and then return their information"""
-        info = _inspect_smart(image_path)
-        # raise Exception("mama")
-        return info
+    def inspect_many(self, image_paths: List[str]):
+        """Inspect a sequence of images and then return their information.
+        Intermediary buffer file is used to avoid char limit of command lines
+        """
+        resolved_paths = []
+        for ipath in image_paths:
+            cpath = Path(ipath).resolve()
+            if cpath.exists():
+                resolved_paths.append(cpath)
+        info = inspect_sequence(resolved_paths)
+        if info:
+            logger.data(info)
 
-    @zerorpc.stream
-    def combine_image(self, image_paths, out_dir, filename, vals: dict):
+    def inspect_smart(self, image_path: str):
+        """Inspect a sequence of images and then return their information"""
+        if not image_path:
+            raise Exception("Please load an image!")
+        elif type(image_path) is list:
+            image_path = image_path[0]
+        image_path = Path(image_path).resolve()
+        if not image_path.exists():
+            raise FileNotFoundError(image_path.name)
+        info = inspect_sequence_autodetect(image_path)
+        if info:
+            logger.data(info)
+
+    # def combine_image(self, image_paths: List[str], out_dir: str, criteria_pack: Dict):
+    def combine_image(self, image_paths: List[str], out_path: str, criteria_pack: Dict):
         """Combine a sequence of images into a GIF/APNG"""
         # raise Exception(image_paths, out_dir, filename, fps, extension, fps, reverse, transparent)
-        if not image_paths and not out_dir:
-            raise Exception("Please load the images and choose the output folder!")
+        if not image_paths and not out_path:
+            raise Exception("Please load the images and choose the output file!")
         elif not image_paths:
             raise Exception("Please load the images!")
-        elif not out_dir:
-            raise Exception("Please choose the output folder!")
+        elif not out_path:
+            raise Exception("Please choose the output file!")
+        resolved_paths = []
+        for ipath in image_paths:
+            resolved_path = Path(ipath).resolve()
+            if resolved_path.exists():
+                resolved_paths.append(resolved_path)
+        missing_paths = set(image_paths) - set((str(rp) for rp in resolved_paths))
+        out_path = Path(out_path).resolve()
+        # out_dir = Path(out_dir).resolve()
+        if len(missing_paths) == len(image_paths):
+            raise FileNotFoundError("All of the image sequences are missing! Check if they are not moved/deleted")
+        if not out_path.parent.exists():
+            raise FileNotFoundError(f"The directory {str(out_path.parent)} is not found!")
         crbundle = CriteriaBundle({
-            "create_aimg": CreationCriteria(vals),
-            "gif_opt": GIFOptimizationCriteria(vals),
-            "apng_opt": APNGOptimizationCriteria(vals)
+            "create_aimg_criteria": CreationCriteria(criteria_pack["criteria"]),
+            "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
+            "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
         })
-        return create_aimg(image_paths, out_dir, filename, crbundle)
+        out_path = create_aimg(resolved_paths, out_path, crbundle)
+        if out_path:
+            logger.data(str(out_path))
+        if len(missing_paths) > 0:
+            logger.warn(str(missing_paths))
+        return
 
-    @zerorpc.stream
-    def split_image(self, image_path, out_dir, vals):
+    def split_image(self, image_path: str, out_dir: str, criteria_vals: SplitCriteria):
         """Split all the frames of a GIF/APNG into a sequence of images"""
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
@@ -69,31 +121,41 @@ class API(object):
             raise Exception("Please load a GIF or APNG!")
         elif not out_dir:
             raise Exception("Please choose an output folder!")
-        criteria = SplitCriteria(vals)
-        return split_aimg(image_path, out_dir, criteria)
+        image_path = Path(image_path).resolve()
+        out_dir = Path(out_dir).resolve()
+        if not image_path.exists():
+            raise FileNotFoundError(image_path.name)
+        if not out_dir.exists():
+            raise FileNotFoundError(out_dir)
+        criteria = SplitCriteria(criteria_vals)
+        split_aimg(image_path, out_dir, criteria)
+        return
 
-    @zerorpc.stream
-    def modify_image(self, image_path, out_dir, vals):
+    def modify_image(self, image_path: str, out_path: str, criteria_pack: Dict):
         """Modify the criteria and behavior of a GIF/APNG"""
-        if not image_path and not out_dir:
+        if not image_path and not out_path:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
         elif not image_path:
             raise Exception("Please load a GIF or APNG!")
-        elif not out_dir:
+        elif not out_path:
             raise Exception("Please choose an output folder!")
-        criteria = ModificationCriteria(vals)
+        image_path = Path(image_path).resolve()
+        out_path = Path(out_path).resolve()
+        if not image_path.exists():
+            raise FileNotFoundError(image_path.name)
         crbundle = CriteriaBundle({
-            'modify_aimg': ModificationCriteria(vals),
-            'gif_opt': GIFOptimizationCriteria(vals),
-            'apng_opt': APNGOptimizationCriteria(vals),
+            "modify_aimg_criteria": ModificationCriteria(criteria_pack["criteria"]),
+            "gif_opt_criteria": GIFOptimizationCriteria(criteria_pack["gif_opt_criteria"]),
+            "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
         })
-        return modify_aimg(image_path, out_dir, crbundle)
-        
+        out_path = modify_aimg(image_path, out_path, crbundle)
+        if out_path:
+            logger.preview_path(out_path)
+            logger.control("MOD_FINISH")
+        return
 
-    @zerorpc.stream
     def build_spritesheet(self, image_paths, out_dir, filename, vals: dict):
         """Build a spritesheet using the specified sequence of images"""
-    # def build_spritesheet(self, image_paths, input_mode, out_dir, filename, width, height, tiles_per_row, off_x, off_y, pad_x, pad_y, preserve_alpha):
         if not image_paths and not out_dir:
             raise Exception("Please load the images and choose the output folder!")
         elif not image_paths:
@@ -104,8 +166,7 @@ class API(object):
         # raise Exception(criteria.__dict__)
         # yield {"msg": "yo"}
         return _build_spritesheet(image_paths, out_dir, filename, criteria)
-    
-    @zerorpc.stream
+
     def slice_spritesheet(self, image_path, out_dir, filename, vals: dict):
         """Slice a spritesheet into individual sections"""
         if not image_path and not out_dir:
@@ -117,60 +178,50 @@ class API(object):
         criteria = SpritesheetSliceCriteria(vals)
         return _slice_spritesheet(image_path, out_dir, filename, criteria)
 
-    def purge_cache_temp(self):
-        """Remove cache and temp directories"""
-        _purge_directory(ABS_TEMP_PATH())
-        _purge_directory(ABS_CACHE_PATH())
-        return "Cache and temp evaporated"
 
-    def print_cwd(self):
-        """Dev method for displaying python cwd"""
-        msg = {
-            "os.getcwd()": os.getcwd(),
-            "sys.executable": sys.executable,
-            "__file__": __file__,
-            "IS_FROZEN": IS_FROZEN
-        }
-        return msg
-
-    @zerorpc.stream
-    def test_generator(self):
-        return util_generator()
-
-
-class GracefullKiller:
-    def __init__(self, SERVER: zerorpc.Server):
-        self.SERVER = SERVER
-        signal.signal(signal.SIGINT, self.exit_gracefully)
-        signal.signal(signal.SIGTERM, self.exit_gracefully)
-        # print(self.SERVER)
-    
-    def exit_gracefully(self, signum, frame):
-        print(f"{signum} Closing server...")
-        self.SERVER.close()
-
-
-def main():
-    port = '42069'
-    # print(port)
-    handle_execpath()
-    # port = argv
-    address = f"tcp://127.0.0.1:{port}"
-    SERVER: zerorpc.Server = zerorpc.Server(API())
-    SERVER.debug = True
-    SERVER.bind(address)
-    print(f"Starting TridentFrame's imaging engine on {address}")
-    # killer = GracefullKiller(SERVER)
-    SERVER.run()
+def print_cwd():
+    """Dev method for displaying python cwd"""
+    msg = {
+        "os.getcwd()": os.getcwd(),
+        "sys.executable": sys.executable,
+        "__file__": __file__,
+        "IS_FROZEN": IS_FROZEN,
+    }
+    return msg
 
 
 def handle_execpath():
-    if IS_FROZEN:
-        frozen_dir = os.path.dirname(sys.executable)
-        os.chdir(frozen_dir)
+    pass
+
+
+def main():
+    # print(json.dumps({"msg": "Main called"}))
+    # handle_execpath()
+    # print(json.dumps(print_cwd()))
+    # print(json.dumps(f"{len(sys.argv) == 1}, {sys.stdin.isatty()}"))
+    exception.set_exception_handler(True)
+    if len(sys.argv) == 1 and not sys.stdin.isatty():
+        data = {}
+        try:
+            data = json.loads(sys.stdin.read())
+        except Exception as e:
+            raise Exception(e)
+        if not data:
+            raise Exception("No data received from stdin!")
+        pyimager = TridentFrameImager()
+        try:
+            method = getattr(pyimager, data["command"])
+        except AttributeError:
+            errmsg = f"Method {data['command']} not implemented"
+            raise NotImplementedError(errmsg)
+        globalvar_overrides = data.get("globalvar_overrides", None)
+        if globalvar_overrides:
+            debug = globalvar_overrides.get("debug", None)
+            if debug:
+                exception.set_exception_handler(debug)
+        args = data["args"]
+        method(*args)
 
 
 if __name__ == "__main__":
-    # port = sys.argv[-1]
     main()
-    # main(port)

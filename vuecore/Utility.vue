@@ -1,8 +1,23 @@
 <script>
 const path = require('path');
 const fs = require('fs');
-const remote = require("electron").remote;
-const app = remote.app;
+const deploy_env = process.env.DEPLOY_ENV;
+let TEMP_PATH = "";
+if (deploy_env == "DEV") {
+  TEMP_PATH = "./temp";
+}
+else {
+  if (process.platform == "win32") {
+    TEMP_PATH = "./resources/app/engine/windows/temp";
+  }
+  else if (process.platform == "linux") { 
+    TEMP_PATH = "./resources/app/engine/linux/temp";
+  }
+}
+
+// function imageTableGenerator(sequence_infos) {
+
+// }
 
 function quintcellLister(sequence_infos, from_where="") {
   var quintrows = {};
@@ -45,12 +60,16 @@ function ticks() {
   return epoch
 }
 
-function randString() {
+function escapeLocalPath(path) {
+  return path.replace("%", "%25");
+}
+
+function randString(length) {
    let result = '';
-   let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   let charactersLength = characters.length;
-   for ( let i = 0; i < 50; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+   let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+   let charsetlen = charset.length;
+   for ( let i = 0; i < length; i++ ) {
+      result += charset.charAt(Math.floor(Math.random() * charsetlen));
    }
    return result;
 }
@@ -72,6 +91,28 @@ function wholeNumConstrain(event) {
     console.log("IS NOT DIGIT!");
     event.preventDefault();
   }
+}
+
+function roundPrecise(number, precision = 0) {
+  let mult = Math.pow(10, precision);
+  return (Math.round(number * mult) / mult);
+}
+
+/***
+ * Convert bytes to human-readable file sizes using the biggest possible size unit without having the value smaller than 1
+ * @param {int} nbytes - Total amount of bytes
+ * @param {int} precision - Amount of decimal places to round up
+ */
+function readFilesize(nbytes, precision) {
+  let i = 0;
+  let size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+  while (nbytes >= 1024 && i < size_suffixes.length - 1){
+    nbytes /= 1024;
+    i += 1;
+  }
+  let size = roundPrecise(nbytes, precision);
+  // size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
+  return `${size} ${size_suffixes[i]}`;
 }
 
 function floatConstrain(event) {
@@ -133,10 +174,17 @@ function posWholeNumConstrain(event) {
   }
 }
 
-function fileExists(out_dir, name) {
-  let full_path = path.join(out_dir, name);
+function fileExists(full_path) {
+  // let full_path = path.join(out_dir, name);
   console.log("full path", full_path);
   return fs.existsSync(full_path);
+}
+
+function isNullOrWhitespace( input ) {
+
+    if (typeof input === 'undefined' || input == null) return true;
+
+    return input.replace(/\s/g, '').length < 1;
 }
 
 
@@ -155,6 +203,11 @@ module.exports = {
   numConstrain: numConstrain,
   floatConstrain: floatConstrain,
   fileExists: fileExists,
+  readFilesize: readFilesize,
+  isNullOrWhitespace: isNullOrWhitespace,
+  roundPrecise: roundPrecise,
+  escapeLocalPath: escapeLocalPath,
+  TEMP_PATH: TEMP_PATH,
 }
 
 </script>

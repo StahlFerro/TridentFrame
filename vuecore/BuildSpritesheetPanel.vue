@@ -136,14 +136,14 @@
                       <a v-on:click="loadInput('replace')" class="button is-neon-emerald" v-bind:class="{'is-loading': BSPR_REPLACE_LOAD, 'is-static': isButtonFrozen}"
                       title="Loads multiple static images to create an animated image. This replaces the current sequence above">
                         <span class="icon is-small">
-                          <i class="fas fa-trash-alt"></i>
+                          <i class="fas fa-times"></i>
                         </span>
                         <span>Load</span>
                       </a>
                       <a v-on:click="clearInfo" class="button is-neon-crimson" v-bind:class="{'is-static': isButtonFrozen}"
                       title="Clears the entire sequence">
                         <span class="icon is-small">
-                          <i class="fas fa-trash-alt"></i>
+                          <i class="fas fa-times"></i>
                         </span>
                         <span>Clear</span>
                       </a>
@@ -371,7 +371,7 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+// const { client } = require("./Client.vue");
 import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain,
   numConstrain, validateFilename, fileExists } from './Utility.vue';
 

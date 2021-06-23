@@ -11,21 +11,22 @@
           </a>
         </td>
         <td>
-          <a v-on:click="purgeCacheTemp" class="button is-large is-neon-cyan">
-            <span class="icon is-large">
-              <i class="fas fa-ban"></i>
-            </span>
-            <span>Purge Cache</span>
-          </a>
-        </td>
-      </tr>
-      <tr>
-        <td>
           <a v-on:click="openInspector" class="button is-large is-neon-cyan">
             <span class="icon is-large">
               <i class="fas fa-bug"></i>
             </span>
             <span>Open Inspector</span>
+          </a>
+        </td>
+      </tr>
+
+      <!-- <tr>
+        <td>
+          <a v-on:click="purgeCacheTemp" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fas fa-ban"></i>
+            </span>
+            <span>Purge Cache</span>
           </a>
         </td>
         <td>
@@ -47,8 +48,15 @@
           </a>
         </td>
         <td>
+          <a v-on:click="callPython" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fab fa-python"></i>
+            </span>
+            <span>TestExec</span>
+          </a>
         </td>
-      </tr>
+      </tr> -->
+
     </table>
   </div>
 </template>
@@ -57,7 +65,23 @@
 const { remote, BrowserWindow } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./Client.vue");
+const { client } = require("./PythonCommander.vue");
+const { PythonShell } = require("python-shell");
+
+function callPython() {
+  let shell = new PythonShell('main.py', { 
+    mode: "text",
+    pythonPath: "python.exe",
+    pythonOptions: ["-u"],
+  });
+  let jsonmsg = JSON.stringify({"command": "echostream", "args": [1, 3, 6]})
+  shell.send(jsonmsg);
+  shell.on('message', function (message) {
+    console.log('[STDOUT message]');
+    console.log(message);
+  });
+  shell.end();
+}
 
 function refreshWindow() {
   remote.getCurrentWindow().reload();
@@ -120,6 +144,7 @@ export default {
     openCWD: openCWD,
     testGenerator: testGenerator,
     openConfirm: openConfirm,
+    callPython: callPython,
   }
 };
 </script>

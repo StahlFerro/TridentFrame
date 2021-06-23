@@ -1,0 +1,67 @@
+@import "_colors.scss";
+
+
+.input {
+    /* Grey-block inputs. */
+    &.is-block-grey {
+        background-color: $dark-4;
+        color: $white-d;
+        box-shadow: none;
+        border: 0 !important;
+        &::placeholder {
+            color: $dark-9;
+        }
+    }
+    &.is-solid-grey {
+        $bg-color: $dark-5;
+        $bg-color-on: lighten($bg-color, 10%);
+        $bg-color-off: desaturate(rgba($bg-color, 0.7), 20%);
+        $text-color: $white-d;
+    
+        background-color: $bg-color;
+        color: $text-color;
+        box-shadow: none;
+        border: 2px solid $bg-color;
+        &:hover {
+            border-color: $bg-color-on;
+        }
+        &:focus {
+            border: 2px solid $bg-color-on;
+            background-color: $bg-color-on;
+            box-shadow: none;
+        }
+        &:disabled {
+            border-color: $bg-color-off;
+            color: $bg-color-off;
+            background-color: $bg-color-off;
+        }
+    }
+    /* Neon-white inputs. */
+    &.is-neon-white {
+        $bg-color: $dark-3;
+        $text-color: $white-d;
+        $border-color: $text-color;
+        $border-color-on: lighten($border-color, 20%);
+        $border-color-off: darken($border-color, 40%);
+    
+        background-color: $bg-color;
+        color: $text-color;
+        box-shadow: none;
+        border: 2px solid $border-color;
+        &:hover {
+            border-color: $border-color-on;
+        }
+        &:focus {
+            border: 2px solid $white;
+            box-shadow: none;
+        }
+        &:disabled {
+            border-color: $border-color-off;
+            color: $border-color-off;
+            background-color: $bg-color;
+        }
+        &::placeholder {
+            color: $dark-6;
+        }
+    }
+}
