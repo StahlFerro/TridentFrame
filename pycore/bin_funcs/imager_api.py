@@ -152,7 +152,8 @@ class GifsicleAPI:
         stdout_res = result.stdout.decode("utf-8")
         stderr_res = result.stderr.decode("utf-8")
         logger.message(stdout_res)
-        logger.error(stderr_res)
+        if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
+            logger.error(stderr_res)
         os.chdir(ROOT_PATH)
         return out_full_path
 
@@ -189,7 +190,8 @@ class GifsicleAPI:
             stdout_res = result.stdout.decode("utf-8")
             stderr_res = result.stderr.decode("utf-8")
             logger.message(stdout_res)
-            logger.error(stderr_res)
+            if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
+                logger.error(stderr_res)
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
