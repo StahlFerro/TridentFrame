@@ -366,7 +366,7 @@
                     <div class="control">
                       <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
                         <span class="icon is-small">
-                          <i class="fas fa-folder-open"></i>
+                          <i class="fas fa-save"></i>
                         </span>
                         <span>Save to</span>
                       </a>
@@ -547,8 +547,8 @@ var data = {
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",
-  outdir: "",
   save_path: "",
+  save_fname: "",
   preview_size: "",
   preview_size_hr: "",
   aspect_ratio: "",
@@ -666,6 +666,7 @@ function loadImage() {
         } else if (res && res.data) {
           loadOrigMetadata(res.data);
           populateForm(res.data);
+          data.save_fname = res.data.general_info.name.value;
           data.modify_msgbox = "";
         }
         data.MOD_IS_LOADING = false;
@@ -766,20 +767,10 @@ function clearPreviewImage() {
   clearPreiewMetadata();
 }
 
-function chooseOutDir() {
-  var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options, (chosen_dir) => {
-    console.log(chosen_dir);
-    if (chosen_dir && chosen_dir.length > 0) { 
-      data.outdir = chosen_dir[0];
-    }
-  });
-}
-
 function singleSaveOption() {
   return {
     title: `Save As`,
-    defaultPath: data.sequence_name,
+    defaultPath: data.save_fname,
     filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
     properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
   }
@@ -790,6 +781,7 @@ function setSavePath(afterSaveCallback) {
     if (result.canceled) return;
     let save_path = result.filePath;
     data.save_path = save_path;
+    data.save_fname = path.basename(save_path);
     if (afterSaveCallback) {
       afterSaveCallback();
     }

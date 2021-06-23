@@ -198,7 +198,7 @@
                 <div class="control">
                   <a v-on:click="chooseOutDir" class="button is-neon-cyan">
                     <span class="icon is-small">
-                      <i class="fas fa-folder-open"></i>
+                      <i class="fas fa-save"></i>
                     </span>
                     <span>Save to</span>
                   </a>

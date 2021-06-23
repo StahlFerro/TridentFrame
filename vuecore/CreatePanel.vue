@@ -374,7 +374,7 @@
                     <div class="control">
                       <a class="button is-neon-cyan" v-on:click="btnSetSavePath">
                         <span class="icon is-small">
-                          <i class="fas fa-folder-open"></i>
+                          <i class="fas fa-save"></i>
                         </span>
                         <span>Save to</span>
                       </a>
@@ -544,7 +544,7 @@ let data = {
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
-  sequence_name: "",
+  save_fname: "",
   save_path: "",
   insert_index: "",
   total_size: "",
@@ -664,7 +664,7 @@ function btnLoadImages(ops) {
           console.log(info);
           renderSequence(info, { operation: ops });
           data.total_size = `Total size: ${info.total_size}`;
-          data.sequence_name = data.sequence_name || info.name;
+          data.save_fname = data.save_fname || info.name;
           data.criteria.width = data.criteria.width || info.width;
           data.criteria.height = data.criteria.height || info.height;
           data.criteria.fps = data.criteria.fps || 50;
@@ -726,7 +726,7 @@ function removeFrame(index) {
 function singleSaveOption() {
   return {
     title: `Save As`,
-    defaultPath: data.sequence_name,
+    defaultPath: data.save_fname,
     filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
     properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
   }
@@ -736,7 +736,9 @@ function setSavePath(afterSaveCallback) {
   dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
     if (result.canceled) return;
     let save_path = result.filePath;
+    console.log(result);
     data.save_path = save_path;
+    data.save_fname = path.basename(save_path);
     if (afterSaveCallback) {
       afterSaveCallback();
     }
@@ -758,7 +760,7 @@ function btnClearAll() {
 function clearSequence() {
   data.image_paths = [];
   data.sequence_info = [];
-  data.sequence_name = "";
+  data.save_fname = "";
 }
 
 function clearPreviewAIMG() {
@@ -816,7 +818,7 @@ function previewAIMG() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  let temp_filename = `${data.sequence_name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let temp_filename = `${data.save_fname}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
   let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
   console.log(temp_savepath);
   tridentEngine(["combine_image", data.image_paths, temp_savepath, criteria_pack], (error, res) => {
