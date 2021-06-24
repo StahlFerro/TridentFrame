@@ -27,7 +27,7 @@ else if (process.platform == "linux") {
  * @param {Array} args - Array of arguments. First element of the array must be the name of the python method on the PythonImager class. The rest are the respective method parameters.
  * @param {pyOutCallback} outCallback - The callback function to execute after receiving either stderr or stdout from Python. Must have arguments (error, res), which respresents stderr and stdout respectively. 
  */
-function tridentEngine(args, outCallback) {
+function tridentEngine(args, outCallback, endCallback) {
   console.log(`Current dir: ${process.cwd()}`);
   console.log(`DEPLOY ENV ${deploy_env}`);
 
@@ -51,15 +51,17 @@ function tridentEngine(args, outCallback) {
     });
     pyshell.on("message", (res) => {
       if (!(isNullOrWhitespace(res))) {
-        console.log("pycommander stdout >>>");
+        console.log("pycommander stdout start >>>>>");
         console.log(res);
+        console.log("pycommander stdout end <<<<<");
         parseStdOutAndCall(res, outCallback);
       }
     });
     pyshell.on("stderr", (err) => {
       if (!(isNullOrWhitespace(err))) {
-        console.log("pycommander stderr >>>");
+        console.log("pycommander stderr start >>>>>");
         console.log(err);
+        console.log("pycommander stderr end <<<<<");
         parseStdErrAndCall(err, outCallback);
       }
     });
@@ -69,7 +71,14 @@ function tridentEngine(args, outCallback) {
       if (err) {
         console.error(err);
       }
-      console.log('[PYSHELL END EXIT CODE] ' + code);
+      console.log("out call back was:");
+      console.log(outCallback)
+      console.log("end call back is:");
+      console.log(endCallback);
+      if (endCallback) {
+        endCallback();
+      }
+      console.log('[PYSHELL END EXIT CODE] ' + code); 
       console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
       console.log('[PYSHELL END FINISHED]');
     });
@@ -149,7 +158,9 @@ function parseStdOutAndCall(outstream, callback) {
     }
   }
   catch (parseException) {
-    console.error("[NOT JSON]");
+    console.error("[NOT JSON OUTSTREAM]");
+    console.error(parseException);
+    console.log(outstream)
   }
 }
 

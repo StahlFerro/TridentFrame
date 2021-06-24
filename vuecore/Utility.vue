@@ -19,6 +19,10 @@ else {
 
 // }
 
+function stem(filename) {
+  return filename.replace(/\.[^/.]+$/, "")
+}
+
 function quintcellLister(sequence_infos, from_where="") {
   var quintrows = {};
   // let sq_infos = Array.from(sequence_infos);
@@ -208,6 +212,7 @@ module.exports = {
   roundPrecise: roundPrecise,
   escapeLocalPath: escapeLocalPath,
   TEMP_PATH: TEMP_PATH,
+  stem: stem,
 }
 
 </script>

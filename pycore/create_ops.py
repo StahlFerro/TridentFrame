@@ -119,7 +119,7 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     gifragment_dir = _create_gifragments(image_paths, crbundle.create_aimg_criteria)
     out_full_path = GifsicleAPI.combine_gif_images(gifragment_dir, out_full_path, crbundle)
     logger.preview_path(out_full_path)
-    logger.control("CRT_FINISH")
+    # logger.control("CRT_FINISH")
     return out_full_path
 
 
@@ -224,7 +224,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     # for td in temp_dirs:
     #     shutil.rmtree(td)
     logger.preview_path(out_full_path)
-    logger.control("CRT_FINISH")
+    # logger.control("CRT_FINISH")
 
     return out_full_path
 
