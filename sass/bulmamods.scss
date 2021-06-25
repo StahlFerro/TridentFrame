@@ -5,6 +5,7 @@
 @import "components/button.scss";
 @import "components/contextmenu.scss";
 @import "components/rtable.scss";
+@import "components/select.scss";
 @import "components/text.scss";
 @import "components/interaction.scss";
 @import "components/input.scss";
@@ -704,26 +705,4 @@ canvas.slicegrid-canvas {
     z-index:20;
 }
 
-
-.select.is-neon-cyan { 
-    select {
-        color: $white-d;
-        background-color: $dark-3;
-        border: 2px solid $white-d !important;
-    }
-    select:disabled {
-        border: 2px solid darken($white-d, 40%) !important;
-        color: darken($white-d, 40%) !important;
-    }
-    &:hover select {
-        border: 2px solid lighten($cyan, 10%) !important;
-    }
-    option:hover {
-        box-shadow: 0 0 10px 100px $cyan-bright inset !important;
-    }
-    // For selection arrow recolor
-    &:not(.is-multiple):not(.is-loading)::after {
-        border-color: $cyan;
-    }
-}
 

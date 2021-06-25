@@ -1556,6 +1556,35 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ffbbbb;
 }
 
+/* Responsive table */
+/* Color definitions */
+.is-white-d {
+  color: #cccccc;
+}
+
+.select.is-neon-cyan select {
+  color: #cccccc;
+  background-color: #31363b;
+  border: 2px solid #cccccc !important;
+}
+.select.is-neon-cyan select:disabled {
+  border: 2px solid #666666 !important;
+  color: #666666 !important;
+}
+.select.is-neon-cyan:hover select {
+  border: 2px solid #65d7fa !important;
+}
+.select.is-neon-cyan option:hover {
+  box-shadow: 0 0 10px 100px #98e7ff inset !important;
+}
+.select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
+  border-color: #34caf8;
+}
+.select.is-neon-cyan.non-interactive select {
+  border: 2px solid #666666 !important;
+  color: #666666 !important;
+}
+
 .compact-line {
   line-height: 20px;
 }
@@ -12893,23 +12922,4 @@ canvas.slicegrid-canvas {
   top: 50%;
   transform: translateY(-50%);
   z-index: 20;
-}
-
-.select.is-neon-cyan select {
-  color: #cccccc;
-  background-color: #31363b;
-  border: 2px solid #cccccc !important;
-}
-.select.is-neon-cyan select:disabled {
-  border: 2px solid #666666 !important;
-  color: #666666 !important;
-}
-.select.is-neon-cyan:hover select {
-  border: 2px solid #65d7fa !important;
-}
-.select.is-neon-cyan option:hover {
-  box-shadow: 0 0 10px 100px #98e7ff inset !important;
-}
-.select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
-  border-color: #34caf8;
 }

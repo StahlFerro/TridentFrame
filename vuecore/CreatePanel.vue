@@ -394,7 +394,7 @@
                   <div class="field">
                     <!-- <label class="label">Format</label> -->
                     <div class="control">
-                      <div class="select is-neon-cyan">
+                      <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
                         <select v-model="criteria.format">
                           <option value="GIF">GIF</option>
                           <option value="PNG">APNG</option>
