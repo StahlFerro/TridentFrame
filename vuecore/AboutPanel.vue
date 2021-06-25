@@ -37,25 +37,23 @@ const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const logo = require('../imgs/TridentFrame_logo_512x512.png');
 
-function warpGithub() {
-  shell.openExternal("https://github.com/StahlFerro/TridentFrame");
-}
-
-function warpDonate() {
-  shell.openExternal("https://en.liberapay.com/StahlFerro");
-}
-
 let data = {
   logo: logo,
 }
 
 export default {
   data: function() {
-    return data;
+    return {
+      logo: logo,
+    };
   },
   methods: {
-    warpGithub: warpGithub,
-    warpDonate: warpDonate,
+    warpGithub() {
+      shell.openExternal("https://github.com/StahlFerro/TridentFrame");
+    },
+    warpDonate() {
+      shell.openExternal("https://en.liberapay.com/StahlFerro");
+    },
   }
 }
 </script>

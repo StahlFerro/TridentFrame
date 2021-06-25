@@ -839,21 +839,19 @@ function previewAIMG() {
         previewPathCacheBreaker();
       }
     }},
-    () => { 
-      tridentEngine(["inspect_one", data.preview_path], (error, info) => {
-        if (error) {
-          console.error(error);
-          data.CRT_IS_PREVIEWING = false;
-        } else if (info) {
-          let inspectionData = info.data;
-          console.log("preview inspect");
-          console.log(inspectionData);
-          data.preview_info = inspectionData;
-          data.create_msgbox = "Previewed!";
-          data.CRT_IS_PREVIEWING = false;
-        }
-      })
-    }
+    () => tridentEngine(["inspect_one", data.preview_path], (error, info) => {
+      if (error) {
+        console.error(error);
+        data.CRT_IS_PREVIEWING = false;
+      } else if (info) {
+        let inspectionData = info.data;
+        console.log("preview inspect");
+        console.log(inspectionData);
+        data.preview_info = inspectionData;
+        data.create_msgbox = "Previewed!";
+        data.CRT_IS_PREVIEWING = false;
+      }
+    })
   );
 }
 

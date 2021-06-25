@@ -384,7 +384,7 @@
                 <td colspan="1">
                   <div class="field">
                     <div class="control">
-                      <div class="select is-neon-cyan">
+                      <div class="select is-neon-cyan" v-bind:class="{'non-interactive': buttonIsFrozen}">
                         <select v-model="criteria.format">
                           <option value="GIF">GIF</option>
                           <option value="PNG">APNG</option>
@@ -871,11 +871,11 @@ function modifyImage() {
         if (res.msg) {
           data.modify_msgbox = res.msg;
         }
-        if (res.CONTROL == "MOD_FINISH") {
-          data.modify_msgbox = "Modified and saved!"
-          data.MOD_IS_MODIFYING = false;
-        }
       }
+    },
+    () => {
+      data.modify_msgbox = "Modified and saved!"
+      data.MOD_IS_MODIFYING = false;
     });
   }
 }
@@ -908,29 +908,24 @@ function previewModImg() {
         data.preview_path = res.preview_path;
         previewPathCacheBreaker();
       }
-      if (res.CONTROL == "MOD_FINISH") {
-        console.log(data.preview_path);
-        tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
-          if (error) {
-            console.error(error);
-            data.modify_msgbox = error;
-          } else if (res) {
-            if (res.data) {
-              let preview_data = res.data;
-              console.log(`res -> ${res}`);
-              console.log("preview inspect");
-              loadPreviewMetadata(preview_data);
-              data.preview_info = preview_data;
-              data.preview_size = preview_data.general_info.fsize.value;
-              data.preview_size_hr = preview_data.general_info.fsize_hr.value;
-              data.modify_msgbox = "Previewed!"
-              data.MOD_IS_PREVIEWING = false;
-            }
-          }
-        });
-      }
     }
-  });
+  },
+  () => tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
+    if (error) {
+      console.error(error);
+      data.modify_msgbox = error;
+    } else if (res && res.data) {
+      let preview_data = res.data;
+      console.log(`res -> ${res}`);
+      console.log("preview inspect");
+      loadPreviewMetadata(preview_data);
+      data.preview_info = preview_data;
+      data.preview_size = preview_data.general_info.fsize.value;
+      data.preview_size_hr = preview_data.general_info.fsize_hr.value;
+      data.modify_msgbox = "Previewed!"
+      data.MOD_IS_PREVIEWING = false;
+    }})
+  );
 }
 
 function buttonIsFrozen() {

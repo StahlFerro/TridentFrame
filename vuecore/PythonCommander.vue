@@ -25,7 +25,8 @@ else if (process.platform == "linux") {
 /**
  * Perform call to python console application.
  * @param {Array} args - Array of arguments. First element of the array must be the name of the python method on the PythonImager class. The rest are the respective method parameters.
- * @param {pyOutCallback} outCallback - The callback function to execute after receiving either stderr or stdout from Python. Must have arguments (error, res), which respresents stderr and stdout respectively. 
+ * @param {pyOutCallback} outCallback - The callback function to execute after receiving either stderr or stdout from python/child process. Must have arguments (error, res), which respresents stderr and stdout respectively. 
+ * @param {callback} endCallback - The callback function to execute after python/child process terminates
  */
 function tridentEngine(args, outCallback, endCallback) {
   console.log(`Current dir: ${process.cwd()}`);

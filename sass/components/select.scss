@@ -7,13 +7,16 @@
         background-color: $dark-3;
         border: 2px solid $white-d !important;
     }
-    select:disabled {
-        border: 2px solid darken($white-d, 40%) !important;
-        color: darken($white-d, 40%) !important;
+    &:hover {
+        &::after {
+            border-color: lighten($color: $cyan, $amount: 10%) !important;
+        }
+        border-color: lighten($color: $cyan, $amount: 10%) !important;
+        select {
+            border: 2px solid lighten($cyan, 10%) !important;
+        }
     }
-    &:hover select {
-        border: 2px solid lighten($cyan, 10%) !important;
-    }
+    
     option:hover {
         box-shadow: 0 0 10px 100px $cyan-bright inset !important;
     }
@@ -21,8 +24,13 @@
     &:not(.is-multiple):not(.is-loading)::after {
         border-color: $cyan;
     }
-    &.non-interactive select {
-        border: 2px solid darken($white-d, 40%) !important;
-        color: darken($white-d, 40%) !important;
+    &.non-interactive {
+        &::after {
+            border-color: darken($white-d, 40%) !important;
+        }
+        select {
+            border: 2px solid darken($white-d, 40%) !important;
+            color: darken($white-d, 40%) !important;
+        }
     }
 }

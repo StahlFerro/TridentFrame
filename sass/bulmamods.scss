@@ -5,7 +5,6 @@
 @import "components/button.scss";
 @import "components/contextmenu.scss";
 @import "components/rtable.scss";
-@import "components/select.scss";
 @import "components/text.scss";
 @import "components/interaction.scss";
 @import "components/input.scss";
@@ -705,4 +704,4 @@ canvas.slicegrid-canvas {
     z-index:20;
 }
 
-
+@import "components/select.scss";
