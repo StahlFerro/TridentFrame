@@ -375,7 +375,7 @@
                       <input v-model="save_path"
                         class="input is-neon-white"
                         type="text"
-                        placeholder="Output folder"
+                        placeholder="Output file"
                         readonly
                       />
                     </div>
@@ -462,7 +462,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH } = require("./Utility.vue");
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH, PREVIEWS_PATH } = require("./Utility.vue");
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -891,10 +891,10 @@ function previewModImg() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  let temp_filename = `${data.orig_attribute.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
+  let preview_filename = `${data.orig_attribute.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-  tridentEngine(["modify_image", data.orig_attribute.path, temp_savepath, criteria_pack], (error, res) => {
+  tridentEngine(["modify_image", data.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.modify_msgbox = error;

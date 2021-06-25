@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import shutil
 from pathlib import Path
 
 
@@ -11,8 +12,8 @@ if IS_FROZEN:
     os.chdir(frozen_dir)
 
 
-from pycore.core_funcs import logger
-from pycore.core_funcs import exception
+from pycore.core_funcs import logger, exception
+from pycore.utility import filehandler
 from typing import Dict, List
 from pycore.inspect_ops import inspect_sequence, inspect_general, inspect_sequence_autodetect
 from pycore.create_ops import create_aimg
@@ -42,6 +43,12 @@ class TridentFrameImager:
             print(stdin_data.read())
         else:
             print(stdin_data)
+
+    def purge_previews_dir(self, excluded_images: List[str]):
+        filehandler.empty_previews_dir(excluded_images)
+
+    def purge_temp_dir(self, excluded_images: List[str]):
+        filehandler.empty_temp_dir(excluded_images)
 
     def inspect_one(self, image_path: str, filter: str = ""):
         """Inspect a single image and then return its information"""

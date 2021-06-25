@@ -4,6 +4,7 @@ import time
 from datetime import datetime
 from pathlib import Path
 from hashlib import sha1, sha256
+from typing import List
 
 from pycore.core_funcs import config
 
@@ -29,15 +30,29 @@ def mk_cache_dir(prefix_name: str = "") -> Path:
     return temp_dir
 
 
-def empty_directory_contents(target_dir: Path) -> None:
-    for stuff in os.listdir(target_dir):
-        stuff_path = os.path.join(target_dir, stuff)
+def empty_cache_dir(excluded_files: List[str]) -> None:
+    excluded_files.append(".include")
+    empty_directory_contents(config.get_absolute_cache_path(), excluded_files)
+
+
+def empty_previews_dir(excluded_files: List[str]) -> None:
+    excluded_files.append(".include")
+    empty_directory_contents(config.get_absolute_previews_dir(), excluded_files)
+
+
+def empty_temp_dir(excluded_files: List[str]) -> None:
+    excluded_files.append(".include")
+    empty_directory_contents(config.get_absolute_temp_path(), excluded_files)
+
+
+def empty_directory_contents(target_dir: Path, excluded_files: List[str]) -> None:
+    for item in target_dir.iterdir():
         try:
-            name, ext = os.path.splitext(stuff_path)
-            if os.path.isfile(stuff_path) and ext:
-                os.unlink(stuff_path)
-            elif os.path.isdir(stuff_path):
-                shutil.rmtree(stuff_path)
+            if item.name not in excluded_files:
+                if item.is_file():
+                    os.unlink(item)
+                elif item.is_dir():
+                    shutil.rmtree(item)
         except Exception as e:
             raise Exception(e)
 

@@ -384,7 +384,7 @@
                         v-model="savePath"
                         class="input is-neon-white"
                         type="text"
-                        placeholder="Output folder"
+                        placeholder="Output file"
                         readonly
                       />
                     </div>
@@ -496,6 +496,7 @@ const {
   fileExists,
   readFilesize,
   escapeLocalPath,
+  PREVIEWS_PATH,
   TEMP_PATH,
   stem,
 } = require("./Utility.vue");
@@ -820,10 +821,10 @@ function previewAIMG() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  let temp_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
-  console.log(temp_savepath);
-  tridentEngine(["combine_image", data.image_paths, temp_savepath, criteria_pack], (error, res) => {
+  let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
+  console.log(preview_savepath);
+  tridentEngine(["combine_image", data.image_paths, preview_savepath, criteria_pack], (error, res) => {
     if (error) {
       // console.error(error);
       // let error_data = JSON.parse(error);

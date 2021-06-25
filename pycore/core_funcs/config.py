@@ -22,6 +22,7 @@ with open("./config/settings.json") as f:
     SETTINGS = json.loads(f.read())
 
 CACHE_DIRNAME = SETTINGS["cache_dir"]
+PREVIEWS_DIRNAME = SETTINGS["previews_dir"]
 TEMP_DIRNAME = "temp"
 
 BINARIES_DIR = Path("bin").resolve()
@@ -56,9 +57,30 @@ def get_absolute_cache_path() -> Path:
     """Get the absolute path of the cache directory
 
     Returns:
-        Path: Absolute path of the cache directory
+        Path: Absolute path of the cache directory. Creates the directory if it doesn't exist
     """
-    return Path(CACHE_DIRNAME).resolve()
+    cache_dir = Path(CACHE_DIRNAME).resolve()
+    if not cache_dir.exists():
+        os.mkdir(cache_dir)
+    empty_file = cache_dir.joinpath(".include")
+    if not empty_file.exists():
+        open(empty_file, "x")
+    return cache_dir
+
+
+def get_absolute_previews_dir() -> Path:
+    """Get the absolute path of the cache directory
+
+    Returns:
+        Path: Absolute path of the cache directory. Creates the directory if it doesn't exist
+    """
+    previews_dir = Path(PREVIEWS_DIRNAME).resolve()
+    if not previews_dir.exists():
+        os.mkdir(previews_dir)
+    empty_file = previews_dir.joinpath(".include")
+    if not empty_file.exists():
+        open(empty_file, "x")
+    return previews_dir
 
 
 def get_absolute_temp_path() -> Path:
@@ -67,8 +89,13 @@ def get_absolute_temp_path() -> Path:
     Returns:
         Path: Asbolute path of the temp directory
     """
-    return Path(TEMP_DIRNAME).resolve()
-
+    temp_dir = Path(TEMP_DIRNAME).resolve()
+    if not temp_dir.exists():
+        os.mkdir(temp_dir)
+    empty_file = temp_dir.joinpath(".include")
+    if not empty_file.exists():
+        open(empty_file, "x")
+    return temp_dir
 
 def imager_exec_path(binname: str) -> Path:
     """Get the path to the internal image processing binaries\n

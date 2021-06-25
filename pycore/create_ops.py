@@ -1,5 +1,6 @@
 import os
 import io
+import shutil
 import numpy as np
 from typing import List
 from pathlib import Path
@@ -118,6 +119,7 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     """
     gifragment_dir = _create_gifragments(image_paths, crbundle.create_aimg_criteria)
     out_full_path = GifsicleAPI.combine_gif_images(gifragment_dir, out_full_path, crbundle)
+    shutil.rmtree(gifragment_dir)
     logger.preview_path(out_full_path)
     # logger.control("CRT_FINISH")
     return out_full_path
@@ -225,11 +227,11 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     #     shutil.rmtree(td)
     logger.preview_path(out_full_path)
     # logger.control("CRT_FINISH")
-
+    shutil.rmtree(out_dir)
     return out_full_path
 
 
-def create_aimg(image_paths: List[Path], out_path: Path, crbundle: CriteriaBundle):
+def create_aimg(image_paths: List[Path], out_path: Path, crbundle: CriteriaBundle) -> Path:
     """ Umbrella generator for creating animated images from a sequence of images """
     # abs_image_paths = [os.path.abspath(ip) for ip in image_paths if os.path.exists(ip)]
     img_paths = [f for f in image_paths if str.lower(f.suffix[1:]) in STATIC_IMG_EXTS]

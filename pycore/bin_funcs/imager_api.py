@@ -198,7 +198,7 @@ class GifsicleAPI:
 
     @classmethod
     def extract_gif_frames(cls, unop_gif_path: Path, name: str, criteria: SplitCriteria,
-                           out_dir: Optional[Path] = None) -> List[Path]:
+                           out_dir: Path) -> List[Path]:
         """Extract all frames of a GIF image and return a list of paths of each frame
 
         Args:
@@ -210,7 +210,6 @@ class GifsicleAPI:
         Returns:
             List[Path]: List of paths of each extracted gif frame.
         """
-        out_dir = filehandler.mk_cache_dir(prefix_name="fragment_dir") if not out_dir else out_dir
         fr_paths = []
         # indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
         with Image.open(unop_gif_path) as gif:
@@ -441,14 +440,14 @@ class APNGOptAPI:
         cwd = os.getcwd()
         # common_path = os.path.commonpath([opt_exec_path, target_path])
         target_rel_path = Path(os.path.relpath(target_path, cwd))
-        out_rel_path = Path(os.path.relpath(out_full_path, cwd))
+        # out_rel_path = Path(os.path.relpath(out_full_path, cwd))
         for index, (arg, description) in enumerate(aopt_args, start=1):
             logger.message(f"index {index}, arg {arg}, description: {description}")
             cmdlist = [
                 str(cls.opt_exec_path),
                 arg,
                 str(target_rel_path),
-                str(out_rel_path),
+                str(target_rel_path),
             ]
             # raise Exception(cmdlist, out_full_path)
             cmd = " ".join(cmdlist)
@@ -473,7 +472,7 @@ class APNGOptAPI:
                         index += 1
             # if target_path != out_full_path:
             # target_path = out_full_path
-        # out_full_path = shutil.move(target_path, out_full_path)
+        out_full_path = shutil.move(target_path, out_full_path)
         shutil.rmtree(aopt_dir)
         return out_full_path
 

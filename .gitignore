@@ -256,15 +256,18 @@ typings/
 
 
 test/
-temp/
 
 
 
-##### Ignore everything inside cache/ but keep .placeholder so that this folder will be commited to the VCS
+##### Ignore everything inside cache/, previews/ and temp/ except .include files so that this folder will be commited to the VCS
 
 
 cache/*
-!cache/.placeholder
+!cache/.include
+previews/*
+!previews/.include
+temp/*
+!temp/.include
 release/*
 engine/*
 writer/markdown/*
