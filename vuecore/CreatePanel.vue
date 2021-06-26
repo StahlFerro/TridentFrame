@@ -677,6 +677,7 @@ function btnLoadImages(ops) {
           updateAspectRatio(data.criteria.width, data.criteria.height);
           data.CRT_IS_LOADING = false;
           toggleLoadButtonAnim(ops, false);
+          data.lock_aspect_ratio = true;
         }
       }
     });
@@ -758,6 +759,7 @@ function btnClearAll() {
   clearPreviewAIMG();
   clearAuxInfo();
   clearFields();
+  data.lock_aspect_ratio = false;
 }
 
 function clearSequence() {

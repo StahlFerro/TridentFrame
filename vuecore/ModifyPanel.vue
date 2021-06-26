@@ -670,6 +670,7 @@ function loadImage() {
           data.modify_msgbox = "";
         }
         data.MOD_IS_LOADING = false;
+        data.lock_aspect_ratio = true;
       }
     });
     console.log("registered!");
@@ -757,6 +758,7 @@ function clearImage() {
   clearOrigMetadata();
   clearCriteriaFields();
   clearPreviewImage();
+  data.lock_aspect_ratio = false;
 }
 
 function clearPreviewImage() {

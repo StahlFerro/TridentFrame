@@ -262,6 +262,7 @@ var defaults = {
   fps: "",
   average_delay: "",
   delays: "",
+  delays_are_even: "",
   loop_duration: "",
   loop_count: "",
   has_transparency: "",
