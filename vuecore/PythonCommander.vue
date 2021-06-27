@@ -1,6 +1,7 @@
 <script>
 const { PythonShell } = require("python-shell");
 const process = require("process");
+const { spawn } = require("child_process");
 const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
 const settings = JSON.parse(fs.readFileSync(deploy_env == "DEV"? "./config/settings.json" : "./resources/app/config/settings.json"));
@@ -13,13 +14,18 @@ let _remaining;
 
 let python_path = "";
 let engine_exec_path = "";
-if (process.platform == "win32") {
-  python_path = "python.exe";
-  engine_exec_path = "./resources/app/engine/windows/main.exe";
+if (deploy_env == "DEV") {
+  engine_exec_path = "main.py"
 }
-else if (process.platform == "linux") { 
-  python_path = "python3.7";
-  engine_exec_path = "./resources/app/engine/linux/main";
+else {
+  if (process.platform == "win32") {
+    python_path = "python.exe";
+    engine_exec_path = "./resources/app/engine/windows/tridentengine.exe";
+  }
+  else if (process.platform == "linux") { 
+    python_path = "python3.7";
+    engine_exec_path = "./resources/app/engine/linux/tridentengine";
+  }
 }
 
 /**
@@ -45,7 +51,7 @@ function tridentEngine(args, outCallback, endCallback) {
 
 
   if (deploy_env == "DEV") {
-    let pyshell = new PythonShell('main.py',{
+    let pyshell = new PythonShell(engine_exec_path, {
       mode: "text",
       pythonPath: python_path,
       // pythonOptions: ["-u"],
@@ -86,14 +92,18 @@ function tridentEngine(args, outCallback, endCallback) {
   } 
   
   else {
-    const spawn = require("child_process").spawn;
+    console.debug("Spawning python engine");
     const child = spawn(engine_exec_path, {mode: "text"});
     // child.stdout.on("data", receive.bind(this));
+    console.debug("Attached event handlers");
     child.stdout.on("data", (data) => { receiveInternal("message", data, outCallback) });
     child.stderr.on("data", (err) => { receiveInternal("stderr", err, outCallback) });
     child.on('close', function (code) {
-      if (code != 0) {
-        console.log("Program ended with a error code : " + code);
+      console.log(`Program ended with code: ${code}`);
+      if (code == 0) {
+        if (endCallback) {
+          endCallback();
+        }
       }
     });
     console.log("beforewrite");
