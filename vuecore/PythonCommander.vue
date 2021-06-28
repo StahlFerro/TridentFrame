@@ -4,10 +4,8 @@ const process = require("process");
 const { spawn } = require("child_process");
 const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
-const settings = JSON.parse(fs.readFileSync(deploy_env == "DEV"? "./config/settings.json" : "./resources/app/config/settings.json"));
-const cache_path = deploy_env == "DEV"? `./${settings.cache_dir}` : `./resources/app/engine/windows/${settings.cache_dir}`;
-const bufferfile = `${cache_path}/${settings.bufferfile}`;
-const criterionfile = `${cache_path}/${settings.criterionfile}`;
+let engine_dir = "";
+let settings;
 const { EOL } = require('os');
 const { isNullOrWhitespace } = require("./Utility.vue");
 let _remaining;
@@ -16,15 +14,20 @@ let python_path = "";
 let engine_exec_path = "";
 if (deploy_env == "DEV") {
   engine_exec_path = "main.py"
+  settings = JSON.parse(fs.readFileSync("./config/settings.json"));
 }
 else {
   if (process.platform == "win32") {
     python_path = "python.exe";
-    engine_exec_path = "./resources/app/engine/windows/tridentengine.exe";
+    engine_dir = "./resources/app/engine/windows/";
+    engine_exec_path = `${engine_dir}/tridentengine.exe`;
+    settings = JSON.parse(fs.readFileSync(`${engine_dir}/config/settings.json`));
   }
   else if (process.platform == "linux") { 
     python_path = "python3.7";
-    engine_exec_path = "./resources/app/engine/linux/tridentengine";
+    engine_dir = "./resources/app/engine/linux/";
+    engine_exec_path = `${engine_dir}/tridentengine.exe`;
+    settings = JSON.parse(fs.readFileSync(`${engine_dir}/config/settings.json`));
   }
 }
 

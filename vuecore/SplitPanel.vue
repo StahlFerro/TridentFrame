@@ -315,6 +315,7 @@ function loadImage() {
     let chosen_path = result.filePaths;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
+      console.debug('chosen path undefined/null. returning...')
       return;
     }
     data.SPL_IS_LOADING = true;
