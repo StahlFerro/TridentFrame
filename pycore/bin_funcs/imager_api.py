@@ -170,7 +170,7 @@ class GifsicleAPI:
             if result.stderr:
                 stderr_res = result.stderr.readline().decode("utf-8")
                 if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
-                    logger.error({"jackpot": stderr_res})
+                    logger.error(stderr_res)
 
         os.chdir(ROOT_PATH)
         return out_full_path
@@ -395,21 +395,15 @@ class ImageMagickAPI:
         ]
         cmd = " ".join(args)
         logger.debug(cmd)
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        index = 0
+        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         while process.poll() is None:
-            output = process.stdout.readline()
-            err = ""
+            if process.stdout:
+                stdout_res = process.stdout.readline().decode("utf-8")
+                if stdout_res:
+                    logger.message(stdout_res)
             if process.stderr:
-                err = process.stderr.readline()
-            # if process.poll() is not None:
-            # break
-            if output:
-                output = output.decode("utf-8")
-                logger.message(output.capitalize())
-            if err:
-                err = err.decode("utf-8")
-                logger.error(err.capitalize())
+                stderr_res = process.stderr.readline().decode("utf-8")
+                logger.error(stderr_res)
         return out_path
 
 
