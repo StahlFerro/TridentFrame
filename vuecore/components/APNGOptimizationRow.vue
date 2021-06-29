@@ -13,7 +13,7 @@
           <div class="control">
             <div class="select is-neon-cyan" v-bind:class="{'non-interactive': !apng_is_optimized}">
               <select v-model="apng_optimization_level" @change="$emit('update:apng_optimization_level', apng_optimization_level)">
-                <option value="1" title="Default compression">Lv. 1: zlib compression</option>
+                <option value="1" title="Normal compression">Lv. 1: zlib compression</option>
                 <option value="2" title="Heavier compression than zlib. Takes longer">Lv. 2: 7zip compression</option>
                 <option value="3" title="Heaviest compression. Takes longest">Lv. 3: zopfli compression</option>
               </select>

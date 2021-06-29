@@ -7,7 +7,6 @@ verify_ssl = true
 pywin32 = {version = "*", sys_platform = "== 'win32'"}
 black = "*"
 pylint = "*"
-cx-freeze = "*"
 pyinstaller = "*"
 
 [requires]

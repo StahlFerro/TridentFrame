@@ -26,7 +26,7 @@ else {
   else if (process.platform == "linux") { 
     python_path = "python3.7";
     engine_dir = "./resources/app/engine/linux/";
-    engine_exec_path = `${engine_dir}/tridentengine.exe`;
+    engine_exec_path = `${engine_dir}/tridentengine`;
     settings = JSON.parse(fs.readFileSync(`${engine_dir}/config/settings.json`));
   }
 }
