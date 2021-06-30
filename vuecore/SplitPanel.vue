@@ -431,11 +431,11 @@ function splitImage() {
       if (res.msg) {
         data.split_msgbox = res.msg;
       }
-      if (res.CONTROL == "SPL_FINISH") {
-        data.split_msgbox = "All frames successfully split!"
-        data.SPL_IS_SPLITTING = false;
-      }
     }
+  },
+  () => {
+    data.split_msgbox = "All frames successfully split!"
+    data.SPL_IS_SPLITTING = false;
   });
 }
 

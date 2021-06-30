@@ -405,6 +405,7 @@ class ImageMagickAPI:
             Path: Path of unoptimized GIF
         """
         # raise Exception(gif_path, out_dir)
+        supressed_error_txts = ["binary operator expected"]
         args = [
             str(cls.imagemagick_path),
             "convert",
@@ -422,7 +423,8 @@ class ImageMagickAPI:
                     logger.message(stdout_res)
             if process.stderr:
                 stderr_res = process.stderr.readline().decode("utf-8")
-                logger.error(stderr_res)
+                if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    logger.error(stderr_res)
         return out_path
 
 
