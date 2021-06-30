@@ -272,3 +272,9 @@ release/*
 engine/*
 writer/markdown/*
 jsconfig.json
+
+
+##### KDE and/or GNOME FreeDesktop specification files exclusion
+
+.directory
+.desktop

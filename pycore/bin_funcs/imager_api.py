@@ -2,7 +2,9 @@ import os
 import shutil
 import subprocess
 import uuid
+import shlex
 from pathlib import Path
+from sys import platform
 from typing import List, Tuple, Iterator, Optional
 
 from PIL import Image
@@ -34,7 +36,7 @@ class GifsicleAPI:
     gifsicle_path = config.imager_exec_path("gifsicle")
 
     @classmethod
-    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle) -> List[str]:
+    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, quotes=False) -> List[str]:
         """Generate a list containing gifsicle command and its arguments.
 
         Args:
@@ -52,7 +54,7 @@ class GifsicleAPI:
         loop_arg = "--loopcount"
         opti_mode = "--unoptimize"
         args = [
-            str(cls.gifsicle_path),
+            shlex.quote(str(cls.gifsicle_path)) if quotes else str(cls.gifsicle_path),
             opti_mode,
         ]
         colorspace_arg = ""
@@ -81,14 +83,14 @@ class GifsicleAPI:
             loop_arg,
             globstar_path,
             "--output",
-            str(out_full_path),
+            shlex.quote(str(out_full_path)) if quotes else str(out_full_path),
         ])
         if ";" in " ".join(args):
             raise MalformedCommandException("gifsicle")
         return args
 
     @classmethod
-    def _mod_args_builder(
+    def _mod_options_builder(
             cls, metadata: AnimatedImageMetadata, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria
     ) -> List[Tuple[str, str]]:
         """Get a list of gifsicle arguments from either ModificationCriteria, or GIFOptimizationCriteria
@@ -142,14 +144,10 @@ class GifsicleAPI:
         Returns:
             Path: Path of the created GIF.
         """
-        args = cls._combine_cmd_builder(out_full_path, crbundle)
-        logger.message(f"ARGS::::: {args}")
         ROOT_PATH = str(os.getcwd())
         if os.getcwd() != gifragment_dir:
             logger.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")
             os.chdir(gifragment_dir)
-        cmd = " ".join(args)
-        logger.debug(f"cmd -> {cmd}")
         logger.message("Combining frames...")
         supressed_error_txts = ["gifsicle.exe: warning: too many colors, using local colormaps",
                                 "You may want to try"]
@@ -161,7 +159,15 @@ class GifsicleAPI:
         # if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
         #     logger.error(stderr_res)
 
-        result = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        if platform.startswith('win') or platform.startswith('cygwin'):
+            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=False)
+            logger.debug(args)
+            result = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        elif platform.startswith('linux'):
+            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=True)
+            cmd = " ".join(args)
+            logger.debug(f"linux cmd -> {cmd}")
+            result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         while result.poll() is None:
             if result.stdout:
                 stdout_res = result.stdout.readline().decode("utf-8")
@@ -190,7 +196,7 @@ class GifsicleAPI:
         Returns:
             Path: Resulting path of the new modified GIF image.
         """
-        sicle_args = cls._mod_args_builder(original_metadata, crbundle.modify_aimg_criteria, crbundle.gif_opt_criteria)
+        sicle_args = cls._mod_options_builder(original_metadata, crbundle.modify_aimg_criteria, crbundle.gif_opt_criteria)
         supressed_error_txts = ["gifsicle.exe: warning: too many colors, using local colormaps",
                                 "You may want to try"]
         # yield {"sicle_args": sicle_args}
