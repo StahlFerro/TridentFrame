@@ -89,6 +89,15 @@ class MalformedCommandException(Exception):
         super().__init__(self.message)
 
 
+class UnsupportedPlatformException(Exception):
+    """Raised when a certain operation is not supported in the specified platform"""
+
+    def __init__(self, platform, message="The platform {platform_name} does not support this operation") -> None:
+        self.platform = platform
+        self.message = message.format(platform_name=platform)
+        super().__init__(self.message)
+
+
 def set_exception_handler(json_mode: bool = True):
     """Toggle between normal python verbose traceback print, or json-serialzied traceback and error prints
 

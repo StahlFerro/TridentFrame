@@ -4,7 +4,7 @@
       <div class="about-info">
         <img v-bind:src="logo" class="about-logo no-select-drag"/>
         <h1 class="about-software-name">TridentFrame</h1>
-        <p class="about-software-version">v0.1.0-beta.6</p>
+        <p class="about-software-version">v0.1.0-beta.7</p>
         <p class="about-software-author">Developed by StahlFerro</p>
       </div>
       <div class="about-buttons">
@@ -37,25 +37,23 @@ const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const logo = require('../imgs/TridentFrame_logo_512x512.png');
 
-function warpGithub() {
-  shell.openExternal("https://github.com/StahlFerro/TridentFrame");
-}
-
-function warpDonate() {
-  shell.openExternal("https://en.liberapay.com/StahlFerro");
-}
-
 let data = {
   logo: logo,
 }
 
 export default {
   data: function() {
-    return data;
+    return {
+      logo: logo,
+    };
   },
   methods: {
-    warpGithub: warpGithub,
-    warpDonate: warpDonate,
+    warpGithub() {
+      shell.openExternal("https://github.com/StahlFerro/TridentFrame");
+    },
+    warpDonate() {
+      shell.openExternal("https://en.liberapay.com/StahlFerro");
+    },
   }
 }
 </script>

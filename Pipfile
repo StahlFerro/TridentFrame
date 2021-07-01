@@ -4,12 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pyinstaller = "*"
-apng = "*"
 pywin32 = {version = "*", sys_platform = "== 'win32'"}
 black = "*"
 pylint = "*"
-Pillow = "==8.2.0"
+pyinstaller = "*"
 
 [requires]
 python_version = "3.7"
@@ -19,6 +17,4 @@ allow_prereleases = true
 
 [packages]
 apng = "*"
-pyinstaller = "*"
-Pillow = "*"
-numpy = "*"
+pillow = "~=8.2.0"

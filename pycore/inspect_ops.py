@@ -1,6 +1,5 @@
 import os
 import io
-import numpy as np
 from pathlib import Path
 from typing import List, Dict, Optional, Union
 
@@ -192,7 +191,7 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     creation_dt = filehandler.get_creation_time(image_path)
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
-    logger.debug({"im.info": im.info, "icc": icc, "palette": imageutils.reshape_palette(palette) if palette else None})
+    # logger.debug({"im.info": im.info, "icc": icc, "palette": imageutils.reshape_palette(palette) if palette else None})
     im.close()
 
     metadata = ImageMetadata({
@@ -277,7 +276,7 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     #     logger.debug(f"Total colors: {color_counts.shape[1]}")
         # imageutils.get_palette_image(gif).show()
     color_mode = COLOR_MODE_FULL_NAME.get(gif.mode) or gif.mode
-    logger.debug({"gif.info": gif.info, "palette": imageutils.reshape_palette(palette) if palette else None})
+    # logger.debug({"gif.info": gif.info, "palette": imageutils.reshape_palette(palette) if palette else None})
     gif.close()
     metadata = AnimatedImageMetadata({
         "name": filename,

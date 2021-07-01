@@ -2,7 +2,9 @@ import os
 import shutil
 import subprocess
 import uuid
+import shlex
 from pathlib import Path
+from sys import platform, stderr
 from typing import List, Tuple, Iterator, Optional
 
 from PIL import Image
@@ -18,8 +20,9 @@ from pycore.models.criterion import (
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.core_funcs import logger
 from pycore.core_funcs import config
-from pycore.core_funcs.exception import MalformedCommandException
+from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPlatformException
 from pycore.utility import filehandler, imageutils
+from pycore.utility.sysinfo import os_platform, OS
 
 
 class PillowImageAPI:
@@ -34,7 +37,7 @@ class GifsicleAPI:
     gifsicle_path = config.imager_exec_path("gifsicle")
 
     @classmethod
-    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle) -> List[str]:
+    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, quotes=False) -> List[str]:
         """Generate a list containing gifsicle command and its arguments.
 
         Args:
@@ -51,6 +54,10 @@ class GifsicleAPI:
         disposal = "background"
         loop_arg = "--loopcount"
         opti_mode = "--unoptimize"
+        args = [
+            shlex.quote(str(cls.gifsicle_path)) if quotes else str(cls.gifsicle_path),
+            opti_mode,
+        ]
         colorspace_arg = ""
         lossy_arg = ""
         if not criteria.loop_count or criteria.loop_count == 0:
@@ -63,30 +70,29 @@ class GifsicleAPI:
         if gif_opt_criteria:
             if gif_opt_criteria.is_optimized and gif_opt_criteria.optimization_level:
                 opti_mode = f"--optimize={gif_opt_criteria.optimization_level}"
+                args.append(opti_mode)
             if gif_opt_criteria.is_lossy and gif_opt_criteria.lossy_value:
                 lossy_arg = f"--lossy={gif_opt_criteria.lossy_value}"
+                args.append(lossy_arg)
             if gif_opt_criteria.is_reduced_color and gif_opt_criteria.color_space:
                 colorspace_arg = f"--colors={gif_opt_criteria.color_space}"
+                args.append(colorspace_arg)
 
-        args = [
-            str(cls.gifsicle_path),
-            opti_mode,
-            lossy_arg,
-            colorspace_arg,
+        args.extend([
             f"--delay={delay}",
             f"--disposal={disposal}",
             loop_arg,
             globstar_path,
             "--output",
-            f'"{out_full_path}"',
-        ]
+            shlex.quote(str(out_full_path)) if quotes else str(out_full_path),
+        ])
         if ";" in " ".join(args):
             raise MalformedCommandException("gifsicle")
         return args
 
     @classmethod
-    def _mod_args_builder(
-        cls, metadata: AnimatedImageMetadata, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria
+    def _mod_options_builder(
+            cls, metadata: AnimatedImageMetadata, criteria: ModificationCriteria, gif_criteria: GIFOptimizationCriteria
     ) -> List[Tuple[str, str]]:
         """Get a list of gifsicle arguments from either ModificationCriteria, or GIFOptimizationCriteria
 
@@ -98,19 +104,20 @@ class GifsicleAPI:
             List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and
             a status string to echo out on the second value
         """
-        args = []
+        options = []
         if criteria.must_resize(metadata):
-            args.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
+            options.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
         if criteria.must_redelay(metadata):
-            args.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
+            options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
         if gif_criteria.is_optimized and gif_criteria.optimization_level:
-            args.append((f"--optimize={gif_criteria.optimization_level}",
-                         f"Optimizing image with level {gif_criteria.optimization_level}..."))
+            options.append((f"--optimize={gif_criteria.optimization_level}",
+                            f"Optimizing image with level {gif_criteria.optimization_level}..."))
         if gif_criteria.is_lossy and gif_criteria.lossy_value:
-            args.append((f"--lossy={gif_criteria.lossy_value}",
-                         f"Lossy compressing with value: {gif_criteria.lossy_value}..."))
+            options.append((f"--lossy={gif_criteria.lossy_value}",
+                            f"Lossy compressing with value: {gif_criteria.lossy_value}..."))
         if gif_criteria.is_reduced_color and gif_criteria.color_space:
-            args.append((f"--colors={gif_criteria.color_space}", f"Reducing colors to: {gif_criteria.color_space}..."))
+            options.append((f"--colors={gif_criteria.color_space}",
+                            f"Reducing colors to: {gif_criteria.color_space}..."))
         # if criteria.flip_x:
         #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
         # if criteria.flip_y:
@@ -124,8 +131,10 @@ class GifsicleAPI:
                 loop_arg = "--no-loopcount"
             elif loop_count > 1:
                 loop_arg = f"--loopcount={loop_count - 1}"
-            args.append((loop_arg, f"Changing loop count to {loop_count or 'Infinite'}..."))
-        return args
+            options.append((loop_arg, f"Changing loop count to {loop_count or 'Infinite'}..."))
+        if ";" in " ".join(opt[0] for opt in options):
+            raise MalformedCommandException("gifsicle")
+        return options
 
     @classmethod
     def combine_gif_images(cls, gifragment_dir: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
@@ -139,26 +148,48 @@ class GifsicleAPI:
         Returns:
             Path: Path of the created GIF.
         """
-        args = cls._combine_cmd_builder(out_full_path, crbundle)
-        logger.message(f"ARGS::::: {args}")
         ROOT_PATH = str(os.getcwd())
         if os.getcwd() != gifragment_dir:
             logger.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")
             os.chdir(gifragment_dir)
-        cmd = " ".join(args)
-        logger.debug(f"cmd -> {cmd}")
         logger.message("Combining frames...")
-        result = subprocess.run(cmd, shell=True, capture_output=True)
-        stdout_res = result.stdout.decode("utf-8")
-        stderr_res = result.stderr.decode("utf-8")
-        logger.message(stdout_res)
-        if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
-            logger.error(stderr_res)
+        supressed_error_txts = ["warning: too many colors, using local colormaps",
+                                "You may want to try"]
+
+        # result = subprocess.run(cmd, shell=True, capture_output=True)
+        # stdout_res = result.stdout.decode("utf-8")
+        # stderr_res = result.stderr.decode("utf-8")
+        # logger.message(stdout_res)
+        # if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
+        #     logger.error(stderr_res)
+
+        if os_platform() == OS.WINDOWS:
+            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=False)
+            logger.debug(args)
+            result = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        elif os_platform() == OS.LINUX:
+            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=True)
+            cmd = " ".join(args)
+            logger.debug(f"linux cmd -> {cmd}")
+            result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        else:
+            raise UnsupportedPlatformException(platform)
+        while result.poll() is None:
+            if result.stdout:
+                stdout_res = result.stdout.readline().decode("utf-8")
+                if stdout_res:
+                    logger.message(stdout_res)
+            if result.stderr:
+                stderr_res = result.stderr.readline().decode("utf-8")
+                if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    logger.error(stderr_res)
+
         os.chdir(ROOT_PATH)
         return out_full_path
 
     @classmethod
-    def modify_gif_image(cls, target_path: Path, out_full_path: Path, original_metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
+    def modify_gif_image(cls, target_path: Path, out_full_path: Path, original_metadata: AnimatedImageMetadata,
+                         crbundle: CriteriaBundle) -> Path:
         """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied
         arguments.
 
@@ -171,34 +202,50 @@ class GifsicleAPI:
         Returns:
             Path: Resulting path of the new modified GIF image.
         """
-        sicle_args = cls._mod_args_builder(original_metadata, crbundle.modify_aimg_criteria, crbundle.gif_opt_criteria)
+        gifsicle_options = cls._mod_options_builder(original_metadata, crbundle.modify_aimg_criteria,
+                                                    crbundle.gif_opt_criteria)
+        supressed_error_txts = ["warning: too many colors, using local colormaps",
+                                "You may want to try"]
         # yield {"sicle_args": sicle_args}
-        for index, (arg, description) in enumerate(sicle_args, start=1):
+        if os_platform() not in (OS.WINDOWS, OS.LINUX):
+            raise UnsupportedPlatformException(platform)
+        for index, (option, description) in enumerate(gifsicle_options, start=1):
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
             logger.message(description)
-            cmdlist = [
+            args = [
                 str(cls.gifsicle_path),
-                arg,
-                f'"{target_path}"',
+                # shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
+                option,
+                str(target_path),
+                # shlex.quote(str(target_path)) if os_platform() == OS.LINUX else str(target_path),
                 "--output",
-                f'"{out_full_path}"',
+                str(out_full_path)
+                # shlex.quote(str(out_full_path)) if os_platform() == OS.LINUX else str(out_full_path)
             ]
-            cmd = " ".join(cmdlist)
+            # cmd = " ".join(cmdlist)
             # yield {"msg": f"[{index}/{total_ops}] {description}"}
             # yield {"cmd": cmd}
-            result = subprocess.run(cmd, shell=False, capture_output=True)
-            stdout_res = result.stdout.decode("utf-8")
-            stderr_res = result.stderr.decode("utf-8")
-            logger.message(stdout_res)
-            if "gifsicle.exe: warning: too many colors, using local colormaps" not in stderr_res:
-                logger.error(stderr_res)
+            logger.debug(f"cmd -> {' '.join(args)}")
+            cmd = " ".join(args)
+            result = subprocess.Popen(args if os_platform() == OS.WINDOWS else cmd,
+                                      stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                      shell=os_platform() == OS.LINUX)
+            while result.poll() is None:
+                if result.stdout:
+                    stdout_res = result.stdout.readline().decode("utf-8")
+                    if stdout_res:
+                        logger.message(stdout_res)
+                if result.stderr:
+                    stderr_res = result.stderr.readline().decode("utf-8")
+                    if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                        logger.error(stderr_res)
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
 
     @classmethod
     def extract_gif_frames(cls, unop_gif_path: Path, name: str, criteria: SplitCriteria,
-                           out_dir: Optional[Path] = None) -> List[Path]:
+                           out_dir: Path) -> List[Path]:
         """Extract all frames of a GIF image and return a list of paths of each frame
 
         Args:
@@ -210,7 +257,6 @@ class GifsicleAPI:
         Returns:
             List[Path]: List of paths of each extracted gif frame.
         """
-        out_dir = filehandler.mk_cache_dir(prefix_name="fragment_dir") if not out_dir else out_dir
         fr_paths = []
         # indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
         with Image.open(unop_gif_path) as gif:
@@ -243,29 +289,29 @@ class GifsicleAPI:
         return fr_paths
 
     @classmethod
-    def reduce_gif_color(cls, gif_path: Path, out_dir: Path, color: int = 256) -> Path:
+    def reduce_gif_color(cls, gif_path: Path, out_path: Path, color: int = 256) -> Path:
         """Reduce the color of a GIF image.
 
         Args:
             gif_path (Path): Path to the GIF.
-            out_dir (Path): Output directory to save the color-reduced GIF to.
+            out_path (Path): Output path to save the color-reduced GIF as.
             color (int, optional): Amount of color to reduce to. Defaults to 256.
 
         Returns:
             Path: Absolute path of the color-reduced GIF.
         """
         logger.message("Performing color reduction...")
-        redux_gif_path = out_dir.joinpath(gif_path.name)
+        # redux_gif_path = out_dir.joinpath(gif_path.name)
         args = [
             str(cls.gifsicle_path),
             f"--colors={color}",
             str(gif_path),
             "--output",
-            str(redux_gif_path),
+            str(out_path),
         ]
         cmd = " ".join(args)
         subprocess.run(args)
-        return redux_gif_path
+        return out_path
 
     @classmethod
     def unoptimize_gif(cls, gif_path: Path, out_dir: Path) -> Path:
@@ -296,7 +342,6 @@ class GifsicleAPI:
 
 
 class ImageMagickAPI:
-
     imagemagick_path = config.imager_exec_path("imagemagick")
 
     @classmethod
@@ -307,7 +352,8 @@ class ImageMagickAPI:
             gifopt_criteria (GIFOptimizationCriteria): GIF Optimization Criteria
 
         Returns:
-            List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and a status string to echo out on the second value
+            List[Tuple[str, str]]: List of two valued tuples containing imagemagick argument on the first value, and a
+            status string to echo out on the second value
         """
         args = []
         if gifopt_criteria.is_unoptimized:
@@ -321,11 +367,8 @@ class ImageMagickAPI:
         """Use imagemagick to perform an array of modifications to an existing animated image.
 
         Args:
-            magick_args (List[Tuple[str, str]]): Arguments to supply to imagemagick.
             target_path (Path): Target path of the animated image.
             out_full_path (Path): Output full path to save the animated image to.
-            total_ops (int, optional): UNUSED. Defaults to 0.
-            shift_index (int, optional): UNUSED. Defaults to 0.
 
         Returns:
             Path: Path of the new modified animated image.
@@ -357,40 +400,35 @@ class ImageMagickAPI:
         Args:
             gif_path (Path): Path to GIF image
             out_path (Path): Output path of unoptimized GIF
-            decoder (str): 'imagemagick' or 'gifsicle', to be used to unoptimize the GIF
 
         Returns:
             Path: Path of unoptimized GIF
         """
         # raise Exception(gif_path, out_dir)
+        supressed_error_txts = ["binary operator expected"]
         args = [
             str(cls.imagemagick_path),
+            "convert",
             "-coalesce",
             str(gif_path),
             str(out_path)
         ]
         cmd = " ".join(args)
         logger.debug(cmd)
-        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-        index = 0
+        process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         while process.poll() is None:
-            output = process.stdout.readline()
-            err = ""
+            if process.stdout:
+                stdout_res = process.stdout.readline().decode("utf-8")
+                if stdout_res:
+                    logger.message(stdout_res)
             if process.stderr:
-                err = process.stderr.readline()
-            # if process.poll() is not None:
-            # break
-            if output:
-                output = output.decode("utf-8")
-                logger.message(output.capitalize())
-            if err:
-                err = err.decode("utf-8")
-                logger.error(err.capitalize())
+                stderr_res = process.stderr.readline().decode("utf-8")
+                if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    logger.error(stderr_res)
         return out_path
 
 
 class APNGOptAPI:
-
     opt_exec_path = config.imager_exec_path("apngopt")
 
     @classmethod
@@ -415,10 +453,10 @@ class APNGOptAPI:
 
     @classmethod
     def optimize_apng(
-        cls,
-        target_path: Path,
-        out_full_path: Path,
-        apngopt_criteria: APNGOptimizationCriteria,
+            cls,
+            target_path: Path,
+            out_full_path: Path,
+            apngopt_criteria: APNGOptimizationCriteria,
     ) -> Path:
         """Use apngopt to optimize an APNG. Returns the output path
 
@@ -441,51 +479,56 @@ class APNGOptAPI:
         cwd = os.getcwd()
         # common_path = os.path.commonpath([opt_exec_path, target_path])
         target_rel_path = Path(os.path.relpath(target_path, cwd))
-        out_rel_path = Path(os.path.relpath(out_full_path, cwd))
+        # out_rel_path = Path(os.path.relpath(out_full_path, cwd))
         for index, (arg, description) in enumerate(aopt_args, start=1):
             logger.message(f"index {index}, arg {arg}, description: {description}")
             cmdlist = [
                 str(cls.opt_exec_path),
                 arg,
                 str(target_rel_path),
-                str(out_rel_path),
+                str(target_rel_path),
             ]
             # raise Exception(cmdlist, out_full_path)
             cmd = " ".join(cmdlist)
             # result = subprocess.check_output(cmd, shell=True)
             logger.message("Performing optimization...")
+            logger.debug(cmd)
             logger.debug(cmdlist)
-            process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             index = 0
             while process.poll() is None:
-                output = process.stdout.readline()
                 # if process.poll() is not None:
                 # break
-                if output:
-                    output = output.decode("utf-8")
-                    logger.message(output.capitalize())
-                    if "saving" in output:
+                if process.stdout:
+                    stdout_res = process.stdout.readline().decode("utf-8")
+                    logger.message(stdout_res.capitalize())
+                    if stdout_res and "saving" in stdout_res:
                         out_words = " ".join(
-                            output.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
+                            stdout_res.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
                         )[:-1]
                         out_msg = f"Optimizing frame {out_words}..."
                         logger.message(out_msg)
                         index += 1
+                if process.stderr:
+                    stderr_res = process.stderr.readline().decode("utf-8")
+                    # if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    if stderr_res:
+                        logger.error(stderr_res)
             # if target_path != out_full_path:
             # target_path = out_full_path
-        # out_full_path = shutil.move(target_path, out_full_path)
+        out_full_path = shutil.move(target_path, out_full_path)
         shutil.rmtree(aopt_dir)
         return out_full_path
 
 
 class APNGDisAPI:
-
     dis_exec_path = config.imager_exec_path("apngdis")
 
     @classmethod
     def _dis_args_builder(cls, criteria: ModificationCriteria) -> List[Tuple[str, str]]:
         args = []
         return args
+
     @classmethod
     def split_apng(cls, target_path: Path, seq_rename: str = "", out_dir: Path = "") -> Iterator[Path]:
         """Split an APNG image into its individual frames using apngdis
@@ -513,6 +556,8 @@ class APNGDisAPI:
         fcount = len(APNG.open(target_path).frames)
         logger.debug(f"fcount: {fcount}")
         shout_nums = imageutils.shout_indices(fcount, 5)
+        logger.debug(f"cmd -> {cmd}")
+        logger.debug(args)
         process = subprocess.Popen(
             args,
             stdout=subprocess.PIPE,
@@ -557,7 +602,6 @@ class APNGDisAPI:
                           f != filename and f.name.startswith(uuid_name) and f.suffixes[-1] == ".png")
         return fragment_paths
         # Remove generated text file and copied APNG file
-
 
 # class PNGQuantAPI:
 

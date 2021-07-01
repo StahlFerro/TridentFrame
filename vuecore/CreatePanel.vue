@@ -381,10 +381,10 @@
                     </div>
                     <div class="control is-expanded">
                       <input
-                        v-model="save_path"
+                        v-model="savePath"
                         class="input is-neon-white"
                         type="text"
-                        placeholder="Output folder"
+                        placeholder="Output file"
                         readonly
                       />
                     </div>
@@ -394,7 +394,7 @@
                   <div class="field">
                     <!-- <label class="label">Format</label> -->
                     <div class="control">
-                      <div class="select is-neon-cyan">
+                      <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
                         <select v-model="criteria.format">
                           <option value="GIF">GIF</option>
                           <option value="PNG">APNG</option>
@@ -496,7 +496,9 @@ const {
   fileExists,
   readFilesize,
   escapeLocalPath,
+  PREVIEWS_PATH,
   TEMP_PATH,
+  stem,
 } = require("./Utility.vue");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
@@ -544,8 +546,8 @@ let data = {
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
-  save_fname: "",
-  save_path: "",
+  save_fstem: "",
+  save_dir: "",
   insert_index: "",
   total_size: "",
   orig_width: "",
@@ -664,7 +666,7 @@ function btnLoadImages(ops) {
           console.log(info);
           renderSequence(info, { operation: ops });
           data.total_size = `Total size: ${info.total_size}`;
-          data.save_fname = data.save_fname || info.name;
+          data.save_fstem = stem(data.save_fstem || info.name);
           data.criteria.width = data.criteria.width || info.width;
           data.criteria.height = data.criteria.height || info.height;
           data.criteria.fps = data.criteria.fps || 50;
@@ -675,6 +677,7 @@ function btnLoadImages(ops) {
           updateAspectRatio(data.criteria.width, data.criteria.height);
           data.CRT_IS_LOADING = false;
           toggleLoadButtonAnim(ops, false);
+          data.lock_aspect_ratio = true;
         }
       }
     });
@@ -726,7 +729,7 @@ function removeFrame(index) {
 function singleSaveOption() {
   return {
     title: `Save As`,
-    defaultPath: data.save_fname,
+    defaultPath: saveFileName(),
     filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
     properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
   }
@@ -737,8 +740,9 @@ function setSavePath(afterSaveCallback) {
     if (result.canceled) return;
     let save_path = result.filePath;
     console.log(result);
-    data.save_path = save_path;
-    data.save_fname = path.basename(save_path);
+    // data.save_path = save_path;
+    data.save_dir = path.dirname(save_path);
+    data.save_fstem = stem(path.basename(save_path));
     if (afterSaveCallback) {
       afterSaveCallback();
     }
@@ -755,12 +759,13 @@ function btnClearAll() {
   clearPreviewAIMG();
   clearAuxInfo();
   clearFields();
+  data.lock_aspect_ratio = false;
 }
 
 function clearSequence() {
   data.image_paths = [];
   data.sequence_info = [];
-  data.save_fname = "";
+  data.save_fstem = "";
 }
 
 function clearPreviewAIMG() {
@@ -818,10 +823,10 @@ function previewAIMG() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  let temp_filename = `${data.save_fname}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
-  console.log(temp_savepath);
-  tridentEngine(["combine_image", data.image_paths, temp_savepath, criteria_pack], (error, res) => {
+  let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
+  console.log(preview_savepath);
+  tridentEngine(["combine_image", data.image_paths, preview_savepath, criteria_pack], (error, res) => {
     if (error) {
       // console.error(error);
       // let error_data = JSON.parse(error);
@@ -835,23 +840,21 @@ function previewAIMG() {
         data.preview_path = res.preview_path;
         previewPathCacheBreaker();
       }
-      if (res.CONTROL == "CRT_FINISH") {
-        tridentEngine(["inspect_one", data.preview_path], (err, info) => {
-          if (error) {
-            console.error(error);
-            data.CRT_IS_PREVIEWING = false;
-          } else if (info) {
-            let inspectionData = info.data;
-            console.log("preview inspect");
-            console.log(inspectionData);
-            data.preview_info = inspectionData;
-            data.create_msgbox = "Previewed!";
-            data.CRT_IS_PREVIEWING = false;
-          }
-        });
+    }},
+    () => tridentEngine(["inspect_one", data.preview_path], (error, info) => {
+      if (error) {
+        console.error(error);
+        data.CRT_IS_PREVIEWING = false;
+      } else if (info) {
+        let inspectionData = info.data;
+        console.log("preview inspect");
+        console.log(inspectionData);
+        data.preview_info = inspectionData;
+        data.create_msgbox = "Previewed!";
+        data.CRT_IS_PREVIEWING = false;
       }
-    }
-  });
+    })
+  );
 }
 
 function btnCreateAIMG() {
@@ -859,7 +862,7 @@ function btnCreateAIMG() {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
-  if (data.save_path) {
+  if (savePath()) {
     createAnimatedImage();
   }
   else {
@@ -889,7 +892,7 @@ function createAnimatedImage() {
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
-    tridentEngine(["combine_image", data.image_paths, data.save_path, criteria_pack], (error, res) => {
+    tridentEngine(["combine_image", data.image_paths, savePath(), criteria_pack], (error, res) => {
       if (error) {
         try {
           data.create_msgbox = error;
@@ -905,12 +908,12 @@ function createAnimatedImage() {
           if (res.msg) {
             data.create_msgbox = res.msg;
           }
-          if (res.CONTROL == "CRT_FINISH") {
-            data.create_msgbox = `${data.criteria.format.toUpperCase()} created!`;
-            data.CRT_IS_CREATING = false;
-          }
         }
       }
+    },
+    () => {
+      data.create_msgbox = `${data.criteria.format.toUpperCase()} created!`;
+      data.CRT_IS_CREATING = false;
     });
   }
 }
@@ -919,6 +922,17 @@ function computeTotalSequenceSize() {
   console.log("computeTotalSequenceSize");
   console.log(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
   return readFilesize(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
+}
+
+function saveFileName() {
+  return `${data.save_fstem}.${data.criteria.format.toLowerCase()}`;
+}
+
+function savePath() {
+  if (data.save_dir && data.save_fstem)
+    return path.join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
+  else
+    return "";
 }
 
 function btnToggleCheckerBG() {
@@ -1069,6 +1083,8 @@ export default {
     isButtonFrozen: isButtonFrozen,
     sequenceCounter: sequenceCounter,
     computeTotalSequenceSize: computeTotalSequenceSize,
+    saveFileName: saveFileName,
+    savePath: savePath,
   },
   directives:{
     ClickOutside,

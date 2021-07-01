@@ -372,10 +372,10 @@
                       </a>
                     </div>
                     <div class="control is-expanded">
-                      <input v-model="save_path"
+                      <input v-model="savePath"
                         class="input is-neon-white"
                         type="text"
-                        placeholder="Output folder"
+                        placeholder="Output file"
                         readonly
                       />
                     </div>
@@ -384,7 +384,7 @@
                 <td colspan="1">
                   <div class="field">
                     <div class="control">
-                      <div class="select is-neon-cyan">
+                      <div class="select is-neon-cyan" v-bind:class="{'non-interactive': buttonIsFrozen}">
                         <select v-model="criteria.format">
                           <option value="GIF">GIF</option>
                           <option value="PNG">APNG</option>
@@ -462,7 +462,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./PythonCommander.vue");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH } = require("./Utility.vue");
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH, PREVIEWS_PATH, stem } = require("./Utility.vue");
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -547,8 +547,8 @@ var data = {
   preview_path: "",
   preview_path_cb: "",
   preview_info: "",
-  save_path: "",
-  save_fname: "",
+  save_fstem: "",
+  save_dir: "",
   preview_size: "",
   preview_size_hr: "",
   aspect_ratio: "",
@@ -670,6 +670,7 @@ function loadImage() {
           data.modify_msgbox = "";
         }
         data.MOD_IS_LOADING = false;
+        data.lock_aspect_ratio = true;
       }
     });
     console.log("registered!");
@@ -680,6 +681,7 @@ function loadOrigMetadata(res) {
   let geninfo = res.general_info;
   let ainfo = res.animation_info;
   data.orig_attribute.name = geninfo.name.value;
+  data.save_fstem = stem(data.save_fstem || geninfo.name.value);
   data.orig_attribute.width = geninfo.width.value;
   data.orig_attribute.height = geninfo.height.value;
   data.orig_attribute.fps = `${ainfo.fps.value} FPS`;
@@ -757,6 +759,7 @@ function clearImage() {
   clearOrigMetadata();
   clearCriteriaFields();
   clearPreviewImage();
+  data.lock_aspect_ratio = false;
 }
 
 function clearPreviewImage() {
@@ -770,23 +773,39 @@ function clearPreviewImage() {
 function singleSaveOption() {
   return {
     title: `Save As`,
-    defaultPath: data.save_fname,
+    defaultPath: saveFileName(),
     filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
     properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
   }
 }
 
+
+function saveFileName() {
+  return `${data.save_fstem}.${data.criteria.format.toLowerCase()}`;
+}
+
+function savePath() {
+  if (data.save_dir && data.save_fstem)
+    return path.join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
+  else
+    return "";
+}
+
+
 function setSavePath(afterSaveCallback) {
   dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
     if (result.canceled) return;
     let save_path = result.filePath;
-    data.save_path = save_path;
-    data.save_fname = path.basename(save_path);
+    console.log(result);
+    // data.save_path = save_path;
+    data.save_dir = path.dirname(save_path);
+    data.save_fstem = stem(path.basename(save_path));
     if (afterSaveCallback) {
       afterSaveCallback();
     }
   });
 }
+
 
 function btnSetSavePath() {
   setSavePath();
@@ -841,7 +860,7 @@ function btnModifyImage() {
     data.modify_msgbox = "Please load the animated image to be modified!";
     return;
   }
-  if (data.save_path)
+  if (savePath())
     modifyImage();
   else
     setSavePath(modifyImage);
@@ -860,7 +879,7 @@ function modifyImage() {
       "apng_opt_criteria": data.apng_opt_criteria,
     });
     // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-    tridentEngine(["modify_image", data.orig_attribute.path, data.save_path, criteria_pack], (error, res) => {
+    tridentEngine(["modify_image", data.orig_attribute.path, savePath(), criteria_pack], (error, res) => {
       if (error) {
         console.error(error);
         data.modify_msgbox = error;
@@ -871,11 +890,11 @@ function modifyImage() {
         if (res.msg) {
           data.modify_msgbox = res.msg;
         }
-        if (res.CONTROL == "MOD_FINISH") {
-          data.modify_msgbox = "Modified and saved!"
-          data.MOD_IS_MODIFYING = false;
-        }
       }
+    },
+    () => {
+      data.modify_msgbox = "Modified and saved!"
+      data.MOD_IS_MODIFYING = false;
     });
   }
 }
@@ -891,10 +910,10 @@ function previewModImg() {
     "gif_opt_criteria": data.gif_opt_criteria,
     "apng_opt_criteria": data.apng_opt_criteria,
   });
-  let temp_filename = `${data.orig_attribute.name}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let temp_savepath = path.join(process.cwd(), TEMP_PATH, temp_filename);
+  let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
+  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-  tridentEngine(["modify_image", data.orig_attribute.path, temp_savepath, criteria_pack], (error, res) => {
+  tridentEngine(["modify_image", data.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
     if (error) {
       console.error(error);
       data.modify_msgbox = error;
@@ -908,29 +927,24 @@ function previewModImg() {
         data.preview_path = res.preview_path;
         previewPathCacheBreaker();
       }
-      if (res.CONTROL == "MOD_FINISH") {
-        console.log(data.preview_path);
-        tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
-          if (error) {
-            console.error(error);
-            data.modify_msgbox = error;
-          } else if (res) {
-            if (res.data) {
-              let preview_data = res.data;
-              console.log(`res -> ${res}`);
-              console.log("preview inspect");
-              loadPreviewMetadata(preview_data);
-              data.preview_info = preview_data;
-              data.preview_size = preview_data.general_info.fsize.value;
-              data.preview_size_hr = preview_data.general_info.fsize_hr.value;
-              data.modify_msgbox = "Previewed!"
-              data.MOD_IS_PREVIEWING = false;
-            }
-          }
-        });
-      }
     }
-  });
+  },
+  () => tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
+    if (error) {
+      console.error(error);
+      data.modify_msgbox = error;
+    } else if (res && res.data) {
+      let preview_data = res.data;
+      console.log(`res -> ${res}`);
+      console.log("preview inspect");
+      loadPreviewMetadata(preview_data);
+      data.preview_info = preview_data;
+      data.preview_size = preview_data.general_info.fsize.value;
+      data.preview_size_hr = preview_data.general_info.fsize_hr.value;
+      data.modify_msgbox = "Previewed!"
+      data.MOD_IS_PREVIEWING = false;
+    }})
+  );
 }
 
 function buttonIsFrozen() {
@@ -1047,6 +1061,8 @@ export default {
     previewDimensions: previewDimensions,
     buttonIsFrozen: buttonIsFrozen,
     previewSizePercentage: previewSizePercentage,
+    saveFileName: saveFileName,
+    savePath: savePath,
   }
 };
 </script>

@@ -13,8 +13,8 @@
           <div class="field">
             <!-- <label class="label">Optimization Level</label> -->
             <div class="control">
-              <div class="select is-neon-cyan">
-                <select v-model="optimization_level" @change="$emit('update:optimization_level', optimization_level)" v-bind:disabled="!is_optimized">
+              <div class="select is-neon-cyan" v-bind:class="{'non-interactive': !is_optimized}">
+                <select v-model="optimization_level" @change="$emit('update:optimization_level', optimization_level)">
                   <option value="1">Lv. 1: Store changed portion only</option>
                   <option value="2">Lv. 2: Also uses transparency</option>
                   <option value="3">Lv. 3: All optimization methods</option>

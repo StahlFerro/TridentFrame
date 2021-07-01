@@ -74,6 +74,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "apng_opt_criteria": crbundle.apng_opt_criteria,
     })
     new_image_path = create_aimg(frame_paths, out_path, creation_crbundle)
+    shutil.rmtree(frames_dir)
     return new_image_path
 
 

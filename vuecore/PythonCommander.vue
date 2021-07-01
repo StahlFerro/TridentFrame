@@ -1,33 +1,43 @@
 <script>
 const { PythonShell } = require("python-shell");
 const process = require("process");
+const { spawn } = require("child_process");
 const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
-const settings = JSON.parse(fs.readFileSync(deploy_env == "DEV"? "./config/settings.json" : "./resources/app/config/settings.json"));
-const cache_path = deploy_env == "DEV"? `./${settings.cache_dir}` : `./resources/app/engine/windows/${settings.cache_dir}`;
-const bufferfile = `${cache_path}/${settings.bufferfile}`;
-const criterionfile = `${cache_path}/${settings.criterionfile}`;
+let engine_dir = "";
+let settings;
 const { EOL } = require('os');
 const { isNullOrWhitespace } = require("./Utility.vue");
 let _remaining;
 
 let python_path = "";
 let engine_exec_path = "";
-if (process.platform == "win32") {
-  python_path = "python.exe";
-  engine_exec_path = "./resources/app/engine/windows/main.exe";
+if (deploy_env == "DEV") {
+  engine_exec_path = "main.py"
+  settings = JSON.parse(fs.readFileSync("./config/settings.json"));
 }
-else if (process.platform == "linux") { 
-  python_path = "python3.7";
-  engine_exec_path = "./resources/app/engine/linux/main";
+else {
+  if (process.platform == "win32") {
+    python_path = "python.exe";
+    engine_dir = "./resources/app/engine/windows/";
+    engine_exec_path = `${engine_dir}/tridentengine.exe`;
+    settings = JSON.parse(fs.readFileSync(`${engine_dir}/config/settings.json`));
+  }
+  else if (process.platform == "linux") { 
+    python_path = "python3.7";
+    engine_dir = "./resources/app/engine/linux/";
+    engine_exec_path = `${engine_dir}/tridentengine`;
+    settings = JSON.parse(fs.readFileSync(`${engine_dir}/config/settings.json`));
+  }
 }
 
 /**
  * Perform call to python console application.
  * @param {Array} args - Array of arguments. First element of the array must be the name of the python method on the PythonImager class. The rest are the respective method parameters.
- * @param {pyOutCallback} outCallback - The callback function to execute after receiving either stderr or stdout from Python. Must have arguments (error, res), which respresents stderr and stdout respectively. 
+ * @param {pyOutCallback} outCallback - The callback function to execute after receiving either stderr or stdout from python/child process. Must have arguments (error, res), which respresents stderr and stdout respectively. 
+ * @param {callback} endCallback - The callback function to execute after python/child process terminates
  */
-function tridentEngine(args, outCallback) {
+function tridentEngine(args, outCallback, endCallback) {
   console.log(`Current dir: ${process.cwd()}`);
   console.log(`DEPLOY ENV ${deploy_env}`);
 
@@ -44,22 +54,24 @@ function tridentEngine(args, outCallback) {
 
 
   if (deploy_env == "DEV") {
-    let pyshell = new PythonShell('main.py',{
+    let pyshell = new PythonShell(engine_exec_path, {
       mode: "text",
       pythonPath: python_path,
       // pythonOptions: ["-u"],
     });
     pyshell.on("message", (res) => {
       if (!(isNullOrWhitespace(res))) {
-        console.log("pycommander stdout >>>");
+        console.log("pycommander stdout start >>>>>");
         console.log(res);
+        console.log("pycommander stdout end <<<<<");
         parseStdOutAndCall(res, outCallback);
       }
     });
     pyshell.on("stderr", (err) => {
       if (!(isNullOrWhitespace(err))) {
-        console.log("pycommander stderr >>>");
+        console.log("pycommander stderr start >>>>>");
         console.log(err);
+        console.log("pycommander stderr end <<<<<");
         parseStdErrAndCall(err, outCallback);
       }
     });
@@ -69,21 +81,32 @@ function tridentEngine(args, outCallback) {
       if (err) {
         console.error(err);
       }
-      console.log('[PYSHELL END EXIT CODE] ' + code);
+      console.log("out call back was:");
+      console.log(outCallback)
+      console.log("end call back is:");
+      console.log(endCallback);
+      if (endCallback) {
+        endCallback();
+      }
+      console.log('[PYSHELL END EXIT CODE] ' + code); 
       console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
       console.log('[PYSHELL END FINISHED]');
     });
   } 
   
   else {
-    const spawn = require("child_process").spawn;
+    console.debug("Spawning python engine");
     const child = spawn(engine_exec_path, {mode: "text"});
     // child.stdout.on("data", receive.bind(this));
+    console.debug("Attached event handlers");
     child.stdout.on("data", (data) => { receiveInternal("message", data, outCallback) });
     child.stderr.on("data", (err) => { receiveInternal("stderr", err, outCallback) });
     child.on('close', function (code) {
-      if (code != 0) {
-        console.log("Program ended with a error code : " + code);
+      console.log(`Program ended with code: ${code}`);
+      if (code == 0) {
+        if (endCallback) {
+          endCallback();
+        }
       }
     });
     console.log("beforewrite");
@@ -149,7 +172,9 @@ function parseStdOutAndCall(outstream, callback) {
     }
   }
   catch (parseException) {
-    console.error("[NOT JSON]");
+    console.error("[NOT JSON OUTSTREAM]");
+    console.error(parseException);
+    console.log(outstream)
   }
 }
 

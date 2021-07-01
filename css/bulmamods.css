@@ -12895,14 +12895,22 @@ canvas.slicegrid-canvas {
   z-index: 20;
 }
 
+/* Responsive table */
+/* Color definitions */
+.is-white-d {
+  color: #cccccc;
+}
+
 .select.is-neon-cyan select {
   color: #cccccc;
   background-color: #31363b;
   border: 2px solid #cccccc !important;
 }
-.select.is-neon-cyan select:disabled {
-  border: 2px solid #666666 !important;
-  color: #666666 !important;
+.select.is-neon-cyan:hover {
+  border-color: #65d7fa !important;
+}
+.select.is-neon-cyan:hover::after {
+  border-color: #65d7fa !important;
 }
 .select.is-neon-cyan:hover select {
   border: 2px solid #65d7fa !important;
@@ -12912,4 +12920,11 @@ canvas.slicegrid-canvas {
 }
 .select.is-neon-cyan:not(.is-multiple):not(.is-loading)::after {
   border-color: #34caf8;
+}
+.select.is-neon-cyan.non-interactive::after {
+  border-color: #666666 !important;
+}
+.select.is-neon-cyan.non-interactive select {
+  border: 2px solid #666666 !important;
+  color: #666666 !important;
 }

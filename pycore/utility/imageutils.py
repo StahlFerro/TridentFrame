@@ -1,6 +1,5 @@
 import json
 import re
-import numpy as np
 from collections import deque
 from collections import OrderedDict
 from pathlib import Path
@@ -16,21 +15,21 @@ PNG_BLOCK_SIZE = 64
 ACTL_CHUNK = b"\x61\x63\x54\x4D"
 
 
-def reshape_palette(palette_array) -> np.array:
-    """Reshape im.getpalette() one-dimensional array to 
-
-    Args:
-        palette_array ([type]): One-dimensional array (im.getpalette()) [r, g, b, r, g, b, ...]
-
-    Returns:
-        np.array: 2 dimensional numpy array of (R, G, B) value per item [[r, g, b], [r, g, b], ...]
-    """
-    return np.array(palette_array, dtype=np.uint8).reshape(256, 3)
-
-
-def get_palette_image(im) -> Image:
-    palette = np.array(im.getpalette(), dtype=np.uint8).reshape(16, 16, 3)
-    return Image.fromarray(palette, "RGB").resize((256, 256), resample=Image.NEAREST)
+# def reshape_palette(palette_array) -> np.array:
+#     """Reshape im.getpalette() one-dimensional array to
+#
+#     Args:
+#         palette_array ([type]): One-dimensional array (im.getpalette()) [r, g, b, r, g, b, ...]
+#
+#     Returns:
+#         np.array: 2 dimensional numpy array of (R, G, B) value per item [[r, g, b], [r, g, b], ...]
+#     """
+#     return np.array(palette_array, dtype=np.uint8).reshape(256, 3)
+#
+#
+# def get_palette_image(im) -> Image:
+#     palette = np.array(im.getpalette(), dtype=np.uint8).reshape(16, 16, 3)
+#     return Image.fromarray(palette, "RGB").resize((256, 256), resample=Image.NEAREST)
 
 
 def get_image_delays(image_path: Path, extension: str) -> Iterator[float]:

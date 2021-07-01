@@ -10,6 +10,7 @@ _bin_dirpath = 'bin/win64'
 imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
 added_files = [
     ('cache/.include', 'cache/'),
+    ('previews/.include', 'previews/'),
     ('temp/.include', 'temp/'),
     ('config/imagers.json', 'config/'),
     ('config/settings.json', 'config/'),
@@ -33,7 +34,7 @@ exe = EXE(pyz,
           a.scripts,
           [],
           exclude_binaries=True,
-          name='main',
+          name='tridentengine',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,

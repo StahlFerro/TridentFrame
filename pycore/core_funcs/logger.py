@@ -1,6 +1,6 @@
 import json
 from json import JSONEncoder
-import numpy
+# import numpy
 import sys
 import os
 import traceback
@@ -28,10 +28,10 @@ class JSONEncoderTrident(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, bytes):
             return obj.hex()
-        if isinstance(obj, numpy.ndarray):
-            return obj.tolist()
-        if isinstance(obj, numpy.int32):
-            return int(obj)
+        # if isinstance(obj, numpy.ndarray):
+        #     return obj.tolist()
+        # if isinstance(obj, numpy.int32):
+        #     return int(obj)
         return JSONEncoder.default(self, obj)
 
 
@@ -59,7 +59,7 @@ def warn(logmsg: str):
     print(json.dumps(msg))
 
 
-def error(logmsg: str):
+def error(logmsg: Any):
     msg = {"error": logmsg}
     print(json.dumps(msg), file=sys.stderr)
 

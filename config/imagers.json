@@ -7,7 +7,7 @@
     },
     "linux": {
         "gifsicle": "gifsicle-1.92-2+b1_amd64/gifsicle",
-        "imagemagick": "ImageMagick-7.0.8-61-unix/convert",
+        "imagemagick": "ImageMagick-7.1.0-2-unix/magick",
         "apngopt": "apngopt-1.4-bin-linux/apngopt",
         "apngdis": "apngdis-2.9-bin-linux/apngdis"
     }
