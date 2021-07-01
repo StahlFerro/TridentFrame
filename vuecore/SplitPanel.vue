@@ -20,35 +20,35 @@
                 <td class="spl-info-label is-cyan">Name</td>
                 <td class="spl-info-data">
                   <span v-if="name">{{ name }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Dimensions</td>
                 <td class="spl-info-data">
                   <span v-if="dimensions">{{ dimensions }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">File Size</td>
                 <td class="spl-info-data">
                   <span v-if="file_size">{{ file_size_hr }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Has Transparency</td>
                 <td class="spl-info-data">
                   <span v-if="has_transparency">{{ has_transparency? "Yes" : "No" }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Total frames</td>
                 <td class="spl-info-data">
                   <span v-if="frame_count">{{ frame_count }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <!-- <tr>
@@ -61,36 +61,36 @@
               <tr>
                 <td class="spl-info-label is-cyan">Average delay (ms)</td>
                 <td class="spl-info-data">                  
-                  <span v-if="average_delay">{{ average_delay }}</span>
-                  <span v-else>-</span>
+                  <span v-if="average_delay">{{ roundPrecise(average_delay, 3) }}</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Delays are even</td>
                 <td class="spl-info-data">                  
-                  <span v-if="delays_are_even">{{ delays_are_even? "Yes" : "No" }}</span>
-                  <span v-else>-</span>
+                  <span v-if="delays">{{ delays_are_even? "Yes" : "No" }}</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Delays</td>
                 <td class="spl-info-data">                  
                   <span v-if="delays">{{ delays }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Frame rate (FPS)</td>
                 <td class="spl-info-data">
                   <span v-if="fps">{{ fps }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
                 <td class="spl-info-label is-cyan">Loop duration</td>
                 <td class="spl-info-data">
                   <span v-if="loop_duration">{{ loop_duration }}</span>
-                  <span v-else>-</span>
+                  <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
@@ -100,7 +100,7 @@
                       <span v-if="loop_count == 0">Infinite</span>
                       <span v-else>{{ loop_count }}</span>
                     </template>
-                    <template v-else>-</template>
+                    <!-- <template v-else>-</template> -->
                 </td>
               </tr>
             </tbody>
@@ -243,7 +243,7 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { randString, validateFilename, numConstrain, escapeLocalPath } = require('./Utility.vue');
+const { randString, validateFilename, numConstrain, escapeLocalPath, roundPrecise } = require('./Utility.vue');
 const { tridentEngine } = require("./PythonCommander.vue");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
@@ -459,6 +459,7 @@ export default {
     splitImage: splitImage,
     numConstrain: numConstrain,
     escapeLocalPath: escapeLocalPath,
+    roundPrecise: roundPrecise,
   }
 };
 </script>
