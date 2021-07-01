@@ -4,7 +4,7 @@ import subprocess
 import uuid
 import shlex
 from pathlib import Path
-from sys import platform
+from sys import platform, stderr
 from typing import List, Tuple, Iterator, Optional
 
 from PIL import Image
@@ -153,7 +153,7 @@ class GifsicleAPI:
             logger.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")
             os.chdir(gifragment_dir)
         logger.message("Combining frames...")
-        supressed_error_txts = ["gifsicle.exe: warning: too many colors, using local colormaps",
+        supressed_error_txts = ["warning: too many colors, using local colormaps",
                                 "You may want to try"]
 
         # result = subprocess.run(cmd, shell=True, capture_output=True)
@@ -204,7 +204,7 @@ class GifsicleAPI:
         """
         gifsicle_options = cls._mod_options_builder(original_metadata, crbundle.modify_aimg_criteria,
                                                     crbundle.gif_opt_criteria)
-        supressed_error_txts = ["gifsicle.exe: warning: too many colors, using local colormaps",
+        supressed_error_txts = ["warning: too many colors, using local colormaps",
                                 "You may want to try"]
         # yield {"sicle_args": sicle_args}
         if os_platform() not in (OS.WINDOWS, OS.LINUX):
@@ -492,23 +492,27 @@ class APNGOptAPI:
             cmd = " ".join(cmdlist)
             # result = subprocess.check_output(cmd, shell=True)
             logger.message("Performing optimization...")
+            logger.debug(cmd)
             logger.debug(cmdlist)
-            process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             index = 0
             while process.poll() is None:
-                output = process.stdout.readline()
                 # if process.poll() is not None:
                 # break
-                if output:
-                    output = output.decode("utf-8")
-                    logger.message(output.capitalize())
-                    if "saving" in output:
+                if process.stdout:
+                    stdout_res = process.stdout.readline().decode("utf-8")
+                    logger.message(stdout_res.capitalize())
+                    if "saving" in stdout_res:
                         out_words = " ".join(
-                            output.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
+                            stdout_res.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
                         )[:-1]
                         out_msg = f"Optimizing frame {out_words}..."
                         logger.message(out_msg)
                         index += 1
+                if process.stderr:
+                    stderr_res = process.stderr.readline().decode("utf-8")
+                    # if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    logger.error(stderr_res)
             # if target_path != out_full_path:
             # target_path = out_full_path
         out_full_path = shutil.move(target_path, out_full_path)
@@ -551,6 +555,8 @@ class APNGDisAPI:
         fcount = len(APNG.open(target_path).frames)
         logger.debug(f"fcount: {fcount}")
         shout_nums = imageutils.shout_indices(fcount, 5)
+        logger.debug(f"cmd -> {cmd}")
+        logger.debug(args)
         process = subprocess.Popen(
             args,
             stdout=subprocess.PIPE,
