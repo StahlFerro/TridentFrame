@@ -502,7 +502,7 @@ class APNGOptAPI:
                 if process.stdout:
                     stdout_res = process.stdout.readline().decode("utf-8")
                     logger.message(stdout_res.capitalize())
-                    if "saving" in stdout_res:
+                    if stdout_res and "saving" in stdout_res:
                         out_words = " ".join(
                             stdout_res.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
                         )[:-1]
@@ -512,7 +512,8 @@ class APNGOptAPI:
                 if process.stderr:
                     stderr_res = process.stderr.readline().decode("utf-8")
                     # if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
-                    logger.error(stderr_res)
+                    if stderr_res:
+                        logger.error(stderr_res)
             # if target_path != out_full_path:
             # target_path = out_full_path
         out_full_path = shutil.move(target_path, out_full_path)
