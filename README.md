@@ -11,17 +11,17 @@ TridentFrame consists of two main parts. The python backend handling image proce
 
 ## Powered by
 
-* [Electron](https://electronjs.org/) : Cross-platform GUI
-* [Vue](https://vuejs.org/) : Frontend framework
-* [Pillow](https://python-pillow.org/) : Image preprocessing and spritesheet handling
-* [ImageMagick](https://imagemagick.org/index.php) : GIF manipulation
-* [Gifsicle](https://www.lcdf.org/gifsicle/) : GIF creation and splitting
-* [pyAPNG](https://github.com/eight04/pyAPNG) : APNG creation & splitting
-* [apngdis](http://apngdis.sourceforge.net/) : APNG disassembler
-* [apngopt](https://sourceforge.net/projects/apng/files/APNG_Optimizer/) : APNG modification
-* [Bulma](https://bulma.io/) : For the clean UI
-* [Sass](https://sass-lang.com/) : Modifying bulma's styles
-* [Font Awesome](https://fontawesome.com/) : Icons
+* [Electron](https://electronjs.org/) : Cross-platform GUI.
+* [Vue](https://vuejs.org/) : Frontend framework.
+* [Pillow](https://python-pillow.org/) : Image preprocessing and spritesheet handling.
+* [ImageMagick](https://imagemagick.org/index.php) : GIF manipulation.
+* [Gifsicle](https://www.lcdf.org/gifsicle/) : GIF creation and splitting.
+* [pyAPNG](https://github.com/eight04/pyAPNG) : APNG creation & splitting.
+* [apngdis](http://apngdis.sourceforge.net/) : APNG disassembler.
+* [apngopt](https://sourceforge.net/projects/apng/files/APNG_Optimizer/) : APNG modification.
+* [Bulma](https://bulma.io/) : For the clean UI.
+* [Sass](https://sass-lang.com/) : Modifying bulma's styles.
+* [Font Awesome](https://fontawesome.com/) : Icons.
 
 # Setup for development
 
@@ -36,20 +36,20 @@ Make sure to have the following installed:
 
 ## Project setup
 
-* Clone repository
+* Clone repository:
 
     ```
     $ git clone https://github.com/StahlFerro/TridentFrame.git
     ```
 
-* [Optional] Setup python virtual environment, install Pipfile dependencies and activate the environment (this example uses pipenv)
+* [Optional] Setup python virtual environment, install Pipfile dependencies and activate the environment (this example uses pipenv):
 
     ```
     $ pipenv install --dev
     $ pipenv shell
     ```
 
-* Install node dependencies
+* Install node dependencies:
 
     ```
     $ npm i
@@ -57,21 +57,21 @@ Make sure to have the following installed:
 
 ## Running the app in development
 
-Perform these commands in separate windows
+Perform each of these commands in separate terminal windows:
 
-1. Start Sass to monitor changes in .scss files
+1. Start Sass to monitor changes in .scss files:
 
     ```
     $ npm run css-watch
     ```
   
-2. Then start up webpack dev server
+2. Then start up webpack dev server:
 
     ```
     $ npm run wpserve
     ```
 
-3. Finally start Electron
+3. Finally start Electron:
 
     ```
     $ npm run dev
@@ -80,15 +80,15 @@ Perform these commands in separate windows
 
 ## Building the app as distributables
 
-**NOTE**: If using a python virtual environment, make sure to activate it before running these commands
+**NOTE**: If using a python virtual environment, make sure to activate it before running these commands.
 
-* Windows
+* Windows:
 
     ```
     $ npm run release-windows
   ```
 
-* Linux
+* Linux:
 
     ```
     $ npm run release-linux
