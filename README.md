@@ -22,3 +22,74 @@ TridentFrame consists of two main parts. The python backend handling image proce
 * [Bulma](https://bulma.io/) : For the clean UI
 * [Sass](https://sass-lang.com/) : Modifying bulma's styles
 * [Font Awesome](https://fontawesome.com/) : Icons
+
+# Setup for development
+
+## Prerequisites
+
+Make sure to have the following installed:
+
+* Python 3.7 (or above)
+* Pipenv (optional)
+* Node.js 12 (or above)
+
+
+## Project setup
+
+* Clone repository
+
+    ```
+    $ git clone https://github.com/StahlFerro/TridentFrame.git
+    ```
+
+* [Optional] Setup python virtual environment, install Pipfile dependencies and activate the environment (this example uses pipenv)
+
+    ```
+    $ pipenv install --dev
+    $ pipenv shell
+    ```
+
+* Install node dependencies
+
+    ```
+    $ npm i
+    ```
+
+## Running the app in development
+
+Perform these commands in separate windows
+
+1. Start Sass to monitor changes in .scss files
+
+    ```
+    $ npm run css-watch
+    ```
+  
+2. Then start up webpack dev server
+
+    ```
+    $ npm run wpserve
+    ```
+
+3. Finally start Electron
+
+    ```
+    $ npm run dev
+    ```
+
+
+## Building the app as distributables
+
+**NOTE**: If using a python virtual environment, make sure to activate it before running these commands
+
+* Windows
+
+    ```
+    $ npm run release-windows
+  ```
+
+* Linux
+
+    ```
+    $ npm run release-linux
+    ```
