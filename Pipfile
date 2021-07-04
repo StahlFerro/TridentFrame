@@ -3,6 +3,10 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[packages]
+apng = "*"
+pillow = "~=8.2.0"
+
 [dev-packages]
 pywin32 = {version = "*", sys_platform = "== 'win32'"}
 black = "*"
@@ -14,7 +18,3 @@ python_version = "3.7"
 
 [pipenv]
 allow_prereleases = true
-
-[packages]
-apng = "*"
-pillow = "~=8.2.0"

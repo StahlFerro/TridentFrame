@@ -1,5 +1,5 @@
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Tuple, Any, Optional
 
 
 class TransformativeCriteria:
@@ -10,6 +10,10 @@ class TransformativeCriteria:
         self.flip_x: bool = vals.get("flip_x", False)
         self.flip_y: bool = vals.get("flip_y", False)
         self.rotation = int(vals["rotation"] or 0)
+
+    @property
+    def size(self) -> Tuple[int, int]:
+        return self.width, self.height
 
     def must_resize(self, metadata: Optional[ImageMetadata] = None, width: Optional[int] = 0,
                     height: Optional[int] = 0) -> bool:
@@ -43,6 +47,7 @@ class CreationCriteria(TransformativeCriteria):
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.skip_frame = vals.get("skip_frame") or 0
+
 
 
 class ModificationCriteria(CreationCriteria):

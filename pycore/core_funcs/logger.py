@@ -6,6 +6,7 @@ import os
 import traceback
 from typing import Any
 from pathlib import Path
+from apng import FrameControl
 
 
 class UnbufferedStream(object):
@@ -28,6 +29,8 @@ class JSONEncoderTrident(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, bytes):
             return obj.hex()
+        if isinstance(obj, FrameControl):
+            return obj.__dict__
         # if isinstance(obj, numpy.ndarray):
         #     return obj.tolist()
         # if isinstance(obj, numpy.int32):

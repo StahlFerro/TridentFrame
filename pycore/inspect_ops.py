@@ -14,6 +14,7 @@ from .core_funcs.exception import (
 from .utility import filehandler, imageutils
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 
+
 Image.MAX_IMAGE_PIXELS = None
 
 COLOR_MODE_BIT_DEPTH = {
@@ -327,10 +328,10 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     delays = [f[1].delay if f[1] else 0 for f in frames]
     im = Image.open(abspath)
     logger.debug(im.default_image)
-    for index in range(0, im.n_frames):
-        logger.debug(im.info)
-        logger.debug(im.mode)
-        im.seek(index)
+    # for index in range(0, im.n_frames):
+        # logger.debug(im.info)
+        # logger.debug(im.mode)
+        # im.seek(index)
     color_mode = COLOR_MODE_FULL_NAME.get(im.mode) or im.mode
     has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
     # min_duration = min(delays)
@@ -341,8 +342,16 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     creation_dt = filehandler.get_creation_time(abspath)
     modification_dt = filehandler.get_modification_time(abspath)
     checksum = filehandler.hash_sha1(abspath)
-    for index, (png, control) in enumerate(apng.frames):
-        logger.debug(f"blend_op: {control.blend_op}, depose_op: {control.depose_op}")
+    # for index, (png, control) in enumerate(apng.frames):
+    #     with io.BytesIO() as img_buf:
+    #         png.save(img_buf)
+    #         with Image.open(img_buf) as im:
+    #             logger.debug({"control": control, "mode": im.mode, "info": im.info})
+
+    # for index, im in enumerate(TridentFrameImagingAPI.get_apng_true_frames(apng)):
+    #     if index < 4:
+    #         im.show()
+
     metadata = AnimatedImageMetadata({
         "name": filename,
         "base_filename": base_fname,

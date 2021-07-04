@@ -1,14 +1,16 @@
 import os
-import shutil
-import subprocess
+import io
 import uuid
 import shlex
+import shutil
+import subprocess
 from pathlib import Path
 from sys import platform, stderr
-from typing import List, Tuple, Iterator, Optional
+from typing import List, Tuple, Iterator, Optional, Generator
 
 from PIL import Image
-from apng import APNG
+from apng import APNG, FrameControl
+
 
 from pycore.models.criterion import (
     CriteriaBundle,
@@ -25,10 +27,45 @@ from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
 
 
-class PillowImageAPI:
-    """Class wrapper around Pillow's Image manipulation functionalities
-    """
-    pass
+class InternalImageAPI:
+
+    @classmethod
+    def get_apng_frames(cls, apng: APNG, unoptimize: bool = False) -> Iterator[Tuple[Image.Image, FrameControl]]:
+        canvas: Image.Image
+        for index, (png, control) in enumerate(apng.frames):
+            final_im: Image.Image
+            with io.BytesIO() as img_buf:
+                png.save(img_buf)
+                with Image.open(img_buf) as im:
+                    logger.debug({"index": index, "control": control, "mode": im.mode, "info": im.info})
+                    if index == 0 or not unoptimize:
+                        canvas = im.copy()
+                        yield canvas.copy(), control
+                    else:
+                        prev_canvas = canvas.copy()
+                        offsets = control.x_offset, control.y_offset
+                        if control.blend_op == 0:
+                            canvas.paste(im, box=offsets)
+                        elif control.blend_op == 1:
+                            canvas.alpha_composite(im, dest=offsets)
+                        yield canvas.copy(), control
+                        if control.depose_op == 1:
+                            tp_mask: Image.Image
+                            if im.mode == "P":
+                                tp_mask = Image.new("P", size=im.size)
+                                tp_mask.info["transparency"] = 0
+                            elif im.mode == "RGB":
+                                tp_color = im.info.get("transparency") if im.info.get("transparency") is not None else \
+                                    [0, 0, 0]
+                                logger.debug({"tp_color": tp_color})
+                                tp_mask = Image.new("RGB", size=im.size, color=tp_color)
+                                tp_mask.info["transparency"] = tp_color
+                                # tp_mask.show()
+                            elif im.mode == "RGBA":
+                                tp_mask = Image.new("RGBA", size=im.size)
+                            canvas.paste(tp_mask, box=offsets)
+                        elif control.depose_op == 2:
+                            canvas = prev_canvas.copy()
 
 
 class GifsicleAPI:
@@ -154,7 +191,8 @@ class GifsicleAPI:
             os.chdir(gifragment_dir)
         logger.message("Combining frames...")
         supressed_error_txts = ["warning: too many colors, using local colormaps",
-                                "You may want to try"]
+                                "You may want to try", "input images have conflicting background colors",
+                                "This means some animation frames may appear incorrect."]
 
         # result = subprocess.run(cmd, shell=True, capture_output=True)
         # stdout_res = result.stdout.decode("utf-8")

@@ -37,6 +37,7 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
     if criteria.start_frame:
         image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
     shout_nums = imageutils.shout_indices(fcount, 1)
+    black_bg = Image.new("RGBA", size=criteria.size)
     for index, ipath in enumerate(image_paths):
         if shout_nums.get(index):
             logger.message(f"Processing frames... ({shout_nums.get(index)})")
@@ -73,10 +74,10 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
                     im.paste(255, mask)
                     im.info["transparency"] = 255
                 else:
-                    black_bg = Image.new("RGBA", size=im.size)
-                    black_bg.alpha_composite(im)
+                    bg_image = black_bg.copy()
+                    bg_image.alpha_composite(im)
                     # im.show()
-                    im = black_bg
+                    im = bg_image
                     # black_bg.show()
                     im = im.convert("P", palette=Image.ADAPTIVE)
                 im.save(save_path)
@@ -119,7 +120,7 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     """
     gifragment_dir = _create_gifragments(image_paths, crbundle.create_aimg_criteria)
     out_full_path = GifsicleAPI.combine_gif_images(gifragment_dir, out_full_path, crbundle)
-    # shutil.rmtree(gifragment_dir)
+    shutil.rmtree(gifragment_dir)
     logger.preview_path(out_full_path)
     # logger.control("CRT_FINISH")
     return out_full_path
