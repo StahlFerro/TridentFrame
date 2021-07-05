@@ -77,7 +77,10 @@ function tridentEngine(args, outCallback, endCallback) {
     });
     pyshell.send(json_command);
     pyshell.end(function (err,code,signal) {
-      console.log("pycommander end >>>");
+      console.log("pycommander exit start >>>");
+      console.log('[PYSHELL END EXIT CODE] ' + code); 
+      console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
+      console.log('[PYSHELL END FINISHED]');
       if (err) {
         console.error(err);
       }
@@ -85,12 +88,10 @@ function tridentEngine(args, outCallback, endCallback) {
       console.log(outCallback)
       console.log("end call back is:");
       console.log(endCallback);
-      if (endCallback) {
+      if (code == 0 && endCallback) {
         endCallback();
       }
-      console.log('[PYSHELL END EXIT CODE] ' + code); 
-      console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
-      console.log('[PYSHELL END FINISHED]');
+      console.log("pycommander exit end <<<");
     });
   } 
   
@@ -103,10 +104,8 @@ function tridentEngine(args, outCallback, endCallback) {
     child.stderr.on("data", (err) => { receiveInternal("stderr", err, outCallback) });
     child.on('close', function (code) {
       console.log(`Program ended with code: ${code}`);
-      if (code == 0) {
-        if (endCallback) {
-          endCallback();
-        }
+      if (code == 0 && endCallback) {
+        endCallback();
       }
     });
     console.log("beforewrite");
