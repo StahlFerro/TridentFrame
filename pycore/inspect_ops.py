@@ -193,8 +193,10 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
     # logger.debug({"im.info": im.info, "icc": icc, "palette": imageutils.reshape_palette(palette) if palette else None})
+    logger.debug(im.info)
+    if im.mode == "P":
+        logger.debug(im.getpalette())
     im.close()
-
     metadata = ImageMetadata({
         "name": filename,
         "base_filename": base_fname,
@@ -244,6 +246,7 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     comments = []
     for f in range(0, gif.n_frames):
         gif.seek(f)
+        logger.debug(gif.info)
         # if f in range(0, 3):
         #     logger.debug(f"Frame #{f}\nDisposal: {gif.disposal_method}\nBackground: {gif.info.get('background', '')}\n"
         #         f"Transparency: {gif.info.get('transparency', '')}")

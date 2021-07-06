@@ -282,12 +282,12 @@ class GifsicleAPI:
         return target_path
 
     @classmethod
-    def extract_gif_frames(cls, unop_gif_path: Path, name: str, criteria: SplitCriteria,
+    def extract_gif_frames(cls, gif_path: Path, name: str, criteria: SplitCriteria,
                            out_dir: Path) -> List[Path]:
         """Extract all frames of a GIF image and return a list of paths of each frame
 
         Args:
-            unop_gif_path (Path): Path to gif.
+            gif_path (Path): Path to gif.
             name (str): Filename of sequence, before appending sequence numbers (zero-padded).
             criteria (SplitCriteria): Criteria to follow.
             out_dir (Optional[Path]): Optional output directory of the split frames, else use default fragment_dir
@@ -297,17 +297,17 @@ class GifsicleAPI:
         """
         fr_paths = []
         # indexed_ratios = _get_aimg_delay_ratios(unop_gif_path, "GIF", criteria.is_duration_sensitive)
-        with Image.open(unop_gif_path) as gif:
+        with Image.open(gif_path) as gif:
             total_frames = gif.n_frames
         gifsicle_path = cls.gifsicle_path
         shout_nums = imageutils.shout_indices(total_frames, 1)
         for n in range(0, total_frames):
             if shout_nums.get(n):
                 logger.message(f"Extracting frames ({n}/{total_frames})")
-            split_gif_path: Path = out_dir.joinpath(f"{name}_{str.zfill(str(n), criteria.pad_count)}.png")
+            split_gif_path: Path = out_dir.joinpath(f"{name}_{str.zfill(str(n), criteria.pad_count)}.gif")
             args = [
                 str(gifsicle_path),
-                str(unop_gif_path),
+                str(gif_path),
                 f'#{n}',
                 "--output",
                 str(split_gif_path)
@@ -464,6 +464,39 @@ class ImageMagickAPI:
                 if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
                     logger.error(stderr_res)
         return out_path
+
+
+    @classmethod
+    def extract_unoptimized_gif_frames(cls, gif_path: Path, name: str, criteria: SplitCriteria,
+                           out_dir: Path) -> List[Path]:
+        """Unoptimize and extract all frames of a GIF image and return a list of paths of each frame
+
+        Args:
+            gif_path (Path): Path to gif.
+            name (str): Filename of sequence, before appending sequence numbers (zero-padded).
+            criteria (SplitCriteria): Criteria to follow.
+            out_dir (Optional[Path]): Optional output directory of the split frames, else use default fragment_dir
+
+        Returns:
+            List[Path]: List of paths of each extracted gif frame.
+        """
+        fr_count = Image.open(gif_path).n_frames
+        pad_format = str(criteria.pad_count).zfill(4)
+        output_format_path = out_dir.joinpath(f"{name}_%{pad_format}d.png")
+        args = [
+            str(cls.imagemagick_path),
+            "-coalesce",
+            "-verbose",
+            str(gif_path),
+            str(output_format_path)
+        ]
+        cmd = " ".join(args)
+        logger.debug(f"cmd -> {cmd}")
+        logger.debug(args)
+        process = subprocess.run(args, capture_output=True)
+        all_frnames = [f"{name}_{str(n).zfill(criteria.pad_count)}.png" for n in range(0, fr_count)]
+        fr_paths = [p for p in out_dir.iterdir() if p.name in all_frnames]
+        return fr_paths
 
 
 class APNGOptAPI:

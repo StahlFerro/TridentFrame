@@ -187,8 +187,10 @@ function parseStdErrAndCall(errStream, callback) {
       callback(err.error, "");
     }
   }
-  catch (parseErr) {
-    console.error(parseErr);
+  catch (parseException) {
+    console.error("[NOT JSON OUTSTREAM]");
+    console.error(parseException);
+    console.log(errStream)
   }
 }
 

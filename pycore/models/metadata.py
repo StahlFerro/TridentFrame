@@ -1,4 +1,5 @@
 from typing import List, Dict
+from dataclasses import dataclass, field
 from pycore.utility import filehandler
 
 
@@ -6,27 +7,22 @@ class ImageMetadata:
     def __init__(self, info):
         self.name = {
             "value": info.get("name"),
-            "label": "Name",
             "category": "general_info",
         }
         self.base_filename = {
             "value": info.get("base_filename"),
-            "label": "Base filename",
             "category": "general_info",
         }
         self.width = {
             "value": info.get("width"),
-            "label": "Width",
             "category": "general_info",
         }
         self.height = {
             "value": info.get("height"),
-            "label": "Height",
             "category": "general_info",
         }
         self.format = {
             "value": info.get("format"),
-            "label": "Format",
             "category": "general_info",
         }
         self.format_version = {
@@ -66,22 +62,18 @@ class ImageMetadata:
         }
         self.color_mode = {
             "value": info.get("color_mode"),
-            "label": "Color mode",
             "category": "general_info",
         }
         self.color_profile = {
             "value": info.get("color_profile"),
-            "label": "Color profile",
             "category": "general_info",
         }
         self.bit_depth = {
             "value": info.get("bit_depth"),
-            "label": "Bit Depth",
             "category": "general_info"
         }
         self.has_transparency = {
             "value": info.get("has_transparency"),
-            "label": "Has Transparency",
             "category": "general_info",
         }
         self.exif = {
@@ -91,7 +83,6 @@ class ImageMetadata:
         }
         self.is_animated = {
             "value": info.get("is_animated"),
-            "label": "Is animated",
             "category": "general_info",
         }
         self.hash_sha1 = {
@@ -115,7 +106,8 @@ class ImageMetadata:
             subinfo = {}
             for k, v in (attr for attr in attrs if attr[1]["category"] == category):
                 # print(f"{k} -> {v}")
-                subinfo[k] = {"value": v["value"], "label": v["label"]}
+                label = v.get("label") or k.replace("_", " ").capitalize()
+                subinfo[k] = {"value": v["value"], "label": label}
             info[category] = subinfo
         return info
 
@@ -124,7 +116,6 @@ class AnimatedImageMetadata(ImageMetadata):
     def __init__(self, info):
         self.frame_count = {
             "value": info.get("frame_count"),
-            "label": "Frame count",
             "category": "animation_info",
         }
         self.delays = {
@@ -134,7 +125,6 @@ class AnimatedImageMetadata(ImageMetadata):
         }
         self.delays_are_even = {
             "value": len(set(self.delays["value"])) == 1,
-            "label": "Delays are even",
             "category": "animation_info",
         }
         self.average_delay = {
@@ -149,12 +139,10 @@ class AnimatedImageMetadata(ImageMetadata):
         }
         self.loop_duration = {
             "value": sum(self.delays["value"]) / 1000,
-            "label": "Loop duration",
             "category": "animation_info",
         }
         self.loop_count = {
             "value": info.get("loop_count"),
-            "label": "Loop count",
             "category": "animation_info",
         }
         super().__init__(info)

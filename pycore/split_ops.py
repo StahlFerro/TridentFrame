@@ -153,18 +153,18 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
         List[Path]: Paths to each split images
     """
     frame_paths = []
-    name = gif_path.stem
-    unop_dir = filehandler.mk_cache_dir(prefix_name="unop_gif")
-    unop_gif_path = unop_dir.joinpath(gif_path.name)
-    color_space = criteria.color_space
+    name = criteria.new_name or gif_path.stem
+    # unop_dir = filehandler.mk_cache_dir(prefix_name="unop_gif")
+    # unop_gif_path = unop_dir.joinpath(gif_path.name)
+    # color_space = criteria.color_space
     target_path = Path(gif_path)
     logger.message(str(target_path))
-    if color_space:
-        if color_space < 2 or color_space > 256:
-            raise Exception("Color space must be between 2 and 256!")
-        else:
-            logger.message(f"Reducing colors to {color_space}...")
-            target_path = GifsicleAPI.reduce_gif_color(gif_path, unop_gif_path, color=color_space)
+    # if color_space:
+    #     if color_space < 2 or color_space > 256:
+    #         raise Exception("Color space must be between 2 and 256!")
+    #     else:
+    #         logger.message(f"Reducing colors to {color_space}...")
+    #         target_path = GifsicleAPI.reduce_gif_color(gif_path, unop_gif_path, color=color_space)
 
     # ===== Start test splitting code =====
     # gif: GifImageFile = GifImageFile(gif_path)
@@ -181,33 +181,41 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     # ===== End test splitting code =====
 
     if criteria.is_unoptimized:
-        logger.message("Unoptimizing GIF...")
+        logger.message("Unoptimizing and splitting GIF...")
         # ImageMagick is used to unoptimized rather than Gifsicle's unoptimizer because Gifsicle doesn't support
         # unoptimization of GIFs with local color table
-        target_path = ImageMagickAPI.unoptimize_gif(gif_path, unop_gif_path)
-
-    # frames = _fragment_gif_frames(target_path, name, criteria)
-    fr_paths = GifsicleAPI.extract_gif_frames(target_path, name, criteria, out_dir)
-    shout_nums = imageutils.shout_indices(len(fr_paths), 5)
-    save_name = criteria.new_name or name
-    gif = Image.open(gif_path)
-    for index, fpath in enumerate(fr_paths):
-        gif.seek(index)
-        # print(gif.info)
-        if shout_nums.get(index):
-            logger.message(f"Saving frames... ({shout_nums.get(index)})")
-        # save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
-        if criteria.convert_to_rgba:
-            with Image.open(fpath).convert("RGBA") as im:
-                im.save(fpath, "PNG")
-        else:
-            with Image.open(fpath) as im:
-                im.save(fpath, "PNG")
-        frame_paths.append(fpath)
+        # target_path = ImageMagickAPI.unoptimize_gif(gif_path, unop_gif_path)
+        frame_paths = ImageMagickAPI.extract_unoptimized_gif_frames(gif_path, name, criteria, out_dir)
+    else:
+        # frames = _fragment_gif_frames(target_path, name, criteria)
+        fr_paths = GifsicleAPI.extract_gif_frames(target_path, name, criteria, out_dir)
+        shout_nums = imageutils.shout_indices(len(fr_paths), 5)
+        # gif = Image.open(gif_path)
+        for index, fpath in enumerate(fr_paths):
+            # gif.seek(index)
+            if shout_nums.get(index):
+                logger.message(f"Saving frames... ({shout_nums.get(index)})")
+            # save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
+            if criteria.convert_to_rgba:
+                with Image.open(fpath).convert("RGBA") as im:
+                    # alpha = im.getchannel("A")
+                    # im = im.convert("RGB").convert("P", palette=Image.ADAPTIVE, colors=255)
+                    # mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+                    # im.paste(255, mask)
+                    # im.info["transparency"] = 255
+                    im.save(fpath, "PNG")
+            # else:
+            #     with Image.open(fpath, formats=["GIF"]) as im:
+            #         if index in range(0, 4):
+            #             im.show()
+            #         logger.debug(im.info)
+            #         im.save(fpath, "GIF")
+            frame_paths.append(fpath)
     if criteria.extract_delay_info:
         logger.message("Generating delay information file...")
         imageutils.generate_delay_file(gif_path, "GIF", out_dir)
-    shutil.rmtree(unop_dir)
+    # shutil.rmtree(unop_dir)
+    logger.debug({"frame_paths": frame_paths})
     return frame_paths
 
 
