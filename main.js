@@ -29,6 +29,7 @@ const createWindow = () => {
 			webSecurity: false,
 			nodeIntegration: true,
 			enableRemoteModule: true,
+			contextIsolation: false,
 		}
 	});
 	mainWindow.setMenu(null);
