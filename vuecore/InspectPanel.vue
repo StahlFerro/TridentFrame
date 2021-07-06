@@ -95,11 +95,7 @@
 </template>
 
 <script>
-import { webFrame, clipboard } from "electron";
-const remote = require("electron").remote;
-const dialog = remote.dialog;
-const mainWindow = remote.getCurrentWindow();
-const session = remote.getCurrentWebContents().session;
+const { webFrame, clipboard, ipcRenderer } = require("electron");
 // const { client } = require("./Client.vue");
 const { roundPrecise, escapeLocalPath } = require("./Utility.vue");
 const { tridentEngine, settings } = require("./PythonCommander.vue");
@@ -186,7 +182,9 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props,
   };
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
+  
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
+  // dialog.showOpenDialog(mainWindow, options).then((result) => {
     let chosen_paths = result.filePaths;
     console.log(`chosen path: ${chosen_paths}`);
     if (chosen_paths === undefined || chosen_paths.length == 0) {

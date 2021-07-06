@@ -19,6 +19,16 @@
           </a>
         </td>
       </tr>
+      <!-- <tr>
+        <td>
+          <a v-on:click="ipcWindow" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fas fa-window-maximize"></i>
+            </span>
+            <span>IPC Window Test</span>
+          </a>
+        </td>
+      </tr> -->
 
       <!-- <tr>
         <td>
@@ -62,7 +72,7 @@
 </template>
 
 <script>
-const { remote, BrowserWindow } = require("electron");
+const { remote, BrowserWindow, ipcRenderer } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { client } = require("./PythonCommander.vue");
@@ -136,6 +146,16 @@ function openConfirm() {
   console.log(`response: ${response}`)
 }
 
+
+let extension_filters = [
+  {
+    name: "Images",
+    extensions: ["png", "gif", "jpg", "webp"],
+  },
+];
+let file_dialog_props = ["openfile"];
+let dir_dialog_props = ["openDirectory", "createDirectory"];
+
 export default {
   methods: {
     refreshWindow: refreshWindow,
@@ -145,6 +165,15 @@ export default {
     testGenerator: testGenerator,
     openConfirm: openConfirm,
     callPython: callPython,
+    // ipcWindow: function() {
+    //   var options = {
+    //     filters: extension_filters,
+    //     properties: file_dialog_props,
+    //   };
+    //   ipcRenderer.invoke('open-dialog', options).then((result) => {
+    //     console.log(result);
+    //   });
+    // }
   }
 };
 </script>
