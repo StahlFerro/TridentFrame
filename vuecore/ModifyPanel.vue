@@ -460,9 +460,10 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { tridentEngine } = require("./PythonCommander.js");
+const { tridentEngine } = require("./api/tridentEngine");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH, PREVIEWS_PATH, stem } = require("./Utility.vue");
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, stem } = require("./api/utility");
+import { PREVIEWS_PATH, TEMP_PATH } from "./api/config";
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -911,7 +912,7 @@ function previewModImg() {
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
+  let preview_savepath = path.join(PREVIEWS_PATH, preview_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["modify_image", data.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
     if (error) {

@@ -482,7 +482,7 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
-const { tridentEngine } = require("./PythonCommander.js");
+// const { tridentEngine } = require("./api/tridentEngine");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
 const {
@@ -496,10 +496,9 @@ const {
   fileExists,
   readFilesize,
   escapeLocalPath,
-  PREVIEWS_PATH,
-  TEMP_PATH,
   stem,
-} = require("./Utility.vue");
+} = require("./api/utility");
+const { PREVIEWS_PATH } = require("./api/config");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
@@ -824,7 +823,7 @@ function previewAIMG() {
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
+  let preview_savepath = path.join(PREVIEWS_PATH, preview_filename);
   console.log(preview_savepath);
   tridentEngine(["combine_image", data.image_paths, preview_savepath, criteria_pack], (error, res) => {
     if (error) {

@@ -190,7 +190,7 @@
 
 // import { client } from "./vuecore/Client.vue";
 // import { client, ImageViewer } from "./vuecore/Client.vue";
-const { tridentEngine } = require("./vuecore/PythonCommander.js")
+const { tridentEngine } = require("./vuecore/api/tridentEngine")
 import ContextMenu from './vuecore/components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './vuecore/components/ContextMenu/ContextMenuItem.vue';
 

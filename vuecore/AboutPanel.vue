@@ -32,9 +32,7 @@
 </template>
 
 <script>
-const { remote, shell } = require('electron');
-const dialog = remote.dialog;
-const session = remote.getCurrentWebContents().session;
+const { shell } = require('electron');
 const logo = require('../imgs/TridentFrame_logo_512x512.png');
 
 let data = {

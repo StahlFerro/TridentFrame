@@ -97,8 +97,9 @@
 <script>
 const { webFrame, clipboard, ipcRenderer } = require("electron");
 // const { client } = require("./Client.vue");
-const { roundPrecise, escapeLocalPath } = require("./Utility.vue");
-const { tridentEngine, settings } = require("./PythonCommander.js");
+const { roundPrecise, escapeLocalPath } = require("./api/utility");
+const { tridentEngine } = require("./api/tridentEngine");
+const { SETTINGS } = require("./api/config");
 
 let extension_filters = [
   {
@@ -109,8 +110,6 @@ let extension_filters = [
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
-let metadata_order = settings.image_metadata
-
 var data = {
   img_path: "",
   checkerbg_active: false,
@@ -118,7 +117,7 @@ var data = {
   INS_IS_INSPECTING: false,
   info_data: "",
   inspect_msgbox: "",
-  metadata_settings: settings.image_metadata,
+  metadata_settings: SETTINGS.image_metadata,
   inspect_image_menu_options: [
     {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
     {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},

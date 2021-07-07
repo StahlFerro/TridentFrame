@@ -75,7 +75,7 @@
 const { remote, BrowserWindow, ipcRenderer } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { tridentEngine } = require("./PythonCommander.js");
+const { tridentEngine } = require("./api/tridentEngine.js");
 const { PythonShell } = require("python-shell");
 
 function callPython() {
@@ -171,11 +171,11 @@ export default {
         properties: file_dialog_props,
       };
       console.log('before invoke');
-      // ipcRenderer.invoke('open-dialog', options).then((result) => {
-        tridentEngine(["inspect_one", "/home/iceberg/Pictures/Florian de Looij/squares.gif"], (error, res) => {
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        tridentEngine(["inspect_one", result.filePaths[0]], (error, res) => {
           console.log(res);
         })
-      // });
+      });
       console.log('after invoke here');
 
     }

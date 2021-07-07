@@ -1,53 +1,14 @@
 
 const { PythonShell } = require("python-shell");
-const { remote, ipcRenderer } = require("electron");
-const process = require("process");
+const { ipcRenderer }  = require("electron");
+const { env, cwd } = require("process");
 const { spawn } = require("child_process");
-const path = require("path");
-const fs = require('fs');
-const deploy_env = process.env.DEPLOY_ENV;
+const { PYTHON_PATH, ENGINE_EXEC_PATH } = require("./config.js");
+const engine_env = env.DEPLOY_ENV;
 
-let appPath = "";
-let python_path = "";
-let engine_dir = "";
-let engine_exec_path = "";
-
-let settings;
 
 const { EOL } = require('os');
-const { isNullOrWhitespace } = require("./Utility.vue");
-let _remaining;
-
-  appPath = ipcRenderer.sendSync("get-app-path");
-  console.log(appPath);
-  console.log(`current appPath: ${appPath}`);
-  console.log(`current dirname -> ${__dirname}`);
-  console.log(`current process.cwd() -> ${process.cwd()}`);
-  console.log(`current dot -> ${path.resolve(".")}`);
-  
-  if (deploy_env == "DEV") {
-    engine_exec_path = "main.py"
-    settings = JSON.parse(fs.readFileSync("./config/settings.json"));
-  }
-  else {
-    if (process.platform == "win32") {
-      python_path = "python.exe";
-      
-      engine_dir = path.join(appPath, "engine", "windows");
-      engine_exec_path = path.join(engine_dir, "tridentengine.exe");
-      settingsFile = path.join(engine_dir, "config", "settings.json");
-      settings = JSON.parse(fs.readFileSync(settingsFile));
-    }
-    else if (process.platform == "linux") { 
-      python_path = "python3.7";
-      
-      engine_dir = path.join(appPath, "engine", "linux");
-      engine_exec_path = path.join(engine_dir, "tridentengine");
-      settingsFile = path.join(engine_dir, "config", "settings.json");
-      settings = JSON.parse(fs.readFileSync(settingsFile));
-    }
-  }
-
+const { isNullOrWhitespace } = require("./utility.js");
 
 
 /**
@@ -57,8 +18,8 @@ let _remaining;
  * @param {callback} endCallback - The callback function to execute after python/child process terminates
  */
 function tridentEngine(args, outCallback, endCallback) {
-  console.log(`Current dir: ${process.cwd()}`);
-  console.log(`DEPLOY ENV ${deploy_env}`);
+  console.log(`Current dir: ${cwd()}`);
+  console.log(`DEPLOY ENV ${engine_env}`);
 
   let command = args[0];
   let cmd_args = args.slice(1);
@@ -70,12 +31,12 @@ function tridentEngine(args, outCallback, endCallback) {
   }});
 
 
-  if (deploy_env == "DEV") {
+  if (engine_env == "DEV") {
     console.log("json_command");
     console.log(json_command);
-    let pyshell = new PythonShell(engine_exec_path, {
+    let pyshell = new PythonShell(ENGINE_EXEC_PATH, {
       mode: "text",
-      pythonPath: python_path,
+      pythonPath: PYTHON_PATH,
       // pythonOptions: ["-u"],
     });
     console.log("DEBUG 1");
@@ -122,7 +83,7 @@ function tridentEngine(args, outCallback, endCallback) {
   
   else {
     console.debug("Spawning python engine");
-    const child = spawn(engine_exec_path, {mode: "text"});
+    const child = spawn(ENGINE_EXEC_PATH, {mode: "text"});
     // child.stdout.on("data", receive.bind(this));
     console.debug("Attached event handlers");
     child.stdout.on("data", (data) => { receiveInternal("message", data, outCallback) });
@@ -162,6 +123,7 @@ function tridentEngine(args, outCallback, endCallback) {
 }
 
 function receiveInternal(emitType, data, outCallback){
+  let _remaining;  
   console.log(data);
   let parts = (''+data).split(EOL);
   if (parts.length === 1) {
@@ -220,7 +182,5 @@ function parseStdErrAndCall(errStream, callback) {
 }
 
 module.exports = {
-  tridentEngine: tridentEngine,
-  settings: settings,
-};
-
+  tridentEngine: tridentEngine
+}

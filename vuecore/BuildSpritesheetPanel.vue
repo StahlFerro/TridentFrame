@@ -373,7 +373,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
 import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain,
-  numConstrain, validateFilename, fileExists } from './Utility.vue';
+  numConstrain, validateFilename, fileExists } from './api/utility';
 
 function clearInfo() {
   data.image_paths = [],
