@@ -52,6 +52,9 @@ const createWindow = () => {
 				slashes: true
 			})
 		);
+		mainWindow.webContents.openDevTools({
+			mode: 'detach'
+		});
 	}
 	mainWindow.focus();
 	mainWindow.on('closed', () => {
@@ -83,6 +86,10 @@ app.whenReady().then(() => {
 
 ipcMain.handle('open-dialog', async (event, args) => {
 	return dialog.showOpenDialog(mainWindow, args);
+});
+
+ipcMain.on('get-app-path', function (event, args) {
+	event.returnValue = app.getAppPath();
 });
 
 // const selectPort = () => {

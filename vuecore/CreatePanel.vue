@@ -482,7 +482,7 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
-const { tridentEngine } = require("./PythonCommander.vue");
+const { tridentEngine } = require("./PythonCommander.js");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
 const {

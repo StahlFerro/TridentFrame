@@ -1,35 +1,54 @@
-<script>
+
 const { PythonShell } = require("python-shell");
+const { remote, ipcRenderer } = require("electron");
 const process = require("process");
 const { spawn } = require("child_process");
+const path = require("path");
 const fs = require('fs');
 const deploy_env = process.env.DEPLOY_ENV;
+
+let appPath = "";
+let python_path = "";
 let engine_dir = "";
+let engine_exec_path = "";
+
 let settings;
+
 const { EOL } = require('os');
 const { isNullOrWhitespace } = require("./Utility.vue");
 let _remaining;
 
-let python_path = "";
-let engine_exec_path = "";
-if (deploy_env == "DEV") {
-  engine_exec_path = "main.py"
-  settings = JSON.parse(fs.readFileSync("./config/settings.json"));
-}
-else {
-  if (process.platform == "win32") {
-    python_path = "python.exe";
-    engine_dir = "./resources/app/engine/windows/";
-    engine_exec_path = `${engine_dir}/tridentengine.exe`;
-    settings = JSON.parse(fs.readFileSync(`${engine_dir}/config/settings.json`));
+  appPath = ipcRenderer.sendSync("get-app-path");
+  console.log(appPath);
+  console.log(`current appPath: ${appPath}`);
+  console.log(`current dirname -> ${__dirname}`);
+  console.log(`current process.cwd() -> ${process.cwd()}`);
+  console.log(`current dot -> ${path.resolve(".")}`);
+  
+  if (deploy_env == "DEV") {
+    engine_exec_path = "main.py"
+    settings = JSON.parse(fs.readFileSync("./config/settings.json"));
   }
-  else if (process.platform == "linux") { 
-    python_path = "python3.7";
-    engine_dir = "./resources/app/engine/linux/";
-    engine_exec_path = `${engine_dir}/tridentengine`;
-    settings = JSON.parse(fs.readFileSync(`${engine_dir}/config/settings.json`));
+  else {
+    if (process.platform == "win32") {
+      python_path = "python.exe";
+      
+      engine_dir = path.join(appPath, "engine", "windows");
+      engine_exec_path = path.join(engine_dir, "tridentengine.exe");
+      settingsFile = path.join(engine_dir, "config", "settings.json");
+      settings = JSON.parse(fs.readFileSync(settingsFile));
+    }
+    else if (process.platform == "linux") { 
+      python_path = "python3.7";
+      
+      engine_dir = path.join(appPath, "engine", "linux");
+      engine_exec_path = path.join(engine_dir, "tridentengine");
+      settingsFile = path.join(engine_dir, "config", "settings.json");
+      settings = JSON.parse(fs.readFileSync(settingsFile));
+    }
   }
-}
+
+
 
 /**
  * Perform call to python console application.
@@ -49,33 +68,38 @@ function tridentEngine(args, outCallback, endCallback) {
     "globalvar_overrides": {
       "debug": true,
   }});
-  console.log("json_command");
-  console.log(json_command);
 
 
   if (deploy_env == "DEV") {
+    console.log("json_command");
+    console.log(json_command);
     let pyshell = new PythonShell(engine_exec_path, {
       mode: "text",
       pythonPath: python_path,
       // pythonOptions: ["-u"],
     });
+    console.log("DEBUG 1");
     pyshell.on("message", (res) => {
+      console.log("pycommander stdout start >>>>>");
       if (!(isNullOrWhitespace(res))) {
-        console.log("pycommander stdout start >>>>>");
         console.log(res);
-        console.log("pycommander stdout end <<<<<");
         parseStdOutAndCall(res, outCallback);
       }
+      console.log("pycommander stdout end <<<<<");
     });
+    console.log("DEBUG 2");
     pyshell.on("stderr", (err) => {
+      console.log("pycommander stderr start >>>>>");
       if (!(isNullOrWhitespace(err))) {
-        console.log("pycommander stderr start >>>>>");
         console.log(err);
-        console.log("pycommander stderr end <<<<<");
         parseStdErrAndCall(err, outCallback);
       }
+      console.log("pycommander stderr end <<<<<");
     });
-    pyshell.send(json_command);
+    console.log("DEBUG 3");
+    pyshell.send(`${json_command}\n`);
+    
+    console.log("DEBUG 4");
     pyshell.end(function (err,code,signal) {
       console.log("pycommander exit start >>>");
       console.log('[PYSHELL END EXIT CODE] ' + code); 
@@ -93,6 +117,7 @@ function tridentEngine(args, outCallback, endCallback) {
       }
       console.log("pycommander exit end <<<");
     });
+    console.log("DEBUG 5");
   } 
   
   else {
@@ -199,4 +224,3 @@ module.exports = {
   settings: settings,
 };
 
-</script>

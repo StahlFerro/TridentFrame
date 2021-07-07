@@ -460,7 +460,7 @@ const remote = require('electron').remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { tridentEngine } = require("./PythonCommander.vue");
+const { tridentEngine } = require("./PythonCommander.js");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
         gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH, PREVIEWS_PATH, stem } = require("./Utility.vue");
 const path = require("path");

@@ -98,7 +98,7 @@
 const { webFrame, clipboard, ipcRenderer } = require("electron");
 // const { client } = require("./Client.vue");
 const { roundPrecise, escapeLocalPath } = require("./Utility.vue");
-const { tridentEngine, settings } = require("./PythonCommander.vue");
+const { tridentEngine, settings } = require("./PythonCommander.js");
 
 let extension_filters = [
   {

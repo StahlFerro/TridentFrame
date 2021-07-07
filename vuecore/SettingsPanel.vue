@@ -19,7 +19,7 @@
           </a>
         </td>
       </tr>
-      <!-- <tr>
+      <tr>
         <td>
           <a v-on:click="ipcWindow" class="button is-large is-neon-cyan">
             <span class="icon is-large">
@@ -28,7 +28,7 @@
             <span>IPC Window Test</span>
           </a>
         </td>
-      </tr> -->
+      </tr>
 
       <!-- <tr>
         <td>
@@ -75,7 +75,7 @@
 const { remote, BrowserWindow, ipcRenderer } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./PythonCommander.vue");
+const { tridentEngine } = require("./PythonCommander.js");
 const { PythonShell } = require("python-shell");
 
 function callPython() {
@@ -165,15 +165,38 @@ export default {
     testGenerator: testGenerator,
     openConfirm: openConfirm,
     callPython: callPython,
-    // ipcWindow: function() {
-    //   var options = {
-    //     filters: extension_filters,
-    //     properties: file_dialog_props,
-    //   };
-    //   ipcRenderer.invoke('open-dialog', options).then((result) => {
-    //     console.log(result);
-    //   });
-    // }
+    ipcWindow: function() {
+      var options = {
+        filters: extension_filters,
+        properties: file_dialog_props,
+      };
+      console.log('before invoke');
+      // ipcRenderer.invoke('open-dialog', options).then((result) => {
+        tridentEngine(["inspect_one", "/home/iceberg/Pictures/Florian de Looij/squares.gif"], (error, res) => {
+          console.log(res);
+        })
+      // });
+      console.log('after invoke here');
+
+    }
+  },
+  /** 
+   * *TODO: Find the actual cause of this bug.
+  There is a weird bug in linux, in which performing the first tridentengine executable call from UI returns no response from the event handlers,
+  while subsequent calls behave normally. This terrible workaround is in place so that the tridentengine executable is called at least
+  once upon application startup.
+  **/
+  mounted: function() {
+    if (process.platform == "linux") {
+      setTimeout(function() {
+        tridentEngine(["echo", "PING"], (error, res) => {
+          console.debug(res);
+        })
+        tridentEngine(["info"], (error, res) => {
+          console.debug(res);
+        })
+      }, 300);
+    }
   }
 };
 </script>
