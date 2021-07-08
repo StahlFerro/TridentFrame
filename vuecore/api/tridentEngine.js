@@ -117,7 +117,8 @@ function tridentEngine(args, outCallback, endCallback) {
     });
     console.log("beforewrite");
     child.stdin.write(`${json_command}\n`, (error) => {
-      console.log(`[send error]\n${error}`);
+      if (error)
+        console.log({"stdin.write error": error});
     });
     child.stdin.end();
     console.log("afterwrite");

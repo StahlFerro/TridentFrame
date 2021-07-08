@@ -263,7 +263,7 @@ class GifsicleAPI:
             # cmd = " ".join(cmdlist)
             # yield {"msg": f"[{index}/{total_ops}] {description}"}
             # yield {"cmd": cmd}
-            logger.debug(f"cmd -> {' '.join(args)}")
+            logger.debug(f"modify_gif_image cmd -> {' '.join(args)}")
             cmd = " ".join(args)
             result = subprocess.Popen(args if os_platform() == OS.WINDOWS else cmd,
                                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
@@ -491,7 +491,7 @@ class ImageMagickAPI:
             str(output_format_path)
         ]
         cmd = " ".join(args)
-        logger.debug(f"cmd -> {cmd}")
+        logger.debug(f"extract_unoptimized_gif_frames cmd -> {cmd}")
         logger.debug(args)
         process = subprocess.run(args, capture_output=True)
         all_frnames = [f"{name}_{str(n).zfill(criteria.pad_count)}.png" for n in range(0, fr_count)]
@@ -628,7 +628,7 @@ class APNGDisAPI:
         fcount = len(APNG.open(target_path).frames)
         logger.debug(f"fcount: {fcount}")
         shout_nums = imageutils.shout_indices(fcount, 5)
-        logger.debug(f"cmd -> {cmd}")
+        logger.debug(f"split_apng cmd -> {cmd}")
         logger.debug(args)
         process = subprocess.Popen(
             args,
