@@ -791,7 +791,7 @@ function savePath() {
 
 
 function setSavePath(afterSaveCallback) {
-  ipcRenderer.invoke('open-dialog', singleSaveOption()).then((result) => {
+  ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
     let save_path = result.filePath;
     console.log(result);
