@@ -8,13 +8,13 @@ from typing import List, Tuple, Iterator
 from PIL import Image
 from apng import APNG
 
-from .bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGDisAPI, InternalImageAPI
-from .core_funcs.config import (
+from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGDisAPI, InternalImageAPI
+from pycore.core_funcs.config import (
     ANIMATED_IMG_EXTS,
 )
 from pycore.models.criterion import SplitCriteria
-from .utility import filehandler, imageutils
-from .core_funcs import logger
+from pycore.utility import filehandler, imageutils
+from pycore.core_funcs import logger
 
 
 def _get_aimg_delay_ratios(aimg_path: Path, aimg_type: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:

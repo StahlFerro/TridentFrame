@@ -5,7 +5,7 @@ from typing import List
 
 from PIL import Image
 
-from .core_funcs.config import ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
+from pycore.core_funcs.config import ANIMATED_IMG_EXTS, STATIC_IMG_EXTS
 from pycore.models.criterion import SpritesheetBuildCriteria, SpritesheetSliceCriteria
 
 

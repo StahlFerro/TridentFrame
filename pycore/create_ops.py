@@ -8,16 +8,16 @@ from pathlib import Path
 from PIL import Image
 from apng import APNG, PNG
 
-from .core_funcs import logger
-from .core_funcs.config import (
+from pycore.core_funcs import logger
+from pycore.core_funcs.config import (
     STATIC_IMG_EXTS,
 )
 from pycore.models.criterion import (
     CreationCriteria,
     CriteriaBundle,
 )
-from .utility import filehandler, imageutils
-from .bin_funcs.imager_api import GifsicleAPI, APNGOptAPI
+from pycore.utility import filehandler, imageutils
+from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI
 
 
 def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):

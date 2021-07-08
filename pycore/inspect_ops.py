@@ -5,13 +5,13 @@ from typing import List, Dict, Optional, Union
 
 from PIL import Image, ImageCms, ExifTags, UnidentifiedImageError
 from apng import APNG
-from .core_funcs import logger
-from .core_funcs.exception import (
+from pycore.core_funcs import logger
+from pycore.core_funcs.exception import (
     ImageNotStaticException,
     ImageNotAnimatedException,
     UnidentifiedImageException,
 )
-from .utility import filehandler, imageutils
+from pycore.utility import filehandler, imageutils
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 
 

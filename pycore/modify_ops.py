@@ -94,8 +94,9 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
     mod_criteria = crbundle.modify_aimg_criteria
     aopt_criteria = crbundle.apng_opt_criteria
     apng_im: APNG = APNG.open(apng_path)
+    logger.debug({"crbundle": crbundle})
     # Reiterate through the frames if matching certain conditions, or per-frame lossy compression is required
-    if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_lossy:
+    if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_lossy or aopt_criteria.is_unoptimized:
         logger.debug(f"REITERATE APNG")
         new_apng: APNG = APNG()
         orig_width, orig_height = metadata.width["value"], metadata.height["value"]
@@ -106,7 +107,8 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             delay = int(mod_criteria.delay * 1000)
             control.delay = delay
             logger.debug({"fr_control": control})
-            if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode:
+            if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode\
+                    or aopt_criteria.is_unoptimized:
                 # with io.BytesIO() as img_buf:
                 #     png.save(img_buf)
                 #     with Image.open(img_buf) as im:
