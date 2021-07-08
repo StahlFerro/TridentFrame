@@ -41,6 +41,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "convert_to_rgba": False,
     })
     frame_paths = split_aimg(img_path, frames_dir, split_criteria)
+    logger.debug({"presplit_fr_paths": frame_paths})
     # yield {"MOD split frames": frame_paths}
     # if mod_criteria.is_reversed:
     #     frames.reverse()

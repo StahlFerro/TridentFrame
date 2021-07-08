@@ -251,20 +251,19 @@ class GifsicleAPI:
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
             logger.message(description)
             args = [
-                str(cls.gifsicle_path),
-                # shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
+                shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
                 option,
-                str(target_path),
-                # shlex.quote(str(target_path)) if os_platform() == OS.LINUX else str(target_path),
+                shlex.quote(str(target_path)) if os_platform() == OS.LINUX else str(target_path),
                 "--output",
-                str(out_full_path)
-                # shlex.quote(str(out_full_path)) if os_platform() == OS.LINUX else str(out_full_path)
+                shlex.quote(str(out_full_path)) if os_platform() == OS.LINUX else str(out_full_path)
             ]
             # cmd = " ".join(cmdlist)
             # yield {"msg": f"[{index}/{total_ops}] {description}"}
             # yield {"cmd": cmd}
-            logger.debug(f"modify_gif_image cmd -> {' '.join(args)}")
             cmd = " ".join(args)
+            if ";" in cmd:
+                raise MalformedCommandException("gifsicle")
+            logger.debug(f"modify_gif_image cmd -> {cmd}")
             result = subprocess.Popen(args if os_platform() == OS.WINDOWS else cmd,
                                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                       shell=os_platform() == OS.LINUX)
@@ -490,12 +489,19 @@ class ImageMagickAPI:
             str(gif_path),
             str(output_format_path)
         ]
+        # Linux executable need to specify as 'magick convert', while windows already has the executable as 'convert.exe'
+        if os_platform() == OS.LINUX:
+            args.insert(1, "convert")
         cmd = " ".join(args)
         logger.debug(f"extract_unoptimized_gif_frames cmd -> {cmd}")
         logger.debug(args)
         process = subprocess.run(args, capture_output=True)
+        print(process.stdout)
+        print(process.stderr)
+        # process.check_returncode()
         all_frnames = [f"{name}_{str(n).zfill(criteria.pad_count)}.png" for n in range(0, fr_count)]
         fr_paths = [p for p in out_dir.iterdir() if p.name in all_frnames]
+        fr_paths.sort()
         return fr_paths
 
 
