@@ -4,7 +4,7 @@
       <div class="about-info">
         <img v-bind:src="logo" class="about-logo no-select-drag"/>
         <h1 class="about-software-name">TridentFrame</h1>
-        <p class="about-software-version">v0.1.0-beta.7</p>
+        <p class="about-software-version">v0.1.0-beta.8</p>
         <p class="about-software-author">Developed by StahlFerro</p>
       </div>
       <div class="about-buttons">
