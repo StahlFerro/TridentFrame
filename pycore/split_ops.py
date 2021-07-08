@@ -187,30 +187,31 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
         # target_path = ImageMagickAPI.unoptimize_gif(gif_path, unop_gif_path)
         frame_paths = ImageMagickAPI.extract_unoptimized_gif_frames(gif_path, name, criteria, out_dir)
     else:
+        logger.message("Splitting GIF...")
         # frames = _fragment_gif_frames(target_path, name, criteria)
-        fr_paths = GifsicleAPI.extract_gif_frames(target_path, name, criteria, out_dir)
-        shout_nums = imageutils.shout_indices(len(fr_paths), 5)
-        # gif = Image.open(gif_path)
-        for index, fpath in enumerate(fr_paths):
+        frame_paths = GifsicleAPI.extract_gif_frames(target_path, name, criteria, out_dir)
+    # gif = Image.open(gif_path)
+
+    if criteria.convert_to_rgba:
+        shout_nums = imageutils.shout_indices(len(frame_paths), 5)
+        for index, fpath in enumerate(frame_paths):
             # gif.seek(index)
             if shout_nums.get(index):
-                logger.message(f"Saving frames... ({shout_nums.get(index)})")
+                logger.message(f"Converting frames into RGBA color mode... ({shout_nums.get(index)})")
             # save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
-            if criteria.convert_to_rgba:
-                with Image.open(fpath).convert("RGBA") as im:
-                    # alpha = im.getchannel("A")
-                    # im = im.convert("RGB").convert("P", palette=Image.ADAPTIVE, colors=255)
-                    # mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
-                    # im.paste(255, mask)
-                    # im.info["transparency"] = 255
-                    im.save(fpath, "PNG")
+            with Image.open(fpath).convert("RGBA") as im:
+                # alpha = im.getchannel("A")
+                # im = im.convert("RGB").convert("P", palette=Image.ADAPTIVE, colors=255)
+                # mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
+                # im.paste(255, mask)
+                # im.info["transparency"] = 255
+                im.save(fpath, "PNG")
             # else:
             #     with Image.open(fpath, formats=["GIF"]) as im:
             #         if index in range(0, 4):
             #             im.show()
             #         logger.debug(im.info)
             #         im.save(fpath, "GIF")
-            frame_paths.append(fpath)
     if criteria.extract_delay_info:
         logger.message("Generating delay information file...")
         imageutils.generate_delay_file(gif_path, "GIF", out_dir)

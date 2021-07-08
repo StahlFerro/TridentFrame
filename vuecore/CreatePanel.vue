@@ -482,7 +482,7 @@
 const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
-// const { tridentEngine } = require("./api/tridentEngine");
+const { tridentEngine } = require("./api/tridentEngine");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
 const {
