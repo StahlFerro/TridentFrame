@@ -479,9 +479,7 @@
 </template>
 
 <script>
-const remote = require("electron").remote;
-const dialog = remote.dialog;
-const mainWindow = remote.getCurrentWindow();
+const { ipcRenderer } = require('electron');
 const { tridentEngine } = require("./api/tridentEngine");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
@@ -633,7 +631,7 @@ function btnLoadImages(ops) {
     properties: props,
   };
 
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
     let img_paths = result.filePaths;
     console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) {
@@ -735,7 +733,7 @@ function singleSaveOption() {
 }
 
 function setSavePath(afterSaveCallback) {
-  dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+  ipcRenderer.invoke('open-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
     let save_path = result.filePath;
     console.log(result);

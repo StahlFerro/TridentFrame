@@ -2,7 +2,6 @@ const { ipcRenderer, app } = require("electron");
 const { env, cwd, platform } = require("process");
 const { resolve, join } = require("path");
 const { readFileSync } = require('fs');
-let deploy_env = env.DEPLOY_ENV;
 
 let appPath;
 let python_path;
@@ -22,7 +21,7 @@ console.log(`current dirname -> ${__dirname}`);
 console.log(`current process.cwd() -> ${cwd()}`);
 console.log(`current dot -> ${resolve(".")}`);
 
-if (deploy_env == "DEV") {
+if (env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py"
   settings_path = join(appPath, "config", "settings.json");
   settings = JSON.parse(readFileSync(settings_path));

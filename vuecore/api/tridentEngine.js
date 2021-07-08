@@ -4,11 +4,13 @@ const { ipcRenderer }  = require("electron");
 const { env, cwd } = require("process");
 const { spawn } = require("child_process");
 const { PYTHON_PATH, ENGINE_EXEC_PATH } = require("./config.js");
-const engine_env = env.DEPLOY_ENV;
+const { NewlineTransformer } = require("./datastream.js");
 
 
 const { EOL } = require('os');
 const { isNullOrWhitespace } = require("./utility.js");
+
+let _remaining;  
 
 
 /**
@@ -19,7 +21,7 @@ const { isNullOrWhitespace } = require("./utility.js");
  */
 function tridentEngine(args, outCallback, endCallback) {
   console.log(`Current dir: ${cwd()}`);
-  console.log(`DEPLOY ENV ${engine_env}`);
+  console.log(`DEPLOY ENV ${env.DEPLOY_ENV}`);
 
   let command = args[0];
   let cmd_args = args.slice(1);
@@ -31,7 +33,7 @@ function tridentEngine(args, outCallback, endCallback) {
   }});
 
 
-  if (engine_env == "DEV") {
+  if (env.DEPLOY_ENV == "DEV") {
     console.log("json_command");
     console.log(json_command);
     let pyshell = new PythonShell(ENGINE_EXEC_PATH, {
@@ -63,9 +65,7 @@ function tridentEngine(args, outCallback, endCallback) {
     console.log("DEBUG 4");
     pyshell.end(function (err,code,signal) {
       console.log("pycommander exit start >>>");
-      console.log('[PYSHELL END EXIT CODE] ' + code); 
-      console.log('[PYSHELL END EXIT SIGNAL] ' + signal);
-      console.log('[PYSHELL END FINISHED]');
+      console.log({status: "exited", code: code, signal: signal});
       if (err) {
         console.error(err);
       }
@@ -82,12 +82,33 @@ function tridentEngine(args, outCallback, endCallback) {
   } 
   
   else {
+
+    /*
+    * New stdout and stderr buffering using NewlineTransformer
+    * Reference: https://github.com/extrabacon/python-shell/blob/5b6c3165136bfb320615dd2e8c12fcceceeb3164/index.ts#L176-L197
+    Node buffers stdout&stderr in batches regardless of newline placement
+    This is troublesome if you want to recieve distinct individual messages
+    for example JSON parsing breaks if it recieves partial JSON
+    so we use newlineTransformer to emit each batch seperated by newline
+    */
+
     console.debug("Spawning python engine");
     const child = spawn(ENGINE_EXEC_PATH, {mode: "text"});
     // child.stdout.on("data", receive.bind(this));
     console.debug("Attached event handlers");
-    child.stdout.on("data", (data) => { receiveInternal("message", data, outCallback) });
-    child.stderr.on("data", (err) => { receiveInternal("stderr", err, outCallback) });
+    let stdoutSplitter = new NewlineTransformer();
+    let stderrSplitter = new NewlineTransformer();
+    stdoutSplitter.setEncoding('utf8');
+    stderrSplitter.setEncoding('utf8');
+    child.stdout.pipe(stdoutSplitter).on('data', (chunk) => {
+      parseStdOutAndCall(chunk, outCallback);
+    });
+    child.stderr.pipe(stderrSplitter).on('data', (chunk) => {
+      parseStdErrAndCall(chunk, outCallback);
+    });
+
+    // child.stdout.on("data", (data) => { processBuffer("message", data, outCallback) });
+    // child.stderr.on("data", (err) => { processBuffer("stderr", err, outCallback) });
     child.on('close', function (code) {
       console.log(`Program ended with code: ${code}`);
       if (code == 0 && endCallback) {
@@ -101,7 +122,7 @@ function tridentEngine(args, outCallback, endCallback) {
     child.stdin.end();
     console.log("afterwrite");
     child.on('exit', function (code) {
-      console.log('child process exited with code ' + code.toString());
+      console.log({status: "exited", code: code});
     });
     // exec(engine_exec_path, args, (error, stdout, stderr) => {
     //   console.log(">>error");
@@ -122,9 +143,11 @@ function tridentEngine(args, outCallback, endCallback) {
   }
 }
 
-function receiveInternal(emitType, data, outCallback){
-  let _remaining;  
-  console.log(data);
+// Old buffer processor (copied from python-shell v2.0.3 repository)
+// https://github.com/extrabacon/python-shell/blob/f3b64d3307d8dc15eb9c071d8aa774c1e7d5b2d7/index.ts#L379 receiveInternal method
+function processBuffer(emitType, data, outCallback){
+  console.log({"buffer": data});
+  console.log({"remaining": _remaining});
   let parts = (''+data).split(EOL);
   if (parts.length === 1) {
     // an incomplete record, keep buffering
@@ -158,9 +181,11 @@ function parseStdOutAndCall(outstream, callback) {
     }
   }
   catch (parseException) {
-    console.error("[NOT JSON OUTSTREAM]");
-    console.error(parseException);
-    console.log(outstream)
+    console.error({
+      error: "[NOT JSON OUTSTREAM]",
+      parseException: parseException,
+      outstream: outstream,
+    });
   }
 }
 
@@ -175,9 +200,11 @@ function parseStdErrAndCall(errStream, callback) {
     }
   }
   catch (parseException) {
-    console.error("[NOT JSON OUTSTREAM]");
-    console.error(parseException);
-    console.log(errStream)
+    console.error({
+      error: "[NOT JSON OUTSTREAM]",
+      parseException: parseException,
+      outstream: errStream,
+    });
   }
 }
 

@@ -456,10 +456,7 @@
 
 <script>
 
-const remote = require('electron').remote;
-const dialog = remote.dialog;
-const mainWindow = remote.getCurrentWindow();
-const session = remote.getCurrentWebContents().session;
+const { ipcRenderer } = require('electron');
 const { tridentEngine } = require("./api/tridentEngine");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
         gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, stem } = require("./api/utility");
@@ -644,7 +641,7 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
     let chosen_path = result.filePaths;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
@@ -794,7 +791,7 @@ function savePath() {
 
 
 function setSavePath(afterSaveCallback) {
-  dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+  ipcRenderer.invoke('open-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
     let save_path = result.filePath;
     console.log(result);

@@ -19,7 +19,7 @@
           </a>
         </td>
       </tr>
-      <tr>
+      <!-- <tr>
         <td>
           <a v-on:click="ipcWindow" class="button is-large is-neon-cyan">
             <span class="icon is-large">
@@ -28,7 +28,7 @@
             <span>IPC Window Test</span>
           </a>
         </td>
-      </tr>
+      </tr> -->
 
       <!-- <tr>
         <td>
@@ -142,8 +142,8 @@ function openConfirm() {
     buttons: ["Yes", "Cancel"],
     message: "A file with the same name exists in the output folder. Do you want to override it?"
   };
-  let response = dialog.showMessageBoxSync(WINDOW, options);
-  console.log(`response: ${response}`)
+  // let response = dialog.showMessageBoxSync(WINDOW, options);
+  // console.log(`response: ${response}`)
 }
 
 

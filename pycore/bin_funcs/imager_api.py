@@ -215,7 +215,7 @@ class GifsicleAPI:
         while result.poll() is None:
             if result.stdout:
                 stdout_res = result.stdout.readline().decode("utf-8")
-                if stdout_res:
+                if stdout_res and not any(s in stdout_res for s in supressed_error_txts):
                     logger.message(stdout_res)
             if result.stderr:
                 stderr_res = result.stderr.readline().decode("utf-8")
@@ -271,7 +271,7 @@ class GifsicleAPI:
             while result.poll() is None:
                 if result.stdout:
                     stdout_res = result.stdout.readline().decode("utf-8")
-                    if stdout_res:
+                    if stdout_res and not any(s in stdout_res for s in supressed_error_txts):
                         logger.message(stdout_res)
                 if result.stderr:
                     stderr_res = result.stderr.readline().decode("utf-8")
