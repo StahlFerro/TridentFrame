@@ -182,21 +182,23 @@ export default {
   },
   /** 
    * *TODO: Find the actual cause of this bug.
-  There is a weird bug in linux, in which performing the first tridentengine executable call from UI returns no response from the event handlers,
-  while subsequent calls behave normally. This terrible workaround is in place so that the tridentengine executable is called at least
-  once upon application startup.
+  // There is a weird bug in linux, in which performing the first tridentengine executable call from UI returns no response from the event handlers,
+  // while subsequent calls behave normally. This terrible workaround is in place so that the tridentengine executable is called at least
+  // once upon application startup
+  * ! Update: As of 2021-07-09 this workaround does not work. The new observed behavior is that loading images in CreatePanel works, but
+  * ! image previewing/processing does not work
   **/
-  mounted: function() {
-    if (process.platform == "linux") {
-      setTimeout(function() {
-        tridentEngine(["echo", "PING"], (error, res) => {
-          console.debug(res);
-        })
-        tridentEngine(["info"], (error, res) => {
-          console.debug(res);
-        })
-      }, 300);
-    }
-  }
+  // mounted: function() {
+  //   if (process.platform == "linux") {
+  //     setTimeout(function() {
+  //       tridentEngine(["echo", "PING"], (error, res) => {
+  //         console.debug(res);
+  //       })
+  //       tridentEngine(["info"], (error, res) => {
+  //         console.debug(res);
+  //       })
+  //     }, 300);
+  //   }
+  // }
 };
 </script>
