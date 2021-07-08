@@ -551,6 +551,7 @@ class APNGOptAPI:
         # common_path = os.path.commonpath([opt_exec_path, target_path])
         target_rel_path = Path(os.path.relpath(target_path, cwd))
         # out_rel_path = Path(os.path.relpath(out_full_path, cwd))
+        newline_check = ["\r\n", "\n"]
         for index, (arg, description) in enumerate(aopt_args, start=1):
             logger.message(f"index {index}, arg {arg}, description: {description}")
             cmdlist = [
@@ -572,8 +573,8 @@ class APNGOptAPI:
                 # break
                 if process.stdout:
                     stdout_res = process.stdout.readline().decode("utf-8")
-                    logger.message(stdout_res.capitalize())
-                    if stdout_res and "saving" in stdout_res:
+                    logger.debug(stdout_res.capitalize())
+                    if stdout_res and stdout_res not in newline_check and "saving" in stdout_res:
                         out_words = " ".join(
                             stdout_res.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
                         )[:-1]
