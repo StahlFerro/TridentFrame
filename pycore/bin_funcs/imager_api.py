@@ -30,7 +30,8 @@ from pycore.utility.sysinfo import os_platform, OS
 class InternalImageAPI:
 
     @classmethod
-    def get_apng_frames(cls, apng: APNG, unoptimize: bool = False) -> Iterator[Tuple[Image.Image, FrameControl]]:
+    def get_apng_frames(cls, apng: APNG, unoptimize: bool = False) -> \
+            Generator[Tuple[Image.Image, FrameControl], None, None]:
         canvas: Image.Image
         for index, (png, control) in enumerate(apng.frames):
             final_im: Image.Image

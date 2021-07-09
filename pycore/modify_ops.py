@@ -103,6 +103,8 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
         orig_width, orig_height = metadata.width["value"], metadata.height["value"]
         alpha_base = Image.new("RGBA", size=(orig_width, orig_height))
         unoptimized_apng_frames = InternalImageAPI.get_apng_frames(apng_im, unoptimize=True)
+        if mod_criteria.reverse:
+            unoptimized_apng_frames = reversed(list(unoptimized_apng_frames))
         for index, (im, control) in enumerate(unoptimized_apng_frames):
             # logger.debug(png.chunks)
             delay = int(mod_criteria.delay * 1000)
@@ -117,6 +119,8 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
                 logger.debug({"fr_orig_size": im.size})
                 has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
                 im = im.resize(mod_criteria.size, resample=getattr(Image, mod_criteria.resize_method))
+                im = im.transpose(Image.FLIP_LEFT_RIGHT) if mod_criteria.flip_x else im
+                im = im.transpose(Image.FLIP_TOP_BOTTOM) if mod_criteria.flip_y else im
                 if im.mode == "P":
                     if has_transparency:
                         im = im.convert("RGBA")

@@ -70,7 +70,7 @@ class ModificationCriteria(CreationCriteria):
         return self.must_resize(metadata) or self.must_flip()
 
     def apng_must_reiterate(self, metadata: AnimatedImageMetadata) -> bool:
-        return self.must_resize(metadata) or self.must_flip() or self.must_redelay(metadata)
+        return self.must_resize(metadata) or self.must_flip() or self.must_redelay(metadata) or self.reverse
     
     def gif_must_rebuild(self) -> bool:
         """Determine whether the modification needs the animated GIF to be split and rebuilt with the required modifications,

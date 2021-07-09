@@ -186,15 +186,13 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
                     (round(criteria.width), round(criteria.height)),
                     resize_method_enum,
                 )
+            im = im.transpose(Image.FLIP_LEFT_RIGHT) if criteria.flip_x else im
+            im = im.transpose(Image.FLIP_TOP_BOTTOM) if criteria.flip_y else im
             if im.mode == "P":
                 if has_transparency:
                     im = im.convert("RGBA")
                 else:
                     im = im.convert("RGB")
-            if criteria.flip_x:
-                im = im.transpose(Image.FLIP_LEFT_RIGHT)
-            if criteria.flip_y:
-                im = im.transpose(Image.FLIP_TOP_BOTTOM)
             # if criteria.rotation:
             #     im = im.rotate(criteria.rotation, expand=True)
             # logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
