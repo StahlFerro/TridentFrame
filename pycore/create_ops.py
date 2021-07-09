@@ -212,6 +212,8 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
             preprocessed_paths.append(save_path)
             # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
     logger.message("Saving APNG....")
+    if criteria.start_frame:
+        preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, criteria.start_frame)
     apng = APNG.from_files(preprocessed_paths, delay=int(criteria.delay * 1000))
     apng.num_plays = criteria.loop_count
     apng.save(out_full_path)
