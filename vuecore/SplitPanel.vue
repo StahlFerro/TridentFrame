@@ -239,12 +239,9 @@
 
 <script>
 
-const remote = require("electron").remote;
-const dialog = remote.dialog;
-const mainWindow = remote.getCurrentWindow();
-const session = remote.getCurrentWebContents().session;
-const { randString, validateFilename, numConstrain, escapeLocalPath, roundPrecise } = require('./Utility.vue');
-const { tridentEngine } = require("./PythonCommander.vue");
+const { ipcRenderer } = require("electron");
+const { randString, validateFilename, numConstrain, escapeLocalPath, roundPrecise } = require('./api/utility');
+const { tridentEngine } = require("./api/tridentEngine");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
@@ -311,7 +308,7 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
     let chosen_path = result.filePaths;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
@@ -393,7 +390,7 @@ function toggleCheckerBG() {
 
 function chooseOutDir() {
   var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
     let out_dirs = result.filePaths;
     console.log(out_dirs);
     if (out_dirs && out_dirs.length > 0) { 

@@ -19,6 +19,16 @@
           </a>
         </td>
       </tr>
+      <!-- <tr>
+        <td>
+          <a v-on:click="ipcWindow" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <i class="fas fa-window-maximize"></i>
+            </span>
+            <span>IPC Window Test</span>
+          </a>
+        </td>
+      </tr> -->
 
       <!-- <tr>
         <td>
@@ -62,10 +72,10 @@
 </template>
 
 <script>
-const { remote, BrowserWindow } = require("electron");
+const { remote, BrowserWindow, ipcRenderer } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./PythonCommander.vue");
+const { tridentEngine } = require("./api/tridentEngine.js");
 const { PythonShell } = require("python-shell");
 
 function callPython() {
@@ -132,9 +142,19 @@ function openConfirm() {
     buttons: ["Yes", "Cancel"],
     message: "A file with the same name exists in the output folder. Do you want to override it?"
   };
-  let response = dialog.showMessageBoxSync(WINDOW, options);
-  console.log(`response: ${response}`)
+  // let response = dialog.showMessageBoxSync(WINDOW, options);
+  // console.log(`response: ${response}`)
 }
+
+
+let extension_filters = [
+  {
+    name: "Images",
+    extensions: ["png", "gif", "jpg", "webp"],
+  },
+];
+let file_dialog_props = ["openfile"];
+let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 export default {
   methods: {
@@ -145,6 +165,40 @@ export default {
     testGenerator: testGenerator,
     openConfirm: openConfirm,
     callPython: callPython,
-  }
+    ipcWindow: function() {
+      var options = {
+        filters: extension_filters,
+        properties: file_dialog_props,
+      };
+      console.log('before invoke');
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        tridentEngine(["inspect_one", result.filePaths[0]], (error, res) => {
+          console.log(res);
+        })
+      });
+      console.log('after invoke here');
+
+    }
+  },
+  /** 
+   * *TODO: Find the actual cause of this bug.
+  // There is a weird bug in linux, in which performing the first tridentengine executable call from UI returns no response from the event handlers,
+  // while subsequent calls behave normally. This terrible workaround is in place so that the tridentengine executable is called at least
+  // once upon application startup
+  * ! Update: As of 2021-07-09 this workaround does not work. The new observed behavior is that loading images in CreatePanel works, but
+  * ! image previewing/processing does not work
+  **/
+  // mounted: function() {
+  //   if (process.platform == "linux") {
+  //     setTimeout(function() {
+  //       tridentEngine(["echo", "PING"], (error, res) => {
+  //         console.debug(res);
+  //       })
+  //       tridentEngine(["info"], (error, res) => {
+  //         console.debug(res);
+  //       })
+  //     }, 300);
+  //   }
+  // }
 };
 </script>

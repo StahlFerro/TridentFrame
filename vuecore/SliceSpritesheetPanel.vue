@@ -163,8 +163,8 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./PythonCommander.vue");
-const { randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./Utility.vue");
+const { client } = require("./api/tridentEngine");
+const { randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./api/utility");
 
 let extension_filters = [{ name: "Spritesheet image", extensions: ["png", "jpg"] }];
 let file_dialog_props = ["openfile"];
@@ -221,7 +221,8 @@ function loadSheet() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options, (chosen_path) => {
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
+    let chosen_path = result.filePaths[0];
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
       return;
@@ -420,10 +421,10 @@ function toggleCheckerBG() {
 
 function chooseOutDir() {
   var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options, (out_dirs) => {
-    console.log(out_dirs);
-    if (out_dirs && out_dirs.length > 0) { 
-      data.outdir = out_dirs[0];
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
+    console.log(result);
+    if (result && result.length > 0) { 
+      data.outdir = result[0];
     }
     data.split_msgbox = "";
   });

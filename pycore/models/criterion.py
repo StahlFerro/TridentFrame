@@ -1,5 +1,5 @@
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Tuple, Any, Optional
 
 
 class TransformativeCriteria:
@@ -10,6 +10,10 @@ class TransformativeCriteria:
         self.flip_x: bool = vals.get("flip_x", False)
         self.flip_y: bool = vals.get("flip_y", False)
         self.rotation = int(vals["rotation"] or 0)
+
+    @property
+    def size(self) -> Tuple[int, int]:
+        return self.width, self.height
 
     def must_resize(self, metadata: Optional[ImageMetadata] = None, width: Optional[int] = 0,
                     height: Optional[int] = 0) -> bool:
@@ -45,6 +49,7 @@ class CreationCriteria(TransformativeCriteria):
         self.skip_frame = vals.get("skip_frame") or 0
 
 
+
 class ModificationCriteria(CreationCriteria):
     """ Contains all of the criterias for Modifying the specifications of an animated image """
 
@@ -65,7 +70,7 @@ class ModificationCriteria(CreationCriteria):
         return self.must_resize(metadata) or self.must_flip()
 
     def apng_must_reiterate(self, metadata: AnimatedImageMetadata) -> bool:
-        return self.must_resize(metadata) or self.must_flip() or self.must_redelay(metadata)
+        return self.must_resize(metadata) or self.must_flip() or self.must_redelay(metadata) or self.reverse
     
     def gif_must_rebuild(self) -> bool:
         """Determine whether the modification needs the animated GIF to be split and rebuilt with the required modifications,

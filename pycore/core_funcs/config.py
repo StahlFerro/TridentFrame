@@ -2,7 +2,6 @@ import os
 import platform
 import json
 from pathlib import Path
-from . import logger
 
 
 IMG_EXTS = ["png", "jpg", "jpeg", "gif", "bmp", "tiff"]
@@ -10,16 +9,11 @@ STATIC_IMG_EXTS = ["png", "jpg", "jpeg", "bmp", "gif"]
 ANIMATED_IMG_EXTS = ["gif", "png"]
 
 
-class ApplicationConfig:
-    def __init__(self, cache_dir, temp_dir):
-        self.cache_dir = cache_dir
-        self.temp_dir = temp_dir
-
-
 # logger.message(f"On config.py, {os.getcwd()}")
 
 with open("./config/settings.json") as f:
     SETTINGS = json.loads(f.read())
+
 
 CACHE_DIRNAME = SETTINGS["cache_dir"]
 PREVIEWS_DIRNAME = SETTINGS["previews_dir"]
@@ -96,6 +90,7 @@ def get_absolute_temp_path() -> Path:
     if not empty_file.exists():
         open(empty_file, "x")
     return temp_dir
+
 
 def imager_exec_path(binname: str) -> Path:
     """Get the path to the internal image processing binaries\n

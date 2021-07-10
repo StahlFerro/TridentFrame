@@ -373,7 +373,7 @@ const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
 // const { client } = require("./Client.vue");
 import { quintcellLister, GIF_DELAY_DECIMAL_PRECISION, randString, gcd, wholeNumConstrain,
-  numConstrain, validateFilename, fileExists } from './Utility.vue';
+  numConstrain, validateFilename, fileExists } from './api/utility';
 
 function clearInfo() {
   data.image_paths = [],
@@ -459,7 +459,7 @@ function loadInput(ops) {
     filters: extension_filters,
     properties: props,
   }
-  dialog.showOpenDialog(mainWindow, options, (img_paths) => {
+    ipcRenderer.invoke('open-dialog', options).then((img_paths) => {
     if (img_paths === undefined || img_paths.length == 0) { return; }
     if (data.input_format == "sequence") {
       loadSequence(img_paths, ops);
@@ -608,7 +608,7 @@ function sheetDimensions() {
 
 function chooseOutDir() {
   var options = { properties: dir_dialog_props };
-  dialog.showOpenDialog(mainWindow, options, (out_dirs) => {
+  ipcRenderer.invoke('open-dialog', options).then((out_dirs) => {
     console.log(out_dirs);
     if (out_dirs && out_dirs.length > 0) {
       data.outdir = out_dirs[0];
@@ -686,8 +686,8 @@ function buildSpritesheet() {
       buttons: ["Yes", "Cancel"],
       message: "A file with the same name already exists in the output folder. Do you want to override it?"
     };
-    let response = dialog.showMessageBoxSync(WINDOW, options);
-    if (response == 1) proceed_build = false;
+    // let response = MessageBoxSync(WINDOW, options);
+    // if (response ==dialog.show 1) proceed_build = false;
   }
 
   if (proceed_build) {

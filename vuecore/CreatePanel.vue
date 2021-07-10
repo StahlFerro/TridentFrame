@@ -479,10 +479,8 @@
 </template>
 
 <script>
-const remote = require("electron").remote;
-const dialog = remote.dialog;
-const mainWindow = remote.getCurrentWindow();
-const { tridentEngine } = require("./PythonCommander.vue");
+const { ipcRenderer } = require('electron');
+const { tridentEngine } = require("./api/tridentEngine");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
 const {
@@ -496,10 +494,9 @@ const {
   fileExists,
   readFilesize,
   escapeLocalPath,
-  PREVIEWS_PATH,
-  TEMP_PATH,
   stem,
-} = require("./Utility.vue");
+} = require("./api/utility");
+const { PREVIEWS_PATH } = require("./api/config");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
@@ -634,7 +631,7 @@ function btnLoadImages(ops) {
     properties: props,
   };
 
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
     let img_paths = result.filePaths;
     console.log(img_paths);
     if (img_paths === undefined || img_paths.length == 0) {
@@ -736,10 +733,10 @@ function singleSaveOption() {
 }
 
 function setSavePath(afterSaveCallback) {
-  dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+  ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
-    let save_path = result.filePath;
     console.log(result);
+    let save_path = result.filePath;
     // data.save_path = save_path;
     data.save_dir = path.dirname(save_path);
     data.save_fstem = stem(path.basename(save_path));
@@ -824,7 +821,7 @@ function previewAIMG() {
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
+  let preview_savepath = path.join(PREVIEWS_PATH, preview_filename);
   console.log(preview_savepath);
   tridentEngine(["combine_image", data.image_paths, preview_savepath, criteria_pack], (error, res) => {
     if (error) {

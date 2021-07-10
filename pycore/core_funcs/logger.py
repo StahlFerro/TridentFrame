@@ -6,6 +6,8 @@ import os
 import traceback
 from typing import Any
 from pathlib import Path
+from apng import FrameControl
+from pycore.models import criterion
 
 
 class UnbufferedStream(object):
@@ -27,7 +29,20 @@ class UnbufferedStream(object):
 class JSONEncoderTrident(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, bytes):
-            return obj.hex()
+            return obj.decode('utf-8')
+        if isinstance(obj, Path):
+            return str(obj)
+        if isinstance(obj, FrameControl):
+            return obj.__dict__
+        if isinstance(obj, (
+            criterion.CriteriaBundle,
+            criterion.CreationCriteria,
+            criterion.SplitCriteria,
+            criterion.ModificationCriteria,
+            criterion.APNGOptimizationCriteria,
+            criterion.GIFOptimizationCriteria,
+        )):
+            return obj.__dict__
         # if isinstance(obj, numpy.ndarray):
         #     return obj.tolist()
         # if isinstance(obj, numpy.int32):

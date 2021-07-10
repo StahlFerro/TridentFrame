@@ -187,11 +187,10 @@
 </template>
 
 <script>
-const remote = require("electron").remote;
-const session = remote.getCurrentWebContents().session;
 
 // import { client } from "./vuecore/Client.vue";
 // import { client, ImageViewer } from "./vuecore/Client.vue";
+const { tridentEngine } = require("./vuecore/api/tridentEngine")
 import ContextMenu from './vuecore/components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './vuecore/components/ContextMenu/ContextMenuItem.vue';
 
@@ -220,10 +219,6 @@ function whatClicked(event) {
   console.log(`CLICK!!!`);
   console.log(event);
 }
-
-session.clearCache(() => {
-  alert("Cache cleared!");
-});
 
 // window.addEventListener("contextmenu", (e) => {
 //   e.preventDefault();

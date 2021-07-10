@@ -2,6 +2,8 @@ const electron = require('electron');
 const protocol = electron.protocol;
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
+const dialog = electron.dialog;
+const ipcMain = electron.ipcMain;
 const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
 let pyProc = null;
@@ -29,6 +31,7 @@ const createWindow = () => {
 			webSecurity: false,
 			nodeIntegration: true,
 			enableRemoteModule: true,
+			contextIsolation: false,
 		}
 	});
 	mainWindow.setMenu(null);
@@ -76,6 +79,18 @@ app.whenReady().then(() => {
 		const pathname = decodeURIComponent(request.url.replace('file:///', ''));
 		callback(pathname);
 	});
+});
+
+ipcMain.handle('open-dialog', async (event, args) => {
+	return dialog.showOpenDialog(mainWindow, args);
+});
+
+ipcMain.handle('save-dialog', async (event, args) => {
+	return dialog.showSaveDialog(mainWindow, args);
+});
+
+ipcMain.on('get-app-path', function (event, args) {
+	event.returnValue = app.getAppPath();
 });
 
 // const selectPort = () => {

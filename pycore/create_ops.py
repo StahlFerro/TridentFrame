@@ -8,16 +8,16 @@ from pathlib import Path
 from PIL import Image
 from apng import APNG, PNG
 
-from .core_funcs import logger
-from .core_funcs.config import (
+from pycore.core_funcs import logger
+from pycore.core_funcs.config import (
     STATIC_IMG_EXTS,
 )
 from pycore.models.criterion import (
     CreationCriteria,
     CriteriaBundle,
 )
-from .utility import filehandler, imageutils
-from .bin_funcs.imager_api import GifsicleAPI, APNGOptAPI
+from pycore.utility import filehandler, imageutils
+from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI
 
 
 def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
@@ -37,6 +37,7 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
     if criteria.start_frame:
         image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
     shout_nums = imageutils.shout_indices(fcount, 1)
+    black_bg = Image.new("RGBA", size=criteria.size)
     for index, ipath in enumerate(image_paths):
         if shout_nums.get(index):
             logger.message(f"Processing frames... ({shout_nums.get(index)})")
@@ -73,10 +74,10 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
                     im.paste(255, mask)
                     im.info["transparency"] = 255
                 else:
-                    black_bg = Image.new("RGBA", size=im.size)
-                    black_bg.alpha_composite(im)
+                    bg_image = black_bg.copy()
+                    bg_image.alpha_composite(im)
                     # im.show()
-                    im = black_bg
+                    im = bg_image
                     # black_bg.show()
                     im = im.convert("P", palette=Image.ADAPTIVE)
                 im.save(save_path)
@@ -119,7 +120,7 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     """
     gifragment_dir = _create_gifragments(image_paths, crbundle.create_aimg_criteria)
     out_full_path = GifsicleAPI.combine_gif_images(gifragment_dir, out_full_path, crbundle)
-    # shutil.rmtree(gifragment_dir)
+    shutil.rmtree(gifragment_dir)
     logger.preview_path(out_full_path)
     # logger.control("CRT_FINISH")
     return out_full_path
@@ -185,15 +186,13 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
                     (round(criteria.width), round(criteria.height)),
                     resize_method_enum,
                 )
+            im = im.transpose(Image.FLIP_LEFT_RIGHT) if criteria.flip_x else im
+            im = im.transpose(Image.FLIP_TOP_BOTTOM) if criteria.flip_y else im
             if im.mode == "P":
                 if has_transparency:
                     im = im.convert("RGBA")
                 else:
                     im = im.convert("RGB")
-            if criteria.flip_x:
-                im = im.transpose(Image.FLIP_LEFT_RIGHT)
-            if criteria.flip_y:
-                im = im.transpose(Image.FLIP_TOP_BOTTOM)
             # if criteria.rotation:
             #     im = im.rotate(criteria.rotation, expand=True)
             # logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
@@ -211,6 +210,8 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
             preprocessed_paths.append(save_path)
             # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
     logger.message("Saving APNG....")
+    if criteria.start_frame:
+        preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, criteria.start_frame)
     apng = APNG.from_files(preprocessed_paths, delay=int(criteria.delay * 1000))
     apng.num_plays = criteria.loop_count
     apng.save(out_full_path)

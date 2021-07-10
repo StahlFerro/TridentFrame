@@ -33,15 +33,13 @@ from pycore.models.criterion import (
 
 class TridentFrameImager:
     def echo(self, msg):
-        print(msg)
-        return f"{msg} echoed"
+        logger.debug(f"{msg} echoed")
 
-    def echostream(self, stdin_data):
-        print(type(stdin_data))
-        if type(stdin_data) != str:
-            print(stdin_data.read())
-        else:
-            print(stdin_data)
+    def info(self):
+        logger.debug({
+            "name": "TridentFrame",
+            "version": "v0.1.0-beta.8",
+        })
 
     def purge_previews_dir(self, excluded_images: List[str]):
         filehandler.empty_previews_dir(excluded_images)

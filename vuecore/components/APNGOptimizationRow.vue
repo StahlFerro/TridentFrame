@@ -94,7 +94,7 @@
 
 <script>
 import { Fragment } from 'vue-fragment';
-const { numConstrain } = require("../Utility.vue");
+const { numConstrain } = require("../api/utility");
 
 let props = ['apng_is_unoptimized'];
 

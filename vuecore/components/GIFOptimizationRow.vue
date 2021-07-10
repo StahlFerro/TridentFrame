@@ -104,7 +104,7 @@
 // import Vue from 'vue';
 // import { Plugin } from 'vue'
 import { Fragment }  from 'vue-fragment';
-const { numConstrain } = require("../Utility.vue");
+const { numConstrain } = require("../api/utility.js");
 const lodashClonedeep = require('lodash.clonedeep');
 
 let props = ['is_unoptimized']

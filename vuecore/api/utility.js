@@ -1,31 +1,4 @@
-<script>
-const path = require('path');
 const fs = require('fs');
-const deploy_env = process.env.DEPLOY_ENV;
-let PREVIEWS_PATH = "";
-if (deploy_env == "DEV") {
-  PREVIEWS_PATH = "./previews";
-}
-else {
-  if (process.platform == "win32") {
-    PREVIEWS_PATH = "./resources/app/engine/windows/previews";
-  }
-  else if (process.platform == "linux") { 
-    PREVIEWS_PATH = "./resources/app/engine/linux/previews";
-  }
-}
-let TEMP_PATH = "";
-if (deploy_env == "DEV") {
-  TEMP_PATH = "./temp";
-}
-else {
-  if (process.platform == "win32") {
-    TEMP_PATH = "./resources/app/engine/windows/temp";
-  }
-  else if (process.platform == "linux") { 
-    TEMP_PATH = "./resources/app/engine/linux/temp";
-  }
-}
 
 // function imageTableGenerator(sequence_infos) {
 
@@ -223,9 +196,5 @@ module.exports = {
   isNullOrWhitespace: isNullOrWhitespace,
   roundPrecise: roundPrecise,
   escapeLocalPath: escapeLocalPath,
-  PREVIEWS_PATH: PREVIEWS_PATH,
-  TEMP_PATH: TEMP_PATH,
   stem: stem,
 }
-
-</script>

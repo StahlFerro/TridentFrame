@@ -456,13 +456,11 @@
 
 <script>
 
-const remote = require('electron').remote;
-const dialog = remote.dialog;
-const mainWindow = remote.getCurrentWindow();
-const session = remote.getCurrentWebContents().session;
-const { tridentEngine } = require("./PythonCommander.vue");
+const { ipcRenderer } = require('electron');
+const { tridentEngine } = require("./api/tridentEngine");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, TEMP_PATH, PREVIEWS_PATH, stem } = require("./Utility.vue");
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, stem } = require("./api/utility");
+import { PREVIEWS_PATH, TEMP_PATH } from "./api/config";
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -643,7 +641,7 @@ function loadImage() {
     filters: extension_filters,
     properties: file_dialog_props
   };
-  dialog.showOpenDialog(mainWindow, options).then((result) => {
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
     let chosen_path = result.filePaths;
     console.log(`chosen path: ${chosen_path}`);
     if (chosen_path === undefined || chosen_path.length == 0) {
@@ -793,7 +791,7 @@ function savePath() {
 
 
 function setSavePath(afterSaveCallback) {
-  dialog.showSaveDialog(mainWindow, singleSaveOption()).then((result) => {
+  ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
     let save_path = result.filePath;
     console.log(result);
@@ -911,7 +909,7 @@ function previewModImg() {
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let preview_savepath = path.join(process.cwd(), PREVIEWS_PATH, preview_filename);
+  let preview_savepath = path.join(PREVIEWS_PATH, preview_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["modify_image", data.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
     if (error) {

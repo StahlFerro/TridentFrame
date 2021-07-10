@@ -1,6 +1,7 @@
 import os
 import io
 import shutil
+import math
 from pathlib import Path
 
 from PIL import Image
@@ -10,7 +11,7 @@ from pycore.models.criterion import (
     CriteriaBundle,
 )
 from pycore.utility import filehandler
-from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI
+from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI, InternalImageAPI
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.models.criterion import CreationCriteria, SplitCriteria
 from pycore.core_funcs import logger
@@ -40,6 +41,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "convert_to_rgba": False,
     })
     frame_paths = split_aimg(img_path, frames_dir, split_criteria)
+    logger.debug({"presplit_fr_paths": frame_paths})
     # yield {"MOD split frames": frame_paths}
     # if mod_criteria.is_reversed:
     #     frames.reverse()
@@ -93,42 +95,53 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
     mod_criteria = crbundle.modify_aimg_criteria
     aopt_criteria = crbundle.apng_opt_criteria
     apng_im: APNG = APNG.open(apng_path)
+    logger.debug({"crbundle": crbundle})
     # Reiterate through the frames if matching certain conditions, or per-frame lossy compression is required
-    if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_lossy:
+    if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_lossy or aopt_criteria.is_unoptimized:
         logger.debug(f"REITERATE APNG")
         new_apng: APNG = APNG()
-        for index, (png, control) in enumerate(apng_im.frames):
+        orig_width, orig_height = metadata.width["value"], metadata.height["value"]
+        alpha_base = Image.new("RGBA", size=(orig_width, orig_height))
+        unoptimized_apng_frames = InternalImageAPI.get_apng_frames(apng_im, unoptimize=True)
+        if mod_criteria.reverse:
+            unoptimized_apng_frames = reversed(list(unoptimized_apng_frames))
+        for index, (im, control) in enumerate(unoptimized_apng_frames):
             # logger.debug(png.chunks)
             delay = int(mod_criteria.delay * 1000)
             control.delay = delay
-            if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode:
-                with io.BytesIO() as img_buf:
-                    png.save(img_buf)
-                    with Image.open(img_buf) as im:
-                        has_transparency = im.info.get("transparency") is not None  or im.mode == "RGBA"
-                        im = im.resize((mod_criteria.width, mod_criteria.height),
-                                       resample=getattr(Image, mod_criteria.resize_method))
-                        if im.mode == "P":
-                            if has_transparency:
-                                im = im.convert("RGBA")
-                            else:
-                                im = im.convert("RGB")
-                        quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
-                        if aopt_criteria.is_lossy:
-                            im = im.quantize(
-                                aopt_criteria.lossy_value, method=quant_method, dither=1).convert("RGBA")
-                        if aopt_criteria.convert_color_mode:
-                            im = im.convert(aopt_criteria.new_color_mode)
-                        with io.BytesIO() as new_buf:
-                            im.save(new_buf, "PNG")
-                            new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=delay)
+            logger.debug({"fr_control": control})
+            if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode\
+                    or aopt_criteria.is_unoptimized:
+                # with io.BytesIO() as img_buf:
+                #     png.save(img_buf)
+                #     with Image.open(img_buf) as im:
+                #         im.show()
+                logger.debug({"fr_orig_size": im.size})
+                has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
+                im = im.resize(mod_criteria.size, resample=getattr(Image, mod_criteria.resize_method))
+                im = im.transpose(Image.FLIP_LEFT_RIGHT) if mod_criteria.flip_x else im
+                im = im.transpose(Image.FLIP_TOP_BOTTOM) if mod_criteria.flip_y else im
+                if im.mode == "P":
+                    if has_transparency:
+                        im = im.convert("RGBA")
+                    else:
+                        im = im.convert("RGB")
+                quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
+                if aopt_criteria.is_lossy:
+                    im = im.quantize(
+                        aopt_criteria.lossy_value, method=quant_method, dither=1).convert("RGBA")
+                if aopt_criteria.convert_color_mode:
+                    im = im.convert(aopt_criteria.new_color_mode)
+                with io.BytesIO() as new_buf:
+                    im.save(new_buf, "PNG")
+                    new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=delay)
         logger.debug(f"NEW FRAMES COUNT: {len(new_apng.frames)}")
         if len(new_apng.frames) > 0:
             apng_im = new_apng
     apng_im.num_plays = mod_criteria.loop_count
     apng_im.save(out_path)
-    logger.message(f"Optimizing APNG...")
     if aopt_criteria.is_optimized:
+        logger.message(f"Optimizing APNG...")
         APNGOptAPI.optimize_apng(out_path, out_path, aopt_criteria)
     return out_path
 
