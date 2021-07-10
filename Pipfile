@@ -12,6 +12,7 @@ pywin32 = {version = "*", sys_platform = "== 'win32'"}
 black = "*"
 pylint = "*"
 pyinstaller = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.7"

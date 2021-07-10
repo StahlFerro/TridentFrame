@@ -6,7 +6,7 @@ class TransformativeCriteria:
     def __init__(self, vals: Dict):
         self.width: int = int(vals.get("width", 1))
         self.height: int = int(vals.get("height"))
-        self.resize_method: str = vals.get("resize_method", "BICUBIC").upper()
+        self.resize_method: str = (vals.get("resize_method") or "BICUBIC").upper()
         self.flip_x: bool = vals.get("flip_x", False)
         self.flip_y: bool = vals.get("flip_y", False)
         self.rotation = int(vals["rotation"] or 0)
@@ -47,7 +47,6 @@ class CreationCriteria(TransformativeCriteria):
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.skip_frame = vals.get("skip_frame") or 0
-
 
 
 class ModificationCriteria(CreationCriteria):

@@ -40,7 +40,10 @@
     "updatepy-linux": "npm run buildpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
     "release-windows": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-windows && npm run elbuild && npm run scribe-version",
     "release-linux": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild && npm run scribe-version",
-    "scribe-version": "python writer/info_scribe.py"
+    "scribe-version": "python writer/info_scribe.py",
+    "test-py": "python -m pytest",
+    "test-js": "cross-env DEPLOY_ENV=DEV mocha './tests/javascript/**/*.js'",
+    "test-js-prod": "mocha './tests/javascript/**/*.js'"
   },
   "build": {
     "productName": "TridentFrame",
@@ -125,10 +128,11 @@
     "html-webpack-plugin": "^5.3.2",
     "make-fetch-happen": "^8.0.14",
     "mini-css-extract-plugin": "^1.6.2",
+    "mocha": "^9.0.2",
     "node-loader": "^1.0.3",
     "rimraf": "^3.0.2",
     "sass": "^1.35.1",
-    "spectron": "^13.0.0",
+    "spectron": "^15.0.0",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.7",
     "vue-template-compiler": "^2.6.14",
