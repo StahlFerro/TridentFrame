@@ -31,7 +31,7 @@ Make sure to have the following installed:
 
 * Python 3.7 (or above)
 * Pipenv (optional)
-* Node.js 12 (or above)
+* Node.js 14 (or above)
 
 
 ## Project setup
