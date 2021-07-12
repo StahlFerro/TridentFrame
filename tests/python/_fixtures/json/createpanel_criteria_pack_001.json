@@ -24,7 +24,7 @@
         "is_unoptimized": false
     },
     "apng_opt_criteria": {
-        "apng_is_optimized": false,
+        "apng_is_optimized": true,
         "apng_optimization_level": "1",
         "apng_is_lossy": false,
         "apng_lossy_value": "",
