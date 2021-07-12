@@ -1,5 +1,3 @@
-import unittest
-
 from pycore.models.criterion import TransformativeCriteria, CreationCriteria, SplitCriteria
 
 

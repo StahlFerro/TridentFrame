@@ -4,8 +4,8 @@ from pycore.utility.imageutils import shout_indices, png_is_animated, get_image_
     , sequence_nameget
 
 
-TEST_APNG_PATH = Path(__file__).resolve().parents[1].joinpath("sample_images/checker_256px.png")
-TEST_SEQUENCE_PATH = [p for p in Path(__file__).resolve().parents[1].joinpath("sample_images").iterdir()
+TEST_APNG_PATH = Path(__file__).resolve().parents[1].joinpath("_fixtures/apng/checker_256px.png")
+TEST_SEQUENCE_PATH = [p for p in Path(__file__).resolve().parents[1].joinpath("_fixtures/sequence/").iterdir()
                  if p.stem.startswith("checker_4x4_")]
 
 
