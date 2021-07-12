@@ -203,9 +203,13 @@
                   <div class="field">
                     <label class="label" title="The width of the GIF/APNG">Width</label>
                     <div class="control">
-                      <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="widthHandler(criteria.width, $event)" class="input is-neon-white"
-                        type="number" min="1"/>
+                      <input 
+                        v-bind:value="criteria.width" 
+                        v-on:keydown="numConstrain($event, true, true)"
+                        v-on:input="widthHandler(criteria.width, $event)" 
+                        class="input is-neon-white"
+                        type="number" 
+                        min="1"/>
                     </div>
                   </div>
                 </td>
@@ -948,15 +952,14 @@ function isButtonFrozen() {
 
 function widthHandler(width, event) {
   data.old_width = parseInt(width);
-  console.log(event);
   let newWidth = event.target.value;
-  data.criteria.width = newWidth;
+  data.criteria.width = parseInt(newWidth);
   if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) {
     // Change height if lock_aspect_ratio is true and height is not 0
     let raHeight = Math.round(
       (newWidth / data.aspect_ratio.w_ratio) * data.aspect_ratio.h_ratio
     );
-    data.criteria.height = raHeight > 0 ? raHeight : "";
+    data.criteria.height = raHeight > 0 ? parseInt(raHeight) : "";
   } else {
     updateAspectRatio(data.criteria.width, data.criteria.height);
   }
@@ -965,13 +968,13 @@ function widthHandler(width, event) {
 function heightHandler(height, event) {
   data.old_height = parseInt(height);
   let newHeight = event.target.value;
-  data.criteria.height = newHeight;
+  data.criteria.height = parseInt(newHeight);
   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
     let raWidth = Math.round(
       (newHeight / data.aspect_ratio.h_ratio) * data.aspect_ratio.w_ratio
     );
     console.log(raWidth);
-    data.criteria.width = raWidth > 0 ? raWidth : "";
+    data.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
   } else {
     updateAspectRatio(data.criteria.width, data.criteria.height);
   }

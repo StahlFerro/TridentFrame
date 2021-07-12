@@ -1,4 +1,10 @@
-from pycore.models.criterion import TransformativeCriteria, CreationCriteria, SplitCriteria
+import json
+from pathlib import Path
+from pycore.models.criterion import TransformativeCriteria, CreationCriteria, SplitCriteria, CriteriaBundle,\
+    GIFOptimizationCriteria, APNGOptimizationCriteria
+
+
+TEST_JSON_DIR = Path(__file__).resolve().parents[1].joinpath("_fixtures/json/")
 
 
 def test_transformative_criteria():
@@ -70,3 +76,15 @@ def test_split_criteria():
     assert split_criteria.extract_delay_info
     assert split_criteria.new_name == "Navigation"
     assert split_criteria.pad_count == 3
+
+
+def test_criteria_bundle():
+    with open(TEST_JSON_DIR.joinpath("createpanel_criteria_pack_001.json"), "r") as f:
+        crpack = json.loads(f.read())
+    crbundle = CriteriaBundle({
+        "create_aimg_criteria": CreationCriteria(crpack["criteria"]),
+        "gif_opt_criteria": GIFOptimizationCriteria(crpack["gif_opt_criteria"]),
+        "apng_opt_criteria": APNGOptimizationCriteria(crpack["apng_opt_criteria"]),
+    })
+    assert crbundle.create_aimg_criteria
+    assert crbundle.apng_opt_criteria
