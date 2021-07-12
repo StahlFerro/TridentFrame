@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from . import logger
+from . import stdio
 
 
 class UnidentifiedImageException(Exception):
@@ -107,8 +107,8 @@ def set_exception_handler(json_mode: bool = True):
 
     def exception_handler(exception_type, exception, traceback, debug_hook=sys.excepthook):
         if json_mode:
-            logger.error_traceback(traceback)
-            logger.error(f"Error: {exception}")
+            stdio.error_traceback(traceback)
+            stdio.error(f"Error: {exception}")
         else:
             debug_hook(exception_type, exception, traceback)
 

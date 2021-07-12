@@ -2,7 +2,11 @@ from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from typing import Dict, List, Tuple, Any, Optional
 
 
-class TransformativeCriteria:
+class CriteriaBase:
+    pass
+
+
+class TransformativeCriteria(CriteriaBase):
     def __init__(self, vals: Dict):
         self.width: int = int(vals.get("width", 1))
         self.height: int = int(vals.get("height"))
@@ -108,7 +112,7 @@ class ModificationCriteria(CreationCriteria):
         return f"{self.width}x{self.height}"
 
 
-class SplitCriteria:
+class SplitCriteria(CriteriaBase):
     """ Contains all of the criterias for Splitting an animated image """
 
     def __init__(self, vals):
@@ -123,7 +127,7 @@ class SplitCriteria:
         self.extract_delay_info: bool = vals["extract_delay_info"]
 
 
-class SpritesheetBuildCriteria:
+class SpritesheetBuildCriteria(CriteriaBase):
     """ Contains all of the criterias to build a spritesheet """
 
     def __init__(self, vals: dict):
@@ -138,7 +142,7 @@ class SpritesheetBuildCriteria:
         self.preserve_alpha: bool = vals["preserve_alpha"]
 
 
-class SpritesheetSliceCriteria:
+class SpritesheetSliceCriteria(CriteriaBase):
     """ Contains all of the criterias to slice a spritesheet """
 
     def __init__(self, vals):
@@ -153,7 +157,7 @@ class SpritesheetSliceCriteria:
         self.is_edge_alpha: bool = vals.get("is_edge_alpha")
 
 
-class GIFOptimizationCriteria:
+class GIFOptimizationCriteria(CriteriaBase):
     """ Criteria for GIF-related optimization/unoptimization """
 
     def __init__(self, vals):
@@ -173,7 +177,7 @@ class GIFOptimizationCriteria:
 #         pass
 
 
-class APNGOptimizationCriteria:
+class APNGOptimizationCriteria(CriteriaBase):
     """ Criteria for APNG-related optimization/unoptimization """
 
     def __init__(self, vals):
@@ -190,7 +194,7 @@ class APNGOptimizationCriteria:
         return (self.is_optimized and self.optimization_level) or (self.is_lossy and self.lossy_value)
 
 
-class CriteriaBundle:
+class CriteriaBundle(CriteriaBase):
     """ Packs multiple criterias into one"""
 
     def __init__(self, vals):

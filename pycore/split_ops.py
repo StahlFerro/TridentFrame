@@ -14,7 +14,7 @@ from pycore.core_funcs.config import (
 )
 from pycore.models.criterion import SplitCriteria
 from pycore.utility import filehandler, imageutils
-from pycore.core_funcs import logger
+from pycore.core_funcs import stdio
 
 
 def _get_aimg_delay_ratios(aimg_path: Path, aimg_type: str, duration_sensitive: bool = False) -> List[Tuple[str, str]]:
@@ -158,7 +158,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     # unop_gif_path = unop_dir.joinpath(gif_path.name)
     # color_space = criteria.color_space
     target_path = Path(gif_path)
-    logger.message(str(target_path))
+    stdio.message(str(target_path))
     # if color_space:
     #     if color_space < 2 or color_space > 256:
     #         raise Exception("Color space must be between 2 and 256!")
@@ -181,13 +181,13 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
     # ===== End test splitting code =====
 
     if criteria.is_unoptimized:
-        logger.message("Unoptimizing and splitting GIF...")
+        stdio.message("Unoptimizing and splitting GIF...")
         # ImageMagick is used to unoptimized rather than Gifsicle's unoptimizer because Gifsicle doesn't support
         # unoptimization of GIFs with local color table
         # target_path = ImageMagickAPI.unoptimize_gif(gif_path, unop_gif_path)
         frame_paths = ImageMagickAPI.extract_unoptimized_gif_frames(gif_path, name, criteria, out_dir)
     else:
-        logger.message("Splitting GIF...")
+        stdio.message("Splitting GIF...")
         # frames = _fragment_gif_frames(target_path, name, criteria)
         frame_paths = GifsicleAPI.extract_gif_frames(target_path, name, criteria, out_dir)
     # gif = Image.open(gif_path)
@@ -197,7 +197,7 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
         for index, fpath in enumerate(frame_paths):
             # gif.seek(index)
             if shout_nums.get(index):
-                logger.message(f"Converting frames into RGBA color mode... ({shout_nums.get(index)})")
+                stdio.message(f"Converting frames into RGBA color mode... ({shout_nums.get(index)})")
             # save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), criteria.pad_count)}.png")
             with Image.open(fpath).convert("RGBA") as im:
                 # alpha = im.getchannel("A")
@@ -213,10 +213,10 @@ def _split_gif(gif_path: Path, out_dir: Path, criteria: SplitCriteria) -> List[P
             #         logger.debug(im.info)
             #         im.save(fpath, "GIF")
     if criteria.extract_delay_info:
-        logger.message("Generating delay information file...")
+        stdio.message("Generating delay information file...")
         imageutils.generate_delay_file(gif_path, "GIF", out_dir)
     # shutil.rmtree(unop_dir)
-    logger.debug({"frame_paths": frame_paths})
+    stdio.debug({"frame_paths": frame_paths})
     return frame_paths
 
 
@@ -470,12 +470,12 @@ def _split_apng(apng_path: Path, out_dir: Path, name: str, criteria: SplitCriter
     save_name = criteria.new_name or name
     for index, (fr, control) in enumerate(apng_frames):
         if shout_nums.get(index):
-            logger.message(f"Saving split frames... ({shout_nums.get(index)})")
+            stdio.message(f"Saving split frames... ({shout_nums.get(index)})")
         save_path = out_dir.joinpath(f"{save_name}_{str.zfill(str(index), pad_count)}.png")
         fr.save(save_path, format="PNG")
         frame_paths.append(save_path)
     if criteria.extract_delay_info:
-        logger.message("Generating delay information file...")
+        stdio.message("Generating delay information file...")
         imageutils.generate_delay_file(apng_path, "PNG", out_dir)
     return frame_paths
 
@@ -511,7 +511,7 @@ def split_aimg(image_path: Path, out_dir: Path, criteria: SplitCriteria) -> List
         frame_paths = _split_gif(image_path, out_dir, criteria)
     elif ext == "png":
         frame_paths = _split_apng(image_path, out_dir, name, criteria)
-    logger.control("SPL_FINISH")
+    stdio.control("SPL_FINISH")
     return frame_paths
 
 

@@ -5,7 +5,7 @@ from typing import List, Dict, Optional, Union
 
 from PIL import Image, ImageCms, ExifTags, UnidentifiedImageError
 from apng import APNG
-from pycore.core_funcs import logger
+from pycore.core_funcs import stdio
 from pycore.core_funcs.exception import (
     ImageNotStaticException,
     ImageNotAnimatedException,
@@ -156,7 +156,7 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         #     im = Image.open(image)
         im = Image.open(image_path)
     except Exception as e:
-        logger.error(str(e).replace("\\\\", "/"))
+        stdio.error(str(e).replace("\\\\", "/"))
         return
     fmt = im.format
     exif = ""
@@ -193,9 +193,9 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
     # logger.debug({"im.info": im.info, "icc": icc, "palette": imageutils.reshape_palette(palette) if palette else None})
-    logger.debug(im.info)
+    stdio.debug(im.info)
     if im.mode == "P":
-        logger.debug(im.getpalette())
+        stdio.debug(im.getpalette())
     im.close()
     metadata = ImageMetadata({
         "name": filename,
@@ -246,7 +246,7 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     comments = []
     for f in range(0, gif.n_frames):
         gif.seek(f)
-        logger.debug(gif.info)
+        stdio.debug(gif.info)
         # if f in range(0, 3):
         #     logger.debug(f"Frame #{f}\nDisposal: {gif.disposal_method}\nBackground: {gif.info.get('background', '')}\n"
         #         f"Transparency: {gif.info.get('transparency', '')}")
@@ -330,7 +330,7 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     # raise Exception(frames)
     delays = [f[1].delay if f[1] else 0 for f in frames]
     im = Image.open(abspath)
-    logger.debug(im.default_image)
+    stdio.debug(im.default_image)
     # for index in range(0, im.n_frames):
         # logger.debug(im.info)
         # logger.debug(im.mode)
@@ -392,14 +392,14 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     shout_nums = imageutils.shout_indices(len(abs_image_paths), 1)
     for index, path in enumerate(abs_image_paths):
         if shout_nums.get(index):
-            logger.message(f"Loading images... ({shout_nums.get(index)})")
+            stdio.message(f"Loading images... ({shout_nums.get(index)})")
         info = inspect_general(path, filter_on="static", skip=True)
         if info:
             gen_info = info.format_info()["general_info"]
             sequence_info.append(gen_info)
     # logger.message(sequence_info)
     if not sequence_info:
-        logger.error("No images selected. Make sure the path to them are correct and they are not animated images!")
+        stdio.error("No images selected. Make sure the path to them are correct and they are not animated images!")
         return {}
     static_img_paths = [si["absolute_url"]["value"] for si in sequence_info]
     # print("imgs count", len(static_img_paths))

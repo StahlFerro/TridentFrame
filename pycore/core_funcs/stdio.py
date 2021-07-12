@@ -1,5 +1,4 @@
 import json
-from json import JSONEncoder
 # import numpy
 import sys
 import os
@@ -8,6 +7,7 @@ from typing import Any
 from pathlib import Path
 from apng import FrameControl
 from pycore.models import criterion
+from pycore.utility.encoders import JSONEncoderTrident
 
 
 class UnbufferedStream(object):
@@ -26,28 +26,7 @@ class UnbufferedStream(object):
         return getattr(self.stream, attr)
 
 
-class JSONEncoderTrident(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, bytes):
-            return obj.decode('utf-8')
-        if isinstance(obj, Path):
-            return str(obj)
-        if isinstance(obj, FrameControl):
-            return obj.__dict__
-        if isinstance(obj, (
-            criterion.CriteriaBundle,
-            criterion.CreationCriteria,
-            criterion.SplitCriteria,
-            criterion.ModificationCriteria,
-            criterion.APNGOptimizationCriteria,
-            criterion.GIFOptimizationCriteria,
-        )):
-            return obj.__dict__
-        # if isinstance(obj, numpy.ndarray):
-        #     return obj.tolist()
-        # if isinstance(obj, numpy.int32):
-        #     return int(obj)
-        return JSONEncoder.default(self, obj)
+
 
 
 sys.stdout = UnbufferedStream(sys.stdout)

@@ -11,7 +11,7 @@ if IS_FROZEN:
     os.chdir(frozen_dir)
 
 
-from pycore.core_funcs import logger, exception
+from pycore.core_funcs import stdio, exception
 from pycore.utility import filehandler
 from typing import Dict, List
 from pycore.inspect_ops import inspect_sequence, inspect_general, inspect_sequence_autodetect
@@ -33,10 +33,10 @@ from pycore.models.criterion import (
 
 class TridentFrameImager:
     def echo(self, msg):
-        logger.debug(f"{msg} echoed")
+        stdio.debug(f"{msg} echoed")
 
     def info(self):
-        logger.debug({
+        stdio.debug({
             "name": "TridentFrame",
             "version": "v0.1.0-beta.8",
         })
@@ -55,7 +55,7 @@ class TridentFrameImager:
         info = inspect_general(image_path, filter)
         if info:
             # print(info.__dict__)
-            logger.data(info.format_info())
+            stdio.data(info.format_info())
 
     def inspect_many(self, image_paths: List[str]):
         """Inspect a sequence of images and then return their information.
@@ -68,7 +68,7 @@ class TridentFrameImager:
                 resolved_paths.append(cpath)
         info = inspect_sequence(resolved_paths)
         if info:
-            logger.data(info)
+            stdio.data(info)
 
     def inspect_smart(self, image_path: str):
         """Inspect a sequence of images and then return their information"""
@@ -81,7 +81,7 @@ class TridentFrameImager:
             raise FileNotFoundError(image_path.name)
         info = inspect_sequence_autodetect(image_path)
         if info:
-            logger.data(info)
+            stdio.data(info)
 
     # def combine_image(self, image_paths: List[str], out_dir: str, criteria_pack: Dict):
     def combine_image(self, image_paths: List[str], out_path: str, criteria_pack: Dict):
@@ -112,9 +112,9 @@ class TridentFrameImager:
         })
         out_path = create_aimg(resolved_paths, out_path, crbundle)
         if out_path:
-            logger.data(str(out_path))
+            stdio.data(str(out_path))
         if len(missing_paths) > 0:
-            logger.warn(str(missing_paths))
+            stdio.warn(str(missing_paths))
         return
 
     def split_image(self, image_path: str, out_dir: str, criteria_vals: SplitCriteria):
@@ -154,8 +154,8 @@ class TridentFrameImager:
         })
         out_path = modify_aimg(image_path, out_path, crbundle)
         if out_path:
-            logger.preview_path(out_path)
-            logger.control("MOD_FINISH")
+            stdio.preview_path(out_path)
+            stdio.control("MOD_FINISH")
         return
 
     def build_spritesheet(self, image_paths, out_dir, filename, vals: dict):

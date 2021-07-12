@@ -8,7 +8,7 @@ from typing import Iterator, List, Dict, Any
 from PIL import Image
 from apng import APNG
 
-from pycore.core_funcs import logger
+from pycore.core_funcs import stdio
 
 
 PNG_BLOCK_SIZE = 64
@@ -91,7 +91,7 @@ def shift_image_sequence(image_paths: List[Path], start_frame: int) -> List[Path
     """
     shift_items = deque(image_paths)
     shift = -start_frame
-    logger.message(f"SHIFT {shift}")
+    stdio.message(f"SHIFT {shift}")
     shift_items.rotate(shift)
     image_paths = list(shift_items)
     return image_paths
