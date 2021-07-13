@@ -42,7 +42,7 @@
     "release-linux": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild && npm run scribe-version",
     "scribe-version": "python writer/info_scribe.py",
     "test-py": "python -m pytest",
-    "test-js": "cross-env DEPLOY_ENV=DEV mocha './tests/javascript/**/*.js'",
+    "test-js": "cross-env DEPLOY_ENV=DEV mocha './tests/javascript/**/*.js' --exit",
     "test-js-prod": "mocha './tests/javascript/**/*.js'"
   },
   "build": {
@@ -86,7 +86,7 @@
       "!sass/**",
       "!temp/**",
       "!previews/**",
-      "!test/**",
+      "!tests/**",
       "!venv/**",
       "!vuecore/**",
       "!webfonts/**",
@@ -140,6 +140,7 @@
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.7.2",
     "webpack-dashboard": "^3.3.3",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "wtfnode": "^0.9.0"
   }
 }
