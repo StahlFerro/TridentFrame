@@ -76,7 +76,6 @@ describe('Application launch', function() {
             let btnId = await btn.getAttribute('id');
             btn.click();
             let panel = await app.client.$(`.root-panel > div#${btnId}`);
-            let panelId = await panel.getAttribute('id');
             assert.strictEqual(await panel.isDisplayed(), true);
         }
     })
