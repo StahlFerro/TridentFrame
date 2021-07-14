@@ -1,11 +1,13 @@
 import os
 import io
+import math
 import uuid
 import shlex
 import shutil
 import subprocess
 from pathlib import Path
 from sys import platform, stderr
+from enum import Enum, unique
 from typing import List, Tuple, Iterator, Optional, Generator
 
 from PIL import Image
@@ -27,7 +29,43 @@ from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
 
 
+@unique
+class ALPHADITHER(Enum):
+    # Screen door transparency pattern inspired from
+    # https://digitalrune.github.io/DigitalRune-Documentation/html/fa431d48-b457-4c70-a590-d44b0840ab1e.htm
+    SCREENDOOR = 0
+    DIFFUSION = 1  # Not implemented yet
+    NOISE = 2  # Not implemented yet
+
+
 class InternalImageAPI:
+
+    @classmethod
+    def dither_alpha(cls, im: Image, method: ALPHADITHER) -> Image:
+        if method == ALPHADITHER.SCREENDOOR:
+            weights_matrix = [
+                [1.0 / 16.0, 9.0 / 16.0, 3.0 / 16.0, 11.0 / 16.0],
+                [13.0 / 16.0, 5.0 / 16.0, 15.0 / 16.0, 7.0 / 16.0],
+                [4.0 / 16.0, 12.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0],
+                [16.0 / 16.0, 8.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0],
+            ]
+            weights_matrix = [[math.pow(n * 1.35, 2 + ((n - 0.5) * 3)) for n in mrow] for mrow in weights_matrix]
+            width, height = im.size
+            pixels = list(im.getdata())
+            threshold = 128
+            for y in range(int(height)):
+                for x in range(int(width)):
+                    index = y * width + x
+                    pix = pixels[index]
+                    orig_alpha = pix[3]
+                    if orig_alpha == 255:
+                        continue
+                    weight = weights_matrix[x % 4][y % 4]
+                    display_alpha = orig_alpha * weight >= threshold
+                    pixels[index] = (*pix[0:3], 255) if display_alpha else (*pix[0:3], 0)
+            new_im = Image.new("RGBA", im.size)
+            new_im.putdata(pixels)
+            return new_im
 
     @classmethod
     def get_apng_frames(cls, apng: APNG, unoptimize: bool = False) -> \
