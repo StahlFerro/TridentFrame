@@ -32,6 +32,8 @@ from pycore.utility.sysinfo import os_platform, OS
 
 @unique
 class ALPHADITHER(Enum):
+    """Options for different transparency dithering methods"""
+
     # Screen door transparency pattern inspired from
     # https://digitalrune.github.io/DigitalRune-Documentation/html/fa431d48-b457-4c70-a590-d44b0840ab1e.htm
     SCREENDOOR = 0
@@ -42,7 +44,8 @@ class ALPHADITHER(Enum):
 class InternalImageAPI:
 
     @classmethod
-    def dither_alpha(cls, im: Image, method: ALPHADITHER = ALPHADITHER.SCREENDOOR) -> Image:
+    def dither_alpha(cls, im: Image, method: ALPHADITHER = ALPHADITHER.SCREENDOOR, threshold: int = 128,
+                     w_mult: float = 2.0, w_factor: float = 1.6) -> Image:
         if im.mode != "RGBA":
             raise UnsupportedImageModeException(im.name, im.mode)
         if method == ALPHADITHER.SCREENDOOR:
@@ -52,16 +55,17 @@ class InternalImageAPI:
                 [4.0 / 16.0, 12.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0],
                 [16.0 / 16.0, 8.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0],
             ]
-            weights_matrix = [[math.pow(n * 1.35, 2 + ((n - 0.5) * 3)) for n in mrow] for mrow in weights_matrix]
+            weights_matrix = [[math.pow(n * w_mult, w_factor + ((n - 0.5) * 3)) for n in mrow]
+                              for mrow in weights_matrix]
+            stdio.debug({"screendoor wmatrix": weights_matrix})
             width, height = im.size
             pixels = list(im.getdata())
-            threshold = 128
             for y in range(int(height)):
                 for x in range(int(width)):
                     index = y * width + x
                     pix = pixels[index]
                     orig_alpha = pix[3]
-                    if orig_alpha == 255:
+                    if orig_alpha == 0 or orig_alpha == 255:
                         continue
                     weight = weights_matrix[x % 4][y % 4]
                     display_alpha = orig_alpha * weight >= threshold

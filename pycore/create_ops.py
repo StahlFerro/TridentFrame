@@ -17,7 +17,7 @@ from pycore.models.criterion import (
     CriteriaBundle,
 )
 from pycore.utility import filehandler, imageutils
-from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI
+from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI, InternalImageAPI
 
 
 def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
@@ -46,6 +46,9 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
             transparency = im.info.get("transparency", False)
             orig_width, orig_height = im.size
             alpha = None
+            # if im.mode == "RGBA" and criteria.preserve_alpha:
+            #     pass
+            #     im = InternalImageAPI.dither_alpha(im)
             if criteria.flip_x:
                 im = im.transpose(Image.FLIP_LEFT_RIGHT)
             if criteria.flip_y:
@@ -68,6 +71,7 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
             save_path = out_dir.joinpath(f"{fragment_name}.gif")
             if im.mode == "RGBA":
                 if criteria.preserve_alpha:
+                    im = InternalImageAPI.dither_alpha(im)
                     alpha = im.getchannel("A")
                     im = im.convert("RGB").convert("P", palette=Image.ADAPTIVE, colors=255)
                     mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)

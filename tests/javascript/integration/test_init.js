@@ -14,11 +14,11 @@ const app = new Application({
 describe('Application launch', function() {
     this.timeout(10000);
 
-    beforeEach(function() {
+    this.beforeAll(function() {
         return app.start();
     })
 
-    afterEach(function() {
+    this.afterAll(function() {
         if (app && app.isRunning()) {
             app.stop();
         }

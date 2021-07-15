@@ -109,6 +109,8 @@ def inspect_general(image_path: Path, filter_on: str = "", skip: bool = False) -
         except UnidentifiedImageError:
             raise UnidentifiedImageException(abspath)
         frames = apng.frames
+        # n_frames = Image.open(abspath).n_frames
+        # stdio.debug({"fr": len(frames), "nfr": n_frames})
         frame_count = len(frames)
         if frame_count > 1:
             if filter_on == "static":
@@ -177,12 +179,15 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     comment = im.info.get("comment", "")
     icc = im.info.get("icc_profile")
     color_profile = ""
-    if icc: 
+    if icc:
         f = io.BytesIO(icc)
         color_profile = ImageCms.getOpenProfile(f).profile
         # print(color_profile.profile_description)
+        stdio.debug({"copyright": color_profile.copyright, "technology": color_profile.technology,
+                     "manufacturer": color_profile.manufacturer, "creation_date": '',
+                     "header_manufacturer": color_profile.header_manufacturer, "header_model": color_profile.header_model,
+                     "icc_version": color_profile.icc_version, "target": color_profile.target})
         color_profile = color_profile.profile_description
-    palette = im.getpalette()
     # if palette:
     #     logger.debug(imageutils.reshape_palette(palette))
     #     color_counts = np.array(im.getcolors())

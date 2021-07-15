@@ -1,18 +1,21 @@
 from json import JSONEncoder
 from pathlib import Path
 from apng import APNG, FrameControl
+from PIL._imagingcms import CmsProfile
 import pycore.models.criterion as criterion
 
 
 class JSONEncoderTrident(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, bytes):
-            return obj.decode('utf-8')
-        if isinstance(obj, Path):
+            return f"0x{obj.hex()}"
+        elif isinstance(obj, Path):
             return str(obj)
-        if isinstance(obj, FrameControl):
+        elif isinstance(obj, FrameControl):
             return obj.__dict__
-        if isinstance(obj, criterion.CriteriaBase):
+        elif isinstance(obj, criterion.CriteriaBase):
+            return obj.__dict__
+        elif isinstance(obj, CmsProfile):
             return obj.__dict__
         # if isinstance(obj, numpy.ndarray):
         #     return obj.tolist()
