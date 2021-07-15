@@ -2,8 +2,11 @@
   "name": "tridentframe",
   "productName": "TridentFrame",
   "version": "0.1.0-beta.8",
-  "description": "Desktop GIF and APNG swiss-army knife",
-  "author": "StahlFerro <forgeworkseven@gmail.com>",
+  "description": "Desktop animated images swiss-army knife",
+  "author": {
+    "name": "StahlFerro",
+    "email": "forgeworkseven@gmail.com"
+  },
   "license": "GPLv3",
   "homepage": "https://stahlferro.netlify.app/softwares/tridentframe",
   "repository": {
@@ -101,6 +104,8 @@
       "!*.ps1",
       "!*.sh",
       "!*.md",
+      "!*.pytest_cache",
+      "LICENSE.md",
       "!Pipfile",
       "!Pipfile.lock"
     ]

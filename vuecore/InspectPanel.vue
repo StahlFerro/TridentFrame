@@ -5,8 +5,12 @@
         <!-- <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)" -->
         <div class="inspect-panel-image silver-bordered"
            v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
-          <div class="inspect-panel-msgbox" v-show="inspect_msgbox !== ''">
+          <div v-if="inspect_msgbox !== ''" class="inspect-panel-msgbox">
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
+          </div>
+          <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
+            <h2 class="is-2 is-white-d"><span class="icon is-large"><i class="fas fa-file-upload fa-2x"></i></span></h2>
+            <p class="is-border-colorless is-white-d">Drop your image here</p>
           </div>
           <img v-bind:src="escapeLocalPath(img_path)" v-show="inspect_msgbox === ''"/>
         </div>

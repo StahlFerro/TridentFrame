@@ -22,8 +22,16 @@
             align-items: center;
             .inspect-panel-msgbox {
                 padding: 7px;
-                display: block;
+                display: flex;
                 flex-grow: 1;
+            }
+            .inspect-panel-hint {
+                padding: 7px;
+                display: flex;
+                flex-grow: 1;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
             }
             img {
                 max-width: 100%;
