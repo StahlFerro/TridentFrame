@@ -24,7 +24,8 @@ from pycore.models.criterion import (
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.core_funcs import stdio
 from pycore.core_funcs import config
-from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPlatformException
+from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPlatformException, \
+    UnsupportedImageModeException
 from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
 
@@ -41,7 +42,9 @@ class ALPHADITHER(Enum):
 class InternalImageAPI:
 
     @classmethod
-    def dither_alpha(cls, im: Image, method: ALPHADITHER) -> Image:
+    def dither_alpha(cls, im: Image, method: ALPHADITHER = ALPHADITHER.SCREENDOOR) -> Image:
+        if im.mode != "RGBA":
+            raise UnsupportedImageModeException(im.name, im.mode)
         if method == ALPHADITHER.SCREENDOOR:
             weights_matrix = [
                 [1.0 / 16.0, 9.0 / 16.0, 3.0 / 16.0, 11.0 / 16.0],

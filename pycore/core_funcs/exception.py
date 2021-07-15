@@ -69,6 +69,29 @@ class ImageNotAnimatedException(Exception):
         super().__init__(self.message)
 
 
+class UnsupportedImageModeException(Exception):
+    """Raised when an image is expected to be in a certain color mode, but is not."""
+
+    def __init__(
+        self,
+        image_name: str,
+        color_mode: str,
+        message: str = "The image {image_name}'s color mode {color_mode} is not supported for this operation",
+    ) -> None:
+        """Initialize the exception
+
+        Args:
+            image_name (str): Name of the image
+            color_mode (str): Color mode
+            message (str, optional): Exception message. Defaults to "The image {image_name} is not an animated
+            {extension}".
+        """
+        self.image_name = image_name
+        self.color_mode = color_mode
+        self.message = message.format(image_name=self.image_name, extension=self.color_mode)
+        super().__init__(self.message)
+
+
 class MalformedCommandException(Exception):
     """Raised when a imager command is malformed."""
 
