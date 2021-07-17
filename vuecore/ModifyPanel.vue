@@ -459,7 +459,8 @@
 const { ipcRenderer } = require('electron');
 const { tridentEngine } = require("./modules/tridentEngine");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, stem } = require("./modules/utility");
+        gcd, roundPrecise, stem } = require("./modules/utility");
+const { escapeLocalPath } = require("./modules/formatters");
 import { PREVIEWS_PATH, TEMP_PATH } from "./modules/config";
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');

@@ -22,7 +22,7 @@
               <!-- <span v-bind:key="key"/> -->
               <template v-if="info_data[meta_categ]">
                 <tr :key="meta_categ">
-                  <td colspan="2" class="is-cyan">{{ headerMetaCategory(meta_categ) }}</td>
+                  <td colspan="2" class="is-cyan">{{ varToSpaceUpper(meta_categ) }}</td>
                 </tr>
                 <!-- <tr v-if="meta_categ == 'general_info'" :key="'general_info_' + meta_categ">
                   <td colspan="2" class="is-cyan">GENERAL INFO</td>
@@ -76,7 +76,7 @@
           <span class="icon is-small">
             <i class="fas fa-plus"></i>
           </span>
-          <span>Load Any Image</span>
+          <span>Load Image</span>
         </a>
         <a v-on:click="clearButton" class="button is-neon-crimson"
           v-bind:class="{ 'is-static': isButtonFrozen }">
@@ -102,43 +102,33 @@
 <script>
 const { webFrame, clipboard, ipcRenderer } = require("electron");
 // const { client } = require("./Client.vue");
-const { roundPrecise, escapeLocalPath } = require("./modules/utility");
+const { roundPrecise } = require("./modules/utility");
+const { varToSpaceUpper, escapeLocalPath } = require("./modules/formatters");
 const { tridentEngine } = require("./modules/tridentEngine");
 const { SETTINGS } = require("./modules/config");
 const { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } = require("./modules/constants")
 const mime = require("mime-types");
 
 
-var data = {
-  img_path: "",
-  checkerbg_active: false,
-  isButtonFrozen: false,
-  INS_IS_INSPECTING: false,
-  info_data: "",
-  inspect_msgbox: "",
-  load_has_error: false,
-  metadata_settings: SETTINGS.image_metadata,
-  inspect_image_menu_options: [
-    {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
-    {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
-    {'id': 'send_to', 'name': 'Send To', 'callback': sendTo},
-  ],
-  inspect_info_menu_options: [
-    {'name': "Copy Info", 'callback': copyInfo}
-  ],
-};
+// var data = {
+//   img_path: "",
+//   checkerbg_active: false,
+//   isButtonFrozen: false,
+//   INS_IS_INSPECTING: false,
+//   info_data: "",
+//   inspect_msgbox: "",
+//   load_has_error: false,
+//   metadata_settings: SETTINGS.image_metadata,
+//   inspect_image_menu_options: [
+//     {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
+//     {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
+//     {'id': 'send_to', 'name': 'Send To', 'callback': sendTo},
+//   ],
+//   inspect_info_menu_options: [
+//     {'name': "Copy Info", 'callback': copyInfo}
+//   ],
+// };
 
-console.table(data.metadata_settings)
-
-function addExtraCtxOptions(payloads) {
-  let combined_payload = data.inspect_image_menu_options.concat(payloads);
-  data.inspect_image_menu_options = combined_payload;
-}
-
-function removeExtraCtxOptions(ids) {
-  let filtered_payloads = data.inspect_image_menu_options.filter(payload => !ids.includes(payload.id));
-  data.inspect_image_menu_options = filtered_payloads;
-}
 
 function formatShouter(event) {
   console.log("formatShouter");
@@ -168,98 +158,170 @@ function copyInfo(event) {
     clipboard.writeText(text);
 }
 
-function clearMsgBox() {
-  data.load_has_error = false;
-  data.inspect_msgbox = "";
-}
 
-function headerMetaCategory(meta_categ) {
-  return meta_categ.replace("_", " ").toUpperCase();
-}
 
-function loadImage() {
-  let dialog_options = {
-    filters: DIALOG_INSPECTING_EXT_FILTERS,
-    properties: ["openFile"],
-  };
+// function _inspectImage(image_path) {
+//   this.INS_IS_INSPECTING = true;
+//   console.log(image_path);
+//   tridentEngine(["inspect_one", image_path], (error, res) => {
+//     if (error) {
+//       try {
+//         this.load_has_error = true;
+//         this.inspect_msgbox = error;
+//         clearImage(); 
+//         clearInfo();
+//       }
+//       catch (e) {
+//         // data.split_msgbox = error;
+//       }
+//     }
+//     else {
+//       if (res.data) {
+//         clearMsgBox();
+//         let res_data = res.data;
+//         this.info_data = res_data;
+//         // if (res_data.general_info || res_data.animation_info) {
+//         // data.img_path = `${
+//         //   res_data.general_info.absolute_url.value
+//         // }?timestamp=${randString()}`;
+//         let localPath = res_data.general_info.absolute_url.value;
+//         // To allow loading images with percent signs on their name.
+//         this.img_path = localPath;
+//         // }
+//         addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
+//       }
+//     }
+//     this.INS_IS_INSPECTING = false;
+//   });
+// }
+
+// function loadImage() {
+//   let dialog_options = {
+//     filters: DIALOG_INSPECTING_EXT_FILTERS,
+//     properties: ["openFile"],
+//   };
   
-  ipcRenderer.invoke('open-dialog', dialog_options).then((result) => {
-  // dialog.showOpenDialog(mainWindow, options).then((result) => {
-    console.log(result);
-    let chosen_paths = result.filePaths;
-    console.log(`chosen path: ${chosen_paths}`);
-    if (chosen_paths === undefined || chosen_paths.length == 0) {
-      return;
-    }
-    data.INS_IS_INSPECTING = true;
-    console.log(chosen_paths);
-    tridentEngine(["inspect_one", chosen_paths[0]], (error, res) => {
-      if (error) {
-        try {
-          data.load_has_error = true;
-          data.inspect_msgbox = error;
-          clearImage(); 
-          clearInfo();
-        }
-        catch (e) {
-          // data.split_msgbox = error;
-        }
-      }
-      else {
-        if (res.data) {
-          clearMsgBox();
-          let res_data = res.data;
-          data.info_data = res_data;
-          // if (res_data.general_info || res_data.animation_info) {
-          // data.img_path = `${
-          //   res_data.general_info.absolute_url.value
-          // }?timestamp=${randString()}`;
-          let localPath = res_data.general_info.absolute_url.value;
-          // To allow loading images with percent signs on their name.
-          data.img_path = localPath;
-          // }
-          addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
-        }
-      }
-      data.INS_IS_INSPECTING = false;
-    });
-  })
-  .catch((err) => {
-    console.log(err);
-  });
-}
+//   ipcRenderer.invoke('open-dialog', dialog_options).then((result) => {
+//   // dialog.showOpenDialog(mainWindow, options).then((result) => {
+//     console.log(result);
+//     let chosen_paths = result.filePaths;
+//     console.log(`chosen path: ${chosen_paths}`);
+//     if (chosen_paths === undefined || chosen_paths.length == 0) {
+//       return;
+//     }
+//     _inspectImage(this, chosen_paths[0]);
+    
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
+// }
 
-function clearButton() {
-  clearImage(); 
-  clearInfo();
-  clearMsgBox();
-}
 
-function clearInfo() {
-  data.info_data = "";
-}
 
-function clearImage() {
-  data.img_path = "";
-  removeExtraCtxOptions(['format']);
-  webFrame.clearCache();
-}
-
-function toggleCheckerBG() {
-  data.checkerbg_active = !data.checkerbg_active;
-  console.log("now checkerbg is", data.checkerbg_active);
-}
-export default {
+let vm = {
   data: function () {
-    return data;
+    return {
+      img_path: "",
+      checkerbg_active: false,
+      isButtonFrozen: false,
+      INS_IS_INSPECTING: false,
+      info_data: "",
+      inspect_msgbox: "",
+      load_has_error: false,
+      metadata_settings: SETTINGS.image_metadata,
+      inspect_image_menu_options: [
+        {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
+        {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
+        {'id': 'send_to', 'name': 'Send To', 'callback': sendTo},
+      ],
+      inspect_info_menu_options: [
+        {'name': "Copy Info", 'callback': copyInfo}
+      ],
+    };
   },
   methods: {
-    loadImage: loadImage,
-    // clearImage: clearImage,
-    // clearInfo: clearInfo,
-    clearButton: clearButton,
-    toggleCheckerBG: toggleCheckerBG,
-    headerMetaCategory: headerMetaCategory,
+    loadImage() {
+      let dialog_options = {
+        filters: DIALOG_INSPECTING_EXT_FILTERS,
+        properties: ["openFile"],
+      };
+      ipcRenderer.invoke('open-dialog', dialog_options).then((result) => {
+      // dialog.showOpenDialog(mainWindow, options).then((result) => {
+        console.log(result);
+        let chosen_paths = result.filePaths;
+        console.log(`chosen path: ${chosen_paths}`);
+        if (chosen_paths === undefined || chosen_paths.length == 0) return;
+        this._inspectImage(chosen_paths[0]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    },
+    _inspectImage (image_path) {
+      this.INS_IS_INSPECTING = true;
+      console.log(image_path);
+      tridentEngine(["inspect_one", image_path], (error, res) => {
+        if (error) {
+          try {
+            this.load_has_error = true;
+            this.inspect_msgbox = error;
+            clearImage(); 
+            clearInfo();
+          }
+          catch (e) {
+            // data.split_msgbox = error;
+          }
+        }
+        else {
+          if (res.data) {
+            this.clearMsgBox();
+            let res_data = res.data;
+            this.info_data = res_data;
+            // if (res_data.general_info || res_data.animation_info) {
+            // data.img_path = `${
+            //   res_data.general_info.absolute_url.value
+            // }?timestamp=${randString()}`;
+            let localPath = res_data.general_info.absolute_url.value;
+            // To allow loading images with percent signs on their name.
+            this.img_path = localPath;
+            // }
+            this._addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
+          }
+        }
+        this.INS_IS_INSPECTING = false;
+      });
+    },
+    clearButton() {
+      this._clearImage(); 
+      this._clearInfo();
+      this.clearMsgBox();
+    },
+    _clearInfo() {
+      this.info_data = "";
+    },
+    _clearImage() {
+      this.img_path = "";
+      this._removeExtraCtxOptions(['format']);
+      webFrame.clearCache();
+    },
+    clearMsgBox() {
+      this.load_has_error = false;
+      this.inspect_msgbox = "";
+    },
+    _addExtraCtxOptions(payloads) {
+      let combined_payload = this.inspect_image_menu_options.concat(payloads);
+      this.inspect_image_menu_options = combined_payload;
+    },
+    _removeExtraCtxOptions(ids) {
+      let filtered_payloads = this.inspect_image_menu_options.filter(payload => !ids.includes(payload.id));
+      this.inspect_image_menu_options = filtered_payloads;
+    },
+    toggleCheckerBG() {
+      this.checkerbg_active = !this.checkerbg_active;
+      console.log("now checkerbg is", this.checkerbg_active);
+    },
+    varToSpaceUpper: varToSpaceUpper,
     roundPrecise: roundPrecise,
     escapeLocalPath: escapeLocalPath,
     helidropFile(e) {
@@ -268,17 +330,19 @@ export default {
       if (!droppedFiles || droppedFiles.length == 0) return;
       else if (droppedFiles.length > 1) console.error("error");
       else {
-        droppedFiles = droppedFiles[0];
-        console.log({a: INSPECTING_IMG_EXTS, r: droppedFiles.type, b: mime.extension(droppedFiles.type)});
-        if (INSPECTING_IMG_EXTS.includes(mime.extension(droppedFiles.type))) {
-          console.log('ext is image');
+        let file = droppedFiles[0];
+        console.log({a: INSPECTING_IMG_EXTS, r: file.type, b: mime.extension(file.type)});
+        if (INSPECTING_IMG_EXTS.includes(mime.extension(file.type))) {
+          console.log({exttee: file});
+          this._inspectImage(file.path);
         }
         else {
-          data.load_has_error = true;
-          data.inspect_msgbox = "File is not an image, try loading a valid image file.";
+          this.load_has_error = true;
+          this.inspect_msgbox = "File is not an image, try loading a valid image file.";
         }
       }
     },
   },
 };
+export default vm;
 </script>

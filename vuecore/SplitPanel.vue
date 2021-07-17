@@ -240,7 +240,8 @@
 <script>
 
 const { ipcRenderer } = require("electron");
-const { randString, validateFilename, numConstrain, escapeLocalPath, roundPrecise } = require('./modules/utility');
+const { randString, numConstrain, roundPrecise, validateFilename } = require('./modules/utility');
+const { escapeLocalPath } = require("./modules/formatters");
 const { tridentEngine } = require("./modules/tridentEngine");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];

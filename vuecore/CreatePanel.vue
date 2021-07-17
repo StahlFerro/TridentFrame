@@ -489,17 +489,14 @@ const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
 const {
   quintcellLister,
-  validateFilename,
   GIF_DELAY_DECIMAL_PRECISION,
   APNG_DELAY_DECIMAL_PRECISION,
   randString,
   gcd,
   numConstrain,
-  fileExists,
-  readFilesize,
-  escapeLocalPath,
   stem,
 } = require("./modules/utility");
+const { readFilesize, escapeLocalPath } = require("./modules/formatters");
 const { PREVIEWS_PATH } = require("./modules/config");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
