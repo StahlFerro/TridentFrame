@@ -1,4 +1,6 @@
+import math
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
+from pycore.models.enums import ALPHADITHER
 from typing import Dict, List, Tuple, Any, Optional
 
 
@@ -168,6 +170,17 @@ class GIFOptimizationCriteria(CriteriaBase):
         self.is_reduced_color = vals["is_reduced_color"]
         self.color_space = int(vals["color_space"] or 0)
         self.is_unoptimized = vals["is_unoptimized"]
+        self.is_dither_alpha = vals["is_dither_alpha"]
+        self.dither_alpha_method = (vals.get("dither_alpha_method") or "SCREENDOOR").upper()
+        self.dither_alpha_threshold = int(vals["dither_alpha_threshold"]) or 0
+
+    @property
+    def dither_alpha_method_enum(self) -> ALPHADITHER:
+        return ALPHADITHER[self.dither_alpha_method]
+
+    @property
+    def dither_alpha_threshold_value(self) -> int:
+        return math.floor(256 * self.dither_alpha_threshold / 100)
 
 
 # class GIFCreationCriteria:

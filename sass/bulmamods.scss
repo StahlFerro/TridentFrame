@@ -1,13 +1,16 @@
 @import "../node_modules/bulma/sass/utilities/_all.sass";
 @import "../node_modules/bulma/sass/elements/button.sass";
+
 @import "components/_globalvars.scss";
 @import "components/_colors.scss";
+@import "components/_behaviors.scss";
 @import "components/button.scss";
 @import "components/contextmenu.scss";
 @import "components/rtable.scss";
 @import "components/text.scss";
 @import "components/interaction.scss";
 @import "components/input.scss";
+@import "components/slider.scss";
 @import "panels/create_panel.scss";
 @import "panels/split_panel.scss";
 @import "panels/modify_panel.scss";

@@ -3,6 +3,7 @@ from pathlib import Path
 from apng import APNG, FrameControl
 from PIL._imagingcms import CmsProfile
 import pycore.models.criterion as criterion
+from pycore.models.enums import ALPHADITHER
 
 
 class JSONEncoderTrident(JSONEncoder):
@@ -15,6 +16,7 @@ class JSONEncoderTrident(JSONEncoder):
             return obj.__dict__
         elif isinstance(obj, criterion.CriteriaBase):
             return obj.__dict__
+        # elif type(obj) in ALPHADITHER.value:
         # if isinstance(obj, numpy.ndarray):
         #     return obj.tolist()
         # if isinstance(obj, numpy.int32):

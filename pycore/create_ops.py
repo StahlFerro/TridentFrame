@@ -14,13 +14,14 @@ from pycore.core_funcs.config import (
 )
 from pycore.models.criterion import (
     CreationCriteria,
+    GIFOptimizationCriteria,
     CriteriaBundle,
 )
 from pycore.utility import filehandler, imageutils
 from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI, InternalImageAPI
 
 
-def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
+def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria, gif_opt_criteria: GIFOptimizationCriteria):
     """Generate a sequence of static GIF images created from the input sequence with the specified criteria.
 
     Args:
@@ -33,7 +34,6 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
     # temp_gifs = []
     out_dir = filehandler.mk_cache_dir(prefix_name="tmp_gifrags")
     fcount = len(image_paths)
-    stdio.message(f"Criteria start frame {criteria.start_frame}")
     if criteria.start_frame:
         image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
     shout_nums = imageutils.shout_indices(fcount, 1)
@@ -70,8 +70,12 @@ def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria):
                 fragment_name = f"{str.zfill(str(index), 6)}_{fragment_name}"
             save_path = out_dir.joinpath(f"{fragment_name}.gif")
             if im.mode == "RGBA":
+                if gif_opt_criteria.is_dither_alpha:
+                    stdio.debug(gif_opt_criteria.dither_alpha_threshold_value)
+                    stdio.debug(gif_opt_criteria.dither_alpha_method_enum)
+                    im = InternalImageAPI.dither_alpha(im, method=gif_opt_criteria.dither_alpha_method_enum,
+                                                       threshold=gif_opt_criteria.dither_alpha_threshold_value)
                 if criteria.preserve_alpha:
-                    im = InternalImageAPI.dither_alpha(im)
                     alpha = im.getchannel("A")
                     im = im.convert("RGB").convert("P", palette=Image.ADAPTIVE, colors=255)
                     mask = Image.eval(alpha, lambda a: 255 if a <= 128 else 0)
@@ -122,7 +126,8 @@ def _build_gif(image_paths: List, out_full_path: Path, crbundle: CriteriaBundle)
     Returns:
         Path: Path of the created GIF.
     """
-    gifragment_dir = _create_gifragments(image_paths, crbundle.create_aimg_criteria)
+    stdio.debug({"_build_gif crbundle": crbundle})
+    gifragment_dir = _create_gifragments(image_paths, crbundle.create_aimg_criteria, crbundle.gif_opt_criteria)
     out_full_path = GifsicleAPI.combine_gif_images(gifragment_dir, out_full_path, crbundle)
     shutil.rmtree(gifragment_dir)
     stdio.preview_path(out_full_path)

@@ -15,9 +15,9 @@
             <div class="control">
               <div class="select is-neon-cyan" v-bind:class="{'non-interactive': !is_optimized}">
                 <select v-model="optimization_level" @change="$emit('update:optimization_level', optimization_level)">
-                  <option value="1">Lv. 1: Store changed portion only</option>
-                  <option value="2">Lv. 2: Also uses transparency</option>
-                  <option value="3">Lv. 3: All optimization methods</option>
+                  <option value="1" :class="{'is-selected': optimization_level == '1'}">Lv. 1: Store changed portion only</option>
+                  <option value="2" :class="{'is-selected': optimization_level == '2'}">Lv. 2: Also uses transparency</option>
+                  <option value="3" :class="{'is-selected': optimization_level == '3'}">Lv. 3: All optimization methods</option>
                 </select>
               </div>
             </div>
@@ -85,6 +85,44 @@
           </div>
         </td>
       </tr>
+      <tr>
+        <td class="force-vcenter">
+          <label
+            class="checkbox"
+            title="Perform dithering on translucent source pixels to either fully transparent or opaque depending on the chosen method">
+            <input type="checkbox" v-model="is_dither_alpha" v-bind:disabled="is_unoptimized"
+              @change="$emit('update:is_dither_alpha', is_dither_alpha)" />
+            Transparency Dither
+          </label>
+        </td>
+        <td class="force-vcenter">
+          <div class="field">
+            <!-- <label class="label">Color space</label> -->
+            <div class="control">
+              <div class="select is-neon-cyan" v-bind:class="{'non-interactive': !is_dither_alpha}">
+                <select v-model="dither_alpha_method" @change="$emit('update:dither_alpha_method', dither_alpha_method)">
+                  <option value="SCREENDOOR" title="Screen door pattern">Screendoor</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </td>
+        <td class="force-vcenter">
+          <label class="label" title="The width of the GIF/APNG">Threshold value</label>
+        </td>
+        <td class="force-vcenter">
+          <div class="field">
+            <div class="control">
+              <vue-slider :class="[!is_dither_alpha? ['non-interactive', 'vue-slider-disabled']: '']" v-model="dither_alpha_threshold"
+              @change="$emit('update:dither_alpha_threshold', dither_alpha_threshold)"></vue-slider>
+              <!-- <input id="ditherAlphaThresholdSlider" name="ditherAlphaThresholdSlider" class="has-output is-fullwidth" 
+                min="0" max="100" v-model="dither_alpha_threshold" step="1" type="range"/>
+              <output for="ditherAlphaThresholdSlider" @forminput="value = ditherAlphaThresholdSlider.valueAsNumber;">
+                {{ dither_alpha_threshold }}</output> -->
+            </div>
+          </div>
+        </td>
+      </tr>
     <!-- <tr>
       <td colspan="2" class="force-vcenter" width="100%">
         <label
@@ -105,6 +143,8 @@
 // import { Plugin } from 'vue'
 import { Fragment }  from 'vue-fragment';
 const { numConstrain } = require("../modules/utility.js");
+// const bulmaSlider = require("../../node_modules/bulma-slider/dist/js/bulma-slider");
+// bulmaSlider.attach();
 const lodashClonedeep = require('lodash.clonedeep');
 
 let props = ['is_unoptimized']
@@ -122,6 +162,9 @@ export default {
       lossy_value: "",
       is_reduced_color: false,
       color_space: "",
+      is_dither_alpha: false,
+      dither_alpha_method: "SCREENDOOR",
+      dither_alpha_threshold: 50,
     };
   },
   methods: {

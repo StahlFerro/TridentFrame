@@ -1,6 +1,14 @@
 /* Responsive table */
 @import "../components/_colors.scss";
 
+select, option.is-selected {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+    
+
 .select.is-neon-cyan { 
     select {
         color: $white-d;

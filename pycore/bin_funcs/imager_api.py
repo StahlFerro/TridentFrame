@@ -21,6 +21,7 @@ from pycore.models.criterion import (
     ModificationCriteria,
     GIFOptimizationCriteria,
 )
+from pycore.models.enums import ALPHADITHER
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.core_funcs import stdio
 from pycore.core_funcs import config
@@ -29,16 +30,6 @@ from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPl
 from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
 
-
-@unique
-class ALPHADITHER(Enum):
-    """Options for different transparency dithering methods"""
-
-    # Screen door transparency pattern inspired from
-    # https://digitalrune.github.io/DigitalRune-Documentation/html/fa431d48-b457-4c70-a590-d44b0840ab1e.htm
-    SCREENDOOR = 0
-    DIFFUSION = 1  # Not implemented yet
-    NOISE = 2  # Not implemented yet
 
 
 class InternalImageAPI:
@@ -68,7 +59,7 @@ class InternalImageAPI:
                     if orig_alpha == 0 or orig_alpha == 255:
                         continue
                     weight = weights_matrix[x % 4][y % 4]
-                    display_alpha = orig_alpha * weight >= threshold
+                    display_alpha = min(orig_alpha * weight, 255) >= threshold
                     pixels[index] = (*pix[0:3], 255) if display_alpha else (*pix[0:3], 0)
             new_im = Image.new("RGBA", im.size)
             new_im.putdata(pixels)

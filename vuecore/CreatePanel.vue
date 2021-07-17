@@ -446,6 +446,9 @@
                 :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
                 :color_space.sync="gif_opt_criteria.color_space"
                 :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+                :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
+                :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
+                :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
               />
               <!-- <GIFUnoptimizationRow
                       :is_optimized.sync="is_optimized"
@@ -530,6 +533,9 @@ let data = {
     is_reduced_color: false,
     color_space: "",
     is_unoptimized: false,
+    is_dither_alpha: false,
+    dither_alpha_method: "SCREENDOOR",
+    dither_alpha_threshold: 50,
   },
   apng_opt_criteria: {
     apng_is_optimized: false,

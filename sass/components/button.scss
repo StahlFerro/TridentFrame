@@ -1,9 +1,5 @@
 @import "_colors.scss";
 
-.non-interactive {
-    pointer-events: none;
-    box-shadow: none;
-}
 
 .button {
     &.square-button {

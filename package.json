@@ -116,13 +116,15 @@
     "mime-types": "^2.1.31",
     "python-shell": "^3.0.0",
     "vue-click-outside": "^1.1.0",
-    "vue-fragment": "^1.5.2"
+    "vue-fragment": "^1.5.2",
+    "vue-slider-component": "^3.2.13"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.7",
     "babel-loader": "^8.2.2",
     "bulma": "^0.9.3",
+    "bulma-slider": "^2.0.4",
     "copy-webpack-plugin": "^7.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.6",
