@@ -2,9 +2,8 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <!-- <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)" -->
-        <div class="inspect-panel-image silver-bordered"
-           v-bind:class="{'has-checkerboard-bg': checkerbg_active }"  v-cloak @drop.prevent="helidropFile" @dragover.prevent>
+        <div class="inspect-panel-viewbox silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)"
+            v-cloak @drop.prevent="helidropFile" @dragover.prevent>
           <div v-if="load_has_error" class="inspect-panel-msgbox">
             <h2 class="is-2 is-crimson"><span class="icon is-large"><i class="fas fa-exclamation-circle fa-2x"></i></span></h2>
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
@@ -13,7 +12,9 @@
             <h2 class="is-2 is-white-d"><span class="icon is-large"><i class="fas fa-file-upload fa-2x"></i></span></h2>
             <p class="is-border-colorless is-white-d">Drop your image here</p>
           </div>
-          <img v-bind:src="escapeLocalPath(img_path)" v-show="inspect_msgbox === ''"/>
+          <div class="inspect-panel-image" v-bind:class="{'has-checkerboard-bg': checkerbg_active }" v-else-if="img_path !== ''">
+            <img v-bind:src="escapeLocalPath(img_path)" v-show="inspect_msgbox === ''"/>
+          </div>
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
           <table v-if="info_data" class="table ins-info-table is-paddingless" width="100%">
@@ -110,116 +111,7 @@ const { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } = require("./module
 const mime = require("mime-types");
 
 
-// var data = {
-//   img_path: "",
-//   checkerbg_active: false,
-//   isButtonFrozen: false,
-//   INS_IS_INSPECTING: false,
-//   info_data: "",
-//   inspect_msgbox: "",
-//   load_has_error: false,
-//   metadata_settings: SETTINGS.image_metadata,
-//   inspect_image_menu_options: [
-//     {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
-//     {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
-//     {'id': 'send_to', 'name': 'Send To', 'callback': sendTo},
-//   ],
-//   inspect_info_menu_options: [
-//     {'name': "Copy Info", 'callback': copyInfo}
-//   ],
-// };
-
-
-function formatShouter(event) {
-  console.log("formatShouter");
-  let format = data.info_data.general_info.format.value;
-  console.log(format);
-}
-
-function copyImage(event) {
-  console.log("copyImage");
-  console.log(event);
-}
-
-function shareImage(event) {
-  console.log("shareImage")
-}
-
-function sendTo(even) {
-  console.log("sendTo");
-}
-
-function copyInfo(event) {
-  console.log("copyInfo");
-  console.log(event);
-  let text = event.srcElement.innerText;
-  console.log(`text ${text}`);
-  if (text)
-    clipboard.writeText(text);
-}
-
-
-
-// function _inspectImage(image_path) {
-//   this.INS_IS_INSPECTING = true;
-//   console.log(image_path);
-//   tridentEngine(["inspect_one", image_path], (error, res) => {
-//     if (error) {
-//       try {
-//         this.load_has_error = true;
-//         this.inspect_msgbox = error;
-//         clearImage(); 
-//         clearInfo();
-//       }
-//       catch (e) {
-//         // data.split_msgbox = error;
-//       }
-//     }
-//     else {
-//       if (res.data) {
-//         clearMsgBox();
-//         let res_data = res.data;
-//         this.info_data = res_data;
-//         // if (res_data.general_info || res_data.animation_info) {
-//         // data.img_path = `${
-//         //   res_data.general_info.absolute_url.value
-//         // }?timestamp=${randString()}`;
-//         let localPath = res_data.general_info.absolute_url.value;
-//         // To allow loading images with percent signs on their name.
-//         this.img_path = localPath;
-//         // }
-//         addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
-//       }
-//     }
-//     this.INS_IS_INSPECTING = false;
-//   });
-// }
-
-// function loadImage() {
-//   let dialog_options = {
-//     filters: DIALOG_INSPECTING_EXT_FILTERS,
-//     properties: ["openFile"],
-//   };
-  
-//   ipcRenderer.invoke('open-dialog', dialog_options).then((result) => {
-//   // dialog.showOpenDialog(mainWindow, options).then((result) => {
-//     console.log(result);
-//     let chosen_paths = result.filePaths;
-//     console.log(`chosen path: ${chosen_paths}`);
-//     if (chosen_paths === undefined || chosen_paths.length == 0) {
-//       return;
-//     }
-//     _inspectImage(this, chosen_paths[0]);
-    
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-// }
-
-
-
-let vm = {
+export default {
   data: function () {
     return {
       img_path: "",
@@ -231,12 +123,12 @@ let vm = {
       load_has_error: false,
       metadata_settings: SETTINGS.image_metadata,
       inspect_image_menu_options: [
-        {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
-        {'id': 'share_image', 'name': "Share Image", 'callback': shareImage},
-        {'id': 'send_to', 'name': 'Send To', 'callback': sendTo},
+        {'id': 'copy_image', 'name': "Copy Image", 'callback': this.cmCopyImage},
+        {'id': 'share_image', 'name': "Share Image", 'callback': this.cmShareImage},
+        {'id': 'send_to', 'name': 'Send To', 'callback': this.cmSendTo},
       ],
       inspect_info_menu_options: [
-        {'name': "Copy Info", 'callback': copyInfo}
+        {'name': "Copy Info", 'callback': this.cmCopyInfo}
       ],
     };
   },
@@ -266,8 +158,8 @@ let vm = {
           try {
             this.load_has_error = true;
             this.inspect_msgbox = error;
-            clearImage(); 
-            clearInfo();
+            this._clearImage(); 
+            this._clearInfo();
           }
           catch (e) {
             // data.split_msgbox = error;
@@ -286,7 +178,7 @@ let vm = {
             // To allow loading images with percent signs on their name.
             this.img_path = localPath;
             // }
-            this._addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': formatShouter}])
+            this._addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': this.cmFormatShouter}])
           }
         }
         this.INS_IS_INSPECTING = false;
@@ -342,7 +234,29 @@ let vm = {
         }
       }
     },
+    cmFormatShouter(event) {
+      console.log("cmFormatShouter");
+      let format = data.info_data.general_info.format.value;
+      console.log(format);
+    }, 
+    cmCopyImage(event) {
+      console.log("cmCopyImage");
+      console.log(event);
+    },
+    cmShareImage(event) {
+      console.log("cmShareImage")
+    },
+    cmSendTo(event) {
+      console.log("cmSendTo");
+    },
+    cmCopyInfo(event) {
+      console.log("cmCopyInfo");
+      console.log(event);
+      let text = event.srcElement.innerText;
+      console.log(`text ${text}`);
+      if (text)
+        clipboard.writeText(text);
+    }
   },
 };
-export default vm;
 </script>
