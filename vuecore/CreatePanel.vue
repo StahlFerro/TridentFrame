@@ -484,7 +484,7 @@
 
 <script>
 const { ipcRenderer } = require('electron');
-const { tridentEngine } = require("./api/tridentEngine");
+const { tridentEngine } = require("./modules/tridentEngine");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
 const {
@@ -499,8 +499,8 @@ const {
   readFilesize,
   escapeLocalPath,
   stem,
-} = require("./api/utility");
-const { PREVIEWS_PATH } = require("./api/config");
+} = require("./modules/utility");
+const { PREVIEWS_PATH } = require("./modules/config");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";

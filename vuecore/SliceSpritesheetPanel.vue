@@ -163,8 +163,8 @@ const remote = require("electron").remote;
 const dialog = remote.dialog;
 const mainWindow = remote.getCurrentWindow();
 const session = remote.getCurrentWebContents().session;
-const { client } = require("./api/tridentEngine");
-const { randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./api/utility");
+const { client } = require("./modules/tridentEngine");
+const { randString, wholeNumConstrain, posWholeNumConstrain, gcd } = require("./modules/utility");
 
 let extension_filters = [{ name: "Spritesheet image", extensions: ["png", "jpg"] }];
 let file_dialog_props = ["openfile"];

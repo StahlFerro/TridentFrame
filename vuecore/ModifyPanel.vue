@@ -457,10 +457,10 @@
 <script>
 
 const { ipcRenderer } = require('electron');
-const { tridentEngine } = require("./api/tridentEngine");
+const { tridentEngine } = require("./modules/tridentEngine");
 const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, stem } = require("./api/utility");
-import { PREVIEWS_PATH, TEMP_PATH } from "./api/config";
+        gcd, validateFilename, fileExists, roundPrecise, escapeLocalPath, stem } = require("./modules/utility");
+import { PREVIEWS_PATH, TEMP_PATH } from "./modules/config";
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";

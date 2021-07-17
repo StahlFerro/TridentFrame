@@ -75,7 +75,7 @@
 const { remote, BrowserWindow, ipcRenderer } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
-const { tridentEngine } = require("./api/tridentEngine.js");
+const { tridentEngine } = require("./modules/tridentEngine.js");
 const { PythonShell } = require("python-shell");
 
 function callPython() {

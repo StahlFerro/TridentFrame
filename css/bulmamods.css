@@ -1327,9 +1327,17 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #cccccc;
 }
 
+.is-crimson {
+  color: #ff5555;
+}
+
 /* Color definitions */
 .is-white-d {
   color: #cccccc;
+}
+
+.is-crimson {
+  color: #ff5555;
 }
 
 .non-interactive {
@@ -1428,6 +1436,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #cccccc;
 }
 
+.is-crimson {
+  color: #ff5555;
+}
+
 .context-menu {
   width: 180px;
   box-shadow: 0 5px 10px 4px rgba(0, 0, 0, 0.5);
@@ -1493,6 +1505,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 /* Color definitions */
 .is-white-d {
   color: #cccccc;
+}
+
+.is-crimson {
+  color: #ff5555;
 }
 
 .rtable {
@@ -1592,6 +1608,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #cccccc;
 }
 
+.is-crimson {
+  color: #ff5555;
+}
+
 .input {
   /* Grey-block inputs. */
   /* Neon-white inputs. */
@@ -1650,6 +1670,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 /* Color definitions */
 .is-white-d {
   color: #cccccc;
+}
+
+.is-crimson {
+  color: #ff5555;
 }
 
 .create-panel-root {
@@ -1750,6 +1774,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #cccccc;
 }
 
+.is-crimson {
+  color: #ff5555;
+}
+
 .split-panel-root {
   display: flex;
   flex-direction: column;
@@ -1845,6 +1873,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 /* Color definitions */
 .is-white-d {
   color: #cccccc;
+}
+
+.is-crimson {
+  color: #ff5555;
 }
 
 .modify-panel-root {
@@ -1984,6 +2016,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #cccccc;
 }
 
+.is-crimson {
+  color: #ff5555;
+}
+
 .inspect-panel-root {
   display: flex;
   flex-direction: column;
@@ -2000,15 +2036,24 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 .inspect-panel-root .inspect-panel-display .inspect-panel-image {
   display: flex;
   flex-grow: inherit;
+  flex-wrap: wrap;
   width: 60%;
   height: 88vh;
   justify-content: center;
   align-items: center;
+  flex-shrink: 1;
+  /* adjusted */
 }
 .inspect-panel-root .inspect-panel-display .inspect-panel-image .inspect-panel-msgbox {
   padding: 7px;
   display: flex;
-  flex-grow: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.inspect-panel-root .inspect-panel-display .inspect-panel-image .inspect-panel-msgbox p {
+  inline-size: 45vw;
+  overflow-wrap: break-word;
 }
 .inspect-panel-root .inspect-panel-display .inspect-panel-image .inspect-panel-hint {
   padding: 7px;
@@ -2063,6 +2108,10 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 /* Color definitions */
 .is-white-d {
   color: #cccccc;
+}
+
+.is-crimson {
+  color: #ff5555;
 }
 
 div.about-content {
@@ -13031,6 +13080,10 @@ canvas.slicegrid-canvas {
 /* Color definitions */
 .is-white-d {
   color: #cccccc;
+}
+
+.is-crimson {
+  color: #ff5555;
 }
 
 .select.is-neon-cyan select {

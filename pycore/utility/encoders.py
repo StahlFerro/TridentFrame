@@ -15,8 +15,6 @@ class JSONEncoderTrident(JSONEncoder):
             return obj.__dict__
         elif isinstance(obj, criterion.CriteriaBase):
             return obj.__dict__
-        elif isinstance(obj, CmsProfile):
-            return obj.__dict__
         # if isinstance(obj, numpy.ndarray):
         #     return obj.tolist()
         # if isinstance(obj, numpy.int32):

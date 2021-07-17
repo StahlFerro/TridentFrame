@@ -16,14 +16,22 @@
         .inspect-panel-image {
             display: flex;
             flex-grow: inherit;
+            flex-wrap: wrap;
             width: 60%;
             height: 88vh;
             justify-content: center;
             align-items: center;
+            flex-shrink: 1; /* adjusted */
             .inspect-panel-msgbox {
                 padding: 7px;
                 display: flex;
-                flex-grow: 1;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                p { 
+                    inline-size: 45vw;
+                    overflow-wrap: break-word; 
+                }
             }
             .inspect-panel-hint {
                 padding: 7px;

@@ -4,8 +4,9 @@
       <div class="inspect-panel-display" >
         <!-- <div class="inspect-panel-image silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)" -->
         <div class="inspect-panel-image silver-bordered"
-           v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
-          <div v-if="inspect_msgbox !== ''" class="inspect-panel-msgbox">
+           v-bind:class="{'has-checkerboard-bg': checkerbg_active }"  v-cloak @drop.prevent="helidropFile" @dragover.prevent>
+          <div v-if="load_has_error" class="inspect-panel-msgbox">
+            <h2 class="is-2 is-crimson"><span class="icon is-large"><i class="fas fa-exclamation-circle fa-2x"></i></span></h2>
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
           <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
@@ -101,18 +102,12 @@
 <script>
 const { webFrame, clipboard, ipcRenderer } = require("electron");
 // const { client } = require("./Client.vue");
-const { roundPrecise, escapeLocalPath } = require("./api/utility");
-const { tridentEngine } = require("./api/tridentEngine");
-const { SETTINGS } = require("./api/config");
+const { roundPrecise, escapeLocalPath } = require("./modules/utility");
+const { tridentEngine } = require("./modules/tridentEngine");
+const { SETTINGS } = require("./modules/config");
+const { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } = require("./modules/constants")
+const mime = require("mime-types");
 
-let extension_filters = [
-  {
-    name: "Images",
-    extensions: ["png", "gif", "jpg", "webp"],
-  },
-];
-let file_dialog_props = ["openfile"];
-let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 var data = {
   img_path: "",
@@ -121,6 +116,7 @@ var data = {
   INS_IS_INSPECTING: false,
   info_data: "",
   inspect_msgbox: "",
+  load_has_error: false,
   metadata_settings: SETTINGS.image_metadata,
   inspect_image_menu_options: [
     {'id': 'copy_image', 'name': "Copy Image", 'callback': copyImage},
@@ -173,6 +169,7 @@ function copyInfo(event) {
 }
 
 function clearMsgBox() {
+  data.load_has_error = false;
   data.inspect_msgbox = "";
 }
 
@@ -181,13 +178,14 @@ function headerMetaCategory(meta_categ) {
 }
 
 function loadImage() {
-  var options = {
-    filters: extension_filters,
-    properties: file_dialog_props,
+  let dialog_options = {
+    filters: DIALOG_INSPECTING_EXT_FILTERS,
+    properties: ["openFile"],
   };
   
-  ipcRenderer.invoke('open-dialog', options).then((result) => {
+  ipcRenderer.invoke('open-dialog', dialog_options).then((result) => {
   // dialog.showOpenDialog(mainWindow, options).then((result) => {
+    console.log(result);
     let chosen_paths = result.filePaths;
     console.log(`chosen path: ${chosen_paths}`);
     if (chosen_paths === undefined || chosen_paths.length == 0) {
@@ -198,6 +196,7 @@ function loadImage() {
     tridentEngine(["inspect_one", chosen_paths[0]], (error, res) => {
       if (error) {
         try {
+          data.load_has_error = true;
           data.inspect_msgbox = error;
           clearImage(); 
           clearInfo();
@@ -263,6 +262,23 @@ export default {
     headerMetaCategory: headerMetaCategory,
     roundPrecise: roundPrecise,
     escapeLocalPath: escapeLocalPath,
+    helidropFile(e) {
+      let droppedFiles = e.dataTransfer.files;
+      console.log({"droppedFiles": droppedFiles})
+      if (!droppedFiles || droppedFiles.length == 0) return;
+      else if (droppedFiles.length > 1) console.error("error");
+      else {
+        droppedFiles = droppedFiles[0];
+        console.log({a: INSPECTING_IMG_EXTS, r: droppedFiles.type, b: mime.extension(droppedFiles.type)});
+        if (INSPECTING_IMG_EXTS.includes(mime.extension(droppedFiles.type))) {
+          console.log('ext is image');
+        }
+        else {
+          data.load_has_error = true;
+          data.inspect_msgbox = "File is not an image, try loading a valid image file.";
+        }
+      }
+    },
   },
 };
 </script>

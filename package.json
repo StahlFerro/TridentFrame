@@ -113,6 +113,7 @@
   "dependencies": {
     "@popperjs/core": "^2.9.2",
     "lodash.clonedeep": "^4.5.0",
+    "mime-types": "^2.1.31",
     "python-shell": "^3.0.0",
     "vue-click-outside": "^1.1.0",
     "vue-fragment": "^1.5.2"
