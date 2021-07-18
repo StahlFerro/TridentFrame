@@ -4,9 +4,6 @@ from pycore.models.criterion import TransformativeCriteria, CreationCriteria, Sp
     GIFOptimizationCriteria, APNGOptimizationCriteria
 
 
-TEST_JSON_DIR = Path(__file__).resolve().parents[1].joinpath("_fixtures/json/")
-
-
 def test_transformative_criteria():
     trans_criteria = TransformativeCriteria({
         "width": 200.4,
@@ -78,8 +75,8 @@ def test_split_criteria():
     assert split_criteria.pad_count == 3
 
 
-def test_criteria_bundle():
-    with open(TEST_JSON_DIR.joinpath("createpanel_criteria_pack_001.json"), "r") as f:
+def test_criteria_bundle(fx_json_dir):
+    with open(fx_json_dir.joinpath("createpanel_criteria_pack_001.json"), "r") as f:
         crpack = json.loads(f.read())
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),

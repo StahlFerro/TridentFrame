@@ -9,8 +9,13 @@ def scaffold_temp_dir(tmp_path_factory):
 
 
 @pytest.fixture(scope="session")
-def fx_sequence_dir():
-    return Path(__file__).resolve().parents[0].joinpath("_fixtures/sequence/")
+def fx_path():
+    return Path(__file__).resolve().parents[0].joinpath("../_fixtures/")
+
+
+@pytest.fixture(scope="session")
+def fx_sequence_dir(fx_path):
+    return fx_path.joinpath("sequence/")
 
 
 @pytest.fixture(scope="session")
@@ -19,5 +24,10 @@ def fx_sequence_dir_contents(fx_sequence_dir):
 
 
 @pytest.fixture(scope="session")
-def fx_checker_apng_path():
-    return Path(__file__).resolve().parents[0].joinpath("_fixtures/apng/checker_256px.png")
+def fx_checker_apng_path(fx_path):
+    return fx_path.joinpath("apng/checker_256px.png")
+
+
+@pytest.fixture(scope="session")
+def fx_json_dir(fx_path):
+    return fx_path.joinpath("json/")

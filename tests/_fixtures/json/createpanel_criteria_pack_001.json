@@ -21,7 +21,10 @@
         "lossy_value": "",
         "is_reduced_color": false,
         "color_space": "",
-        "is_unoptimized": false
+        "is_unoptimized": false,
+        "is_dither_alpha": true,
+        "dither_alpha_method": "screendoor",
+        "dither_alpha_threshold": 50
     },
     "apng_opt_criteria": {
         "apng_is_optimized": true,
