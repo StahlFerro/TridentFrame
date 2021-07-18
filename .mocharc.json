@@ -1,0 +1,5 @@
+{
+  "exit": true,
+  "reporter": "mochawesome",
+  "reporter-option": ["reportDir=tests/javascript/mochawesome-report", "overwrite=true"]
+}

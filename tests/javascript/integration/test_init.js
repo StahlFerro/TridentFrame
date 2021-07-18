@@ -2,23 +2,25 @@ const { Applcation, Application } = require('spectron');
 const assert = require('assert');
 const electronPath = require('electron');
 const path = require('path');
-const { strictEqual, strict } = require('assert');
 var wtf = require('wtfnode');
 wtf.dump();
 
 const app = new Application({
     path: electronPath,
-    args: [path.join(__dirname, '../../../')]
+    args: [path.join(__dirname, '../../../')],
+    chromeDriverArgs: ['remote-debugging-port=9222']
 })
+console.log(electronPath);
+console.log(path.join(__dirname, '../../../'));
 
 describe('Application launch', function() {
     this.timeout(10000);
 
-    this.beforeAll(function() {
+    beforeEach(function() {
         return app.start();
     })
 
-    this.afterAll(function() {
+    afterEach(function() {
         if (app && app.isRunning()) {
             app.stop();
         }
