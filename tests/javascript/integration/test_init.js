@@ -1,12 +1,23 @@
 const { Applcation, Application } = require('spectron');
 const assert = require('assert');
+const { env, platform } = require("process");
 const electronPath = require('electron');
 const path = require('path');
 var wtf = require('wtfnode');
 wtf.dump();
 
+let appPath;
+if (env.DEPLOY_ENV == "DEV")
+    appPath = electronPath;
+else {
+    if (platform == "win32")
+        appPath = path.join(__dirname,"../../../release/tridentframe/win-unpacked/TridentFrame.exe");
+    else if (platform == "linux")
+        appaPath = path.join(__dirname,"../../../release/tridentframe/linux-unpacked/tridentFrame");
+}
+
 const app = new Application({
-    path: electronPath,
+    path: appPath,
     args: [path.join(__dirname, '../../../')],
     chromeDriverArgs: ['remote-debugging-port=9222']
 })
@@ -34,7 +45,7 @@ describe('Application launch', function() {
     // })
 
     it('shows an initial window', async () => {
-        let windowCount = process.env.DEPLOY_ENV == "DEV"? 2 : 1;
+        let windowCount = env.DEPLOY_ENV == "DEV"? 2 : 1;
         let actualWindowCount = await app.client.getWindowCount();
         return assert.strictEqual(actualWindowCount, windowCount);
     })
@@ -45,7 +56,7 @@ describe('Application launch', function() {
     })
 
     it('shows dev tool if running with DEV environment', async () => {
-        let isDev = process.env.DEPLOY_ENV == "DEV";
+        let isDev = env.DEPLOY_ENV == "DEV";
         const isDevToolOpened = await app.client.browserWindow.isDevToolsOpened();
         return assert.strictEqual(isDevToolOpened, isDev);
     })
