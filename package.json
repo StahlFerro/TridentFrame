@@ -47,7 +47,8 @@
     "test-py": "python -m pytest tests/python/unit/ tests/python/integration",
     "test-py-prod": "python -m pytest tests/python/production",
     "test-js": "npm run clean-mochawesome && cross-env DEPLOY_ENV=DEV mocha './tests/javascript/**/*.js' --exit",
-    "test-js-prod": "npm run clean-mochawesome && mocha './tests/javascript/**/*.js' --exit"
+    "test-js-prod": "npm run clean-mochawesome && mocha './tests/javascript/**/*.js' --exit",
+    "test-all": "npm run test-py && npm run test-js && npm run test-py-prod && npm run test-js-prod"
   },
   "build": {
     "productName": "TridentFrame",
