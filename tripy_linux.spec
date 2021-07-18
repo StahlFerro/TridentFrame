@@ -6,9 +6,8 @@ block_cipher = None
 _bin_dirpath = 'bin/linux'
 imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
 added_files = [
-    ('cache/.include', 'cache/'),
-    ('previews/.include', 'previews/'),
-    ('temp/.include', 'temp/'),
+    ('temp/cache/.include', 'temp/cache/.include'),
+    ('temp/previews/.include', 'temp/previews/.include'),
     ('config/imagers.json', 'config/'),
     ('config/settings.json', 'config/'),
 ]
