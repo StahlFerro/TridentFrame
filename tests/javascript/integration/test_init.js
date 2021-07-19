@@ -13,8 +13,9 @@ else {
     if (platform == "win32")
         appPath = path.join(__dirname,"../../../release/tridentframe/win-unpacked/TridentFrame.exe");
     else if (platform == "linux")
-        appaPath = path.join(__dirname,"../../../release/tridentframe/linux-unpacked/tridentFrame");
+        appPath = path.join(__dirname,"../../../release/tridentframe/linux-unpacked/tridentframe");
 }
+
 
 const app = new Application({
     path: appPath,
