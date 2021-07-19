@@ -49,9 +49,6 @@ function ticks() {
   return epoch
 }
 
-function escapeLocalPath(path) {
-  return path.replace("%", "%25");
-}
 
 function randString(length) {
    let result = '';
@@ -87,22 +84,6 @@ function roundPrecise(number, precision = 0) {
   return (Math.round(number * mult) / mult);
 }
 
-/***
- * Convert bytes to human-readable file sizes using the biggest possible size unit without having the value smaller than 1
- * @param {int} nbytes - Total amount of bytes
- * @param {int} precision - Amount of decimal places to round up
- */
-function readFilesize(nbytes, precision) {
-  let i = 0;
-  let size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-  while (nbytes >= 1024 && i < size_suffixes.length - 1){
-    nbytes /= 1024;
-    i += 1;
-  }
-  let size = roundPrecise(nbytes, precision);
-  // size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
-  return `${size} ${size_suffixes[i]}`;
-}
 
 function floatConstrain(event) {
   console.log('float constrain', event);
@@ -192,9 +173,7 @@ module.exports = {
   numConstrain: numConstrain,
   floatConstrain: floatConstrain,
   fileExists: fileExists,
-  readFilesize: readFilesize,
   isNullOrWhitespace: isNullOrWhitespace,
   roundPrecise: roundPrecise,
-  escapeLocalPath: escapeLocalPath,
   stem: stem,
 }

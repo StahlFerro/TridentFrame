@@ -14,7 +14,7 @@ from pycore.utility import filehandler
 from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI, InternalImageAPI
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.models.criterion import CreationCriteria, SplitCriteria
-from pycore.core_funcs import logger
+from pycore.core_funcs import stdio
 from pycore.inspect_ops import inspect_general
 from pycore.create_ops import create_aimg
 from pycore.split_ops import split_aimg
@@ -41,7 +41,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "convert_to_rgba": False,
     })
     frame_paths = split_aimg(img_path, frames_dir, split_criteria)
-    logger.debug({"presplit_fr_paths": frame_paths})
+    stdio.debug({"presplit_fr_paths": frame_paths})
     # yield {"MOD split frames": frame_paths}
     # if mod_criteria.is_reversed:
     #     frames.reverse()
@@ -82,7 +82,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
 
 def _modify_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
     if crbundle.gif_opt_criteria.is_unoptimized:
-        logger.message("Unoptimizing GIF...")
+        stdio.message("Unoptimizing GIF...")
         # ImageMagick is used to unoptimized rather than Gifsicle's unoptimizer because Gifsicle doesn't support
         # unoptimization of GIFs with local color table
         gif_path = ImageMagickAPI.unoptimize_gif(gif_path, out_path)
@@ -91,14 +91,14 @@ def _modify_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata,
 
 
 def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
-    logger.message("Modifying APNG...")
+    stdio.message("Modifying APNG...")
     mod_criteria = crbundle.modify_aimg_criteria
     aopt_criteria = crbundle.apng_opt_criteria
     apng_im: APNG = APNG.open(apng_path)
-    logger.debug({"crbundle": crbundle})
+    stdio.debug({"crbundle": crbundle})
     # Reiterate through the frames if matching certain conditions, or per-frame lossy compression is required
     if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_lossy or aopt_criteria.is_unoptimized:
-        logger.debug(f"REITERATE APNG")
+        stdio.debug(f"REITERATE APNG")
         new_apng: APNG = APNG()
         orig_width, orig_height = metadata.width["value"], metadata.height["value"]
         alpha_base = Image.new("RGBA", size=(orig_width, orig_height))
@@ -109,14 +109,14 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             # logger.debug(png.chunks)
             delay = int(mod_criteria.delay * 1000)
             control.delay = delay
-            logger.debug({"fr_control": control})
+            stdio.debug({"fr_control": control})
             if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode\
                     or aopt_criteria.is_unoptimized:
                 # with io.BytesIO() as img_buf:
                 #     png.save(img_buf)
                 #     with Image.open(img_buf) as im:
                 #         im.show()
-                logger.debug({"fr_orig_size": im.size})
+                stdio.debug({"fr_orig_size": im.size})
                 has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
                 im = im.resize(mod_criteria.size, resample=getattr(Image, mod_criteria.resize_method))
                 im = im.transpose(Image.FLIP_LEFT_RIGHT) if mod_criteria.flip_x else im
@@ -135,13 +135,13 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
                 with io.BytesIO() as new_buf:
                     im.save(new_buf, "PNG")
                     new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=delay)
-        logger.debug(f"NEW FRAMES COUNT: {len(new_apng.frames)}")
+        stdio.debug(f"NEW FRAMES COUNT: {len(new_apng.frames)}")
         if len(new_apng.frames) > 0:
             apng_im = new_apng
     apng_im.num_plays = mod_criteria.loop_count
     apng_im.save(out_path)
     if aopt_criteria.is_optimized:
-        logger.message(f"Optimizing APNG...")
+        stdio.message(f"Optimizing APNG...")
         APNGOptAPI.optimize_apng(out_path, out_path, aopt_criteria)
     return out_path
 
@@ -154,10 +154,10 @@ def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Pat
     change_format = criteria.change_format(orig_attribute)
 
     if change_format or criteria.gif_must_rebuild():
-        logger.message("Rebuilding im...")
+        stdio.message("Rebuilding im...")
         return rebuild_aimg(img_path, out_path, orig_attribute, crbundle)
     else:
-        logger.message("Modifying im...")
+        stdio.message("Modifying im...")
         if criteria.format == "GIF":
             return _modify_gif(img_path, out_path, orig_attribute, crbundle)
         elif criteria.format == "PNG":

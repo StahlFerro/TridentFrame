@@ -1,11 +1,13 @@
 import os
 import io
+import math
 import uuid
 import shlex
 import shutil
 import subprocess
 from pathlib import Path
 from sys import platform, stderr
+from enum import Enum, unique
 from typing import List, Tuple, Iterator, Optional, Generator
 
 from PIL import Image
@@ -19,15 +21,49 @@ from pycore.models.criterion import (
     ModificationCriteria,
     GIFOptimizationCriteria,
 )
+from pycore.models.enums import ALPHADITHER
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
-from pycore.core_funcs import logger
+from pycore.core_funcs import stdio
 from pycore.core_funcs import config
-from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPlatformException
+from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPlatformException, \
+    UnsupportedImageModeException
 from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
 
 
+
 class InternalImageAPI:
+
+    @classmethod
+    def dither_alpha(cls, im: Image, method: ALPHADITHER = ALPHADITHER.SCREENDOOR, threshold: int = 128,
+                     w_mult: float = 2.0, w_factor: float = 1.6) -> Image:
+        if im.mode != "RGBA":
+            raise UnsupportedImageModeException(im.name, im.mode)
+        if method == ALPHADITHER.SCREENDOOR:
+            weights_matrix = [
+                [1.0 / 16.0, 9.0 / 16.0, 3.0 / 16.0, 11.0 / 16.0],
+                [13.0 / 16.0, 5.0 / 16.0, 15.0 / 16.0, 7.0 / 16.0],
+                [4.0 / 16.0, 12.0 / 16.0, 2.0 / 16.0, 10.0 / 16.0],
+                [16.0 / 16.0, 8.0 / 16.0, 14.0 / 16.0, 6.0 / 16.0],
+            ]
+            weights_matrix = [[math.pow(n * w_mult, w_factor + ((n - 0.5) * 3)) for n in mrow]
+                              for mrow in weights_matrix]
+            stdio.debug({"screendoor wmatrix": weights_matrix})
+            width, height = im.size
+            pixels = list(im.getdata())
+            for y in range(int(height)):
+                for x in range(int(width)):
+                    index = y * width + x
+                    pix = pixels[index]
+                    orig_alpha = pix[3]
+                    if orig_alpha == 0 or orig_alpha == 255:
+                        continue
+                    weight = weights_matrix[x % 4][y % 4]
+                    display_alpha = min(orig_alpha * weight, 255) >= threshold
+                    pixels[index] = (*pix[0:3], 255) if display_alpha else (*pix[0:3], 0)
+            new_im = Image.new("RGBA", im.size)
+            new_im.putdata(pixels)
+            return new_im
 
     @classmethod
     def get_apng_frames(cls, apng: APNG, unoptimize: bool = False) -> \
@@ -38,7 +74,7 @@ class InternalImageAPI:
             with io.BytesIO() as img_buf:
                 png.save(img_buf)
                 with Image.open(img_buf) as im:
-                    logger.debug({"index": index, "control": control, "mode": im.mode, "info": im.info})
+                    stdio.debug({"index": index, "control": control, "mode": im.mode, "info": im.info})
                     if index == 0 or not unoptimize:
                         canvas = im.copy()
                         yield canvas.copy(), control
@@ -58,7 +94,7 @@ class InternalImageAPI:
                             elif im.mode == "RGB":
                                 tp_color = im.info.get("transparency") if im.info.get("transparency") is not None else \
                                     [0, 0, 0]
-                                logger.debug({"tp_color": tp_color})
+                                stdio.debug({"tp_color": tp_color})
                                 tp_mask = Image.new("RGB", size=im.size, color=tp_color)
                                 tp_mask.info["transparency"] = tp_color
                                 # tp_mask.show()
@@ -188,9 +224,9 @@ class GifsicleAPI:
         """
         ROOT_PATH = str(os.getcwd())
         if os.getcwd() != gifragment_dir:
-            logger.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")
+            stdio.message(f"Changing directory from {os.getcwd()} to {gifragment_dir}")
             os.chdir(gifragment_dir)
-        logger.message("Combining frames...")
+        stdio.message("Combining frames...")
         supressed_error_txts = ["warning: too many colors, using local colormaps",
                                 "You may want to try", "input images have conflicting background colors",
                                 "This means some animation frames may appear incorrect."]
@@ -204,12 +240,12 @@ class GifsicleAPI:
 
         if os_platform() == OS.WINDOWS:
             args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=False)
-            logger.debug(args)
+            stdio.debug(args)
             result = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         elif os_platform() == OS.LINUX:
             args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=True)
             cmd = " ".join(args)
-            logger.debug(f"linux cmd -> {cmd}")
+            stdio.debug(f"linux cmd -> {cmd}")
             result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         else:
             raise UnsupportedPlatformException(platform)
@@ -217,11 +253,11 @@ class GifsicleAPI:
             if result.stdout:
                 stdout_res = result.stdout.readline().decode("utf-8")
                 if stdout_res and not any(s in stdout_res for s in supressed_error_txts):
-                    logger.message(stdout_res)
+                    stdio.message(stdout_res)
             if result.stderr:
                 stderr_res = result.stderr.readline().decode("utf-8")
                 if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
-                    logger.error(stderr_res)
+                    stdio.error(stderr_res)
 
         os.chdir(ROOT_PATH)
         return out_full_path
@@ -250,7 +286,7 @@ class GifsicleAPI:
             raise UnsupportedPlatformException(platform)
         for index, (option, description) in enumerate(gifsicle_options, start=1):
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
-            logger.message(description)
+            stdio.message(description)
             args = [
                 shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
                 option,
@@ -264,7 +300,7 @@ class GifsicleAPI:
             cmd = " ".join(args)
             if ";" in cmd:
                 raise MalformedCommandException("gifsicle")
-            logger.debug(f"modify_gif_image cmd -> {cmd}")
+            stdio.debug(f"modify_gif_image cmd -> {cmd}")
             result = subprocess.Popen(args if os_platform() == OS.WINDOWS else cmd,
                                       stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                       shell=os_platform() == OS.LINUX)
@@ -272,11 +308,11 @@ class GifsicleAPI:
                 if result.stdout:
                     stdout_res = result.stdout.readline().decode("utf-8")
                     if stdout_res and not any(s in stdout_res for s in supressed_error_txts):
-                        logger.message(stdout_res)
+                        stdio.message(stdout_res)
                 if result.stderr:
                     stderr_res = result.stderr.readline().decode("utf-8")
                     if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
-                        logger.error(stderr_res)
+                        stdio.error(stderr_res)
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
@@ -303,7 +339,7 @@ class GifsicleAPI:
         shout_nums = imageutils.shout_indices(total_frames, 1)
         for n in range(0, total_frames):
             if shout_nums.get(n):
-                logger.message(f"Extracting frames ({n}/{total_frames})")
+                stdio.message(f"Extracting frames ({n}/{total_frames})")
             split_gif_path: Path = out_dir.joinpath(f"{name}_{str.zfill(str(n), criteria.pad_count)}.gif")
             args = [
                 str(gifsicle_path),
@@ -338,7 +374,7 @@ class GifsicleAPI:
         Returns:
             Path: Absolute path of the color-reduced GIF.
         """
-        logger.message("Performing color reduction...")
+        stdio.message("Performing color reduction...")
         # redux_gif_path = out_dir.joinpath(gif_path.name)
         args = [
             str(cls.gifsicle_path),
@@ -414,7 +450,7 @@ class ImageMagickAPI:
         magick_args = cls._mod_args_builder(crbundle.gif_opt_criteria)
         # yield {"magick_args": magick_args}
         for index, (arg, description) in enumerate(magick_args, start=1):
-            logger.message(f"index {index}, arg {arg}, description: {description}")
+            stdio.message(f"index {index}, arg {arg}, description: {description}")
             cmdlist = [
                 str(cls.imagemagick_path),
                 arg,
@@ -452,23 +488,23 @@ class ImageMagickAPI:
             str(out_path)
         ]
         cmd = " ".join(args)
-        logger.debug(cmd)
+        stdio.debug(cmd)
         process = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         while process.poll() is None:
             if process.stdout:
                 stdout_res = process.stdout.readline().decode("utf-8")
                 if stdout_res:
-                    logger.message(stdout_res)
+                    stdio.message(stdout_res)
             if process.stderr:
                 stderr_res = process.stderr.readline().decode("utf-8")
                 if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
-                    logger.error(stderr_res)
+                    stdio.error(stderr_res)
         return out_path
 
 
     @classmethod
     def extract_unoptimized_gif_frames(cls, gif_path: Path, name: str, criteria: SplitCriteria,
-                           out_dir: Path) -> List[Path]:
+                                       out_dir: Path) -> List[Path]:
         """Unoptimize and extract all frames of a GIF image and return a list of paths of each frame
 
         Args:
@@ -494,8 +530,8 @@ class ImageMagickAPI:
         if os_platform() == OS.LINUX:
             args.insert(1, "convert")
         cmd = " ".join(args)
-        logger.debug(f"extract_unoptimized_gif_frames cmd -> {cmd}")
-        logger.debug(args)
+        stdio.debug(f"extract_unoptimized_gif_frames cmd -> {cmd}")
+        stdio.debug(args)
         process = subprocess.run(args, capture_output=True)
         print(process.stdout)
         print(process.stderr)
@@ -560,7 +596,7 @@ class APNGOptAPI:
         # out_rel_path = Path(os.path.relpath(out_full_path, cwd))
         newline_check = ["\r\n", "\n"]
         for index, (arg, description) in enumerate(aopt_args, start=1):
-            logger.message(f"index {index}, arg {arg}, description: {description}")
+            stdio.message(f"index {index}, arg {arg}, description: {description}")
             cmdlist = [
                 str(cls.opt_exec_path),
                 arg,
@@ -570,9 +606,9 @@ class APNGOptAPI:
             # raise Exception(cmdlist, out_full_path)
             cmd = " ".join(cmdlist)
             # result = subprocess.check_output(cmd, shell=True)
-            logger.message("Performing optimization...")
-            logger.debug(cmd)
-            logger.debug(cmdlist)
+            stdio.message("Performing optimization...")
+            stdio.debug(cmd)
+            stdio.debug(cmdlist)
             process = subprocess.Popen(cmdlist, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             index = 0
             while process.poll() is None:
@@ -580,19 +616,19 @@ class APNGOptAPI:
                 # break
                 if process.stdout:
                     stdout_res = process.stdout.readline().decode("utf-8")
-                    logger.debug(stdout_res.capitalize())
+                    stdio.debug(stdout_res.capitalize())
                     if stdout_res and stdout_res not in newline_check and "saving" in stdout_res:
                         out_words = " ".join(
                             stdout_res.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
                         )[:-1]
                         out_msg = f"Optimizing frame {out_words}..."
-                        logger.message(out_msg)
+                        stdio.message(out_msg)
                         index += 1
                 if process.stderr:
                     stderr_res = process.stderr.readline().decode("utf-8")
                     # if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
                     if stderr_res:
-                        logger.error(stderr_res)
+                        stdio.error(stderr_res)
             # if target_path != out_full_path:
             # target_path = out_full_path
         out_full_path = shutil.move(target_path, out_full_path)
@@ -626,17 +662,17 @@ class APNGDisAPI:
         cwd = os.getcwd()
         # target_rel_path = os.path.relpath(target_path, cwd)
         uuid_name = f"{uuid.uuid4()}_"
-        logger.debug(f"UUID: {uuid_name}")
+        stdio.debug(f"UUID: {uuid_name}")
         args = [str(cls.dis_exec_path), str(target_path), uuid_name]
         if seq_rename:
             args.append(seq_rename)
         cmd = " ".join(args)
         # logger.message(f"APNGDIS ARGS: {cmd}")
         fcount = len(APNG.open(target_path).frames)
-        logger.debug(f"fcount: {fcount}")
+        stdio.debug(f"fcount: {fcount}")
         shout_nums = imageutils.shout_indices(fcount, 5)
-        logger.debug(f"split_apng cmd -> {cmd}")
-        logger.debug(args)
+        stdio.debug(f"split_apng cmd -> {cmd}")
+        stdio.debug(args)
         process = subprocess.Popen(
             args,
             stdout=subprocess.PIPE,
@@ -650,14 +686,14 @@ class APNGDisAPI:
         #     logger.message(line)
         index = 0
         while True:
-            logger.message(index)
+            stdio.message(index)
             output = process.stdout.readline()
-            logger.message(output)
+            stdio.message(output)
             err = process.stderr.readline()
             if process.poll() is not None:
                 break
             if output and shout_nums.get(index):
-                logger.message(f"Extracting frames... ({shout_nums.get(index)})")
+                stdio.message(f"Extracting frames... ({shout_nums.get(index)})")
             # if err:
             #     yield {"apngdis stderr": err.decode('utf-8')}
             index += 1
@@ -676,7 +712,7 @@ class APNGDisAPI:
 
         # for line in iter(process.stdout.readline(), b''):
         #     yield {"msg": line.decode('utf-8')}
-        logger.message("Getting splitdir...")
+        stdio.message("Getting splitdir...")
         fragment_paths = (split_dir.joinpath(f) for f in split_dir.glob("*") if
                           f != filename and f.name.startswith(uuid_name) and f.suffixes[-1] == ".png")
         return fragment_paths

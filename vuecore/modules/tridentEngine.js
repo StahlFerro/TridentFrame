@@ -195,7 +195,7 @@ function parseStdErrAndCall(errStream, callback) {
     let err = JSON.parse(errStream);
     if (err.traceback)
       console.error(err.traceback.join())
-    else if (err.error) {
+    if (err.error) {
       console.error(err.error);
       callback(err.error, "");
     }

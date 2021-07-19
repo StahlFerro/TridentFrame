@@ -43,7 +43,7 @@
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'create_panel' }"
             >
-              <a id="create_menu" v-on:click="menuselection = 'create_panel'">
+              <a id="create_panel" v-on:click="menuselection = 'create_panel'">
                 <span class="icon is-large">
                   <i class="fas fa-image fa-2x fa-inverse"></i>
                 </span>
@@ -55,7 +55,7 @@
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'split_panel' }"
             >
-              <a id="split_menu" v-on:click="menuselection = 'split_panel'">
+              <a id="split_panel" v-on:click="menuselection = 'split_panel'">
                 <span class="icon is-large">
                   <i class="far fa-images fa-2x fa-inverse"></i>
                 </span>
@@ -67,7 +67,7 @@
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'modify_panel' }"
             >
-              <a id="modify_menu" v-on:click="menuselection = 'modify_panel'">
+              <a id="modify_panel" v-on:click="menuselection = 'modify_panel'">
                 <span class="icon is-large">
                   <i class="fas fa-exchange-alt fa-2x fa-inverse"></i>
                 </span>
@@ -109,7 +109,7 @@
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'inspect_panel' }"
             >
-              <a id="inspect_menu" v-on:click="menuselection = 'inspect_panel'">
+              <a id="inspect_panel" v-on:click="menuselection = 'inspect_panel'">
                 <span class="icon is-large">
                   <i class="fas fa-search fa-2x fa-inverse"></i>
                 </span>
@@ -133,7 +133,7 @@
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'settings_panel' }"
             >
-              <a id="settings_menu" v-on:click="menuselection = 'settings_panel'">
+              <a id="settings_panel" v-on:click="menuselection = 'settings_panel'">
                 <span class="icon is-large">
                   <i class="fas fa-cog fa-2x fa-inverse"></i>
                 </span>
@@ -145,7 +145,7 @@
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'about_panel' }"
             >
-              <a id="about_menu" v-on:click="menuselection = 'about_panel'">
+              <a id="about_panel" v-on:click="menuselection = 'about_panel'">
                 <span class="icon is-large">
                   <i class="fas fa-info-circle fa-2x fa-inverse"></i>
                 </span>
@@ -190,7 +190,7 @@
 
 // import { client } from "./vuecore/Client.vue";
 // import { client, ImageViewer } from "./vuecore/Client.vue";
-const { tridentEngine } = require("./vuecore/api/tridentEngine")
+const { tridentEngine } = require("./vuecore/modules/tridentEngine")
 import ContextMenu from './vuecore/components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './vuecore/components/ContextMenu/ContextMenuItem.vue';
 

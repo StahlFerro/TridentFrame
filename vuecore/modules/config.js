@@ -25,8 +25,8 @@ if (env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py"
   settings_path = join(appPath, "config", "settings.json");
   settings = JSON.parse(readFileSync(settings_path));
-  previews_path = join(appPath, "previews");
   temp_path = join(appPath, "temp");
+  previews_path = join(temp_path, "previews");
 } else {
   if (platform == "win32") {
     python_path = "python.exe";
@@ -41,8 +41,8 @@ if (env.DEPLOY_ENV == "DEV") {
   }
   settings_path = join(engine_dir, "config", "settings.json");
   settings = JSON.parse(readFileSync(settings_path));
-  previews_path = join(engine_dir, "previews");
   temp_path = join(engine_dir, "temp");
+  previews_path = join(temp_path, "previews");
 }
 
 console.log(settings);

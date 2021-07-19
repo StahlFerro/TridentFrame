@@ -1,10 +1,13 @@
 {
   "name": "tridentframe",
   "productName": "TridentFrame",
-  "version": "0.1.0-beta.8",
-  "description": "Desktop GIF and APNG swiss-army knife",
-  "author": "StahlFerro <forgeworkseven@gmail.com>",
-  "license": "GPLv3",
+  "version": "0.1.0-beta.9",
+  "description": "Desktop animated images swiss-army knife",
+  "author": {
+    "name": "StahlFerro",
+    "email": "forgeworkseven@gmail.com"
+  },
+  "license": "GPL-3.0-or-later",
   "homepage": "https://stahlferro.netlify.app/softwares/tridentframe",
   "repository": {
     "type": "git",
@@ -17,12 +20,12 @@
   "scripts": {
     "clean-build": "rimraf build/*",
     "clean-dist": "rimraf dist/*",
-    "clean-cache": "rimraf cache/*",
+    "clean-cache": "rimraf temp/cache/*",
+    "clean-previews": "rimraf temp/previews/*",
     "clean-engine": "rimraf engine/*",
-    "clean-temp": "rimraf temp/*",
     "clean-release": "rimraf release/*",
-    "clean-imgcache": "npm run clean-cache && npm run clean-temp",
-    "clean-all": "npm run clean-build && npm run clean-dist && npm run clean-engine && npm run clean-engine && npm run clean-imgcache",
+    "clean-mochawesome": "rimraf tests/javascript/mochawesome-report/*",
+    "clean-all": "npm run clean-build && npm run clean-dist && npm run clean-engine && npm run clean-engine && npm run clean-cache && npm run clean-previews",
     "css-build": "sass --no-source-map sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "sass --no-source-map --watch sass/bulmamods.scss css/bulmamods.css",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
@@ -38,9 +41,14 @@
     "buildpy-linux": "npm run engine-clean && pyinstaller tripy_linux.spec",
     "updatepy-windows": "npm run buildpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
     "updatepy-linux": "npm run buildpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
-    "release-windows": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-windows && npm run elbuild && npm run scribe-version",
-    "release-linux": "npm run clean-build && npm run clean-imgcache && npm run wpbuild && npm run buildpy-linux && npm run elbuild && npm run scribe-version",
-    "scribe-version": "python writer/info_scribe.py"
+    "release-windows": "npm run clean-build && npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-windows && npm run elbuild && npm run scribe-version",
+    "release-linux": "npm run clean-build && npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-linux && npm run elbuild && npm run scribe-version",
+    "scribe-version": "python writer/info_scribe.py",
+    "test-py": "python -m pytest tests/python/unit/ tests/python/integration",
+    "test-py-prod": "python -m pytest tests/python/production",
+    "test-js": "npm run clean-mochawesome && cross-env DEPLOY_ENV=DEV mocha './tests/javascript/**/*.js' --exit",
+    "test-js-prod": "npm run clean-mochawesome && mocha './tests/javascript/**/*.js' --exit",
+    "test-all": "npm run test-py && npm run test-js && npm run test-py-prod && npm run test-js-prod"
   },
   "build": {
     "productName": "TridentFrame",
@@ -76,14 +84,12 @@
       "!.venv/**",
       "!app.js",
       "!bin/**",
-      "!cache/**",
       "!config/**",
       "!css/**",
       "!pycore/**",
       "!sass/**",
       "!temp/**",
-      "!previews/**",
-      "!test/**",
+      "!tests/**",
       "!venv/**",
       "!vuecore/**",
       "!webfonts/**",
@@ -98,6 +104,8 @@
       "!*.ps1",
       "!*.sh",
       "!*.md",
+      "!*.pytest_cache",
+      "LICENSE.md",
       "!Pipfile",
       "!Pipfile.lock"
     ]
@@ -105,15 +113,18 @@
   "dependencies": {
     "@popperjs/core": "^2.9.2",
     "lodash.clonedeep": "^4.5.0",
+    "mime-types": "^2.1.31",
     "python-shell": "^3.0.0",
     "vue-click-outside": "^1.1.0",
-    "vue-fragment": "^1.5.2"
+    "vue-fragment": "^1.5.2",
+    "vue-slider-component": "^3.2.13"
   },
   "devDependencies": {
     "@babel/core": "^7.14.6",
     "@babel/preset-env": "^7.14.7",
     "babel-loader": "^8.2.2",
     "bulma": "^0.9.3",
+    "bulma-slider": "^2.0.4",
     "copy-webpack-plugin": "^7.0.0",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.6",
@@ -125,10 +136,12 @@
     "html-webpack-plugin": "^5.3.2",
     "make-fetch-happen": "^8.0.14",
     "mini-css-extract-plugin": "^1.6.2",
+    "mocha": "^9.0.2",
+    "mochawesome": "^6.2.2",
     "node-loader": "^1.0.3",
     "rimraf": "^3.0.2",
     "sass": "^1.35.1",
-    "spectron": "^13.0.0",
+    "spectron": "^15.0.0",
     "vue": "^2.6.14",
     "vue-loader": "^15.9.7",
     "vue-template-compiler": "^2.6.14",
@@ -136,6 +149,7 @@
     "webpack-bundle-analyzer": "^4.4.2",
     "webpack-cli": "^4.7.2",
     "webpack-dashboard": "^3.3.3",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "wtfnode": "^0.9.0"
   }
 }

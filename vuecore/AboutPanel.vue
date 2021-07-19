@@ -4,8 +4,10 @@
       <div class="about-info">
         <img v-bind:src="logo" class="about-logo no-select-drag"/>
         <h1 class="about-software-name">TridentFrame</h1>
-        <p class="about-software-version">v0.1.0-beta.8</p>
-        <p class="about-software-author">Developed by StahlFerro</p>
+        <p class="about-software-version">v0.1.0-beta.9</p>
+        <p class="about-software-copyright">Copyright <span class="icon"><i class="far fa-copyright"></i></span>
+              2021 StahlFerro</p>
+        <!-- <p class="about-software-author">Developed by StahlFerro</p> -->
       </div>
       <div class="about-buttons">
         <div class="field is-grouped is-grouped-centered">
@@ -34,10 +36,6 @@
 <script>
 const { shell } = require('electron');
 const logo = require('../imgs/TridentFrame_logo_512x512.png');
-
-let data = {
-  logo: logo,
-}
 
 export default {
   data: function() {

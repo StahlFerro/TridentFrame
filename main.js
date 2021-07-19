@@ -12,6 +12,11 @@ let appath = app.getAppPath();
 console.log('DIRNAME', __dirname);
 console.log('APP PATH', appath);
 
+if (deploy_env && deploy_env == 'DEV') {
+	var wtf = require('wtfnode');
+	wtf.dump();
+}
+
 let mainWindow = null;
 const createWindow = () => {
 	console.log('Creating window...');

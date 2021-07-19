@@ -3,16 +3,16 @@ import re
 from collections import deque
 from collections import OrderedDict
 from pathlib import Path
-from typing import Iterator, List, Dict
+from typing import Iterator, List, Dict, Any
 
 from PIL import Image
 from apng import APNG
 
-from pycore.core_funcs import logger
+from pycore.core_funcs import stdio
 
 
 PNG_BLOCK_SIZE = 64
-ACTL_CHUNK = b"\x61\x63\x54\x4D"
+ACTL_CHUNK = b"\x61\x63\x54\x4C"
 
 
 # def reshape_palette(palette_array) -> np.array:
@@ -91,15 +91,14 @@ def shift_image_sequence(image_paths: List[Path], start_frame: int) -> List[Path
     """
     shift_items = deque(image_paths)
     shift = -start_frame
-    logger.message(f"SHIFT {shift}")
+    stdio.message(f"SHIFT {shift}")
     shift_items.rotate(shift)
     image_paths = list(shift_items)
     return image_paths
 
 
-def sequence_nameget(name: str) -> str:
-    """Cuts of sequence number suffixes from a filename. Filenames only, extensions must be excluded from this check
-
+def sequence_nameget(f: Any) -> str:
+    """Cuts of sequence number suffixes from a filename or path
     Args:
         name: Filename without extensions.
 
@@ -107,11 +106,15 @@ def sequence_nameget(name: str) -> str:
         str: Filename wuthout sequence number.
 
     """
-    n_shards = name.split("_")
-    if str.isnumeric(n_shards[-1]):
-        return "_".join(n_shards[:-1])
+    if isinstance(f, Path):
+        f = f.stem
+    if "." in f:
+        f = f.split(".")[0]
+    name_split = f.split("_")
+    if str.isnumeric(name_split[-1]):
+        return "_".join(name_split[:-1])
     else:
-        return name
+        return f
 
 
 def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:

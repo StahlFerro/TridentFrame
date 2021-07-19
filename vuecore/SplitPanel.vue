@@ -240,8 +240,9 @@
 <script>
 
 const { ipcRenderer } = require("electron");
-const { randString, validateFilename, numConstrain, escapeLocalPath, roundPrecise } = require('./api/utility');
-const { tridentEngine } = require("./api/tridentEngine");
+const { randString, numConstrain, roundPrecise, validateFilename } = require('./modules/utility');
+const { escapeLocalPath } = require("./modules/formatters");
+const { tridentEngine } = require("./modules/tridentEngine");
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];

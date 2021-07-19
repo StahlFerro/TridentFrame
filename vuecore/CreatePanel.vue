@@ -203,9 +203,13 @@
                   <div class="field">
                     <label class="label" title="The width of the GIF/APNG">Width</label>
                     <div class="control">
-                      <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="widthHandler(criteria.width, $event)" class="input is-neon-white"
-                        type="number" min="1"/>
+                      <input 
+                        v-bind:value="criteria.width" 
+                        v-on:keydown="numConstrain($event, true, true)"
+                        v-on:input="widthHandler(criteria.width, $event)" 
+                        class="input is-neon-white"
+                        type="number" 
+                        min="1"/>
                     </div>
                   </div>
                 </td>
@@ -442,6 +446,9 @@
                 :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
                 :color_space.sync="gif_opt_criteria.color_space"
                 :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+                :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
+                :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
+                :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
               />
               <!-- <GIFUnoptimizationRow
                       :is_optimized.sync="is_optimized"
@@ -480,23 +487,20 @@
 
 <script>
 const { ipcRenderer } = require('electron');
-const { tridentEngine } = require("./api/tridentEngine");
+const { tridentEngine } = require("./modules/tridentEngine");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
 const {
   quintcellLister,
-  validateFilename,
   GIF_DELAY_DECIMAL_PRECISION,
   APNG_DELAY_DECIMAL_PRECISION,
   randString,
   gcd,
   numConstrain,
-  fileExists,
-  readFilesize,
-  escapeLocalPath,
   stem,
-} = require("./api/utility");
-const { PREVIEWS_PATH } = require("./api/config");
+} = require("./modules/utility");
+const { readFilesize, escapeLocalPath } = require("./modules/formatters");
+const { PREVIEWS_PATH } = require("./modules/config");
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
@@ -529,6 +533,9 @@ let data = {
     is_reduced_color: false,
     color_space: "",
     is_unoptimized: false,
+    is_dither_alpha: false,
+    dither_alpha_method: "SCREENDOOR",
+    dither_alpha_threshold: 50,
   },
   apng_opt_criteria: {
     apng_is_optimized: false,
@@ -948,15 +955,14 @@ function isButtonFrozen() {
 
 function widthHandler(width, event) {
   data.old_width = parseInt(width);
-  console.log(event);
   let newWidth = event.target.value;
-  data.criteria.width = newWidth;
+  data.criteria.width = parseInt(newWidth);
   if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) {
     // Change height if lock_aspect_ratio is true and height is not 0
     let raHeight = Math.round(
       (newWidth / data.aspect_ratio.w_ratio) * data.aspect_ratio.h_ratio
     );
-    data.criteria.height = raHeight > 0 ? raHeight : "";
+    data.criteria.height = raHeight > 0 ? parseInt(raHeight) : "";
   } else {
     updateAspectRatio(data.criteria.width, data.criteria.height);
   }
@@ -965,13 +971,13 @@ function widthHandler(width, event) {
 function heightHandler(height, event) {
   data.old_height = parseInt(height);
   let newHeight = event.target.value;
-  data.criteria.height = newHeight;
+  data.criteria.height = parseInt(newHeight);
   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
     let raWidth = Math.round(
       (newHeight / data.aspect_ratio.h_ratio) * data.aspect_ratio.w_ratio
     );
     console.log(raWidth);
-    data.criteria.width = raWidth > 0 ? raWidth : "";
+    data.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
   } else {
     updateAspectRatio(data.criteria.width, data.criteria.height);
   }

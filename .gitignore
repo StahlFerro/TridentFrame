@@ -251,13 +251,6 @@ typings/
 
 
 
-##### TridentFrame custom ignores
-
-
-
-test/
-
-
 
 ##### Ignore everything inside cache/, previews/ and temp/ except .include files so that this folder will be commited to the VCS
 
@@ -272,6 +265,14 @@ release/*
 engine/*
 writer/markdown/*
 jsconfig.json
+
+
+### Mochawesome Reports
+
+
+
+**/mochawesome-report/**
+
 
 
 ##### KDE and/or GNOME FreeDesktop specification files exclusion

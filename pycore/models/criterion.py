@@ -1,12 +1,18 @@
+import math
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
+from pycore.models.enums import ALPHADITHER
 from typing import Dict, List, Tuple, Any, Optional
 
 
-class TransformativeCriteria:
+class CriteriaBase:
+    pass
+
+
+class TransformativeCriteria(CriteriaBase):
     def __init__(self, vals: Dict):
         self.width: int = int(vals.get("width", 1))
         self.height: int = int(vals.get("height"))
-        self.resize_method: str = vals.get("resize_method", "BICUBIC").upper()
+        self.resize_method: str = (vals.get("resize_method") or "BICUBIC").upper()
         self.flip_x: bool = vals.get("flip_x", False)
         self.flip_y: bool = vals.get("flip_y", False)
         self.rotation = int(vals["rotation"] or 0)
@@ -47,7 +53,6 @@ class CreationCriteria(TransformativeCriteria):
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.skip_frame = vals.get("skip_frame") or 0
-
 
 
 class ModificationCriteria(CreationCriteria):
@@ -109,7 +114,7 @@ class ModificationCriteria(CreationCriteria):
         return f"{self.width}x{self.height}"
 
 
-class SplitCriteria:
+class SplitCriteria(CriteriaBase):
     """ Contains all of the criterias for Splitting an animated image """
 
     def __init__(self, vals):
@@ -124,7 +129,7 @@ class SplitCriteria:
         self.extract_delay_info: bool = vals["extract_delay_info"]
 
 
-class SpritesheetBuildCriteria:
+class SpritesheetBuildCriteria(CriteriaBase):
     """ Contains all of the criterias to build a spritesheet """
 
     def __init__(self, vals: dict):
@@ -139,7 +144,7 @@ class SpritesheetBuildCriteria:
         self.preserve_alpha: bool = vals["preserve_alpha"]
 
 
-class SpritesheetSliceCriteria:
+class SpritesheetSliceCriteria(CriteriaBase):
     """ Contains all of the criterias to slice a spritesheet """
 
     def __init__(self, vals):
@@ -154,7 +159,7 @@ class SpritesheetSliceCriteria:
         self.is_edge_alpha: bool = vals.get("is_edge_alpha")
 
 
-class GIFOptimizationCriteria:
+class GIFOptimizationCriteria(CriteriaBase):
     """ Criteria for GIF-related optimization/unoptimization """
 
     def __init__(self, vals):
@@ -165,6 +170,17 @@ class GIFOptimizationCriteria:
         self.is_reduced_color = vals["is_reduced_color"]
         self.color_space = int(vals["color_space"] or 0)
         self.is_unoptimized = vals["is_unoptimized"]
+        self.is_dither_alpha = vals["is_dither_alpha"]
+        self.dither_alpha_method = (vals.get("dither_alpha_method") or "SCREENDOOR").upper()
+        self.dither_alpha_threshold = int(vals["dither_alpha_threshold"]) or 0
+
+    @property
+    def dither_alpha_method_enum(self) -> ALPHADITHER:
+        return ALPHADITHER[self.dither_alpha_method]
+
+    @property
+    def dither_alpha_threshold_value(self) -> int:
+        return math.floor(256 * self.dither_alpha_threshold / 100)
 
 
 # class GIFCreationCriteria:
@@ -174,7 +190,7 @@ class GIFOptimizationCriteria:
 #         pass
 
 
-class APNGOptimizationCriteria:
+class APNGOptimizationCriteria(CriteriaBase):
     """ Criteria for APNG-related optimization/unoptimization """
 
     def __init__(self, vals):
@@ -191,7 +207,7 @@ class APNGOptimizationCriteria:
         return (self.is_optimized and self.optimization_level) or (self.is_lossy and self.lossy_value)
 
 
-class CriteriaBundle:
+class CriteriaBundle(CriteriaBase):
     """ Packs multiple criterias into one"""
 
     def __init__(self, vals):

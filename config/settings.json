@@ -1,6 +1,6 @@
 {
-    "cache_dir": "cache",
-    "previews_dir": "previews",
+    "cache_dir": "temp/cache",
+    "previews_dir": "temp/previews",
     "imagers_dir": "bin",
     "imagers": { 
         "win": {
