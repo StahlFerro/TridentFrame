@@ -1,13 +1,13 @@
 {
   "name": "tridentframe",
   "productName": "TridentFrame",
-  "version": "0.1.0-beta.8",
+  "version": "0.1.0-beta.9",
   "description": "Desktop animated images swiss-army knife",
   "author": {
     "name": "StahlFerro",
     "email": "forgeworkseven@gmail.com"
   },
-  "license": "GPLv3",
+  "license": "GPL-3.0-or-later",
   "homepage": "https://stahlferro.netlify.app/softwares/tridentframe",
   "repository": {
     "type": "git",
