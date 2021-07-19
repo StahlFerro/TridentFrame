@@ -21,7 +21,9 @@ def fx_sequence_dir(fx_path):
 
 @pytest.fixture(scope="session")
 def fx_sequence_dir_contents(fx_sequence_dir):
-    return [p for p in fx_sequence_dir.iterdir() if p.stem.startswith("checker_4x4_")]
+    sequence = [p for p in fx_sequence_dir.iterdir() if p.stem.startswith("checker_4x4_")]
+    sequence.sort()
+    return sequence
 
 
 @pytest.fixture(scope="session")
