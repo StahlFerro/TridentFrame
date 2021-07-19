@@ -47,7 +47,7 @@ def fx_prod_unpacked_dir(fx_prod_release_dir):
     if platform.startswith("win"):
         os_dirname = "win-unpacked"
     elif platform.startswith("linux"):
-        os_dirname = "linux"
+        os_dirname = "linux-unpacked"
     return fx_prod_release_dir.joinpath(os_dirname)
 
 
