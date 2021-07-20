@@ -16,6 +16,8 @@ if (deploy_env && deploy_env == 'DEV') {
 }
 
 let mainWindow = null;
+let onceReload = 0;
+
 const createWindow = () => {
 	console.log('Creating window...');
 	mainWindow = new BrowserWindow({
@@ -65,7 +67,9 @@ const createWindow = () => {
 app.on('ready', () => {
 	// createPyProc();
 	createWindow();
+	mainWindow.reload();
 });
+
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
@@ -97,8 +101,19 @@ ipcMain.on('get-app-path', function (event, args) {
 });
 
 ipcMain.handle('reload-window', async (event, args) => {
+	reloadWindow();
+});
+
+function reloadWindow() {
 	mainWindow.reload();
 	mainWindow.webContents.session.clearCache(() => {});
+}
+
+ipcMain.handle('reload-window-once', async (event, args) => {
+	if (process.platform == 'linux' && onceReload == 0) {
+		onceReload = 1;
+		reloadWindow();
+	}
 });
 
 ipcMain.handle('open-inspector', async (event, args) => {

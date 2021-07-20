@@ -77,48 +77,6 @@ const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./modules/tridentEngine.js");
 
-function openCWD() {
-  console.log('openCWD');
-  client.invoke("print_cwd", (error, res) => {
-    if (error) {
-      console.error(error);
-    } else if (res) {
-      console.log("JS DIRNAME", __dirname)
-      console.log(res);
-    }
-  })
-}
-
-function testGenerator() {
-  client.invoke("test_generator", (error, res) => {
-    if (error) {
-      console.error(error);
-    } else if (res) {
-      console.log(res);
-    }
-  })
-}
-
-function openConfirm() {
-  let WINDOW = remote.getCurrentWindow();
-  let options  = {
-    buttons: ["Yes", "Cancel"],
-    message: "A file with the same name exists in the output folder. Do you want to override it?"
-  };
-  // let response = dialog.showMessageBoxSync(WINDOW, options);
-  // console.log(`response: ${response}`)
-}
-
-
-let extension_filters = [
-  {
-    name: "Images",
-    extensions: ["png", "gif", "jpg", "webp"],
-  },
-];
-let file_dialog_props = ["openfile"];
-let dir_dialog_props = ["openDirectory", "createDirectory"];
-
 export default {
   methods: {
     refreshWindow() {
@@ -127,11 +85,15 @@ export default {
     openInspector() {
       ipcRenderer.invoke('open-inspector');
     },
-    purgeCacheTemp: purgeCacheTemp,
-    openCWD: openCWD,
-    testGenerator: testGenerator,
-    openConfirm: openConfirm,
     ipcWindow: function() {
+      let extension_filters = [
+        {
+          name: "Images",
+          extensions: ["png", "gif", "jpg", "webp"],
+        },
+      ];
+      let file_dialog_props = ["openfile"];
+      let dir_dialog_props = ["openDirectory", "createDirectory"];
       var options = {
         filters: extension_filters,
         properties: file_dialog_props,
@@ -146,6 +108,9 @@ export default {
 
     }
   },
+  mounted: function() {
+    ipcRenderer.invoke('reload-window-once');
+  }
   /** 
    * *TODO: Find the actual cause of this bug.
   // There is a weird bug in linux, in which performing the first tridentengine executable call from UI returns no response from the event handlers,
