@@ -33,7 +33,7 @@ from pycore.models.criterion import (
 
 class TridentFrameImager:
     def echo(self, msg):
-        stdio.debug(f"{msg} echoed")
+        stdio.debug(f"{msg}")
 
     def info(self):
         stdio.debug({

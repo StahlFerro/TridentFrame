@@ -1,4 +1,6 @@
 import pytest
+import shutil
+from typing import List
 from sys import platform
 from pathlib import Path
 
@@ -7,6 +9,27 @@ from pathlib import Path
 def scaffold_temp_dir(tmp_path_factory):
     tmp_dir = tmp_path_factory.mktemp("tmp_img")
     return tmp_dir
+
+
+@pytest.fixture(scope="session")
+def scaffold_spaced_dir(tmp_path_factory):
+    tmp_dir = tmp_path_factory.mktemp("TridentFrame's Temporary Images")
+    return tmp_dir
+
+
+@pytest.fixture(scope="session")
+def fx_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_sequence_dir_contents: List[Path]):
+    static_img_path = fx_sequence_dir_contents[0]
+    copied_simg = scaffold_spaced_dir.joinpath(static_img_path.name)
+    shutil.copy(static_img_path, copied_simg)
+    return copied_simg
+
+
+@pytest.fixture(scope="session")
+def fx_spaced_dir_animated_image(scaffold_spaced_dir: Path, fx_checker_apng_path: Path):
+    copied_aimg = scaffold_spaced_dir.joinpath(fx_checker_apng_path.name)
+    shutil.copy(fx_checker_apng_path, copied_aimg)
+    return copied_aimg
 
 
 @pytest.fixture(scope="session")

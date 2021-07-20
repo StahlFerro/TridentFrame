@@ -76,43 +76,6 @@ const { remote, BrowserWindow, ipcRenderer } = require("electron");
 const dialog = remote.dialog;
 const session = remote.getCurrentWebContents().session;
 const { tridentEngine } = require("./modules/tridentEngine.js");
-const { PythonShell } = require("python-shell");
-
-function callPython() {
-  let shell = new PythonShell('main.py', { 
-    mode: "text",
-    pythonPath: "python.exe",
-    pythonOptions: ["-u"],
-  });
-  let jsonmsg = JSON.stringify({"command": "echostream", "args": [1, 3, 6]})
-  shell.send(jsonmsg);
-  shell.on('message', function (message) {
-    console.log('[STDOUT message]');
-    console.log(message);
-  });
-  shell.end();
-}
-
-function refreshWindow() {
-  remote.getCurrentWindow().reload();
-  session.clearCache(() => {});
-}
-
-function purgeCacheTemp() {
-  client.invoke("purge_cache_temp", (error, res) => {
-    if (error) {
-      console.error(error);
-    } else if (res) {
-      console.log(res);
-    }
-  });
-}
-
-function openInspector() {
-  remote.getCurrentWebContents().openDevTools({mode: 'detach'});
-  var devtools = remote.getCurrentWindow().devToolsWebContents;
-  if (devtools) { devtools.focus(); }
-}
 
 function openCWD() {
   console.log('openCWD');
@@ -158,13 +121,16 @@ let dir_dialog_props = ["openDirectory", "createDirectory"];
 
 export default {
   methods: {
-    refreshWindow: refreshWindow,
+    refreshWindow() {
+      ipcRenderer.invoke('reload-window');
+    },
+    openInspector() {
+      ipcRenderer.invoke('open-inspector');
+    },
     purgeCacheTemp: purgeCacheTemp,
-    openInspector: openInspector,
     openCWD: openCWD,
     testGenerator: testGenerator,
     openConfirm: openConfirm,
-    callPython: callPython,
     ipcWindow: function() {
       var options = {
         filters: extension_filters,

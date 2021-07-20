@@ -6,8 +6,6 @@ const dialog = electron.dialog;
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
-let pyProc = null;
-let pyPort = null;
 let appath = app.getAppPath();
 console.log('DIRNAME', __dirname);
 console.log('APP PATH', appath);
@@ -96,6 +94,17 @@ ipcMain.handle('save-dialog', async (event, args) => {
 
 ipcMain.on('get-app-path', function (event, args) {
 	event.returnValue = app.getAppPath();
+});
+
+ipcMain.handle('reload-window', async (event, args) => {
+	mainWindow.reload();
+	mainWindow.webContents.session.clearCache(() => {});
+});
+
+ipcMain.handle('open-inspector', async (event, args) => {
+	mainWindow.webContents.openDevTools({mode: 'detach'});
+	var devtools = mainWindow.devToolsWebContents;
+	if (devtools) { devtools.focus(); }
 });
 
 // const selectPort = () => {
