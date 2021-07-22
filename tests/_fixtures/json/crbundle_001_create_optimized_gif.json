@@ -1,0 +1,39 @@
+{
+    "criteria": {
+        "fps": "5",
+        "delay": 0.2,
+        "format": "GIF",
+        "is_reversed": false,
+        "preserve_alpha": false,
+        "flip_x": false,
+        "flip_y": false,
+        "width": 128,
+        "height": 128,
+        "resize_method": "NEAREST",
+        "loop_count": "",
+        "start_frame": "",
+        "rotation": 0
+    },
+    "gif_opt_criteria": {
+        "is_optimized": true,
+        "optimization_level": "2",
+        "is_lossy": true,
+        "lossy_value": "200",
+        "is_reduced_color": true,
+        "color_space": "40",
+        "is_unoptimized": false,
+        "is_dither_alpha": true,
+        "dither_alpha_method": "screendoor",
+        "dither_alpha_threshold": 50
+    },
+    "apng_opt_criteria": {
+        "apng_is_optimized": false,
+        "apng_optimization_level": "1",
+        "apng_is_lossy": false,
+        "apng_lossy_value": "",
+        "apng_is_unoptimized": false,
+        "apng_preconvert_rgba": false,
+        "apng_convert_color_mode": false,
+        "apng_new_color_mode": "RGBA"
+    }
+}

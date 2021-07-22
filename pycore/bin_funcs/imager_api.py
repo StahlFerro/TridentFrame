@@ -31,7 +31,6 @@ from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
 
 
-
 class InternalImageAPI:
 
     @classmethod

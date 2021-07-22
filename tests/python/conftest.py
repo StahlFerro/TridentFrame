@@ -33,7 +33,7 @@ def fx_spaced_dir_animated_image(scaffold_spaced_dir: Path, fx_checker_apng_path
 
 
 @pytest.fixture(scope="session")
-def fx_path():
+def fx_path() -> Path:
     return Path(__file__).resolve().parents[1].joinpath("_fixtures/")
 
 
@@ -50,13 +50,23 @@ def fx_sequence_dir_contents(fx_sequence_dir):
 
 
 @pytest.fixture(scope="session")
-def fx_checker_apng_path(fx_path):
+def fx_checker_apng_path(fx_path: Path):
     return fx_path.joinpath("apng/checker_256px.png")
 
 
 @pytest.fixture(scope="session")
-def fx_json_dir(fx_path):
+def fx_json_dir(fx_path: Path) -> Path:
     return fx_path.joinpath("json/")
+
+
+@pytest.fixture(scope="session")
+def fx_crbundle_001_create_optimized_gif(fx_json_dir: Path):
+    return fx_json_dir.joinpath("crbundle_001_create_optimized_gif.json")
+
+
+@pytest.fixture(scope="session")
+def fx_crbundle_002_create_optimized_apng(fx_json_dir: Path):
+    return fx_json_dir.joinpath("crbundle_002_create_optimized_apng.json")
 
 
 @pytest.fixture(scope="session")

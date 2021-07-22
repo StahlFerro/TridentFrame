@@ -7,8 +7,8 @@ from pycore.inspect_ops import inspect_animated_png
 from pycore.create_ops import _build_apng
 
 
-def test_build_apng(scaffold_temp_dir, fx_json_dir, fx_sequence_dir_contents):
-    with open(fx_json_dir.joinpath("createpanel_criteria_pack_001.json"), "r") as f:
+def test_build_apng(scaffold_temp_dir, fx_crbundle_002_create_optimized_apng: Path, fx_sequence_dir_contents):
+    with open(fx_crbundle_002_create_optimized_apng, "r") as f:
         crpack = json.loads(f.read())
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),
