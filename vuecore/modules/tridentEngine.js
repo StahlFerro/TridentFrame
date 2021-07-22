@@ -25,17 +25,20 @@ function tridentEngine(args, outCallback, endCallback) {
 
   let command = args[0];
   let cmd_args = args.slice(1);
-  let json_command = JSON.stringify({
+  let json_command = {
     "command": command, 
     "args": cmd_args,
     "globalvar_overrides": {
       "debug": true,
-  }});
+    }
+  };
+  let str_cmd = JSON.stringify(json_command);
 
 
   if (env.DEPLOY_ENV == "DEV") {
-    console.log("json_command");
-    console.log(json_command);
+    console.log({"json_command": json_command});
+    console.log("str_cmd");
+    console.log(str_cmd);
     let pyshell = new PythonShell(ENGINE_EXEC_PATH, {
       mode: "text",
       pythonPath: PYTHON_PATH,
@@ -60,7 +63,7 @@ function tridentEngine(args, outCallback, endCallback) {
       console.log("pycommander stderr end <<<<<");
     });
     console.log("DEBUG 3");
-    pyshell.send(`${json_command}\n`);
+    pyshell.send(`${str_cmd}\n`);
     
     console.log("DEBUG 4");
     pyshell.end(function (err,code,signal) {
