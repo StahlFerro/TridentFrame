@@ -119,7 +119,7 @@ function tridentEngine(args, outCallback, endCallback) {
       }
     });
     console.log("beforewrite");
-    child.stdin.write(`${json_command}\n`, (error) => {
+    child.stdin.write(`${str_cmd}\n`, (error) => {
       if (error)
         console.log({"stdin.write error": error});
     });
