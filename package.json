@@ -68,6 +68,7 @@
       "target": [
         "7z",
         "deb",
+        "tar.gz",
         "zip"
       ],
       "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.png",
@@ -82,11 +83,15 @@
       "!.sass-cache/**",
       "!.vscode/**",
       "!.venv/**",
+      "!.mocharc.json",
       "!app.js",
+      "!index.html",
+      "!jsconfig.json",
       "!bin/**",
       "!config/**",
       "!css/**",
       "!pycore/**",
+      "!node_modules/**",
       "!sass/**",
       "!temp/**",
       "!tests/**",
