@@ -51,7 +51,7 @@ def fx_sequence_dir_contents(fx_sequence_dir):
 
 @pytest.fixture(scope="session")
 def fx_checker_apng_path(fx_path: Path):
-    return fx_path.joinpath("apng/checker_256px.png")
+    return fx_path.joinpath("apng", "checker_256px.png")
 
 
 @pytest.fixture(scope="session")
@@ -71,7 +71,7 @@ def fx_crbundle_002_create_optimized_apng(fx_json_dir: Path):
 
 @pytest.fixture(scope="session")
 def fx_prod_release_dir():
-    return Path(__file__).resolve().parents[2].joinpath("release/tridentframe/")
+    return Path(__file__).resolve().parents[2].joinpath("release", "tridentframe/")
 
 
 @pytest.fixture(scope="session")
@@ -86,7 +86,7 @@ def fx_prod_unpacked_dir(fx_prod_release_dir):
 
 @pytest.fixture(scope="session")
 def fx_prod_app_dir(fx_prod_unpacked_dir):
-    return fx_prod_unpacked_dir.joinpath("resources/app/")
+    return fx_prod_unpacked_dir.joinpath("resources", "app/")
 
 
 @pytest.fixture(scope="session")
@@ -116,12 +116,12 @@ def fx_prod_previews_dir(fx_prod_temp_dir):
 
 @pytest.fixture(scope="session")
 def fx_prod_imagers_jsonpath(fx_prod_engine_dir):
-    return fx_prod_engine_dir.joinpath("config/imagers.json")
+    return fx_prod_engine_dir.joinpath("config", "imagers.json")
 
 
 @pytest.fixture(scope="session")
 def fx_prod_settings_jsonpath(fx_prod_engine_dir):
-    return fx_prod_engine_dir.joinpath("config/settings.json")
+    return fx_prod_engine_dir.joinpath("config", "settings.json")
 
 
 @pytest.fixture(scope="session")
