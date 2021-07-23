@@ -6,6 +6,7 @@ verify_ssl = true
 [packages]
 apng = "*"
 pillow = "~=8.2.0"
+psutil = "*"
 
 [dev-packages]
 pywin32 = {version = "*", sys_platform = "== 'win32'"}

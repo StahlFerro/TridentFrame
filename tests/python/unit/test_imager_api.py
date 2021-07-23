@@ -2,9 +2,10 @@ import io
 import json
 import pytest
 from pathlib import Path
-from pycore.utility.sysinfo import os_platform, OS
+from pycore.utility.sysinfo import os_platform, shell_type, OS, SHELL
 from pycore.bin_funcs.imager_api import GifsicleAPI
 from pycore.core_funcs.exception import MalformedCommandException
+from pycore.utility.sysinfo import shell_type
 from pycore.models.criterion import CriteriaBundle, CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 
 
@@ -21,3 +22,8 @@ def test_malformed_combine_cmd_builder(fx_spaced_dir_animated_image: Path, fx_cr
     with pytest.raises(MalformedCommandException) as excinfo:
         cmd_list = GifsicleAPI._combine_cmd_builder(malicious_path, crbundle, must_quote)
     assert 'is malformed' in str(excinfo.value)
+
+
+def test_current_shell_type():
+    assert shell_type() != SHELL.OTHER
+
