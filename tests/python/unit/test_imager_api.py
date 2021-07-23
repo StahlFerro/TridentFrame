@@ -2,7 +2,7 @@ import io
 import json
 import pytest
 from pathlib import Path
-from pycore.utility.sysinfo import os_platform, shell_type, OS, SHELL
+from pycore.utility.sysinfo import os_platform, parent_process_name, shell_type, OS, SHELL
 from pycore.bin_funcs.imager_api import GifsicleAPI
 from pycore.core_funcs.exception import MalformedCommandException
 from pycore.utility.sysinfo import shell_type
@@ -24,6 +24,9 @@ def test_malformed_combine_cmd_builder(fx_spaced_dir_animated_image: Path, fx_cr
     assert 'is malformed' in str(excinfo.value)
 
 
-def test_current_shell_type():
-    assert shell_type() != SHELL.OTHER
+def test_parent_process_name():
+    assert parent_process_name() is not None
 
+
+def test_current_shell_type():
+    assert shell_type() is not None
