@@ -2,10 +2,10 @@
 import { EOL } from 'os';
 import { Transform } from 'stream'
 
-/*
-* Takes in a string stream and emits batches seperated by newlines
-* Reference: https://github.com/extrabacon/python-shell/blob/master/index.ts#L73
-*/
+/**
+ * Takes in a string stream and emits batches seperated by newlines
+ * Reference: https://github.com/extrabacon/python-shell/blob/master/index.ts#L73
+ */
 export class NewlineTransformer extends Transform {
     // NewlineTransformer: Megatron's little known once-removed cousin
     _lastLineData;

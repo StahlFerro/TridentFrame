@@ -25,26 +25,6 @@
             </div>
           </div>
 
-          <!-- <table class="sequence-grid is-paddingless" width="100%">
-            <tbody>
-              <tr v-for="(quintjson, row) in CRTQuintcellLister" v-bind:key="row">
-                <td v-for="(item, i) in quintjson" v-bind:key="i"
-                  v-bind:title="
-                    `Name: ${item.name.value}\n` +
-                    `Dimensions: ${item.width.value} x ${item.height.value}\n` +
-                    `Format: ${item.format.value}\n` +
-                    `Mode: ${item.color_mode.value}\n` +
-                    `Comment: ${item.comments.value || 'None'}`
-                  "
-                >
-                  <div class="seqdiv">
-                    <img v-bind:src="item.absolute_url.value" />
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table> -->
-
         </div>
         <div class="create-panel-preview silver-bordered-no-left"
           v-bind:title="preview_info? 
@@ -487,20 +467,17 @@
 
 <script>
 const { ipcRenderer } = require('electron');
-const { tridentEngine } = require("./modules/tridentEngine");
 const lodashClonedeep = require('lodash.clonedeep');
 const path = require("path");
-const {
-  quintcellLister,
-  GIF_DELAY_DECIMAL_PRECISION,
-  APNG_DELAY_DECIMAL_PRECISION,
-  randString,
-  gcd,
-  numConstrain,
-  stem,
-} = require("./modules/utility");
-const { readFilesize, escapeLocalPath } = require("./modules/formatters");
-const { PREVIEWS_PATH } = require("./modules/config");
+
+const { tridentEngine } = require("../modules/streams/trident_engine");
+const { numConstrain } = require("../modules/events/constraints");
+const { escapeLocalPath, stem } = require("../modules/utility/pathutils");
+const { formatBytes, randString } = require("../modules/utility/stringutils");
+const { gcd } = require("../modules/utility/calculations");
+const { PREVIEWS_PATH } = require("../modules/constants/appconfig");
+const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } = require("../modules/constants/images");
+
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
@@ -925,7 +902,7 @@ function createAnimatedImage() {
 function computeTotalSequenceSize() {
   console.log("computeTotalSequenceSize");
   console.log(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
-  return readFilesize(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
+  return formatBytes(data.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
 }
 
 function saveFileName() {
@@ -1034,10 +1011,6 @@ function fpsConstrain(event) {
   }
 }
 
-function CRTQuintcellLister() {
-  return quintcellLister(data.sequence_info);
-}
-
 function sequenceCounter() {
   if (data.sequence_info.length > 0) {
     return `${data.sequence_info.length} images`;
@@ -1082,7 +1055,6 @@ export default {
     escapeLocalPath: escapeLocalPath,
   },
   computed: {
-    CRTQuintcellLister: CRTQuintcellLister,
     isButtonFrozen: isButtonFrozen,
     sequenceCounter: sequenceCounter,
     computeTotalSequenceSize: computeTotalSequenceSize,

@@ -460,11 +460,14 @@
 <script>
 
 const { ipcRenderer } = require('electron');
-const { tridentEngine } = require("./modules/tridentEngine");
-const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION, randString, wholeNumConstrain, posWholeNumConstrain, floatConstrain, numConstrain, 
-        gcd, roundPrecise, stem } = require("./modules/utility");
-const { escapeLocalPath } = require("./modules/formatters");
-import { PREVIEWS_PATH, TEMP_PATH } from "./modules/config";
+const { tridentEngine } = require("../modules/streams/trident_engine");
+const { roundPrecise, gcd } = require("../modules/utility/calculations");
+const { floatConstrain, numConstrain } = require("../modules/events/constraints");
+const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } = require("../modules/constants/images");
+const { randString } = require("../modules/utility/stringutils");
+const { escapeLocalPath, stem } = require("../modules/utility/pathutils");
+import { PREVIEWS_PATH, TEMP_PATH } from "../modules/constants/appconfig";
+
 const path = require("path");
 const lodashClonedeep = require('lodash.clonedeep');
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";

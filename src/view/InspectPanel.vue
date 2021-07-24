@@ -103,11 +103,12 @@
 <script>
 const { webFrame, clipboard, ipcRenderer } = require("electron");
 // const { client } = require("./Client.vue");
-const { roundPrecise } = require("./modules/utility");
-const { varToSpaceUpper, escapeLocalPath } = require("./modules/formatters");
-const { tridentEngine } = require("./modules/tridentEngine");
-const { SETTINGS } = require("./modules/config");
-const { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } = require("./modules/constants")
+const { roundPrecise } = require("../modules/utility/calculations");
+const { varToSpaceUpper } = require("../modules/utility/stringutils");
+const { escapeLocalPath } = require("../modules/utility/pathutils");
+const { tridentEngine } = require("../modules/streams/trident_engine");
+const { SETTINGS } = require("../modules/constants/appconfig");
+const { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } = require("../modules/constants/images")
 const mime = require("mime-types");
 
 

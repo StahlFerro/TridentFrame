@@ -35,7 +35,7 @@
 
 <script>
 const { shell } = require('electron');
-const logo = require('../imgs/TridentFrame_logo_512x512.png');
+const logo = require('../../imgs/TridentFrame_logo_512x512.png');
 
 export default {
   data: function() {

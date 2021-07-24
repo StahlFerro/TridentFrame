@@ -3,7 +3,8 @@ const { env, cwd, platform } = require("process");
 const { resolve, join } = require("path");
 const { readFileSync } = require('fs');
 
-let appPath;
+const appPath = ipcRenderer.sendSync("get-app-path");
+
 let python_path;
 let engine_dir;
 let engine_exec_path;
@@ -14,12 +15,12 @@ let temp_path;
 let settings_path;
 let settings;
 
-appPath = ipcRenderer.sendSync("get-app-path");
-console.log(appPath);
-console.log(`current appPath: ${appPath}`);
-console.log(`current dirname -> ${__dirname}`);
-console.log(`current process.cwd() -> ${cwd()}`);
-console.log(`current dot -> ${resolve(".")}`);
+
+// console.log(appPath);
+// console.log(`current appPath: ${appPath}`);
+// console.log(`current dirname -> ${__dirname}`);
+// console.log(`current process.cwd() -> ${cwd()}`);
+// console.log(`current dot -> ${resolve(".")}`);
 
 if (env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py"

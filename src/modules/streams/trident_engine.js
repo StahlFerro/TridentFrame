@@ -1,17 +1,10 @@
 
-const { PythonShell } = require("python-shell");
-const { ipcRenderer }  = require("electron");
 const { env, cwd } = require("process");
 const { spawn } = require("child_process");
-const { PYTHON_PATH, ENGINE_EXEC_PATH } = require("./config.js");
-const { NewlineTransformer } = require("./datastream.js");
-
-
-const { EOL } = require('os');
-const { isNullOrWhitespace } = require("./utility.js");
-
-let _remaining;  
-
+const { PythonShell } = require("python-shell");
+const { PYTHON_PATH, ENGINE_EXEC_PATH } = require("../constants/appconfig");
+const { NewlineTransformer } = require("./stream_transformer");
+const { isNullOrWhitespace } = require("../utility/stringutils");
 
 /**
  * Perform call to python console application.
@@ -147,33 +140,6 @@ function tridentEngine(args, outCallback, endCallback) {
   }
 }
 
-// Old buffer processor (copied from python-shell v2.0.3 repository)
-// https://github.com/extrabacon/python-shell/blob/f3b64d3307d8dc15eb9c071d8aa774c1e7d5b2d7/index.ts#L379 receiveInternal method
-function processBuffer(emitType, data, outCallback){
-  console.log({"buffer": data});
-  console.log({"remaining": _remaining});
-  let parts = (''+data).split(EOL);
-  if (parts.length === 1) {
-    // an incomplete record, keep buffering
-    _remaining = (_remaining || '') + parts[0];
-  }
-  let lastLine = parts.pop();
-  // fix the first line with the remaining from the previous iteration of 'receive'
-  parts[0] = (_remaining || '') + parts[0];
-  // keep the remaining for the next iteration of 'receive'
-  _remaining = lastLine;
-  parts.forEach(function (part) {
-    if(emitType == 'message') {
-      console.log(part);
-      parseStdOutAndCall(part, outCallback);
-    }
-    else if(emitType == 'stderr') {
-      console.log(part);
-      parseStdErrAndCall(part, outCallback);
-    }
-  });
-}
-
 function parseStdOutAndCall(outstream, callback) {
   try {
     let json = JSON.parse(outstream);
@@ -212,6 +178,38 @@ function parseStdErrAndCall(errStream, callback) {
   }
 }
 
+
+// let _remaining;
+
+// Old buffer processor (copied from python-shell v2.0.3 repository)
+// https://github.com/extrabacon/python-shell/blob/f3b64d3307d8dc15eb9c071d8aa774c1e7d5b2d7/index.ts#L379 receiveInternal method
+// function processBuffer(emitType, data, outCallback){
+//   console.log({"buffer": data});
+//   console.log({"remaining": _remaining});
+//   let parts = (''+data).split(EOL);
+//   if (parts.length === 1) {
+//     // an incomplete record, keep buffering
+//     _remaining = (_remaining || '') + parts[0];
+//   }
+//   let lastLine = parts.pop();
+//   // fix the first line with the remaining from the previous iteration of 'receive'
+//   parts[0] = (_remaining || '') + parts[0];
+//   // keep the remaining for the next iteration of 'receive'
+//   _remaining = lastLine;
+//   parts.forEach(function (part) {
+//     if(emitType == 'message') {
+//       console.log(part);
+//       parseStdOutAndCall(part, outCallback);
+//     }
+//     else if(emitType == 'stderr') {
+//       console.log(part);
+//       parseStdErrAndCall(part, outCallback);
+//     }
+//   });
+// }
+
 module.exports = {
-  tridentEngine: tridentEngine
+  tridentEngine: tridentEngine,
+  parseStdOutAndCall: parseStdOutAndCall,
+  parseStdErrAndCall: parseStdErrAndCall,
 }

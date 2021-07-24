@@ -72,10 +72,8 @@
 </template>
 
 <script>
-const { remote, BrowserWindow, ipcRenderer } = require("electron");
-const dialog = remote.dialog;
-const session = remote.getCurrentWebContents().session;
-const { tridentEngine } = require("./modules/tridentEngine.js");
+const { ipcRenderer } = require("electron");
+const { tridentEngine } = require("../modules/streams/trident_engine.js");
 
 export default {
   methods: {
