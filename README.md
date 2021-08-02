@@ -1,6 +1,6 @@
 <div align="center">
-  <a href="https://stahlferro.netlify.app/softwares/tridentframe">
-    <img width="200" height="200" src="https://stahlferro.netlify.app/logos/TridentFrame_logo.svg">
+  <a href="https://stahlferro.pages.dev/softwares/tridentframe">
+    <img width="200" height="200" src="https://stahlferro.pages.dev/logos/TridentFrame_logo.svg">
   </a>
   <h1>TridentFrame</h1>
 </div>
