@@ -40,7 +40,7 @@ def test_inspect_agif_prod(fx_prod_exec_path: Path, fx_spaced_dir_agif_checker: 
     ainfo = data['animation_info']
     assert Path(info['absolute_url']['value']) == fx_spaced_dir_agif_checker
     assert info['is_animated']['value']
-    assert info['format']['value'] == "PNG"
+    assert info['format']['value'] == "GIF"
     assert ainfo['frame_count']['value'] == 4
     assert ainfo['loop_count']['value'] == 0
 

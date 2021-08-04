@@ -27,8 +27,8 @@ def fx_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_sequence_dir_conten
 
 @pytest.fixture(scope="session")
 def fx_spaced_dir_agif_checker(scaffold_spaced_dir: Path, fx_checker_agif_path: Path):
-    copied_aimg = scaffold_spaced_dir.joinpath(fx_checker_apng_path.name)
-    shutil.copy(fx_checker_apng_path, copied_aimg)
+    copied_aimg = scaffold_spaced_dir.joinpath(fx_checker_agif_path.name)
+    shutil.copy(fx_checker_agif_path, copied_aimg)
     return copied_aimg
 
 
