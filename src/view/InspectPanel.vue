@@ -72,7 +72,7 @@
         <a v-on:click="loadImage" class="button is-neon-emerald"
           v-bind:class="{
             'is-loading': INS_IS_INSPECTING,
-            'is-static': isButtonFrozen,
+            'non-interactive': isButtonFrozen,
           }">
           <span class="icon is-small">
             <i class="fas fa-plus"></i>
@@ -80,7 +80,7 @@
           <span>Load Image</span>
         </a>
         <a v-on:click="clearButton" class="button is-neon-crimson"
-          v-bind:class="{ 'is-static': isButtonFrozen }">
+          v-bind:class="{'non-interactive': isButtonFrozen}">
           <span class="icon is-small">
             <i class="fas fa-times"></i>
           </span>
@@ -117,7 +117,7 @@ export default {
     return {
       img_path: "",
       checkerbg_active: false,
-      isButtonFrozen: false,
+      // isButtonFrozen: false,
       INS_IS_INSPECTING: false,
       info_data: "",
       inspect_msgbox: "",
@@ -259,5 +259,10 @@ export default {
         clipboard.writeText(text);
     }
   },
+  computed: {
+    isButtonFrozen() {
+      return this.INS_IS_INSPECTING;
+    }
+  }
 };
 </script>
