@@ -44,8 +44,8 @@ class CreationCriteria(TransformativeCriteria):
     def __init__(self, vals):
         super(CreationCriteria, self).__init__(vals)
         # self.name: str = vals["name"]
-        self.fps: float = float(vals["fps"] or 0)
-        self.delay: float = float(vals["delay"] or 0)
+        self.fps: float = float(vals["fps"] or 10) or 10
+        self.delay: float = float(vals["delay"] or 0.1) or 0.1
         self.format: str = vals["format"]
         self.reverse: bool = vals["is_reversed"]
         self.preserve_alpha: bool = vals["preserve_alpha"]

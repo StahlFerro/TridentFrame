@@ -119,7 +119,7 @@ export default {
       checkerbg_active: false,
       // isButtonFrozen: false,
       INS_IS_INSPECTING: false,
-      info_data: "",
+      info_data: {},
       inspect_msgbox: "",
       load_has_error: false,
       metadata_settings: SETTINGS.image_metadata,

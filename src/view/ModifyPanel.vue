@@ -306,7 +306,7 @@
               <tr>
                 <td width="16.7%">
                   <div class="field">
-                    <label class="label">FPS</label>
+                    <label class="label">Frame rate</label>
                     <div class="control">
                       <input v-model="criteria.fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
                     </div>
@@ -314,7 +314,7 @@
                 </td>
                 <td width="16.7%">
                   <div class="field">
-                    <label class="label">Delay</label>
+                    <label class="label">Delay (seconds)</label>
                     <div class="control">
                       <input v-model="criteria.delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
                     </div>
