@@ -142,16 +142,13 @@
 // import Vue from 'vue';
 // import { Plugin } from 'vue'
 import { Fragment }  from 'vue-fragment';
-const { numConstrain } = require("../../modules/events/constraints");
+import { numConstrain } from "../../modules/events/constraints";
 // const bulmaSlider = require("../../node_modules/bulma-slider/dist/js/bulma-slider");
 // bulmaSlider.attach();
-const lodashClonedeep = require('lodash.clonedeep');
-
-let props = ['is_unoptimized']
 
 export default {
   components: { Fragment },
-  props: props,
+  props: ['is_unoptimized'],
   name: "GIFOptimizationRow",
   data: function() {
     return {

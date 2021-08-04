@@ -34,8 +34,8 @@
 </template>
 
 <script>
-const { shell } = require('electron');
-const logo = require('../../imgs/TridentFrame_logo_512x512.png');
+import { shell } from 'electron';
+import logo from '../../imgs/TridentFrame_logo_512x512.png';
 
 export default {
   data: function() {

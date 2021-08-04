@@ -21,22 +21,18 @@
 // import { Plugin } from 'vue'
 import { Fragment }  from 'vue-fragment';
 
-var data = {
-  preserve_alpha: false,
-//   is_optimized: false,
-//   is_lossy: false,
-//   is_reduced_color: false,
-  is_unoptimized: false,
-};
-
-let props = ['is_optimized', 'is_lossy', 'is_reduced_color'];
-
 export default {
   components: { Fragment },
-  props: props,
+  props: ['is_optimized', 'is_lossy', 'is_reduced_color'],
   name: "GIFUnoptimizationRow",
   data: function() {
-    return data;
+    return {
+      preserve_alpha: false,
+    //   is_optimized: false,
+    //   is_lossy: false,
+    //   is_reduced_color: false,
+      is_unoptimized: false,
+    };
   }
 };
 </script>

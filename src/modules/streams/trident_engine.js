@@ -1,10 +1,80 @@
 
-const { env, cwd } = require("process");
-const { spawn } = require("child_process");
-const { PythonShell } = require("python-shell");
-const { PYTHON_PATH, ENGINE_EXEC_PATH } = require("../constants/appconfig");
-const { NewlineTransformer } = require("./stream_transformer");
-const { isNullOrWhitespace } = require("../utility/stringutils");
+import { env, cwd } from "process";
+import { spawn } from "child_process";
+import { PythonShell } from "python-shell";
+import { PYTHON_PATH, ENGINE_EXEC_PATH } from "../constants/appconfig";
+import { NewlineTransformer } from "./stream_transformer";
+import { isNullOrWhitespace } from "../utility/stringutils";
+
+
+function parseStdOutAndCall(outstream, callback) {
+  try {
+    let json = JSON.parse(outstream);
+    if (json.debug) {
+      console.log(json.debug);
+    }
+    else {
+      callback("", json);
+    }
+  }
+  catch (parseException) {
+    console.error({
+      error: "[NOT JSON OUTSTREAM]",
+      parseException: parseException,
+      outstream: outstream,
+    });
+  }
+}
+
+function parseStdErrAndCall(errStream, callback) {
+  try {
+    let err = JSON.parse(errStream);
+    if (err.traceback)
+      console.error(err.traceback.join())
+    if (err.error) {
+      console.error(err.error);
+      callback(err.error, "");
+    }
+  }
+  catch (parseException) {
+    console.error({
+      error: "[NOT JSON OUTSTREAM]",
+      parseException: parseException,
+      outstream: errStream,
+    });
+  }
+}
+
+
+// let _remaining;
+
+// Old buffer processor (copied from python-shell v2.0.3 repository)
+// https://github.com/extrabacon/python-shell/blob/f3b64d3307d8dc15eb9c071d8aa774c1e7d5b2d7/index.ts#L379 receiveInternal method
+// function processBuffer(emitType, data, outCallback){
+//   console.log({"buffer": data});
+//   console.log({"remaining": _remaining});
+//   let parts = (''+data).split(EOL);
+//   if (parts.length === 1) {
+//     // an incomplete record, keep buffering
+//     _remaining = (_remaining || '') + parts[0];
+//   }
+//   let lastLine = parts.pop();
+//   // fix the first line with the remaining from the previous iteration of 'receive'
+//   parts[0] = (_remaining || '') + parts[0];
+//   // keep the remaining for the next iteration of 'receive'
+//   _remaining = lastLine;
+//   parts.forEach(function (part) {
+//     if(emitType == 'message') {
+//       console.log(part);
+//       parseStdOutAndCall(part, outCallback);
+//     }
+//     else if(emitType == 'stderr') {
+//       console.log(part);
+//       parseStdErrAndCall(part, outCallback);
+//     }
+//   });
+// }
+
 
 /**
  * Perform call to python console application.
@@ -12,7 +82,7 @@ const { isNullOrWhitespace } = require("../utility/stringutils");
  * @param {pyOutCallback} outCallback - The callback function to execute after receiving either stderr or stdout from python/child process. Must have arguments (error, res), which respresents stderr and stdout respectively. 
  * @param {callback} endCallback - The callback function to execute after python/child process terminates
  */
-function tridentEngine(args, outCallback, endCallback) {
+export function tridentEngine(args, outCallback, endCallback) {
   console.log(`Current dir: ${cwd()}`);
   console.log(`DEPLOY ENV ${env.DEPLOY_ENV}`);
 
@@ -138,78 +208,4 @@ function tridentEngine(args, outCallback, endCallback) {
     //   }
     // });
   }
-}
-
-function parseStdOutAndCall(outstream, callback) {
-  try {
-    let json = JSON.parse(outstream);
-    if (json.debug) {
-      console.log(json.debug);
-    }
-    else {
-      callback("", json);
-    }
-  }
-  catch (parseException) {
-    console.error({
-      error: "[NOT JSON OUTSTREAM]",
-      parseException: parseException,
-      outstream: outstream,
-    });
-  }
-}
-
-function parseStdErrAndCall(errStream, callback) {
-  try {
-    let err = JSON.parse(errStream);
-    if (err.traceback)
-      console.error(err.traceback.join())
-    if (err.error) {
-      console.error(err.error);
-      callback(err.error, "");
-    }
-  }
-  catch (parseException) {
-    console.error({
-      error: "[NOT JSON OUTSTREAM]",
-      parseException: parseException,
-      outstream: errStream,
-    });
-  }
-}
-
-
-// let _remaining;
-
-// Old buffer processor (copied from python-shell v2.0.3 repository)
-// https://github.com/extrabacon/python-shell/blob/f3b64d3307d8dc15eb9c071d8aa774c1e7d5b2d7/index.ts#L379 receiveInternal method
-// function processBuffer(emitType, data, outCallback){
-//   console.log({"buffer": data});
-//   console.log({"remaining": _remaining});
-//   let parts = (''+data).split(EOL);
-//   if (parts.length === 1) {
-//     // an incomplete record, keep buffering
-//     _remaining = (_remaining || '') + parts[0];
-//   }
-//   let lastLine = parts.pop();
-//   // fix the first line with the remaining from the previous iteration of 'receive'
-//   parts[0] = (_remaining || '') + parts[0];
-//   // keep the remaining for the next iteration of 'receive'
-//   _remaining = lastLine;
-//   parts.forEach(function (part) {
-//     if(emitType == 'message') {
-//       console.log(part);
-//       parseStdOutAndCall(part, outCallback);
-//     }
-//     else if(emitType == 'stderr') {
-//       console.log(part);
-//       parseStdErrAndCall(part, outCallback);
-//     }
-//   });
-// }
-
-module.exports = {
-  tridentEngine: tridentEngine,
-  parseStdOutAndCall: parseStdOutAndCall,
-  parseStdErrAndCall: parseStdErrAndCall,
-}
+};

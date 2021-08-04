@@ -1,35 +1,4 @@
-function wholeNumConstrain(event) {
-  console.log('wholeNumConstrain', event.key);
-  if (event.key != "." && event.key != 'e') {
-    console.log("IS DIGIT!");
-    return true;
-  } else {
-    console.log("IS NOT DIGIT!");
-    event.preventDefault();
-  }
-}
-
-function floatConstrain(event) {
-  console.log('float constrain', event);
-  let current_value = event.target.value;
-  let key = event.key;
-  if (current_value.includes(".") && key == ".") {
-    event.preventDefault();
-  } else {
-    return true;
-  }
-  // let float_regex = new RegExp('(^[0-9]*\\.?[0-9]*$)');
-  // if (float_regex.test(event.target.value)) {
-  //   console.log("IS FLOAT!");
-  //   return true;
-  // }
-  // else {
-  //   console.log("NOT FLOAT!");
-  //   event.preventDefault();
-  // }
-}
-
-function numConstrain(event, must_unsigned = false, must_whole = false) {
+export function numConstrain(event, must_unsigned = false, must_whole = false) {
   console.log(event);
   console.log("num constrain args", must_unsigned, must_whole);
   let current_value = event.target.value;
@@ -57,7 +26,7 @@ function numConstrain(event, must_unsigned = false, must_whole = false) {
   }
 }
 
-function posWholeNumConstrain(event) {
+export function posWholeNumConstrain(event) {
   console.log(event.key);
   if (event.key != "." && event.key != '-') {
     console.log("IS DIGIT!");
@@ -68,9 +37,33 @@ function posWholeNumConstrain(event) {
   }
 }
 
-module.exports = {
-  numConstrain: numConstrain,
-  posWholeNumConstrain: posWholeNumConstrain,
-  wholeNumConstrain: wholeNumConstrain,
-  floatConstrain: floatConstrain,
+export function wholeNumConstrain(event) {
+  console.log('wholeNumConstrain', event.key);
+  if (event.key != "." && event.key != 'e') {
+    console.log("IS DIGIT!");
+    return true;
+  } else {
+    console.log("IS NOT DIGIT!");
+    event.preventDefault();
+  }
+};
+
+export function floatConstrain(event) {
+  console.log('float constrain', event);
+  let current_value = event.target.value;
+  let key = event.key;
+  if (current_value.includes(".") && key == ".") {
+    event.preventDefault();
+  } else {
+    return true;
+  }
+  // let float_regex = new RegExp('(^[0-9]*\\.?[0-9]*$)');
+  // if (float_regex.test(event.target.value)) {
+  //   console.log("IS FLOAT!");
+  //   return true;
+  // }
+  // else {
+  //   console.log("NOT FLOAT!");
+  //   event.preventDefault();
+  // }
 }

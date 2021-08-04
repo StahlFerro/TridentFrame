@@ -1,46 +1,11 @@
-const { roundPrecise } = require("./calculations.js");
-
-function varToSpaceUpper(meta_categ) {
-  return meta_categ.replace("_", " ").toUpperCase();
-}
-
-/**
- * Generate random alphanumeric string
- * @param {number} Output string length
- */
-function randString(length) {
-  let result = '';
-  let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let charsetlen = charset.length;
-  for ( let i = 0; i < length; i++ ) {
-     result += charset.charAt(Math.floor(Math.random() * charsetlen));
-  }
-  return result;
-}
-
-/***
- * Convert bytes to human-readable file sizes using the biggest possible size unit without having the value smaller than 1
- * @param {number} nbytes - Total amount of bytes
- * @param {number} precision - Amount of decimal places to round up
- */
-function formatBytes(nbytes, precision) {
-  let i = 0;
-  let size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-  while (nbytes >= 1024 && i < size_suffixes.length - 1) {
-    nbytes /= 1024;
-    i += 1;
-  }
-  let size = roundPrecise(nbytes, precision);
-  // size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
-  return `${size} ${size_suffixes[i]}`;
-}
+import { roundPrecise } from "./calculations.js";
 
 
 /**
  * Check whether a string is null or whitespace
  * @param {string} input String to check
  */
-function isNullOrWhitespace(input) {
+export function isNullOrWhitespace(input) {
   if (typeof input === 'undefined' || input == null) return true;
   return input.replace(/\s/g, '').length < 1;
 }
@@ -69,9 +34,38 @@ function isNullOrWhitespace(input) {
 //   return quintrows;
 // }
 
-module.exports = {
-  varToSpaceUpper: varToSpaceUpper,
-  formatBytes: formatBytes,
-  randString: randString,
-  isNullOrWhitespace: isNullOrWhitespace,
+export function varToSpaceUpper(meta_categ) {
+  return meta_categ.replace("_", " ").toUpperCase();
+};
+
+/***
+* Convert bytes to human-readable file sizes using the biggest possible size unit without having the value smaller than 1
+* @param {number} nbytes - Total amount of bytes
+* @param {number} precision - Amount of decimal places to round up
+*/
+export function formatBytes(nbytes, precision) {
+ let i = 0;
+ let size_suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+ while (nbytes >= 1024 && i < size_suffixes.length - 1) {
+   nbytes /= 1024;
+   i += 1;
+ }
+ // console.log(`final nbytes = ${nbytes}`);
+ let size = roundPrecise(nbytes, precision);
+ // size = str(round(nbytes, 3)).rstrip('0').rstrip('.')
+ return `${size} ${size_suffixes[i]}`;
+}
+
+/**
+* Generate random alphanumeric string
+* @param {number} Output string length
+*/
+export function randString(length) {
+ let result = '';
+ let charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+ let charsetlen = charset.length;
+ for ( let i = 0; i < length; i++ ) {
+    result += charset.charAt(Math.floor(Math.random() * charsetlen));
+ }
+ return result;
 }

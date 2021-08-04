@@ -94,13 +94,12 @@
 
 <script>
 import { Fragment } from 'vue-fragment';
-const { numConstrain } = require("../../modules/events/constraints");
+import { numConstrain } from "../../modules/events/constraints";
 
-let props = ['apng_is_unoptimized'];
 
 export default {
   name: "APNGOptimizationRow",
-  props: props,
+  props: ['apng_is_unoptimized'],
   components: { Fragment },
   data: function() {
     return {

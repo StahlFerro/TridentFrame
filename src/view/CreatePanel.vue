@@ -466,17 +466,17 @@
 </template>
 
 <script>
-const { ipcRenderer } = require('electron');
-const lodashClonedeep = require('lodash.clonedeep');
-const path = require("path");
+import { ipcRenderer } from 'electron';
+import lodashClonedeep from 'lodash.clonedeep';
+import { dirname, basename, join } from "path";
 
-const { tridentEngine } = require("../modules/streams/trident_engine");
-const { numConstrain } = require("../modules/events/constraints");
-const { escapeLocalPath, stem } = require("../modules/utility/pathutils");
-const { formatBytes, randString } = require("../modules/utility/stringutils");
-const { gcd } = require("../modules/utility/calculations");
-const { PREVIEWS_PATH } = require("../modules/constants/appconfig");
-const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } = require("../modules/constants/images");
+import { tridentEngine } from "../modules/streams/trident_engine";
+import { numConstrain } from "../modules/events/constraints";
+import { escapeLocalPath, stem } from "../modules/utility/pathutils";
+import { formatBytes, randString } from "../modules/utility/stringutils";
+import { gcd } from "../modules/utility/calculations";
+import { PREVIEWS_PATH } from "../modules/constants/appconfig";
+import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
 
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
@@ -722,8 +722,8 @@ function setSavePath(afterSaveCallback) {
     console.log(result);
     let save_path = result.filePath;
     // data.save_path = save_path;
-    data.save_dir = path.dirname(save_path);
-    data.save_fstem = stem(path.basename(save_path));
+    data.save_dir = dirname(save_path);
+    data.save_fstem = stem(basename(save_path));
     if (afterSaveCallback) {
       afterSaveCallback();
     }
@@ -805,7 +805,7 @@ function previewAIMG() {
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let preview_savepath = path.join(PREVIEWS_PATH, preview_filename);
+  let preview_savepath = join(PREVIEWS_PATH, preview_filename);
   console.log(preview_savepath);
   tridentEngine(["combine_image", data.image_paths, preview_savepath, criteria_pack], (error, res) => {
     if (error) {
@@ -911,7 +911,7 @@ function saveFileName() {
 
 function savePath() {
   if (data.save_dir && data.save_fstem)
-    return path.join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
+    return join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
   else
     return "";
 }

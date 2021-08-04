@@ -190,7 +190,7 @@
 
 // import { client } from "./src/Client.vue";
 // import { client, ImageViewer } from "./src/Client.vue";
-const { tridentEngine } = require("./src/modules/streams/trident_engine")
+// const { tridentEngine } = require("./src/modules/streams/trident_engine")
 import ContextMenu from './src/view/components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './src/view/components/ContextMenu/ContextMenuItem.vue';
 
@@ -204,36 +204,13 @@ import InspectPanel from "./src/view/InspectPanel.vue";
 import SettingsPanel from "./src/view/SettingsPanel.vue";
 import AboutPanel from "./src/view/AboutPanel.vue";
 
-var data = {
-  menuselection: "create_panel",
-};
-
-function openContextMenu(event, payload) {
-  console.log("openContextMenu");
-  console.log(event);
-  console.log(payload);
-  this.$refs.ctxmenu.openPopper(event, payload);
-}
-
-function whatClicked(event) {
-  console.log(`CLICK!!!`);
-  console.log(event);
-}
-
-// window.addEventListener("contextmenu", (e) => {
-//   e.preventDefault();
-//   const origin = {
-//     left: e.pageX,
-//     top: e.pageY,
-//   };
-//   setRCMPosition(origin);
-//   return false;
-// });
 
 export default {
   name: "app",
   data: function () {
-    return data;
+    return {
+      menuselection: "create_panel",
+    };
   },
   components: {
     CreatePanel,
@@ -249,24 +226,16 @@ export default {
     ContextMenuItem,
   },
   methods: {
-    minimizeWindow: function () {
-      var window = remote.getCurrentWindow();
-      window.minimize();
+    openContextMenu(event, payload) {
+      console.log("openContextMenu");
+      console.log(event);
+      console.log(payload);
+      this.$refs.ctxmenu.openPopper(event, payload);
     },
-    maximizeWindow: function () {
-      var window = remote.getCurrentWindow();
-      if (window.isMaximized()) {
-        window.unmaximize();
-      } else {
-        window.maximize();
-      }
+    whatClicked(event) {
+      console.log(`CLICK!!!`);
+      console.log(event);
     },
-    exitApp: function () {
-      var window = remote.getCurrentWindow();
-      window.close();
-    },
-    openContextMenu: openContextMenu,
-    whatClicked: whatClicked,
   },
 };
 </script>

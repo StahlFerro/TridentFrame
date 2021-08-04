@@ -69,22 +69,18 @@
 <script>
 import { Fragment } from 'vue-fragment';
 
-var data = {
-  // apng_is_optimized: false,
-  // apng_optimization_level: "1",
-  // apng_is_lossy: false,
-  // apng_lossy_value: "",
-  apng_is_unoptimized: false,
-};
-
-let props = ['apng_is_optimized', 'apng_is_lossy'];
-
 export default {
   name: "APNGUnoptimizationRow",
-  props: props,
+  props: ['apng_is_optimized', 'apng_is_lossy'],
   components: { Fragment },
   data: function() {
-    return data;
+    return {
+      // apng_is_optimized: false,
+      // apng_optimization_level: "1",
+      // apng_is_lossy: false,
+      // apng_lossy_value: "",
+      apng_is_unoptimized: false,
+    };
   }
 };
 </script>

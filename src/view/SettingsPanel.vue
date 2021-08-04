@@ -72,8 +72,8 @@
 </template>
 
 <script>
-const { ipcRenderer } = require("electron");
-const { tridentEngine } = require("../modules/streams/trident_engine.js");
+import { ipcRenderer } from "electron";
+import { tridentEngine } from "../modules/streams/trident_engine.js";
 
 export default {
   methods: {

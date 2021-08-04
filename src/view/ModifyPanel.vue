@@ -459,17 +459,17 @@
 
 <script>
 
-const { ipcRenderer } = require('electron');
-const { tridentEngine } = require("../modules/streams/trident_engine");
-const { roundPrecise, gcd } = require("../modules/utility/calculations");
-const { floatConstrain, numConstrain } = require("../modules/events/constraints");
-const { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } = require("../modules/constants/images");
-const { randString } = require("../modules/utility/stringutils");
-const { escapeLocalPath, stem } = require("../modules/utility/pathutils");
+import { ipcRenderer } from 'electron';
+import { tridentEngine } from "../modules/streams/trident_engine";
+import { roundPrecise, gcd } from "../modules/utility/calculations";
+import { floatConstrain, numConstrain } from "../modules/events/constraints";
+import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
+import { randString } from "../modules/utility/stringutils";
+import { escapeLocalPath, stem } from "../modules/utility/pathutils";
 import { PREVIEWS_PATH, TEMP_PATH } from "../modules/constants/appconfig";
 
-const path = require("path");
-const lodashClonedeep = require('lodash.clonedeep');
+import { dirname, join, basename } from "path";
+import lodashClonedeep from 'lodash.clonedeep';
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
@@ -794,7 +794,7 @@ function saveFileName() {
 
 function savePath() {
   if (data.save_dir && data.save_fstem)
-    return path.join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
+    return join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
   else
     return "";
 }
@@ -806,8 +806,8 @@ function setSavePath(afterSaveCallback) {
     let save_path = result.filePath;
     console.log(result);
     // data.save_path = save_path;
-    data.save_dir = path.dirname(save_path);
-    data.save_fstem = stem(path.basename(save_path));
+    data.save_dir = dirname(save_path);
+    data.save_fstem = stem(basename(save_path));
     if (afterSaveCallback) {
       afterSaveCallback();
     }
@@ -919,7 +919,7 @@ function previewModImg() {
     "apng_opt_criteria": data.apng_opt_criteria,
   });
   let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-  let preview_savepath = path.join(PREVIEWS_PATH, preview_filename);
+  let preview_savepath = join(PREVIEWS_PATH, preview_filename);
   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
   tridentEngine(["modify_image", data.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
     if (error) {

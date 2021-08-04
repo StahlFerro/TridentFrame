@@ -101,15 +101,15 @@
 </template>
 
 <script>
-const { webFrame, clipboard, ipcRenderer } = require("electron");
-// const { client } = require("./Client.vue");
-const { roundPrecise } = require("../modules/utility/calculations");
-const { varToSpaceUpper } = require("../modules/utility/stringutils");
-const { escapeLocalPath } = require("../modules/utility/pathutils");
-const { tridentEngine } = require("../modules/streams/trident_engine");
-const { SETTINGS } = require("../modules/constants/appconfig");
-const { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } = require("../modules/constants/images")
-const mime = require("mime-types");
+import { webFrame, clipboard, ipcRenderer } from "electron";
+// const { client } from ("./Client.vue");
+import { roundPrecise } from "../modules/utility/calculations";
+import { varToSpaceUpper } from "../modules/utility/stringutils";
+import { escapeLocalPath } from "../modules/utility/pathutils";
+import { tridentEngine } from "../modules/streams/trident_engine";
+import { SETTINGS } from "../modules/constants/appconfig";
+import { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } from "../modules/constants/images";
+import { extension as mime_extension } from "mime-types";
 
 
 export default {
@@ -224,8 +224,8 @@ export default {
       else if (droppedFiles.length > 1) console.error("error");
       else {
         let file = droppedFiles[0];
-        console.log({a: INSPECTING_IMG_EXTS, r: file.type, b: mime.extension(file.type)});
-        if (INSPECTING_IMG_EXTS.includes(mime.extension(file.type))) {
+        console.log({a: INSPECTING_IMG_EXTS, r: file.type, b: mime_extension(file.type)});
+        if (INSPECTING_IMG_EXTS.includes(mime_extension(file.type))) {
           console.log({exttee: file});
           this._inspectImage(file.path);
         }

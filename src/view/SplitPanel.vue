@@ -238,12 +238,11 @@
 
 
 <script>
-
-const { ipcRenderer } = require("electron");
-const { roundPrecise } = require("../modules/utility/calculations");
-const { validateFilename, escapeLocalPath } = require('../modules/utility/pathutils');
-const { numConstrain } = require('../modules/events/constraints');
-const { tridentEngine } = require("../modules/streams/trident_engine");
+import { ipcRenderer } from "electron";
+import { roundPrecise } from "../modules/utility/calculations";
+import { validateFilename, escapeLocalPath, getSystemForbiddenFilenameCharacters } from "../modules/utility/pathutils";
+import { numConstrain } from "../modules/events/constraints";
+import { tridentEngine } from "../modules/streams/trident_engine";
 
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
@@ -403,10 +402,11 @@ function chooseOutDir() {
 }
 
 function splitImage() {
-  let validator = validateFilename(data.criteria.new_name);
-  if (!validator.valid) {
-    console.error(validator.msg);
-    data.split_msgbox = validator.msg;
+  let new_name = data.criteria.new_name;
+  if (new_name && !validateFilename(new_name)) {
+    let error = `File name must not contain these characters: ${getSystemForbiddenFilenameCharacters().join(" ")}`;
+    console.error(error);
+    data.split_msgbox = error;
     return;
   }
   data.SPL_IS_SPLITTING = true;

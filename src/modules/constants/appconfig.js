@@ -1,7 +1,7 @@
-const { ipcRenderer, app } = require("electron");
-const { env, cwd, platform } = require("process");
-const { resolve, join } = require("path");
-const { readFileSync } = require('fs');
+import { ipcRenderer, app } from "electron";
+import { env, cwd, platform } from "process";
+import { resolve, join } from "path";
+import { readFileSync } from 'fs';
 
 const appPath = ipcRenderer.sendSync("get-app-path");
 
@@ -48,11 +48,9 @@ if (env.DEPLOY_ENV == "DEV") {
 
 console.log(settings);
 
-module.exports = {
-  SETTINGS: settings,
-  PREVIEWS_PATH: previews_path,
-  TEMP_PATH: temp_path,
-  ENGINE_DIR: engine_dir,
-  ENGINE_EXEC_PATH: engine_exec_path,
-  PYTHON_PATH: python_path,
-}
+export const SETTINGS = settings;
+export const PREVIEWS_PATH = previews_path;
+export const TEMP_PATH = temp_path;
+export const ENGINE_DIR = engine_dir;
+export const ENGINE_EXEC_PATH = engine_exec_path;
+export const PYTHON_PATH = python_path;
