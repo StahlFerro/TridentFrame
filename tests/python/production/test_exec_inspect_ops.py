@@ -25,10 +25,10 @@ def test_inspect_static_image_prod(fx_prod_exec_path: Path, fx_spaced_dir_static
     assert info['fsize']['value'] == fx_spaced_dir_static_image.stat().st_size
 
 
-def test_inspect_animated_image_prod(fx_prod_exec_path: Path, fx_spaced_dir_animated_image: Path):
+def test_inspect_agif_prod(fx_prod_exec_path: Path, fx_spaced_dir_agif_checker: Path):
     p = subprocess.Popen([str(fx_prod_exec_path)], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                          stderr=subprocess.PIPE)
-    str_cmd = json.dumps({"command": "inspect_one", "args": [str(fx_spaced_dir_animated_image)]})
+    str_cmd = json.dumps({"command": "inspect_one", "args": [str(fx_spaced_dir_agif_checker)]})
     output = p.communicate(str_cmd.encode('utf-8'))
     chunks = [o.decode('utf-8') for o in output]
     parsed_chunks = [json.loads(pc) for pc in chain.from_iterable([c.splitlines() for c in chunks])]
@@ -38,7 +38,27 @@ def test_inspect_animated_image_prod(fx_prod_exec_path: Path, fx_spaced_dir_anim
     assert data.get('animation_info') is not None
     info = data['general_info']
     ainfo = data['animation_info']
-    assert Path(info['absolute_url']['value']) == fx_spaced_dir_animated_image
+    assert Path(info['absolute_url']['value']) == fx_spaced_dir_agif_checker
+    assert info['is_animated']['value']
+    assert info['format']['value'] == "PNG"
+    assert ainfo['frame_count']['value'] == 4
+    assert ainfo['loop_count']['value'] == 0
+
+
+def test_inspect_apng_prod(fx_prod_exec_path: Path, fx_spaced_dir_apng_checker: Path):
+    p = subprocess.Popen([str(fx_prod_exec_path)], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE)
+    str_cmd = json.dumps({"command": "inspect_one", "args": [str(fx_spaced_dir_apng_checker)]})
+    output = p.communicate(str_cmd.encode('utf-8'))
+    chunks = [o.decode('utf-8') for o in output]
+    parsed_chunks = [json.loads(pc) for pc in chain.from_iterable([c.splitlines() for c in chunks])]
+    data = next(pc for pc in parsed_chunks if pc.get("data") is not None)['data']
+    assert data is not None
+    assert data.get('general_info') is not None
+    assert data.get('animation_info') is not None
+    info = data['general_info']
+    ainfo = data['animation_info']
+    assert Path(info['absolute_url']['value']) == fx_spaced_dir_apng_checker
     assert info['is_animated']['value']
     assert info['format']['value'] == "PNG"
     assert ainfo['frame_count']['value'] == 4

@@ -1,16 +1,16 @@
 {
     "criteria": {
-        "fps": "5",
-        "delay": 0.2,
+        "fps": "10",
+        "delay": 0.1,
         "format": "GIF",
         "is_reversed": false,
         "preserve_alpha": false,
         "flip_x": false,
         "flip_y": false,
-        "width": 128,
-        "height": 128,
+        "width": 71,
+        "height": 71,
         "resize_method": "NEAREST",
-        "loop_count": "",
+        "loop_count": 4,
         "start_frame": "",
         "rotation": 0
     },

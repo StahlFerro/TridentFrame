@@ -6,19 +6,19 @@ from pathlib import Path
 
 
 @pytest.fixture(scope="session")
-def scaffold_temp_dir(tmp_path_factory):
+def scaffold_temp_dir(tmp_path_factory) -> Path:
     tmp_dir = tmp_path_factory.mktemp("tmp_img")
     return tmp_dir
 
 
 @pytest.fixture(scope="session")
-def scaffold_spaced_dir(tmp_path_factory):
+def scaffold_spaced_dir(tmp_path_factory) -> Path:
     tmp_dir = tmp_path_factory.mktemp("TridentFrame's Temporary Images")
     return tmp_dir
 
 
 @pytest.fixture(scope="session")
-def fx_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_sequence_dir_contents: List[Path]):
+def fx_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_sequence_dir_contents: List[Path]) -> Path:
     static_img_path = fx_sequence_dir_contents[0]
     copied_simg = scaffold_spaced_dir.joinpath(static_img_path.name)
     shutil.copy(static_img_path, copied_simg)
@@ -26,7 +26,14 @@ def fx_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_sequence_dir_conten
 
 
 @pytest.fixture(scope="session")
-def fx_spaced_dir_animated_image(scaffold_spaced_dir: Path, fx_checker_apng_path: Path):
+def fx_spaced_dir_agif_checker(scaffold_spaced_dir: Path, fx_checker_agif_path: Path):
+    copied_aimg = scaffold_spaced_dir.joinpath(fx_checker_apng_path.name)
+    shutil.copy(fx_checker_apng_path, copied_aimg)
+    return copied_aimg
+
+
+@pytest.fixture(scope="session")
+def fx_spaced_dir_apng_checker(scaffold_spaced_dir: Path, fx_checker_apng_path: Path):
     copied_aimg = scaffold_spaced_dir.joinpath(fx_checker_apng_path.name)
     shutil.copy(fx_checker_apng_path, copied_aimg)
     return copied_aimg
@@ -38,19 +45,24 @@ def fx_path() -> Path:
 
 
 @pytest.fixture(scope="session")
-def fx_sequence_dir(fx_path):
+def fx_sequence_dir(fx_path) -> Path:
     return fx_path.joinpath("sequence/")
 
 
 @pytest.fixture(scope="session")
-def fx_sequence_dir_contents(fx_sequence_dir):
+def fx_sequence_dir_contents(fx_sequence_dir) -> List[Path]:
     sequence = [p for p in fx_sequence_dir.iterdir() if p.stem.startswith("checker_4x4_")]
     sequence.sort()
     return sequence
 
 
 @pytest.fixture(scope="session")
-def fx_checker_apng_path(fx_path: Path):
+def fx_checker_agif_path(fx_path: Path) -> Path:
+    return fx_path.joinpath("agif", "checker_371px.gif")
+
+
+@pytest.fixture(scope="session")
+def fx_checker_apng_path(fx_path: Path) -> Path:
     return fx_path.joinpath("apng", "checker_256px.png")
 
 
