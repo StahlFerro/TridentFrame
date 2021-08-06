@@ -1,23 +1,23 @@
 import json
 import pytest
-from typing import List
+from typing import List, Dict
 from pathlib import Path
 from apng import APNG
 from pycore.models.criterion import CriteriaBundle, CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 from pycore.inspect_ops import inspect_general
-from pycore.create_ops import _build_gif, _build_apng
+from pycore.create_ops import create_aimg
 
 
-def test_build_gif(scaffold_temp_dir, fx_crbundle_001_create_optimized_gif: Path, fx_sequence_dir_contents: List[Path]):
-    with open(fx_crbundle_001_create_optimized_gif, "r") as f:
-        crpack = json.loads(f.read())
+def test_create_gif(scaffold_spaced_dir, fx_crbundle_001_create_optimized_gif_json: Dict,
+                    fx_sequence_dir_contents: List[Path]):
+    crpack = fx_crbundle_001_create_optimized_gif_json
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),
         "gif_opt_criteria": GIFOptimizationCriteria(crpack["gif_opt_criteria"]),
         "apng_opt_criteria": APNGOptimizationCriteria(crpack["apng_opt_criteria"]),
     })
-    tmp_out_path = scaffold_temp_dir.joinpath("checker_rotating.gif")
-    out_path = _build_gif(fx_sequence_dir_contents, tmp_out_path, crbundle)
+    tmp_out_path = scaffold_spaced_dir.joinpath("checker_rotating.gif")
+    out_path = create_aimg(fx_sequence_dir_contents, tmp_out_path, crbundle)
     assert out_path == tmp_out_path
 
     metadata = inspect_general(out_path)
@@ -33,16 +33,16 @@ def test_build_gif(scaffold_temp_dir, fx_crbundle_001_create_optimized_gif: Path
     assert metadata.hash_sha1['value'] == "17912c45bf386ca5ca86c50c6dad2edc11220ed1"
 
 
-def test_build_apng(scaffold_temp_dir, fx_crbundle_002_create_optimized_apng: Path, fx_sequence_dir_contents):
-    with open(fx_crbundle_002_create_optimized_apng, "r") as f:
-        crpack = json.loads(f.read())
+def test_create_apng(scaffold_spaced_dir: Path, fx_crbundle_002_create_optimized_apng_json: Dict,
+                     fx_sequence_dir_contents: List[Path]):
+    crpack = fx_crbundle_002_create_optimized_apng_json
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),
         "gif_opt_criteria": GIFOptimizationCriteria(crpack["gif_opt_criteria"]),
         "apng_opt_criteria": APNGOptimizationCriteria(crpack["apng_opt_criteria"]),
     })
-    tmp_out_path = scaffold_temp_dir.joinpath("not_tetris.png")
-    out_path = _build_apng(fx_sequence_dir_contents, tmp_out_path, crbundle)
+    tmp_out_path = scaffold_spaced_dir.joinpath("not_tetris.png")
+    out_path = create_aimg(fx_sequence_dir_contents, tmp_out_path, crbundle)
     assert out_path == tmp_out_path
 
     metadata = inspect_general(out_path)
@@ -55,4 +55,4 @@ def test_build_apng(scaffold_temp_dir, fx_crbundle_002_create_optimized_apng: Pa
     assert metadata.average_delay['value'] == 200
     assert metadata.frame_count['value'] == 4
     assert metadata.has_transparency['value']
-    assert metadata.hash_sha1['value'] == "cef0c9f6938a9d8d36a10e4bc13debeba5cb43e4"
+    assert metadata.hash_sha1['value'] == "657b0c1b7231fc150337bad43a0db2bcea11ea8d"

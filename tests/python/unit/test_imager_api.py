@@ -9,9 +9,9 @@ from pycore.utility.sysinfo import shell_type
 from pycore.models.criterion import CriteriaBundle, CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 
 
-def test_malformed_combine_cmd_builder(fx_spaced_dir_apng_checker: Path, fx_crbundle_002_create_optimized_apng: Path):
-    with open(fx_crbundle_002_create_optimized_apng, "r") as f:
-        crpack = json.loads(f.read())
+def test_malformed_combine_cmd_builder(fx_spaced_dir_apng_checker: Path,
+                                       fx_crbundle_002_create_optimized_apng_json: Path):
+    crpack = fx_crbundle_002_create_optimized_apng_json
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),
         "gif_opt_criteria": GIFOptimizationCriteria(crpack["gif_opt_criteria"]),

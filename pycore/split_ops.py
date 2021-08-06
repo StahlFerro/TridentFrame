@@ -505,6 +505,7 @@ def split_aimg(image_path: Path, out_dir: Path, criteria: SplitCriteria) -> List
         raise Exception("Image needs to have an extension!")
     ext = str.lower(ext[1:])
     # raise Exception(fname, ext)
+    stdio.debug({"split_criteria": criteria})
     if ext not in ANIMATED_IMG_EXTS:
         raise Exception("Only supported extensions are .gif and .png (for APNG)")
     if ext == "gif":
