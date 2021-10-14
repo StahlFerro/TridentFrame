@@ -171,14 +171,14 @@
           <div v-show="crt_menuselection == 0">
             <table class="" width="100%">
               <tr>
-                <!-- <td width="16.7%">
+                <td width="16.7%">
                   <div class="field">
                     <label class="label" title="The name of the GIF/APNG">Name</label>
                     <div class="control">
-                      <input v-model="criteria.name" class="input is-neon-white" type="text" />
+                      <input v-model="fname" class="input is-neon-white" type="text" />
                     </div>
                   </div>
-                </td> -->
+                </td>
                 <td width="16.7%">
                   <div class="field">
                     <label class="label" title="The width of the GIF/APNG">Width</label>
@@ -365,11 +365,10 @@
                     </div>
                     <div class="control is-expanded">
                       <input
-                        v-model="savePath"
+                        v-model="savePathInput"
                         class="input is-neon-white"
                         type="text"
                         placeholder="Output file"
-                        readonly
                       />
                     </div>
                   </div>
@@ -380,8 +379,11 @@
                     <div class="control">
                       <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
                         <select v-model="criteria.format">
-                          <option value="GIF">GIF</option>
-                          <option value="PNG">APNG</option>
+                          <option v-for="(item, name, index) in supported_create_extensions" :key="index" :value="name">
+                            {{ item }}
+                          </option>
+                          <!-- <option value="GIF">GIF</option>
+                          <option value="PNG">APNG</option> -->
                         </select>
                       </div>
                     </div>
@@ -468,7 +470,12 @@
 <script>
 import { ipcRenderer } from 'electron';
 import lodashClonedeep from 'lodash.clonedeep';
-import { dirname, basename, join } from "path";
+import { dirname, basename, join,  } from "path";
+import { access, accessSync, constants } from "fs";
+const SUPPORTED_CREATE_EXTENSIONS = {
+  'gif': 'GIF',
+  'png': 'APNG',
+}
 
 import { tridentEngine } from "../modules/streams/trident_engine";
 import { numConstrain } from "../modules/events/constraints";
@@ -490,7 +497,7 @@ let data = {
     // name: "",
     fps: "",
     delay: "",
-    format: "GIF",
+    format: "gif",
     is_reversed: false,
     preserve_alpha: false,
     flip_x: false,
@@ -524,6 +531,8 @@ let data = {
     apng_convert_color_mode: false,
     apng_new_color_mode: "RGBA",
   },
+  fname: "",
+  supported_create_extensions: SUPPORTED_CREATE_EXTENSIONS,
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
@@ -555,7 +564,7 @@ let data = {
   popperIsVisible: false,
 };
 
-let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
+let extension_filters = [{ name: "Images", extensions: Object.keys(SUPPORTED_CREATE_EXTENSIONS) }];
 let img_dialog_props = ["openfile"];
 let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
@@ -716,11 +725,12 @@ function singleSaveOption() {
   }
 }
 
-function setSavePath(afterSaveCallback) {
+function setSavePathFromDialog(afterSaveCallback) {
   ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
     console.log(result);
     let save_path = result.filePath;
+    // data.savePathInput = save_path;
     // data.save_path = save_path;
     data.save_dir = dirname(save_path);
     data.save_fstem = stem(basename(save_path));
@@ -731,7 +741,7 @@ function setSavePath(afterSaveCallback) {
 }
 
 function btnSetSavePath() {
-  setSavePath();
+  setSavePathFromDialog();
 }
 
 
@@ -843,7 +853,7 @@ function btnCreateAIMG() {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
-  if (savePath()) {
+  if (data.savePathInput) {
     createAnimatedImage();
   }
   else {
@@ -873,7 +883,7 @@ function createAnimatedImage() {
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
-    tridentEngine(["combine_image", data.image_paths, savePath(), criteria_pack], (error, res) => {
+    tridentEngine(["combine_image", data.image_paths, data.savePathInput, criteria_pack], (error, res) => {
       if (error) {
         try {
           data.create_msgbox = error;
@@ -907,13 +917,6 @@ function computeTotalSequenceSize() {
 
 function saveFileName() {
   return `${data.save_fstem}.${data.criteria.format.toLowerCase()}`;
-}
-
-function savePath() {
-  if (data.save_dir && data.save_fstem)
-    return join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
-  else
-    return "";
 }
 
 function btnToggleCheckerBG() {
@@ -1059,7 +1062,52 @@ export default {
     sequenceCounter: sequenceCounter,
     computeTotalSequenceSize: computeTotalSequenceSize,
     saveFileName: saveFileName,
-    savePath: savePath,
+    savePathInput: {
+      get() {
+        console.log(`getter obtain dir: ${this.save_dir}`)
+        console.log(`getter obtain stem: ${this.save_fstem}`)
+        console.log(`getter obtain format: ${this.criteria.format.toLowerCase()}`)
+        if (this.save_dir && this.save_fstem){
+          let p = join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
+          return p;
+        }
+        else
+          return "";
+      },
+      set(value) {
+        let dir = dirname(value);
+        let fstem = stem(basename(value));
+        console.log(`setter stem remove end: ${fstem.slice(-1)}`);
+        if (fstem && fstem.slice(-1) == '.') {
+          console.log('sliceddddd')
+          fstem = fstem.slice(0, -1);
+        }
+        let ext = "";
+        let frags = value.split('.');
+        console.log(`setter frags: ${frags}`);
+        if (frags.length >= 2)
+          ext = frags.pop();
+        console.log(`setter value: ${value}`);
+        console.log(`setter dir: ${dir}`);
+        console.log(`setter stem: ${fstem}`);
+        console.log(`setter ext: ${ext}`);
+        this.save_dir = dir;
+        this.save_fstem = fstem;
+        access(dir, constants.F_OK, (err) => {
+          if (!err){
+            this.save_dir = dir;
+          }
+          else {
+            console.error(`${dir} does not exist`);
+          }
+        })
+          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is false`)
+        if (ext && ext.toLowerCase() in SUPPORTED_CREATE_EXTENSIONS){
+          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is true`)
+          data.criteria.format = ext.toLowerCase();
+        }
+      }
+    },
   },
   directives:{
     ClickOutside,

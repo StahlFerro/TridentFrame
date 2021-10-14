@@ -83,8 +83,8 @@ export function escapeLocalPath(localPath) {
     .replace("#", "%23");
   // else
   //   escapePath = localPath;
-  console.log(localPath);
-  console.log(escapePath);
+  // console.log(localPath);
+  // console.log(escapePath);
   return escapePath;
 }
 
@@ -106,5 +106,7 @@ export function validateFilename(filename) {
  * @param {string} filename File name including extension
  */
 export function stem(filename) {
-  return filename.replace(/\.[^/.]+$/, "")
+  let s = filename.replace(/\.[^/.]+$/, "");
+  console.log(`stemming of ${filename} -> ${s}`);
+  return s;
 }
