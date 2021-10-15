@@ -365,10 +365,10 @@
                     </div>
                     <div class="control is-expanded">
                       <input
-                        v-model="savePathInput"
+                        v-model="save_dir"
                         class="input is-neon-white"
                         type="text"
-                        placeholder="Output file"
+                        placeholder="Output folder"
                       />
                     </div>
                   </div>
@@ -470,7 +470,7 @@
 <script>
 import { ipcRenderer } from 'electron';
 import lodashClonedeep from 'lodash.clonedeep';
-import { dirname, basename, join,  } from "path";
+import { dirname, basename, join } from "path";
 import { access, accessSync, constants } from "fs";
 const SUPPORTED_CREATE_EXTENSIONS = {
   'gif': 'GIF',
@@ -656,7 +656,8 @@ function btnLoadImages(ops) {
           console.log(info);
           renderSequence(info, { operation: ops });
           data.total_size = `Total size: ${info.total_size}`;
-          data.save_fstem = stem(data.save_fstem || info.name);
+          // data.save_fstem = stem(data.save_fstem || info.name);
+          data.fname = data.fname || info.name
           data.criteria.width = data.criteria.width || info.width;
           data.criteria.height = data.criteria.height || info.height;
           data.criteria.fps = data.criteria.fps || 50;
@@ -725,6 +726,18 @@ function singleSaveOption() {
   }
 }
 
+function setSaveDirFromDialog(afterSaveCallback) {
+  let options = { properties: dir_dialog_props };
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
+    let out_dirs = result.filePaths;
+    console.log(out_dirs);
+    if (out_dirs && out_dirs.length > 0) { 
+      data.save_dir = out_dirs[0];
+    }
+    data.create_msgbox = "";
+  });
+}
+
 function setSavePathFromDialog(afterSaveCallback) {
   ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
@@ -741,7 +754,8 @@ function setSavePathFromDialog(afterSaveCallback) {
 }
 
 function btnSetSavePath() {
-  setSavePathFromDialog();
+  // setSavePathFromDialog();
+  setSaveDirFromDialog();
 }
 
 
@@ -853,12 +867,19 @@ function btnCreateAIMG() {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
-  if (data.savePathInput) {
+  if (data.save_dir) {
     createAnimatedImage();
   }
   else {
     btnSetSavePath(createAnimatedImage);
   }
+}
+
+function getSavePath() {
+  let file_name = `${data.fname}.${data.criteria.format}`;
+  let save_path = join(data.save_dir, file_name);
+  console.log(`getSavePath ${save_path}`);
+  return save_path;
 }
 
 function createAnimatedImage() {
@@ -883,14 +904,14 @@ function createAnimatedImage() {
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
-    tridentEngine(["combine_image", data.image_paths, data.savePathInput, criteria_pack], (error, res) => {
+    tridentEngine(["combine_image", data.image_paths, getSavePath(), criteria_pack], (error, res) => {
       if (error) {
         try {
           data.create_msgbox = error;
           data.CRT_IS_CREATING = false;
         }
         catch (e) {
-          data.split_msgbox = error;
+          data.create_msgbox = error;
         }
       } else if (res) {
         console.log(`res -> ${res}`);
@@ -1062,6 +1083,7 @@ export default {
     sequenceCounter: sequenceCounter,
     computeTotalSequenceSize: computeTotalSequenceSize,
     saveFileName: saveFileName,
+    /*
     savePathInput: {
       get() {
         console.log(`getter obtain dir: ${this.save_dir}`)
@@ -1107,7 +1129,7 @@ export default {
           data.criteria.format = ext.toLowerCase();
         }
       }
-    },
+    },*/
   },
   directives:{
     ClickOutside,

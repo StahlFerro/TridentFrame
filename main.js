@@ -92,6 +92,10 @@ ipcMain.handle('open-dialog', async (event, args) => {
 	return dialog.showOpenDialog(mainWindow, args);
 });
 
+ipcMain.handle('choose-dir-dialog', async (event, args) => {
+	return "";
+});
+
 ipcMain.handle('save-dialog', async (event, args) => {
 	return dialog.showSaveDialog(mainWindow, args);
 });

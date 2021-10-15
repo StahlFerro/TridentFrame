@@ -372,10 +372,10 @@
                       </a>
                     </div>
                     <div class="control is-expanded">
-                      <input v-model="savePath"
+                      <input v-model="save_dir"
                         class="input is-neon-white"
                         type="text"
-                        placeholder="Output file"
+                        placeholder="Output folder"
                         readonly
                       />
                     </div>
@@ -799,7 +799,6 @@ function savePath() {
     return "";
 }
 
-
 function setSavePath(afterSaveCallback) {
   ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
@@ -814,9 +813,21 @@ function setSavePath(afterSaveCallback) {
   });
 }
 
+function setSaveDirFromDialog(afterSaveCallback) {
+  let options = { properties: dir_dialog_props };
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
+    let out_dirs = result.filePaths;
+    console.log(out_dirs);
+    if (out_dirs && out_dirs.length > 0) { 
+      data.save_dir = out_dirs[0];
+    }
+    data.create_msgbox = "";
+  });
+}
 
 function btnSetSavePath() {
-  setSavePath();
+  // setSavePath();
+  setSaveDirFromDialog();
 }
 
 function widthHandler(width, event) {
