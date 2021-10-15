@@ -479,7 +479,7 @@ const SUPPORTED_CREATE_EXTENSIONS = {
 
 import { tridentEngine } from "../modules/streams/trident_engine";
 import { numConstrain } from "../modules/events/constraints";
-import { escapeLocalPath, stem } from "../modules/utility/pathutils";
+import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { formatBytes, randString } from "../modules/utility/stringutils";
 import { gcd } from "../modules/utility/calculations";
 import { PREVIEWS_PATH } from "../modules/constants/appconfig";
@@ -868,7 +868,10 @@ function btnCreateAIMG() {
     return;
   }
   if (data.save_dir) {
-    createAnimatedImage();
+    if (validateFilename(data.fname))
+      createAnimatedImage();
+    else
+      data.create_msgbox = "File name contains characters that are not allowed"
   }
   else {
     btnSetSavePath(createAnimatedImage);

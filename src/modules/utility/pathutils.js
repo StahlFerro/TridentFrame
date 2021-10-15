@@ -9,6 +9,9 @@ const FORBIDDEN_FILENAME_CHARACTERS_LINUX = [
   '/'
 ];
 
+const WIN_VALID_FILENAME_REGEX = new RegExp(/^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)(\..+)?$)[^\x00-\x1f\\?*:\";|/]+$/, "g");
+
+
 const SlashDirection = Object.freeze({
   FORWARD: "forward",
   BACKWARD: "backward"
@@ -88,18 +91,24 @@ export function escapeLocalPath(localPath) {
   return escapePath;
 }
 
+
 /**
  * Check if string is valid for a file name.
  * @param {string} filename File name to check
  * @returns {boolean} true if filename is valid, else false.
  */
 export function validateFilename(filename) {
+  let is_valid = filename.match(WIN_VALID_FILENAME_REGEX);
+  return is_valid;
+  /*
   let forbidden_string = forbiddenFileCharsRegex();
   console.log(forbidden_string);
   let regex = new RegExp(escape(forbidden_string), 'g');
   let is_valid = !filename.match(regex);
   return is_valid;
+  */
 }
+
 
 /**
  * Get the file name without extensions
