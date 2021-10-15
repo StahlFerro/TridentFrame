@@ -168,298 +168,297 @@
           </aside>
         </div>
         <div class="cpc-right-panel">
-          <div v-show="crt_menuselection == 0">
-            <table class="" width="100%">
-              <tr>
-                <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="The name of the GIF/APNG">Name</label>
-                    <div class="control">
-                      <input v-model="fname" class="input is-neon-white" type="text" />
-                    </div>
-                  </div>
-                </td>
-                <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="The width of the GIF/APNG">Width</label>
-                    <div class="control">
-                      <input 
-                        v-bind:value="criteria.width" 
-                        v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="widthHandler(criteria.width, $event)" 
-                        class="input is-neon-white"
-                        type="number" 
-                        min="1"/>
-                    </div>
-                  </div>
-                </td>
-                <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="The height of the GIF/APNG">Height</label>
-                    <div class="control">
-                      <input
-                        v-bind:value="criteria.height"
-                        v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="heightHandler(criteria.height, $event)"
-                        class="input is-neon-white"
-                        type="number"
-                        min="1"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td width="16.7%">
-                  <div class="field">
-                    <label
-                      class="label"
-                      title="Which algorithm to use when resizing the image. Default is Bicubic"
-                      >Resize Method</label
-                    >
-                    <div class="control">
-                      <div class="select is-neon-cyan">
-                        <select v-model="criteria.resize_method">
-                          <option
-                            value="BICUBIC"
-                            title="General-use resizing algorithm for most images"
-                          >
-                            Bicubic
-                          </option>
-                          <option
-                            value="NEAREST"
-                            title="Preserve sharp edges. Ideal for pixel art"
-                          >
-                            Nearest
-                          </option>
-                          <option
-                            value="BILINEAR"
-                            title="Similar to Bicubic, but not as smooth"
-                          >
-                            Bilinear
-                          </option>
-                          <option value="BOX">Box</option>
-                          <option value="HAMMING">Hamming</option>
-                          <option value="LANCZOS">Lanczos</option>
-                        </select>
+          <div class="cpc-right-top-panel">
+            <div v-show="crt_menuselection == 0">
+              <table class="" width="100%">
+                <tr>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label" title="The name of the GIF/APNG">Name</label>
+                      <div class="control">
+                        <input v-model="fname" class="input is-neon-white" type="text" />
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
-                    <div class="control">
-                      <input v-model="criteria.start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" 
-                        type="number" min="0" step="1"/>
-                    </div>
-                  </div>
-                </td>
-                <td width="16.7%" style="vertical-align: bottom">
-                  <label class="checkbox">
-                    <input v-model="lock_aspect_ratio" type="checkbox" />
-                    Lock aspect ratio
-                  </label>
-                  <br />
-                  <template v-if="aspect_ratio && aspect_ratio.text">
-                    <input
-                      v-model="aspect_ratio.text"
-                      class="input is-border-colorless is-paddingless"
-                      style="height: 1.5em"
-                      readonly="readonly"
-                    />
-                  </template>
-                  <template v-else>&nbsp;</template>
-                </td>
-                <td width="16.7%"></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="field">
-                    <label class="label" title="The time needed to move to the next frame"
-                      >Delay (seconds)</label
-                    >
-                    <div class="control">
-                      <input
-                        v-model="criteria.delay"
-                        v-on:keydown="numConstrain($event, true, false)"
-                        v-on:input="delayConstrain"
-                        class="input is-neon-white"
-                        type="number"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="field">
-                    <label class="label"
-                      title="How many frames will be consecutively displayed per second.">Frame rate</label>
-                    <div class="control">
-                      <input
-                        v-model="criteria.fps"
-                        v-on:keydown="numConstrain($event, true, false)"
-                        v-on:input="fpsConstrain"
-                        class="input is-neon-white"
-                        type="number"
-                        min="0"
-                        max="50"
-                        step="0.01"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="field">
-                    <label
-                      class="label"
-                      title="How many times the GIF/APNG will loop. Zero/blank for infinite loop"
-                      >Loop count</label
-                    >
-                    <div class="control">
-                      <input
-                        v-model="criteria.loop_count"
-                        v-on:keydown="numConstrain($event, true, true)"
-                        class="input is-neon-white"
-                        type="number"
-                        min="0"
-                        max="999"
-                        step="1"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                </td>
-                <td style="vertical-align: bottom">
-                  <label class="checkbox" title="Flip the image horizontally">
-                    <input v-model="criteria.flip_x" type="checkbox" />
-                    Flip X
-                  </label>
-                  <br />
-                  <label class="checkbox" title="Flip the image vertically">
-                    <input v-model="criteria.flip_y" type="checkbox" />
-                    Flip Y
-                  </label>
-                </td>
-                <td style="vertical-align: bottom">
-                  <label class="checkbox" title="Preserve transparent pixels">
-                    <input v-model="criteria.preserve_alpha" type="checkbox" />
-                    Preserve Alpha
-                  </label>
-                  <br />
-                  <label class="checkbox" title="Reverse the animation">
-                    <input v-model="criteria.is_reversed" type="checkbox" />
-                    Reversed
-                  </label>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="4" style="padding-top: 15px">
-                  <div class="field has-addons">
-                    <div class="control">
-                      <a class="button is-neon-cyan" v-on:click="btnSetSavePath">
-                        <span class="icon is-small">
-                          <i class="fas fa-save"></i>
-                        </span>
-                        <span>Save to</span>
-                      </a>
-                    </div>
-                    <div class="control is-expanded">
-                      <input
-                        v-model="save_dir"
-                        class="input is-neon-white"
-                        type="text"
-                        placeholder="Output folder"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td colspan="1" style="padding-top: 15px">
-                  <div class="field">
-                    <!-- <label class="label">Format</label> -->
-                    <div class="control">
-                      <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
-                        <select v-model="criteria.format">
-                          <option v-for="(item, name, index) in supported_create_extensions" :key="index" :value="name">
-                            {{ item }}
-                          </option>
-                          <!-- <option value="GIF">GIF</option>
-                          <option value="PNG">APNG</option> -->
-                        </select>
+                  </td>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label" title="The width of the GIF/APNG">Width</label>
+                      <div class="control">
+                        <input 
+                          v-bind:value="criteria.width" 
+                          v-on:keydown="numConstrain($event, true, true)"
+                          v-on:input="widthHandler(criteria.width, $event)" 
+                          class="input is-neon-white"
+                          type="number" 
+                          min="1"/>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td colspan="1" style="padding-top: 15px">
-                  <div class="field">
-                    <div class="control">
-                      <a
-                        v-on:click="btnCreateAIMG"
-                        class="button is-neon-cyan"
-                        v-bind:class="{
-                          'is-loading': CRT_IS_CREATING == true,
-                          'non-interactive': isButtonFrozen,
-                        }">CREATE</a>
+                  </td>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label" title="The height of the GIF/APNG">Height</label>
+                      <div class="control">
+                        <input
+                          v-bind:value="criteria.height"
+                          v-on:keydown="numConstrain($event, true, true)"
+                          v-on:input="heightHandler(criteria.height, $event)"
+                          class="input is-neon-white"
+                          type="number"
+                          min="1"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="6">
-                  <input
-                    v-model="create_msgbox"
-                    type="text"
-                    class="input is-left-paddingless is-border-colorless"
-                    readonly="readonly"
-                  />
-                </td>
-              </tr>
-            </table>
+                  </td>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label
+                        class="label"
+                        title="Which algorithm to use when resizing the image. Default is Bicubic"
+                        >Resize Method</label
+                      >
+                      <div class="control">
+                        <div class="select is-neon-cyan">
+                          <select v-model="criteria.resize_method">
+                            <option
+                              value="BICUBIC"
+                              title="General-use resizing algorithm for most images"
+                            >
+                              Bicubic
+                            </option>
+                            <option
+                              value="NEAREST"
+                              title="Preserve sharp edges. Ideal for pixel art"
+                            >
+                              Nearest
+                            </option>
+                            <option
+                              value="BILINEAR"
+                              title="Similar to Bicubic, but not as smooth"
+                            >
+                              Bilinear
+                            </option>
+                            <option value="BOX">Box</option>
+                            <option value="HAMMING">Hamming</option>
+                            <option value="LANCZOS">Lanczos</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
+                      <div class="control">
+                        <input v-model="criteria.start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" 
+                          type="number" min="0" step="1"/>
+                      </div>
+                    </div>
+                  </td>
+                  <td width="16.7%" style="vertical-align: bottom">
+                    <label class="checkbox">
+                      <input v-model="lock_aspect_ratio" type="checkbox" />
+                      Lock aspect ratio
+                    </label>
+                    <br />
+                    <template v-if="aspect_ratio && aspect_ratio.text">
+                      <input
+                        v-model="aspect_ratio.text"
+                        class="input is-border-colorless is-paddingless"
+                        style="height: 1.5em"
+                        readonly="readonly"
+                      />
+                    </template>
+                    <template v-else>&nbsp;</template>
+                  </td>
+                  <td width="16.7%"></td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="field">
+                      <label class="label" title="The time needed to move to the next frame"
+                        >Delay (seconds)</label
+                      >
+                      <div class="control">
+                        <input
+                          v-model="criteria.delay"
+                          v-on:keydown="numConstrain($event, true, false)"
+                          v-on:input="delayConstrain"
+                          class="input is-neon-white"
+                          type="number"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="field">
+                      <label class="label"
+                        title="How many frames will be consecutively displayed per second.">Frame rate</label>
+                      <div class="control">
+                        <input
+                          v-model="criteria.fps"
+                          v-on:keydown="numConstrain($event, true, false)"
+                          v-on:input="fpsConstrain"
+                          class="input is-neon-white"
+                          type="number"
+                          min="0"
+                          max="50"
+                          step="0.01"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="field">
+                      <label
+                        class="label"
+                        title="How many times the GIF/APNG will loop. Zero/blank for infinite loop"
+                        >Loop count</label
+                      >
+                      <div class="control">
+                        <input
+                          v-model="criteria.loop_count"
+                          v-on:keydown="numConstrain($event, true, true)"
+                          class="input is-neon-white"
+                          type="number"
+                          min="0"
+                          max="999"
+                          step="1"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                  </td>
+                  <td style="vertical-align: bottom">
+                    <label class="checkbox" title="Flip the image horizontally">
+                      <input v-model="criteria.flip_x" type="checkbox" />
+                      Flip X
+                    </label>
+                    <br />
+                    <label class="checkbox" title="Flip the image vertically">
+                      <input v-model="criteria.flip_y" type="checkbox" />
+                      Flip Y
+                    </label>
+                  </td>
+                  <td style="vertical-align: bottom">
+                    <label class="checkbox" title="Preserve transparent pixels">
+                      <input v-model="criteria.preserve_alpha" type="checkbox" />
+                      Preserve Alpha
+                    </label>
+                    <br />
+                    <label class="checkbox" title="Reverse the animation">
+                      <input v-model="criteria.is_reversed" type="checkbox" />
+                      Reversed
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="4" style="padding-top: 15px">
+                    <div class="field has-addons">
+                      <div class="control">
+                        <a class="button is-neon-cyan" v-on:click="btnSetSavePath">
+                          <span class="icon is-small">
+                            <i class="fas fa-save"></i>
+                          </span>
+                          <span>Save to</span>
+                        </a>
+                      </div>
+                      <div class="control is-expanded">
+                        <input
+                          v-model="save_dir"
+                          class="input is-neon-white"
+                          type="text"
+                          placeholder="Output folder"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td colspan="1" style="padding-top: 15px">
+                    <div class="field">
+                      <!-- <label class="label">Format</label> -->
+                      <div class="control">
+                        <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
+                          <select v-model="criteria.format">
+                            <option v-for="(item, name, index) in supported_create_extensions" :key="index" :value="name">
+                              {{ item }}
+                            </option>
+                            <!-- <option value="GIF">GIF</option>
+                            <option value="PNG">APNG</option> -->
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td colspan="1" style="padding-top: 15px">
+                    <div class="field">
+                      <div class="control">
+                        <a
+                          v-on:click="btnCreateAIMG"
+                          class="button is-neon-cyan"
+                          v-bind:class="{
+                            'is-loading': CRT_IS_CREATING == true,
+                            'non-interactive': isButtonFrozen,
+                          }">CREATE</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="6">
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div v-show="crt_menuselection == 1">
+              <table
+                class="mod-new-control-table is-hpaddingless medium-size-label"
+                width="100%"
+              >
+                <GIFOptimizationRow
+                  :is_optimized.sync="gif_opt_criteria.is_optimized"
+                  :optimization_level.sync="gif_opt_criteria.optimization_level"
+                  :is_lossy.sync="gif_opt_criteria.is_lossy"
+                  :lossy_value.sync="gif_opt_criteria.lossy_value"
+                  :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
+                  :color_space.sync="gif_opt_criteria.color_space"
+                  :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+                  :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
+                  :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
+                  :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
+                />
+                <!-- <GIFUnoptimizationRow
+                        :is_optimized.sync="is_optimized"
+                        :is_lossy.sync="is_lossy"
+                        :is_reduced_color.sync="is_reduced_color"
+                        :is_unoptimized.sync="is_unoptimized"
+                      /> -->
+              </table>
+            </div>
+            <div v-show="crt_menuselection == 2">
+              <table
+                class="mod-new-control-table is-hpaddingless medium-size-label"
+                width="100%"
+              >
+                <APNGOptimizationRow
+                  :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
+                  :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
+                  :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
+                  :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                  :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
+                  :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
+                  :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+                />
+                <!-- <APNGUnoptimizationRow
+                        :apng_is_optimized.sync="apng_is_optimized"
+                        :apng_is_lossy.sync="apng_is_lossy"
+                        :apng_is_unoptimized.sync="apng_is_unoptimized"
+                      /> -->
+              </table>
+            </div>
           </div>
-          <div v-show="crt_menuselection == 1">
-            <table
-              class="table mod-new-control-table is-hpaddingless medium-size-label"
-              width="100%"
-            >
-              <GIFOptimizationRow
-                :is_optimized.sync="gif_opt_criteria.is_optimized"
-                :optimization_level.sync="gif_opt_criteria.optimization_level"
-                :is_lossy.sync="gif_opt_criteria.is_lossy"
-                :lossy_value.sync="gif_opt_criteria.lossy_value"
-                :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
-                :color_space.sync="gif_opt_criteria.color_space"
-                :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
-                :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
-                :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
-                :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
-              />
-              <!-- <GIFUnoptimizationRow
-                      :is_optimized.sync="is_optimized"
-                      :is_lossy.sync="is_lossy"
-                      :is_reduced_color.sync="is_reduced_color"
-                      :is_unoptimized.sync="is_unoptimized"
-                    /> -->
-            </table>
-          </div>
-          <div v-show="crt_menuselection == 2">
-            <table
-              class="table mod-new-control-table is-hpaddingless medium-size-label"
-              width="100%"
-            >
-              <APNGOptimizationRow
-                :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
-                :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
-                :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
-                :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
-                :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
-                :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
-                :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
-              />
-              <!-- <APNGUnoptimizationRow
-                      :apng_is_optimized.sync="apng_is_optimized"
-                      :apng_is_lossy.sync="apng_is_lossy"
-                      :apng_is_unoptimized.sync="apng_is_unoptimized"
-                    /> -->
-            </table>
+          <div class="cpc-right-bottom-panel">
+            <StatusBar :modelValue="create_msgbox"></StatusBar>
           </div>
         </div>
       </div>
@@ -489,6 +488,8 @@ import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
+import StatusBar from "./components/StatusBar.vue";
+
 import { createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
 
@@ -1062,6 +1063,7 @@ export default {
     GIFUnoptimizationRow,
     APNGOptimizationRow,
     APNGUnoptimizationRow,
+    StatusBar,
   },
   methods: {
     btnToggleLoadPopper: btnToggleLoadPopper,
