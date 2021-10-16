@@ -70,15 +70,25 @@ div.status-bar {
     display: flex;
     width: 100%;
     flex-direction: row;
+    .status-icon {
+        display: flex;
+        width: 5%;
+        border-right: 1.5px solid $white-d;
+        align-items: center;
+        justify-content: center;
+    }
     .status-textbox {
         display: flex;
-        width: 100%;
-        border: none;
+        width: 95%;
         padding-left: 5px;
-        color: $white-d;
-        background-color: transparent;
-        &:focus-visible {
-            outline: none;
+        input {
+            width: 100%;
+            border: none;
+            color: $white-d;
+            background-color: transparent;
+            &:focus-visible {
+                outline: none;
+            }
         }
     }
 }

@@ -1,11 +1,17 @@
 <template>
   <div class="status-bar">
-    <input
-      :value="statusText"
-      type="text"
-      class="status-textbox"
-      readonly="readonly"
-    />
+    <div class="status-icon"> 
+      <span class="icon">
+        <i class="fas fa-minus-circle"></i>
+      </span>
+    </div>
+    <div class="status-textbox">
+      <input
+        :value="statusText"
+        type="text"
+        readonly="readonly"
+      />
+    </div>
   </div>
 </template>
 

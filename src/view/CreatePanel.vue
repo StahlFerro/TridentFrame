@@ -1157,8 +1157,6 @@ export default {
       let button = document.querySelector("#addPopperBtn");
       this.popper = createPopper(button, popper, {
         placement: 'top-start',
-        modifiers: {
-        },
       });
       console.log("btnToggleLoadPopper");
       this.popperIsVisible = true;
@@ -1235,16 +1233,13 @@ export default {
               this.orig_width = info.width;
               this.orig_height = info.height;
               this.latest_load_count = info.total;
-              this._logClear();
+              this._logSuccess(`Loaded ${this.latest_load_count} images`);
               this._updateAspectRatio(this.criteria.width, this.criteria.height);
               this.CRT_IS_LOADING = false;
               this.toggleLoadButtonAnim(ops, false);
               this.lock_aspect_ratio = true;
             }
           }
-        },
-        () => {
-          this._logSuccess(`Loaded ${this.latest_load_count} images`);
         });
       });
     },
