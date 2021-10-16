@@ -186,8 +186,8 @@
                       <div class="control">
                         <input 
                           v-bind:value="criteria.width" 
-                          v-on:keydown="numConstrain($event, true, true)"
-                          v-on:input="widthHandler(criteria.width, $event)" 
+                          @keydown="numConstrain($event, true, true)"
+                          @input="widthHandler(criteria.width, $event)" 
                           class="input is-neon-white"
                           type="number" 
                           min="1"/>
@@ -200,8 +200,8 @@
                       <div class="control">
                         <input
                           v-bind:value="criteria.height"
-                          v-on:keydown="numConstrain($event, true, true)"
-                          v-on:input="heightHandler(criteria.height, $event)"
+                          @keydown="numConstrain($event, true, true)"
+                          @input="heightHandler(criteria.height, $event)"
                           class="input is-neon-white"
                           type="number"
                           min="1"
@@ -249,7 +249,7 @@
                     <div class="field">
                       <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
                       <div class="control">
-                        <input v-model="criteria.start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" 
+                        <input v-model="criteria.start_frame" @keydown="numConstrain($event, true, true)" class="input is-neon-white" 
                           type="number" min="0" step="1"/>
                       </div>
                     </div>
@@ -458,7 +458,7 @@
             </div>
           </div>
           <div class="cpc-right-bottom-panel">
-            <StatusBar :modelValue="create_msgbox"></StatusBar>
+            <StatusBar :bus="statusBarBus"></StatusBar>
           </div>
         </div>
       </div>
@@ -482,6 +482,7 @@ import { escapeLocalPath, stem, validateFilename } from "../modules/utility/path
 import { formatBytes, randString } from "../modules/utility/stringutils";
 import { gcd } from "../modules/utility/calculations";
 import { PREVIEWS_PATH } from "../modules/constants/appconfig";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
 
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -492,7 +493,9 @@ import StatusBar from "./components/StatusBar.vue";
 
 import { createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
+import Vue from 'vue';
 
+/*
 let data = {
   criteria: {
     // name: "",
@@ -564,11 +567,15 @@ let data = {
 
   popperIsVisible: false,
 };
+*/
 
 let extension_filters = [{ name: "Images", extensions: Object.keys(SUPPORTED_CREATE_EXTENSIONS) }];
 let img_dialog_props = ["openfile"];
 let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
+
+
+/*
 
 function toggleLoadButtonAnim(ops, state = false) {
   if (ops == "insert") {
@@ -690,27 +697,24 @@ function renderSequence(pyinfo, options) {
     // data.image_paths = pyinfo.sequence;
     // data.sequence_info = pyinfo.sequence_info;
   // } else if (["insert", "smart_insert"].includes(operation)) {
-    console.log("BB");
-    let image_paths = []
-    let sequence_info = []
-    /*
-    if (operation == "insert") {
-      image_paths.push(pyinfo.general_info.absolute_url.value);
-      sequence_info.push(pyinfo.general_info)
-    }
-    else if (operation == "smart_insert") {
-      image_paths.push(...pyinfo.sequence);
-      sequence_info.push(...pyinfo.sequence_info);
-    }
-    */
-    if (data.insert_index) {
-      data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
-      data.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
-    } else {
-      data.image_paths.push(...pyinfo.sequence);
-      data.sequence_info.push(...pyinfo.sequence_info);
-    }
-  // }
+  console.log("BB");
+  let image_paths = []
+  let sequence_info = []
+  if (operation == "insert") {
+    image_paths.push(pyinfo.general_info.absolute_url.value);
+    sequence_info.push(pyinfo.general_info)
+  }
+  else if (operation == "smart_insert") {
+    image_paths.push(...pyinfo.sequence);
+    sequence_info.push(...pyinfo.sequence_info);
+  }
+  if (data.insert_index) {
+    data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
+    data.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
+  } else {
+    data.image_paths.push(...pyinfo.sequence);
+    data.sequence_info.push(...pyinfo.sequence_info);
+  }
 }
 
 function removeFrame(index) {
@@ -1039,24 +1043,96 @@ function fpsConstrain(event) {
   }
 }
 
-function sequenceCounter() {
-  if (data.sequence_info.length > 0) {
-    return `${data.sequence_info.length} images`;
-  } else return "";
-}
-
 function previewPathCacheBreaker() {
   // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
   let cb_url = `${data.preview_path}`;
   console.log("Cache breaker url", cb_url);
   data.preview_path_cb = cb_url;
 }
-
-window.onresize = closeLoadPopper;
+*/
 
 export default {
+  created() {
+    window.addEventListener("resize", this.closeLoadPopper);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.closeLoadPopper);
+  },
   data: function () {
-    return data;
+    return {
+      criteria: {
+        // name: "",
+        fps: "",
+        delay: "",
+        format: "gif",
+        is_reversed: false,
+        preserve_alpha: false,
+        flip_x: false,
+        flip_y: false,
+        width: "",
+        height: "",
+        resize_method: "BICUBIC",
+        loop_count: "",
+        start_frame: "",
+        rotation: 0,
+      },
+      gif_opt_criteria: {
+        is_optimized: false,
+        optimization_level: "1",
+        is_lossy: false,
+        lossy_value: "",
+        is_reduced_color: false,
+        color_space: "",
+        is_unoptimized: false,
+        is_dither_alpha: false,
+        dither_alpha_method: "SCREENDOOR",
+        dither_alpha_threshold: 50,
+      },
+      apng_opt_criteria: {
+        apng_is_optimized: false,
+        apng_optimization_level: "1",
+        apng_is_lossy: false,
+        apng_lossy_value: "",
+        apng_is_unoptimized: false,
+        apng_preconvert_rgba: false,
+        apng_convert_color_mode: false,
+        apng_new_color_mode: "RGBA",
+      },
+      fname: "",
+      supported_create_extensions: SUPPORTED_CREATE_EXTENSIONS,
+      crt_menuselection: 0,
+      image_paths: [],
+      sequence_info: [],
+      latest_load_count: 0,
+      save_fstem: "",
+      save_dir: "",
+      insert_index: "",
+      total_size: "",
+      orig_width: "",
+      old_width: "",
+      orig_height: "",
+      old_height: "",
+      outdir: "",
+      preview_path: "",
+      preview_path_cb: "",
+      preview_info: "",
+      aspect_ratio: "",
+      lock_aspect_ratio: false,
+
+      create_msgbox: "",
+      // sequence_counter: "",
+      checkerbg_active: false,
+      CRT_INSERT_LOAD: false,
+      CRT_SMARTINSERT_LOAD: false,
+      CRT_REPLACE_LOAD: false,
+      CRT_IS_LOADING: false,
+      CRT_IS_PREVIEWING: false,
+      CRT_IS_CREATING: false,
+
+      popperIsVisible: false,
+
+      statusBarBus: new Vue(),
+    };
   },
   components: {
     GIFOptimizationRow,
@@ -1066,28 +1142,463 @@ export default {
     StatusBar,
   },
   methods: {
-    btnToggleLoadPopper: btnToggleLoadPopper,
-    closeLoadPopper: closeLoadPopper,
-    btnLoadImages: btnLoadImages,
-    removeFrame: removeFrame,
-    btnClearAll: btnClearAll,
-    btnPreviewAIMG: btnPreviewAIMG,
-    btnSetSavePath: btnSetSavePath,
-    btnCreateAIMG: btnCreateAIMG,
-    btnToggleCheckerBG: btnToggleCheckerBG,
+    toggleLoadButtonAnim(ops, state = false) {
+      if (ops == "insert") {
+        this.CRT_INSERT_LOAD = state;
+      } else if (ops == "smart_insert") {
+        this.CRT_SMARTINSERT_LOAD = state;
+      } else if (ops == "replace") {
+        this.CRT_REPLACE_LOAD = state;
+      }
+    },
+    btnToggleLoadPopper() {
+      if (!this.popperIsVisible) {
+      let popper = document.querySelector("#crtLoadPopper");
+      let button = document.querySelector("#addPopperBtn");
+      this.popper = createPopper(button, popper, {
+        placement: 'top-start',
+        modifiers: {
+        },
+      });
+      console.log("btnToggleLoadPopper");
+      this.popperIsVisible = true;
+      }
+      else {
+        this.popperIsVisible = false;
+      }
+    },
+    closeLoadPopper(event) {
+      console.log(`closeLoadPopper ${this.popperIsVisible}, ${this.popper}`);
+      console.log(event);
+      if (this.popperIsVisible) {
+        this.popperIsVisible = false;
+      }
+    },
+    btnLoadImages(ops) {
+      console.log("crt load image with ops:", ops);
+      let props = ops == "replace" ? imgs_dialog_props : img_dialog_props;
+      let cmd_args = [];
+      switch (ops) {
+        case "insert":
+          // Add one image uses inspect-many instead of inspect-one because of the different data structure returned.
+          // inspect-one is suited for singular file inspection, while inspect-many can support 1 to n amount of images.
+          cmd_args.push("inspect_many"); break;
+        case "smart_insert":
+          cmd_args.push("inspect_smart"); break;
+        case "replace":
+          cmd_args.push("inspect_many"); break;
+      }
+      console.log("obtained props", props);
+      var options = {
+        filters: extension_filters,
+        properties: props,
+      };
+
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let img_paths = result.filePaths;
+        console.log(img_paths);
+        if (img_paths === undefined || img_paths.length == 0) {
+          return;
+        }
+
+        this.CRT_IS_LOADING = true;
+        this.toggleLoadButtonAnim(ops, true);
+
+        cmd_args.push(img_paths)
+
+        tridentEngine(cmd_args, (error, res) => {
+          if (error) {
+            try {
+              this._logError(error);
+            }
+            catch (e) {
+              this._logError(error);
+            }
+            this.CRT_IS_LOADING = false;
+            this.toggleLoadButtonAnim(ops, false);
+          } else if (res) {
+            if (res && res.msg) {
+              this._logProcessing(res.msg);
+            } else if (res && res.data) {
+              let info = res.data;
+              console.log("sequence info");
+              console.log(info.sequence_info);
+              console.log(info);
+              this._renderSequence(info, { operation: ops });
+              this.total_size = `Total size: ${info.total_size}`;
+              // data.save_fstem = stem(data.save_fstem || info.name);
+              this.fname = this.fname || info.name
+              this.criteria.width = this.criteria.width || info.width;
+              this.criteria.height = this.criteria.height || info.height;
+              this.criteria.fps = this.criteria.fps || 50;
+              this.criteria.delay = this.criteria.delay || 0.02;
+              this.orig_width = info.width;
+              this.orig_height = info.height;
+              this.latest_load_count = info.total;
+              this._logClear();
+              this._updateAspectRatio(this.criteria.width, this.criteria.height);
+              this.CRT_IS_LOADING = false;
+              this.toggleLoadButtonAnim(ops, false);
+              this.lock_aspect_ratio = true;
+            }
+          }
+        },
+        () => {
+          this._logSuccess(`Loaded ${this.latest_load_count} images`);
+        });
+      });
+    },
+    _renderSequence(pyinfo, options) {
+      let operation = options.operation;
+      // if (operation == "replace") {
+        // console.log("AA");
+        // data.image_paths = pyinfo.sequence;
+        // data.sequence_info = pyinfo.sequence_info;
+      // } else if (["insert", "smart_insert"].includes(operation)) {
+        console.log("BB");
+        let image_paths = []
+        let sequence_info = []
+        /*
+        if (operation == "insert") {
+          image_paths.push(pyinfo.general_info.absolute_url.value);
+          sequence_info.push(pyinfo.general_info)
+        }
+        else if (operation == "smart_insert") {
+          image_paths.push(...pyinfo.sequence);
+          sequence_info.push(...pyinfo.sequence_info);
+        }
+        */
+        if (this.insert_index) {
+          this.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
+          this.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
+        } else {
+          this.image_paths.push(...pyinfo.sequence);
+          this.sequence_info.push(...pyinfo.sequence_info);
+        }
+      // }
+    },
+    _setMinimalDimensions() {
+      if (this.criteria.width == 0)
+        this.criteria.width = 1;
+      if (this.criteria.height == 0)
+        this.criteria.height = 1;
+    },
+    previewAIMG() {
+      console.log("preview called");
+      this._logClear();
+      if (this.sequence_info.length < 2) {
+        // this.create_msgbox = "Please load at least 2 images!";
+        this._logError("Please load at least 2 images!");
+        return;
+      }
+      this._setMinimalDimensions();
+      // let validator = validateFilename(data.criteria.name);
+      // if (!validator.valid) {
+      //   console.error(validator.msg);
+      //   data.create_msgbox = validator.msg;
+      //   return;
+      // }
+      this.CRT_IS_PREVIEWING = true;
+      // console.log(this);
+      let criteria_pack = lodashClonedeep({
+        "criteria": this.criteria,
+        "gif_opt_criteria": this.gif_opt_criteria,
+        "apng_opt_criteria": this.apng_opt_criteria,
+      });
+      let preview_filename = `${this.save_fstem}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
+      let preview_savepath = join(PREVIEWS_PATH, preview_filename);
+      console.log(preview_savepath);
+      tridentEngine(["combine_image", this.image_paths, preview_savepath, criteria_pack], (error, res) => {
+        if (error) {
+          // console.error(error);
+          // let error_data = JSON.parse(error);
+          this._logError(error)
+          this.CRT_IS_PREVIEWING = false;
+        } else if (res) {
+          if (res.msg) {
+            this._logProcessing(res.msg);
+            // this.create_msgbox = res.msg;
+          }
+          if (res.preview_path) {
+            this.preview_path = res.preview_path;
+            this._previewPathCacheBreaker();
+          }
+        }},
+        () => tridentEngine(["inspect_one", this.preview_path], (error, info) => {
+          if (error) {
+            console.error(error);
+            this.CRT_IS_PREVIEWING = false;
+          } else if (info) {
+            let inspectionData = info.data;
+            console.log("preview inspect");
+            console.log(inspectionData);
+            this.preview_info = inspectionData;
+            this._logSuccess("Previewed!");
+            this.CRT_IS_PREVIEWING = false;
+          }
+        })
+      );
+    },
+    _previewPathCacheBreaker() {
+      // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+      let cb_url = `${this.preview_path}`;
+      console.log("Cache breaker url", cb_url);
+      this.preview_path_cb = cb_url;
+    },
+    removeFrame(index) {
+      this.image_paths.splice(index, 1);
+      this.sequence_info.splice(index, 1);
+    },
+    btnClearAll() {
+      this.clearSequence();
+      this.clearPreviewAIMG();
+      this.clearAuxInfo();
+      this.clearFields();
+      this.lock_aspect_ratio = false;
+    },
+    clearSequence() {
+      this.image_paths = [];
+      this.sequence_info = [];
+      this.save_fstem = "";
+    },
+    clearPreviewAIMG() {
+      this.preview_path = "";
+      this.preview_path_cb = "";
+      this.preview_info = "";
+    },
+    clearAuxInfo() {
+      this.total_size = "";
+      this.orig_width = "";
+      this.old_width = "";
+      this.orig_height = "";
+      this.old_height = "";
+      this._logClear();
+      // this.create_msgbox = "";
+      let empty_aspect_ratio = {
+        w_ratio: "",
+        h_ratio: "",
+        text: "",
+      };
+      this.aspect_ratio = empty_aspect_ratio;
+    },
+    clearFields() {
+      this.criteria.name = "";
+      this.criteria.delay = "";
+      this.criteria.fps = "";
+      this.criteria.loop_count = "";
+      this.criteria.width = "";
+      this.criteria.height = "";
+    },
+    btnPreviewAIMG() {
+      this.previewAIMG();
+    },
+    btnSetSavePath() {
+      // setSavePathFromDialog();
+      this.setSaveDirFromDialog();
+    },
+    setSaveDirFromDialog(afterSaveCallback) {
+      let options = { properties: dir_dialog_props };
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let out_dirs = result.filePaths;
+        console.log(out_dirs);
+        if (out_dirs && out_dirs.length > 0) { 
+          this.save_dir = out_dirs[0];
+        }
+        this._logClear();
+        // this.create_msgbox = "";
+      });
+    },
+    btnCreateAIMG() {
+      if (this.sequence_info.length < 2) {
+        this._logError("please load at least 2 messages!");
+        // this.create_msgbox = "Please load at least 2 images!";
+        return;
+      }
+      if (this.save_dir) {
+        if (validateFilename(this.fname))
+          this.createAnimatedImage();
+        else
+          this._logError("File name contains characters that are not allowed");
+          // this.create_msgbox = "File name contains characters that are not allowed"
+      }
+      else {
+        this.btnSetSavePath(createAnimatedImage);
+      }
+    },
+    createAnimatedImage() {
+      let proceed_create = true;
+      this._logClear();
+      // this.create_msgbox = "";
+      this._setMinimalDimensions();
+      // if (fileExists(data.save_path)) {
+      //   let WINDOW = remote.getCurrentWindow();
+      //   let options = {
+      //     buttons: ["Yes", "Cancel"],
+      //     message:
+      //       "A file with the same name already exists in the output folder. Do you want to override it?",
+      //   };
+      //   let response = dialog.showMessageBoxSync(WINDOW, options);
+      //   if (response == 1) proceed_create = false;
+      // }
+
+      if (proceed_create) {
+        this.CRT_IS_CREATING = true;
+        let criteria_pack = lodashClonedeep({
+          "criteria": this.criteria,
+          "gif_opt_criteria": this.gif_opt_criteria,
+          "apng_opt_criteria": this.apng_opt_criteria,
+        });
+        tridentEngine(["combine_image", this.image_paths, this._getSavePath(), criteria_pack], (error, res) => {
+          if (error) {
+            try {
+              this._logError(error);
+              // this.create_msgbox = error;
+              this.CRT_IS_CREATING = false;
+            }
+            catch (e) {
+              this._logError(e);
+              // this.create_msgbox = error;
+            }
+          } else if (res) {
+            console.log(`res -> ${res}`);
+            if (res) {
+              console.log(res);
+              if (res.msg) {
+                this._logProcessing(res.msg);
+                // this.create_msgbox = res.msg;
+              }
+            }
+          }
+        },
+        () => {
+          this._logSuccess(`${this.criteria.format.toUpperCase()} created!`);
+          // this.create_msgbox = `${this.criteria.format.toUpperCase()} created!`;
+          this.CRT_IS_CREATING = false;
+        });
+      }
+    },
+    btnToggleCheckerBG() {
+      this.checkerbg_active = !this.checkerbg_active;
+      console.log("now checkerbg is", this.checkerbg_active);
+    },
+    _getSavePath() {
+      let file_name = `${this.fname}.${this.criteria.format}`;
+      let save_path = join(this.save_dir, file_name);
+      console.log(`getSavePath ${save_path}`);
+      return save_path;
+    },
     numConstrain: numConstrain,
-    widthHandler: widthHandler,
-    heightHandler: heightHandler,
-    delayConstrain: delayConstrain,
-    fpsConstrain: fpsConstrain,
-    removeFrame: removeFrame,
+    widthHandler(width, event) {
+      this.old_width = parseInt(width);
+      let newWidth = event.target.value;
+      this.criteria.width = parseInt(newWidth);
+      if (this.lock_aspect_ratio && this.aspect_ratio.h_ratio > 0) {
+        // Change height if lock_aspect_ratio is true and height is not 0
+        let raHeight = Math.round(
+          (newWidth / this.aspect_ratio.w_ratio) * this.aspect_ratio.h_ratio
+        );
+        this.criteria.height = raHeight > 0 ? parseInt(raHeight) : "";
+      } else {
+        this._updateAspectRatio(this.criteria.width, this.criteria.height);
+      }
+    },
+    heightHandler(height, event) {
+      data.old_height = parseInt(height);
+      let newHeight = event.target.value;
+      data.criteria.height = parseInt(newHeight);
+      if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
+        let raWidth = Math.round(
+          (newHeight / data.aspect_ratio.h_ratio) * data.aspect_ratio.w_ratio
+        );
+        console.log(raWidth);
+        data.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
+      } else {
+        this._updateAspectRatio(data.criteria.width, data.criteria.height);
+      }
+    },
+    _updateAspectRatio(width, height) {
+      if (this.criteria.width && this.criteria.height) {
+        console.log("uAR", width, height);
+        let divisor = gcd(width, height);
+        let w_ratio = width / divisor;
+        let h_ratio = height / divisor;
+        let ARData = {
+          w_ratio: w_ratio,
+          h_ratio: h_ratio,
+          text: `${w_ratio}:${h_ratio}`,
+        };
+        console.log(ARData);
+        this.aspect_ratio = ARData;
+      }
+    },
+    delayConstrain(event) {
+      console.log("delay event", event);
+      let value = event.target.value;
+      if (value && value.includes(".")) {
+        let numdec = value.split(".");
+        console.log("numdec", numdec);
+        let precision = 2;
+        if (this.criteria.format == "GIF") {
+          precision = GIF_DELAY_DECIMAL_PRECISION;
+        } else if (this.criteria.format == "PNG") {
+          precision = APNG_DELAY_DECIMAL_PRECISION;
+        }
+        if (numdec[1].length > precision) {
+          let decs = numdec[1].substring(0, precision);
+          console.log("decs limit triggered", decs);
+          this.criteria.delay = `${numdec[0]}.${decs}`;
+        }
+      }
+      this.criteria.fps = Math.round(1000 / this.criteria.delay) / 1000;
+    },
+    fpsConstrain(event) {
+      console.log("fps event", event);
+      let value = event.target.value;
+      if (value) {
+        let mult = 100;
+        if (this.criteria.format == "GIF") {
+          mult = 100;
+        } else if (this.criteria.format == "PNG") {
+          mult = 1000;
+        }
+        this.criteria.delay = Math.round(mult / this.criteria.fps) / mult;
+      }
+    },
+    _logClear() {
+      this.statusBarBus.$emit("logClear");
+    },
+    _logProcessing(message) {
+      this.statusBarBus.$emit("logProcessing", message);
+    },
+    _logMessage(message) {
+      this.statusBarBus.$emit("logMessage", message);
+    },
+    _logSuccess(message) {
+      this.statusBarBus.$emit("logSuccess", message);
+    },
+    _logWarning(message) {
+      this.statusBarBus.$emit("logWarning", message);
+    },
+    _logError(message) {
+      this.statusBarBus.$emit("logError", message);
+    },
     escapeLocalPath: escapeLocalPath,
   },
   computed: {
-    isButtonFrozen: isButtonFrozen,
-    sequenceCounter: sequenceCounter,
-    computeTotalSequenceSize: computeTotalSequenceSize,
-    saveFileName: saveFileName,
+    isButtonFrozen() {
+      if (this.CRT_IS_LOADING || this.CRT_IS_PREVIEWING || this.CRT_IS_CREATING) return true;
+      else return false;
+    },
+    sequenceCounter() {
+      if (this.sequence_info.length > 0) {
+        return `${this.sequence_info.length} images`;
+      } else return "";
+    },
+    computeTotalSequenceSize() {
+      console.log("computeTotalSequenceSize");
+      console.log(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
+      return formatBytes(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
+    },
     /*
     savePathInput: {
       get() {

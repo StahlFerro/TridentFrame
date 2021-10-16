@@ -237,7 +237,7 @@ export default {
     },
     cmFormatShouter(event) {
       console.log("cmFormatShouter");
-      let format = data.info_data.general_info.format.value;
+      let format = this.info_data.general_info.format.value;
       console.log(format);
     }, 
     cmCopyImage(event) {
