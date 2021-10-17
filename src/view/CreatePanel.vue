@@ -147,7 +147,7 @@
               <li class="subtab-menu-item is-cyan"
                 v-bind:class="{ 'is-selected': crt_menuselection == 1 }">
                 <a v-on:click="crt_menuselection = 1"
-                  v-bind:class="{ 'is-disabled': criteria.format == 'PNG' }">
+                  v-bind:class="{ 'is-disabled': criteria.format != 'gif' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -157,7 +157,7 @@
               <li class="subtab-menu-item"
                 v-bind:class="{ 'is-selected': crt_menuselection == 2 }">
                 <a v-on:click="crt_menuselection = 2"
-                  v-bind:class="{ 'is-disabled': criteria.format == 'GIF' }">
+                  v-bind:class="{ 'is-disabled': criteria.format != 'png' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -1264,8 +1264,8 @@ export default {
         }
         */
         if (this.insert_index) {
-          this.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
-          this.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
+          this.image_paths.splice(this.insert_index, 0, ...pyinfo.sequence);
+          this.sequence_info.splice(this.insert_index, 0, ...pyinfo.sequence_info);
         } else {
           this.image_paths.push(...pyinfo.sequence);
           this.sequence_info.push(...pyinfo.sequence_info);
@@ -1498,17 +1498,17 @@ export default {
       }
     },
     heightHandler(height, event) {
-      data.old_height = parseInt(height);
+      this.old_height = parseInt(height);
       let newHeight = event.target.value;
-      data.criteria.height = parseInt(newHeight);
-      if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
+      this.criteria.height = parseInt(newHeight);
+      if (this.lock_aspect_ratio && this.aspect_ratio.w_ratio > 0) {
         let raWidth = Math.round(
-          (newHeight / data.aspect_ratio.h_ratio) * data.aspect_ratio.w_ratio
+          (newHeight / this.aspect_ratio.h_ratio) * this.aspect_ratio.w_ratio
         );
         console.log(raWidth);
-        data.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
+        this.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
       } else {
-        this._updateAspectRatio(data.criteria.width, data.criteria.height);
+        this._updateAspectRatio(this.criteria.width, this.criteria.height);
       }
     },
     _updateAspectRatio(width, height) {

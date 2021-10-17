@@ -2,7 +2,10 @@
   <div class="status-bar">
     <div class="status-icon"> 
       <span class="icon">
-        <i class="fas fa-minus-circle"></i>
+        <i class="fas fa-info-circle is-cyan" v-show="logLevel == EnumStatusLogLevel.INFO"></i>
+        <i class="fas fa-spinner fa-pulse is-white-d" v-show="logLevel == EnumStatusLogLevel.PROCESSING"></i>
+        <i class="fas fa-check is-emerald" v-show="logLevel == EnumStatusLogLevel.SUCCESS"></i>
+        <i class="fas fa-times is-crimson" v-show="logLevel == EnumStatusLogLevel.ERROR"></i>
       </span>
     </div>
     <div class="status-textbox">
@@ -17,10 +20,13 @@
 
 <script>
 import Vue from 'vue';
+import { EnumStatusLogLevel } from "../../modules/constants/loglevels.js";
 export default {
   data: function() {
     return {
       statusText: "",
+      logLevel: "",
+      EnumStatusLogLevel,
     }
   },
   props: {
@@ -30,35 +36,45 @@ export default {
     logClear() {
       console.log("Clearing log...");
       this.statusText = "";
+      this.logLevel = "";
+    },
+    logInfo(message) {
+      console.log(message);
+      this.statusText = message;
+      if (this.logLevel != EnumStatusLogLevel.INFO)
+        this.logLevel = EnumStatusLogLevel.INFO;
     },
     logProcessing(message) {
       console.log(message);
       this.statusText = message;
-    },
-    logMessage(message) {
-      console.log(message);
-      this.statusText = message;
+      if (this.logLevel != EnumStatusLogLevel.PROCESSING)
+        this.logLevel = EnumStatusLogLevel.PROCESSING;
     },
     logSuccess(message) {
       console.log(message);
       this.statusText = message;
+      this.logLevel = EnumStatusLogLevel.SUCCESS;
     },
     logWarning(message) {
       console.log(message);
       this.statusText = message;
+      this.logLevel = EnumStatusLogLevel.WARNING;
     },
     logError(message) {
+      console.log("logError called");
       console.log(message);
       this.statusText = message;
+      this.logLevel = EnumStatusLogLevel.ERROR;
+      console.log(this.logLevel);
     },
   },
   mounted() {
     this.bus.$on("logClear", this.logClear);
     this.bus.$on("logProcessing", this.logProcessing);
-    this.bus.$on("logMessage", this.logMessage);
+    this.bus.$on("logMessage", this.logInfo);
     this.bus.$on("logSuccess", this.logSuccess);
     this.bus.$on("logWarning", this.logWarning);
-    this.bus.$on("logError", this.logSuccess);
+    this.bus.$on("logError", this.logError);
   }
 };
 </script>

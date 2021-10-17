@@ -1331,6 +1331,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .non-interactive {
   pointer-events: none;
   box-shadow: none;
@@ -1343,6 +1351,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .button.square-button {
@@ -1440,6 +1456,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .context-menu {
   width: 180px;
   box-shadow: 0 5px 10px 4px rgba(0, 0, 0, 0.5);
@@ -1509,6 +1533,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .rtable {
@@ -1612,6 +1644,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .input {
   /* Grey-block inputs. */
   /* Neon-white inputs. */
@@ -1700,6 +1740,14 @@ div.status-bar .status-textbox input:focus-visible {
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 /* component style */
@@ -1835,6 +1883,14 @@ div.status-bar .status-textbox input:focus-visible {
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .create-panel-root {
   display: flex;
   flex-direction: column;
@@ -1946,6 +2002,14 @@ div.status-bar .status-textbox input:focus-visible {
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .split-panel-root {
   display: flex;
   flex-direction: column;
@@ -2045,6 +2109,14 @@ div.status-bar .status-textbox input:focus-visible {
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .modify-panel-root {
@@ -2188,6 +2260,14 @@ div.status-bar .status-textbox input:focus-visible {
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .inspect-panel-root {
   display: flex;
   flex-direction: column;
@@ -2285,6 +2365,14 @@ div.status-bar .status-textbox input:focus-visible {
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 div.about-content {
@@ -12687,14 +12775,14 @@ label.checkbox {
   color: #31363b;
 }
 
+/*
 .is-cyan {
-  color: #34caf8 !important;
+    color: $cyan !important;
 }
-
 .is-white-d {
-  color: #cccccc !important;
+    color: $white-d !important;
 }
-
+*/
 .has-background-dark-2 {
   background-color: #232629;
 }
@@ -13257,6 +13345,14 @@ canvas.slicegrid-canvas {
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 select, option.is-selected {
