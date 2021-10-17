@@ -2231,6 +2231,14 @@ div.status-bar .status-textbox input:focus-visible {
   border-left: 0;
   min-width: 93%;
 }
+.modify-panel-root .modify-panel-controls .mpc-right-panel .mpc-right-top-panel {
+  height: 90%;
+}
+.modify-panel-root .modify-panel-controls .mpc-right-panel .mpc-right-bottom-panel {
+  height: 10%;
+  border-top: 1.5px solid #cccccc;
+  display: flex;
+}
 .modify-panel-root .modify-panel-controls .mpc-right-panel table {
   width: 100%;
   padding: 0;

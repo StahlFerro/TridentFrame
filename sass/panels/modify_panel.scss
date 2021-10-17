@@ -116,6 +116,16 @@
             &::-webkit-scrollbar { width: 0px; height: 0px; }
         }
         .mpc-right-panel {
+            
+            .mpc-right-top-panel {
+                height: 90%;
+            }
+            .mpc-right-bottom-panel {
+                height: 10%;
+                border-top: 1.5px solid $white-d;
+                display: flex;
+            }
+
             border: 2px solid $white-d;
             border-left: 0;
             min-width: 93%;
