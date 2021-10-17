@@ -1047,7 +1047,63 @@ function previewPathCacheBreaker() {
 
 export default {
   data: function() {
-    return data;
+    return {
+      orig_attribute: lodashClonedeep(common_metadata),
+      preview_attribute: lodashClonedeep(common_metadata),
+      criteria: {
+        width: "",
+        height: "",
+        resize_method: "BICUBIC",
+        rotation: "",
+        fps: "",
+        delay: "",
+        loop_count: "",
+        format: "GIF",
+        skip_frame: "",
+        flip_x: false,
+        flip_y: false,
+        is_reversed: false,
+        preserve_alpha: false,
+        start_frame: 0,
+      },
+      gif_opt_criteria: {
+        is_optimized: false,
+        optimization_level: "1",
+        is_lossy: false,
+        lossy_value: "",
+        is_reduced_color: false,
+        color_space: "",
+        is_unoptimized: false,
+        is_dither_alpha: false,
+        dither_alpha_method: "SCREENDOOR",
+        dither_alpha_threshold: 50,
+      },
+      apng_opt_criteria: {
+        apng_is_optimized: false,
+        apng_optimization_level: "1",
+        apng_is_lossy: false,
+        apng_lossy_value: "",
+        apng_is_unoptimized: false,
+        apng_convert_color_mode: false,
+        apng_new_color_mode: "RGBA",
+      },
+      preview_path: "",
+      preview_path_cb: "",
+      preview_info: "",
+      save_fstem: "",
+      save_dir: "",
+      preview_size: "",
+      preview_size_hr: "",
+      aspect_ratio: "",
+      lock_aspect_ratio: false,
+      mod_menuselection: 0,
+      orig_checkerbg_active: false,
+      new_checkerbg_active: false,
+      MOD_IS_LOADING: false,
+      MOD_IS_MODIFYING: false,
+      MOD_IS_PREVIEWING: false,
+      modify_msgbox: "",
+    };
   },
   components: {
     GIFOptimizationRow,
@@ -1056,32 +1112,381 @@ export default {
     APNGUnoptimizationRow,
   },
   methods: {
-    loadImage: loadImage,
-    clearImage: clearImage,
-    clearPreviewImage: clearPreviewImage,
-    btnSetSavePath: btnSetSavePath,
+    loadOrigMetadata(res) {
+      let geninfo = res.general_info;
+      let ainfo = res.animation_info;
+      this.orig_attribute.name = geninfo.name.value;
+      this.save_fstem = stem(this.save_fstem || geninfo.name.value);
+      this.orig_attribute.width = geninfo.width.value;
+      this.orig_attribute.height = geninfo.height.value;
+      this.orig_attribute.fps = `${ainfo.fps.value} FPS`;
+      this.orig_attribute.frame_count= ainfo.frame_count.value;
+      this.orig_attribute.format = geninfo.format.value;
+      let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
+      if (ainfo.delays_are_even.value) {
+        delay_info += ` (even)`;
+      }
+      else {
+        delay_info += ` (uneven)`;
+      }
+      this.orig_attribute.delay = ainfo.average_delay.value;
+      this.orig_attribute.delay_info = delay_info;
+      this.orig_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
+      if (ainfo.loop_count.value == 0) {
+        this.orig_attribute.loop_count = "Infinite"
+      }
+      else {
+        this.orig_attribute.loop_count = ainfo.loop_count.value;
+      }
+      this.orig_attribute.path = geninfo.absolute_url.value;
+      this.orig_attribute.file_size = geninfo.fsize.value;
+      this.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
+      this.orig_attribute.last_modified_dt = geninfo.modification_datetime.value;
+      this.orig_attribute.hash_sha1 = geninfo.hash_sha1.value;
+    },
+    loadPreviewMetadata(res) {
+      let geninfo = res.general_info;
+      let ainfo = res.animation_info;
+      this.preview_attribute.name = geninfo.name.value;
+      this.preview_attribute.width = geninfo.width.value;
+      this.preview_attribute.height = geninfo.height.value;
+      this.preview_attribute.fps = `${ainfo.fps.value} FPS`;
+      this.preview_attribute.frame_count= ainfo.frame_count.value;
+      this.preview_attribute.format = geninfo.format.value;
+      let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
+      if (ainfo.delays_are_even.value) {
+        delay_info += ` (even)`;
+      }
+      else {
+        delay_info += ` (not even)`;
+      }
+      this.preview_attribute.delay = ainfo.average_delay.value;
+      this.preview_attribute.delay_info = delay_info;
+      this.preview_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
+      if (ainfo.loop_count.value == 0) {
+        this.preview_attribute.loop_count = "Infinite"
+      }
+      else {
+        this.preview_attribute.loop_count = ainfo.loop_count.value;
+      }
+      this.preview_attribute.path = geninfo.absolute_url.value;
+      this.preview_attribute.file_size = geninfo.fsize.value;
+      this.preview_attribute.file_size_hr = geninfo.fsize_hr.value;
+      this.preview_attribute.last_modified_dt = geninfo.modification_datetime.value;
+      this.preview_attribute.hash_sha1 = geninfo.hash_sha1.value;
+    },
+    populateForm(res) {
+      var geninfo = res.general_info;
+      var ainfo = res.animation_info;
+      this.criteria.format = geninfo.format.value;
+      this.criteria.width = geninfo.width.value;
+      this.criteria.height = geninfo.height.value;
+      this.criteria.delay = roundPrecise(ainfo.average_delay.value, 3) / 1000;
+      this.criteria.fps = roundPrecise(ainfo.fps.value, 3);
+      this.criteria.loop_count = ainfo.loop_count.value;
+      updateAspectRatio(this.criteria.width, this.criteria.height);
+    },
+    loadImage() {
+      console.log("mod load image called");
+      var options = {
+        filters: extension_filters,
+        properties: file_dialog_props
+      };
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let chosen_path = result.filePaths;
+        console.log(`chosen path: ${chosen_path}`);
+        if (chosen_path === undefined || chosen_path.length == 0) {
+          return;
+        }
+        this.MOD_IS_LOADING = true;
+        tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
+          if (error) {        
+            try {
+              this.modify_msgbox = error;
+            }
+            catch (e) {
+              this.modify_msgbox = error;
+            }
+            // mboxError(split_msgbox, error);
+            this.MOD_IS_LOADING = false;
+          } else if (res) {
+            if (res && res.msg) {
+              this.modify_msgbox = res.msg;
+            } else if (res && res.data) {
+              this.loadOrigMetadata(res.data);
+              this.populateForm(res.data);
+              this.save_fname = res.data.general_info.name.value;
+              this.modify_msgbox = "";
+            }
+            this.MOD_IS_LOADING = false;
+            this.lock_aspect_ratio = true;
+          }
+        });
+        console.log("registered!");
+      });
+    },
+    clearOrigMetadata() {
+      this.orig_attribute.name = "";
+      this.orig_attribute.width = "";
+      this.orig_attribute.height = "";
+      this.orig_attribute.frame_count = "";
+      this.orig_attribute.frame_count_ds = "";
+      this.orig_attribute.fps = "";
+      this.orig_attribute.delay = "";
+      this.orig_attribute.delay_info = "";
+      this.orig_attribute.loop_duration = "";
+      this.orig_attribute.loop_count = "";
+      this.orig_attribute.file_size = "";
+      this.orig_attribute.file_size_hr = "";
+      this.orig_attribute.format = "";
+      this.orig_attribute.path = "";
+      this.orig_attribute.hash_sha1 = "";
+      this.orig_attribute.last_modified_dt = "";
+      this.modify_msgbox = "";
+    },
+    clearPreiewMetadata() {
+      this.preview_attribute.name = "";
+      this.preview_attribute.width = "";
+      this.preview_attribute.height = "";
+      this.preview_attribute.frame_count = "";
+      this.preview_attribute.frame_count_ds = "";
+      this.preview_attribute.fps = "";
+      this.preview_attribute.delay = "";
+      this.preview_attribute.delay_info = "";
+      this.preview_attribute.loop_duration = "";
+      this.preview_attribute.loop_count = "";
+      this.preview_attribute.file_size = "";
+      this.preview_attribute.file_size_hr = "";
+      this.preview_attribute.format = "";
+      this.preview_attribute.path = "";
+      this.preview_attribute.hash_sha1 = "";
+      this.preview_attribute.last_modified_dt = "";
+      this.modify_msgbox = "";
+    },
+    clearCriteriaFields() {
+      this.criteria.old_width = "";
+      this.criteria.width = "";
+      this.criteria.old_height = "";
+      this.criteria.height = "";
+      this.criteria.rotation = "";
+      this.criteria.fps = "";
+      this.criteria.delay = "";
+      this.criteria.loop_count = "";
+      this.criteria.skip_frame = "";
+      this.criteria.modify_msgbox = "";
+      let ARData = {
+        "w_ratio": "",
+        "h_ratio": "",
+        "text": "",
+      };
+      this.aspect_ratio = ARData;
+    },
+    clearImage() {
+      console.log(data);
+      this.clearOrigMetadata();
+      this.clearCriteriaFields();
+      this.clearPreviewImage();
+      this.lock_aspect_ratio = false;
+    },
+    clearPreviewImage() {
+      this.preview_path = "";
+      this.preview_path_cb = "";
+      this.preview_size = "";
+      this.preview_size_hr = "";
+      this.clearPreiewMetadata();
+    },
+    btnSetSavePath() {
+      // setSavePath();
+      this.setSaveDirFromDialog();
+    },
+    setSaveDirFromDialog(afterSaveCallback) {
+      let options = { properties: dir_dialog_props };
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let out_dirs = result.filePaths;
+        console.log(out_dirs);
+        if (out_dirs && out_dirs.length > 0) { 
+          this.save_dir = out_dirs[0];
+        }
+        this.modify_msgbox = "";
+      });
+    },
     // chooseOutDir: chooseOutDir,
-    previewModImg: previewModImg,
-    btnModifyImage: btnModifyImage,
+    previewModImg() {
+      if (this.orig_attribute.path == "") {
+        this.modify_msgbox = "Please load an animated image first!";
+        return;
+      }
+      this.MOD_IS_PREVIEWING = true;
+      let criteria_pack = lodashClonedeep({
+        "criteria": { ...this.criteria, "hash_sha1": this.orig_attribute.hash_sha1, "last_modified_dt": this.orig_attribute.last_modified_dt },
+        "gif_opt_criteria": this.gif_opt_criteria,
+        "apng_opt_criteria": this.apng_opt_criteria,
+      });
+      let preview_filename = `${this.save_fstem}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
+      let preview_savepath = join(PREVIEWS_PATH, preview_filename);
+      // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+      tridentEngine(["modify_image", this.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
+        if (error) {
+          console.error(error);
+          this.modify_msgbox = error;
+          this.MOD_IS_PREVIEWING = false;
+        }
+        else if (res) {
+          if (res.msg) {
+            this.modify_msgbox = res.msg;
+          }
+          if (res.preview_path) {
+            this.preview_path = res.preview_path;
+            this.previewPathCacheBreaker();
+          }
+        }
+      },
+      () => tridentEngine(["inspect_one", this.preview_path, "animated"], (error, res) => {
+        if (error) {
+          console.error(error);
+          this.modify_msgbox = error;
+        } else if (res && res.data) {
+          let preview_data = res.data;
+          console.log(`res -> ${res}`);
+          console.log("preview inspect");
+          this.loadPreviewMetadata(preview_data);
+          this.preview_info = preview_data;
+          this.preview_size = preview_data.general_info.fsize.value;
+          this.preview_size_hr = preview_data.general_info.fsize_hr.value;
+          this.modify_msgbox = "Previewed!"
+          this.MOD_IS_PREVIEWING = false;
+        }})
+      );
+    },
+    btnModifyImage() {
+      if (!this.orig_attribute.path) {
+        this.modify_msgbox = "Please load the animated image to be modified!";
+        return;
+      }
+      if (savePath())
+        this.modifyImage();
+      else
+        this.setSavePath(modifyImage);
+    },
+    previewPathCacheBreaker() {
+      let cb_url = `${this.preview_path}`;
+      console.log("Cache breaker url", cb_url);
+      this.preview_path_cb = cb_url;
+    },
     // modifyImage: modifyImage,
-    widthHandler: widthHandler,
-    heightHandler: heightHandler,
-    toggleOrigCheckerBG: toggleOrigCheckerBG,
-    toggleNewCheckerBG: toggleNewCheckerBG,
-    delayConstrain: delayConstrain,
-    fpsConstrain: fpsConstrain,
+    widthHandler(width, event) {
+      // data.orig_attribute.width = parseInt(width);
+      console.log(event);
+      let newWidth = event.target.value;
+      this.criteria.width = newWidth;
+      if (this.lock_aspect_ratio && this.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
+        let raHeight = Math.round(newWidth / this.aspect_ratio.w_ratio * this.aspect_ratio.h_ratio);
+        this.criteria.height = raHeight > 0? raHeight : "";
+      }
+      else {
+        this.updateAspectRatio(this.criteria.width, this.criteria.height);
+      }
+    },
+    heightHandler(height, event) {
+      // data.orig_attribute.height = parseInt(height);
+      let newHeight = event.target.value;
+      this.criteria.height = newHeight;
+      if (this.lock_aspect_ratio && this.aspect_ratio.w_ratio > 0) {
+        let raWidth = Math.round(newHeight / this.aspect_ratio.h_ratio * this.aspect_ratio.w_ratio);
+        console.log(raWidth);
+        this.criteria.width = raWidth > 0? raWidth : "";
+      }
+      else {
+        this.updateAspectRatio(this.criteria.width, this.criteria.height);
+      }
+    },
+    toggleOrigCheckerBG() {
+      this.orig_checkerbg_active = !this.orig_checkerbg_active;
+      console.log("orig checkerbg is", this.orig_checkerbg_active);
+    },
+    toggleNewCheckerBG() {
+      this.new_checkerbg_active = !this.new_checkerbg_active;
+      console.log("new checkerbg is", this.new_checkerbg_active);
+    },
+    delayConstrain(event) {
+      console.log("delay event", event);
+      let value = event.target.value;
+      if (value && value.includes(".")) {
+        let numdec = value.split(".");
+        console.log("numdec", numdec);
+        let precision = 2;
+        if (this.criteria.format == "GIF") {
+          precision = GIF_DELAY_DECIMAL_PRECISION;
+        } else if (this.criteria.format == "PNG") {
+          precision = APNG_DELAY_DECIMAL_PRECISION;
+        }
+        if (numdec[1].length > precision) {
+          let decs = numdec[1].substring(0, precision);
+          console.log("decs limit triggered", decs);
+          this.criteria.delay = `${numdec[0]}.${decs}`;
+        }
+      }
+      this.criteria.fps = Math.round(1000 / this.criteria.delay) / 1000;
+    },
+    fpsConstrain(event) {
+      console.log("fps event", event);
+      let value = event.target.value;
+      if (value) {
+        let mult = 100;
+        if (this.criteria.format == "GIF") {
+          mult = 100;
+        } else if (this.criteria.format == "PNG") {
+          mult = 1000;
+        }
+        this.criteria.delay = Math.round(mult / this.criteria.fps) / mult;
+      }
+    },
     floatConstrain: floatConstrain,
     numConstrain: numConstrain,
     roundPrecise: roundPrecise,
     escapeLocalPath: escapeLocalPath,
   },
   computed: {
-    origDimensions: origDimensions,
-    previewDimensions: previewDimensions,
-    buttonIsFrozen: buttonIsFrozen,
-    previewSizePercentage: previewSizePercentage,
-    saveFileName: saveFileName,
-    savePath: savePath,
+    origDimensions() {
+      if (this.orig_attribute.width && this.orig_attribute.height) {
+        return `${this.orig_attribute.width} x ${this.orig_attribute.height}`;
+      }
+      else {
+        return "";
+      }
+    },
+    previewDimensions() {
+    if (this.preview_attribute.width && this.preview_attribute.height) {
+      return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
+    }
+    else {
+      return "";
+    }
+  },
+    buttonIsFrozen() {
+      if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
+      else return false;
+    },
+    previewSizePercentage() {
+      if (this.orig_attribute.path && this.preview_attribute.path) {
+        let oldSize = this.orig_attribute.file_size
+        let previewSize = this.preview_attribute.file_size;
+        console.log(oldSize, previewSize);
+        let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
+        let text = `${newSizePercentage}%`;
+        return text;
+      }
+      else return "";
+    },
+    saveFileName() {
+      return `${this.save_fstem}.${this.criteria.format.toLowerCase()}`;
+    },
+    savePath() {
+      if (this.save_dir && this.save_fstem)
+        return join(this.save_dir, `${this.save_fstem}.${this.criteria.format.toLowerCase()}`);
+      else
+        return "";
+    },
   }
 };
 </script>
