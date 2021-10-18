@@ -634,8 +634,8 @@ class APNGOptAPI:
                     # print('6')
                     stderr_res = process.stderr.readline().decode("utf-8")
                     # print('7')
-                    if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
-                    # if stderr_res:
+                    # if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    if stderr_res:
                         # print('8')
                         stdio.error(stderr_res)
                     # print('9')
