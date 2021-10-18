@@ -96,11 +96,11 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.loop_duration }}</span>
+                  <span v-if="orig_attribute && orig_attribute.loop_duration">{{ roundPrecise(orig_attribute.loop_duration, 3) }} seconds</span>
                 </td>
                 <td class="mod-info-label is-cyan">Loop duration</td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.loop_duration }}</span>
+                  <span v-if="preview_attribute && preview_attribute.loop_duration">{{ roundPrecise(preview_attribute.loop_duration, 3) }} seconds</span>
                 </td>
               </tr>
               <tr>
@@ -1141,7 +1141,7 @@ export default {
       }
       this.orig_attribute.delay = ainfo.average_delay.value;
       this.orig_attribute.delay_info = delay_info;
-      this.orig_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
+      this.orig_attribute.loop_duration = ainfo.loop_duration.value;
       if (ainfo.loop_count.value == 0) {
         this.orig_attribute.loop_count = "Infinite"
       }
@@ -1172,7 +1172,7 @@ export default {
       }
       this.preview_attribute.delay = ainfo.average_delay.value;
       this.preview_attribute.delay_info = delay_info;
-      this.preview_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
+      this.preview_attribute.loop_duration = ainfo.loop_duration.value;
       if (ainfo.loop_count.value == 0) {
         this.preview_attribute.loop_count = "Infinite"
       }
