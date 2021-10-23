@@ -195,7 +195,7 @@
               <li id="MOD_box_gif" class="subtab-menu-item is-cyan"
                 v-bind:class="{'is-selected': mod_menuselection == 1}">
                 <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
-                  v-bind:class="{'is-disabled': criteria.format == 'PNG'}">
+                  v-bind:class="{'is-disabled': criteria.format != 'gif'}">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -205,7 +205,7 @@
               <li id="MOD_box_apng" class="subtab-menu-item"
                 v-bind:class="{'is-selected': mod_menuselection == 2}">
                 <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
-                  v-bind:class="{'is-disabled': criteria.format == 'GIF'}">
+                  v-bind:class="{'is-disabled': criteria.format != 'png'}">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -220,6 +220,14 @@
             <div v-show="mod_menuselection == 0">
               <table class="" width="100%">
                 <tr>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label">Name</label>
+                      <div class="control">
+                        <input v-model="fname" class="input is-neon-white" type="text" />
+                      </div>
+                    </div>
+                  </td>
                   <td width="16.7%">
                     <div class="field">
                       <label class="label">Width</label>
@@ -273,9 +281,6 @@
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td width="16.7%">
-                    
                   </td>
                   <td width="16.7%" class="force-vcenter">
                     <label class="checkbox" title="Flip the image horizontally">
@@ -377,7 +382,6 @@
                           class="input is-neon-white"
                           type="text"
                           placeholder="Output folder"
-                          readonly
                         />
                       </div>
                     </div>
@@ -387,8 +391,9 @@
                       <div class="control">
                         <div class="select is-neon-cyan" v-bind:class="{'non-interactive': buttonIsFrozen}">
                           <select v-model="criteria.format">
-                            <option value="GIF">GIF</option>
-                            <option value="PNG">APNG</option>
+                            <option v-for="(item, name, index) in SUPPORTED_MODIFY_EXTENSIONS" :key="index" :value="name">
+                              {{ item }}
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -481,10 +486,15 @@ import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import Vue from 'vue';
 
+const SUPPORTED_MODIFY_EXTENSIONS = {
+  'gif': 'GIF',
+  'png': 'APNG',
+}
+
 import StatusBar from "./components/StatusBar.vue";
 
 let common_metadata = {
-  name: "",
+  fname: "",
   width: "",
   height: "",
   frame_count: "",
@@ -648,7 +658,7 @@ function toggleNewCheckerBG() {
 }
 
 let extension_filters = [
-    { name: 'Images', extensions: ['png', 'gif'] },
+    { name: 'Images', extensions: Object.keys(SUPPORTED_MODIFY_EXTENSIONS) },
 ];
 let file_dialog_props = ['openfile'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
@@ -1066,7 +1076,7 @@ export default {
         fps: "",
         delay: "",
         loop_count: "",
-        format: "GIF",
+        format: "gif",
         skip_frame: "",
         flip_x: false,
         flip_y: false,
@@ -1095,6 +1105,7 @@ export default {
         apng_convert_color_mode: false,
         apng_new_color_mode: "RGBA",
       },
+      fname: "",
       preview_path: "",
       preview_path_cb: "",
       preview_info: "",
@@ -1111,6 +1122,7 @@ export default {
       MOD_IS_MODIFYING: false,
       MOD_IS_PREVIEWING: false,
       modify_msgbox: "",
+      SUPPORTED_MODIFY_EXTENSIONS: SUPPORTED_MODIFY_EXTENSIONS,
       statusBarBus: new Vue(),
     };
   },
@@ -1188,7 +1200,8 @@ export default {
     populateForm(res) {
       var geninfo = res.general_info;
       var ainfo = res.animation_info;
-      this.criteria.format = geninfo.format.value;
+      this.fname = geninfo.base_filename.value;
+      this.criteria.format = geninfo.format.value.toLowerCase();
       this.criteria.width = geninfo.width.value;
       this.criteria.height = geninfo.height.value;
       this.criteria.delay = roundPrecise(ainfo.average_delay.value, 3) / 1000;
@@ -1228,7 +1241,6 @@ export default {
             } else if (res && res.data) {
               this.loadOrigMetadata(res.data);
               this.populateForm(res.data);
-              this.save_fname = res.data.general_info.name.value;
               this._logSuccess("Image loaded.");
             }
             this.MOD_IS_LOADING = false;
@@ -1316,12 +1328,17 @@ export default {
     setSaveDirFromDialog(afterSaveCallback) {
       let options = { properties: dir_dialog_props };
       ipcRenderer.invoke('open-dialog', options).then((result) => {
+        if (result.canceled)
+          return;
         let out_dirs = result.filePaths;
         console.log(out_dirs);
         if (out_dirs && out_dirs.length > 0) { 
           this.save_dir = out_dirs[0];
         }
         this._logClear();
+        if (afterSaveCallback) {
+          afterSaveCallback();
+        }
       });
     },
     // chooseOutDir: chooseOutDir,
@@ -1336,7 +1353,7 @@ export default {
         "gif_opt_criteria": this.gif_opt_criteria,
         "apng_opt_criteria": this.apng_opt_criteria,
       });
-      let preview_filename = `${this.save_fstem}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
+      let preview_filename = `${this.fname}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
       let preview_savepath = join(PREVIEWS_PATH, preview_filename);
       // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
       tridentEngine(["modify_image", this.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
@@ -1378,17 +1395,47 @@ export default {
         this._logError("Please load the animated image to be modified!");
         return;
       }
-      if (savePath())
+      if (this.save_dir)
         this.modifyImage();
       else
-        this.setSavePath(modifyImage);
+        this.setSaveDirFromDialog(this.modifyImage);
     },
     previewPathCacheBreaker() {
       let cb_url = `${this.preview_path}`;
       console.log("Cache breaker url", cb_url);
       this.preview_path_cb = cb_url;
     },
-    // modifyImage: modifyImage,
+    modifyImage() {
+      let proceed_modify = true;
+      this._logClear();
+      
+      if (proceed_modify) {
+        this.MOD_IS_MODIFYING = true;
+        let criteria_pack = lodashClonedeep({
+          "criteria": { ...this.criteria, "hash_sha1": this.orig_attribute.hash_sha1, "last_modified_dt": this.orig_attribute.last_modified_dt },
+          "gif_opt_criteria": this.gif_opt_criteria,
+          "apng_opt_criteria": this.apng_opt_criteria,
+        });
+        // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
+        tridentEngine(["modify_image", this.orig_attribute.path, this._getSavePath(), criteria_pack], (error, res) => {
+          if (error) {
+            console.error(error);
+            this._logError(error);
+            this.MOD_IS_MODIFYING = false;
+          }
+          else if (res) {
+            console.log(res);
+            if (res.msg) {
+              this._logProcessing(res.msg);
+            }
+          }
+        },
+        () => {
+          this._logSuccess("Modified and saved!");
+          this.MOD_IS_MODIFYING = false;
+        });
+      }
+    },
     widthHandler(width, event) {
       // data.orig_attribute.width = parseInt(width);
       console.log(event);
@@ -1422,6 +1469,12 @@ export default {
     toggleNewCheckerBG() {
       this.new_checkerbg_active = !this.new_checkerbg_active;
       console.log("new checkerbg is", this.new_checkerbg_active);
+    },
+    _getSavePath() {
+      let file_name = `${this.fname}.${this.criteria.format}`;
+      let save_path = join(this.save_dir, file_name);
+      console.log(`getSavePath ${save_path}`);
+      return save_path;
     },
     delayConstrain(event) {
       console.log("delay event", event);
@@ -1489,13 +1542,13 @@ export default {
       }
     },
     previewDimensions() {
-    if (this.preview_attribute.width && this.preview_attribute.height) {
-      return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
-    }
-    else {
-      return "";
-    }
-  },
+      if (this.preview_attribute.width && this.preview_attribute.height) {
+        return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
+      }
+      else {
+        return "";
+      }
+    },
     buttonIsFrozen() {
       if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
       else return false;
@@ -1510,15 +1563,6 @@ export default {
         return text;
       }
       else return "";
-    },
-    saveFileName() {
-      return `${this.save_fstem}.${this.criteria.format.toLowerCase()}`;
-    },
-    savePath() {
-      if (this.save_dir && this.save_fstem)
-        return join(this.save_dir, `${this.save_fstem}.${this.criteria.format.toLowerCase()}`);
-      else
-        return "";
     },
   }
 };

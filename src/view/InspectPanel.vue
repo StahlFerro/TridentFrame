@@ -2,7 +2,7 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <div class="inspect-panel-viewbox silver-bordered" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_image_menu_options)"
+        <div class="inspect-panel-viewbox silver-bordered" @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)"
             v-cloak @drop.prevent="helidropFile" @dragover.prevent>
           <div v-if="load_has_error" class="inspect-panel-msgbox">
             <h2 class="is-2 is-crimson"><span class="icon is-large"><i class="fas fa-exclamation-circle fa-2x"></i></span></h2>

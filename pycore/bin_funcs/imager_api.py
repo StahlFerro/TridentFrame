@@ -532,8 +532,8 @@ class ImageMagickAPI:
         stdio.debug(f"extract_unoptimized_gif_frames cmd -> {cmd}")
         stdio.debug(args)
         process = subprocess.run(args, capture_output=True)
-        print(process.stdout)
-        print(process.stderr)
+        # print(process.stdout)
+        # print(process.stderr)
         # process.check_returncode()
         all_frnames = [f"{name}_{str(n).zfill(criteria.pad_count)}.png" for n in range(0, fr_count)]
         fr_paths = [p for p in out_dir.iterdir() if p.name in all_frnames]

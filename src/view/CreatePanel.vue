@@ -246,15 +246,6 @@
                     </div>
                   </td>
                   <td width="16.7%">
-                    <div class="field">
-                      <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
-                      <div class="control">
-                        <input v-model="criteria.start_frame" @keydown="numConstrain($event, true, true)" class="input is-neon-white" 
-                          type="number" min="0" step="1"/>
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%" style="vertical-align: bottom">
                     <label class="checkbox">
                       <input v-model="lock_aspect_ratio" type="checkbox" />
                       Lock aspect ratio
@@ -270,7 +261,8 @@
                     </template>
                     <template v-else>&nbsp;</template>
                   </td>
-                  <td width="16.7%"></td>
+                  <td width="16.7%" style="vertical-align: bottom">
+                  </td>
                 </tr>
                 <tr>
                   <td>
@@ -329,6 +321,13 @@
                     </div>
                   </td>
                   <td>
+                    <div class="field">
+                      <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
+                      <div class="control">
+                        <input v-model="criteria.start_frame" @keydown="numConstrain($event, true, true)" class="input is-neon-white" 
+                          type="number" min="0" step="1"/>
+                      </div>
+                    </div>
                   </td>
                   <td style="vertical-align: bottom">
                     <label class="checkbox" title="Flip the image horizontally">
@@ -380,7 +379,7 @@
                       <div class="control">
                         <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
                           <select v-model="criteria.format">
-                            <option v-for="(item, name, index) in supported_create_extensions" :key="index" :value="name">
+                            <option v-for="(item, name, index) in SUPPORTED_CREATE_EXTENSIONS" :key="index" :value="name">
                               {{ item }}
                             </option>
                             <!-- <option value="GIF">GIF</option>
@@ -1099,7 +1098,7 @@ export default {
         apng_new_color_mode: "RGBA",
       },
       fname: "",
-      supported_create_extensions: SUPPORTED_CREATE_EXTENSIONS,
+      SUPPORTED_CREATE_EXTENSIONS: SUPPORTED_CREATE_EXTENSIONS,
       crt_menuselection: 0,
       image_paths: [],
       sequence_info: [],
@@ -1300,7 +1299,7 @@ export default {
         "gif_opt_criteria": this.gif_opt_criteria,
         "apng_opt_criteria": this.apng_opt_criteria,
       });
-      let preview_filename = `${this.save_fstem}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
+      let preview_filename = `${this.fname}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
       let preview_savepath = join(PREVIEWS_PATH, preview_filename);
       console.log(preview_savepath);
       tridentEngine(["combine_image", this.image_paths, preview_savepath, criteria_pack], (error, res) => {
@@ -1394,13 +1393,17 @@ export default {
     setSaveDirFromDialog(afterSaveCallback) {
       let options = { properties: dir_dialog_props };
       ipcRenderer.invoke('open-dialog', options).then((result) => {
+        if (result.canceled)
+          return;
         let out_dirs = result.filePaths;
         console.log(out_dirs);
         if (out_dirs && out_dirs.length > 0) { 
           this.save_dir = out_dirs[0];
         }
         this._logClear();
-        // this.create_msgbox = "";
+        if (afterSaveCallback) {
+          afterSaveCallback();
+        }
       });
     },
     btnCreateAIMG() {
@@ -1417,7 +1420,7 @@ export default {
           // this.create_msgbox = "File name contains characters that are not allowed"
       }
       else {
-        this.btnSetSavePath(createAnimatedImage);
+        this.setSaveDirFromDialog(this.createAnimatedImage);
       }
     },
     createAnimatedImage() {

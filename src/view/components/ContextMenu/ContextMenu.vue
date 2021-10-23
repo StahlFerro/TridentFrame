@@ -92,10 +92,8 @@ export default {
 
       this.rcmPopper = createPopper(
         this.referenceObject(evt),
-        document.querySelector("#generalRClickMenu"),
-        {
+        document.querySelector("#generalRClickMenu"), {
           placement: "right-start",
-          modifiers: {},
         }
       );
       // Recalculate position
