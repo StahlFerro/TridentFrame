@@ -1,6 +1,7 @@
 import pytest
 import shutil
-from typing import List
+import json
+from typing import List, Dict
 from sys import platform
 from pathlib import Path
 
@@ -15,6 +16,13 @@ def scaffold_temp_dir(tmp_path_factory) -> Path:
 def scaffold_spaced_dir(tmp_path_factory) -> Path:
     tmp_dir = tmp_path_factory.mktemp("TridentFrame's Temporary Images")
     return tmp_dir
+
+
+# @pytest.fixture()
+# def scaffold_spaced_dir(tmp_path) -> Path:
+#     full_tmp_path = tmp_path.joinpath("TridentFrame's Temporary Images")
+#     full_tmp_path.mkdir()
+#     return full_tmp_path
 
 
 @pytest.fixture(scope="session")
@@ -72,13 +80,35 @@ def fx_json_dir(fx_path: Path) -> Path:
 
 
 @pytest.fixture(scope="session")
-def fx_crbundle_001_create_optimized_gif(fx_json_dir: Path):
-    return fx_json_dir.joinpath("crbundle_001_create_optimized_gif.json")
+def fx_crbundle_001_create_optimized_gif_json(fx_json_dir: Path) -> Dict:
+    json_path = fx_json_dir.joinpath("crbundle_001_create_optimized_gif.json")
+    with open(json_path, "r") as f:
+        crpack = json.loads(f.read())
+    return crpack
 
 
 @pytest.fixture(scope="session")
-def fx_crbundle_002_create_optimized_apng(fx_json_dir: Path):
-    return fx_json_dir.joinpath("crbundle_002_create_optimized_apng.json")
+def fx_crbundle_002_create_optimized_apng_json(fx_json_dir: Path) -> Dict:
+    json_path = fx_json_dir.joinpath("crbundle_002_create_optimized_apng.json")
+    with open(json_path, "r") as f:
+        crpack = json.loads(f.read())
+    return crpack
+
+
+@pytest.fixture(scope="session")
+def fx_splitcriteria_001_split_gif_json(fx_json_dir: Path) -> Dict:
+    json_path = fx_json_dir.joinpath("splitcriteria_001_split_gif.json")
+    with open(json_path, "r") as f:
+        crpack = json.loads(f.read())
+    return crpack
+
+
+@pytest.fixture(scope="session")
+def fx_splitcriteria_002_split_gif_json(fx_json_dir: Path) -> Dict:
+    json_path = fx_json_dir.joinpath("splitcriteria_002_split_gif.json")
+    with open(json_path, "r") as f:
+        crpack = json.loads(f.read())
+    return crpack
 
 
 @pytest.fixture(scope="session")

@@ -532,8 +532,8 @@ class ImageMagickAPI:
         stdio.debug(f"extract_unoptimized_gif_frames cmd -> {cmd}")
         stdio.debug(args)
         process = subprocess.run(args, capture_output=True)
-        print(process.stdout)
-        print(process.stderr)
+        # print(process.stdout)
+        # print(process.stderr)
         # process.check_returncode()
         all_frnames = [f"{name}_{str(n).zfill(criteria.pad_count)}.png" for n in range(0, fr_count)]
         fr_paths = [p for p in out_dir.iterdir() if p.name in all_frnames]
@@ -613,21 +613,33 @@ class APNGOptAPI:
             while process.poll() is None:
                 # if process.poll() is not None:
                 # break
+                # print('process-polling...')
                 if process.stdout:
+                    # print(process.stdout)
                     stdout_res = process.stdout.readline().decode("utf-8")
+                    # print('1')
                     stdio.debug(stdout_res.capitalize())
+                    # print('2')
                     if stdout_res and stdout_res not in newline_check and "saving" in stdout_res:
+                        # print('3')
                         out_words = " ".join(
                             stdout_res.translate({ord("\r"): None, ord("\n"): None}).capitalize().split(" ")[3:]
                         )[:-1]
                         out_msg = f"Optimizing frame {out_words}..."
                         stdio.message(out_msg)
                         index += 1
-                if process.stderr:
+                        # print('4')
+                    # print('5')
+                elif process.stderr:
+                    # print('6')
                     stderr_res = process.stderr.readline().decode("utf-8")
+                    # print('7')
                     # if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
                     if stderr_res:
+                        # print('8')
                         stdio.error(stderr_res)
+                    # print('9')
+                # process.communicate('\n')
             # if target_path != out_full_path:
             # target_path = out_full_path
         out_full_path = shutil.move(target_path, out_full_path)

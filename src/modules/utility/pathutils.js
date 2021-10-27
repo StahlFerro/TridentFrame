@@ -9,20 +9,36 @@ const FORBIDDEN_FILENAME_CHARACTERS_LINUX = [
   '/'
 ];
 
+const WIN_VALID_FILENAME_REGEX = new RegExp(/^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)(\..+)?$)[^\x00-\x1f\\?*:\";|/]+$/, "g");
+
+
 const SlashDirection = Object.freeze({
   FORWARD: "forward",
   BACKWARD: "backward"
 })
+
+function _getSystemForbiddenFilenameCharacters() {
+  if (process.platform == "win32")
+    return FORBIDDEN_FILENAME_CHARACTERS_WINDOWS;
+  else if (process.platform == "linux")
+    return FORBIDDEN_FILENAME_CHARACTERS_LINUX;
+}
 
 /**
  * Get list of characters that is forbidden to be used for filenames depending on the current platform
  * @returns {Array} List of forbidden characters/strings
  */
 export function getSystemForbiddenFilenameCharacters() {
-  if (process.platform == "win32")
-    return FORBIDDEN_FILENAME_CHARACTERS_WINDOWS;
-  else if (process.platform == "linux")
-    return FORBIDDEN_FILENAME_CHARACTERS_LINUX;
+  return _getSystemForbiddenFilenameCharacters();
+}
+
+/**
+ * Get forbidden characters to be used for filenames depending on the current platform, as a escaped regex string
+ * @returns {Array} List of forbidden characters/strings
+ */
+function forbiddenFileCharsRegex() {
+  let escapedStr = _getSystemForbiddenFilenameCharacters().map(ch => `\\${ch}`).join("");
+  return escapedStr;
 }
 
 /**
@@ -70,10 +86,11 @@ export function escapeLocalPath(localPath) {
     .replace("#", "%23");
   // else
   //   escapePath = localPath;
-  console.log(localPath);
-  console.log(escapePath);
+  // console.log(localPath);
+  // console.log(escapePath);
   return escapePath;
 }
+
 
 /**
  * Check if string is valid for a file name.
@@ -81,16 +98,24 @@ export function escapeLocalPath(localPath) {
  * @returns {boolean} true if filename is valid, else false.
  */
 export function validateFilename(filename) {
-  let forbidden_string = getSystemForbiddenFilenameCharacters().join();
-  let regex = new RegExp(forbidden_string, 'g');
+  let is_valid = filename.match(WIN_VALID_FILENAME_REGEX);
+  return is_valid;
+  /*
+  let forbidden_string = forbiddenFileCharsRegex();
+  console.log(forbidden_string);
+  let regex = new RegExp(escape(forbidden_string), 'g');
   let is_valid = !filename.match(regex);
   return is_valid;
+  */
 }
+
 
 /**
  * Get the file name without extensions
  * @param {string} filename File name including extension
  */
 export function stem(filename) {
-  return filename.replace(/\.[^/.]+$/, "")
+  let s = filename.replace(/\.[^/.]+$/, "");
+  console.log(`stemming of ${filename} -> ${s}`);
+  return s;
 }

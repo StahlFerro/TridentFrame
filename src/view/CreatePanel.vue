@@ -147,7 +147,7 @@
               <li class="subtab-menu-item is-cyan"
                 v-bind:class="{ 'is-selected': crt_menuselection == 1 }">
                 <a v-on:click="crt_menuselection = 1"
-                  v-bind:class="{ 'is-disabled': criteria.format == 'PNG' }">
+                  v-bind:class="{ 'is-disabled': criteria.format != 'gif' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -157,7 +157,7 @@
               <li class="subtab-menu-item"
                 v-bind:class="{ 'is-selected': crt_menuselection == 2 }">
                 <a v-on:click="crt_menuselection = 2"
-                  v-bind:class="{ 'is-disabled': criteria.format == 'GIF' }">
+                  v-bind:class="{ 'is-disabled': criteria.format != 'png' }">
                   <span class="icon is-large">
                     <i class="far fa-images fa-2x fa-inverse"></i>
                   </span>
@@ -168,296 +168,296 @@
           </aside>
         </div>
         <div class="cpc-right-panel">
-          <div v-show="crt_menuselection == 0">
-            <table class="" width="100%">
-              <tr>
-                <!-- <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="The name of the GIF/APNG">Name</label>
-                    <div class="control">
-                      <input v-model="criteria.name" class="input is-neon-white" type="text" />
-                    </div>
-                  </div>
-                </td> -->
-                <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="The width of the GIF/APNG">Width</label>
-                    <div class="control">
-                      <input 
-                        v-bind:value="criteria.width" 
-                        v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="widthHandler(criteria.width, $event)" 
-                        class="input is-neon-white"
-                        type="number" 
-                        min="1"/>
-                    </div>
-                  </div>
-                </td>
-                <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="The height of the GIF/APNG">Height</label>
-                    <div class="control">
-                      <input
-                        v-bind:value="criteria.height"
-                        v-on:keydown="numConstrain($event, true, true)"
-                        v-on:input="heightHandler(criteria.height, $event)"
-                        class="input is-neon-white"
-                        type="number"
-                        min="1"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td width="16.7%">
-                  <div class="field">
-                    <label
-                      class="label"
-                      title="Which algorithm to use when resizing the image. Default is Bicubic"
-                      >Resize Method</label
-                    >
-                    <div class="control">
-                      <div class="select is-neon-cyan">
-                        <select v-model="criteria.resize_method">
-                          <option
-                            value="BICUBIC"
-                            title="General-use resizing algorithm for most images"
-                          >
-                            Bicubic
-                          </option>
-                          <option
-                            value="NEAREST"
-                            title="Preserve sharp edges. Ideal for pixel art"
-                          >
-                            Nearest
-                          </option>
-                          <option
-                            value="BILINEAR"
-                            title="Similar to Bicubic, but not as smooth"
-                          >
-                            Bilinear
-                          </option>
-                          <option value="BOX">Box</option>
-                          <option value="HAMMING">Hamming</option>
-                          <option value="LANCZOS">Lanczos</option>
-                        </select>
+          <div class="cpc-right-top-panel">
+            <div v-show="crt_menuselection == 0">
+              <table class="" width="100%">
+                <tr>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label" title="The name of the GIF/APNG">Name</label>
+                      <div class="control">
+                        <input v-model="fname" class="input is-neon-white" type="text" />
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td width="16.7%">
-                  <div class="field">
-                    <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
-                    <div class="control">
-                      <input v-model="criteria.start_frame" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" 
-                        type="number" min="0" step="1"/>
-                    </div>
-                  </div>
-                </td>
-                <td width="16.7%" style="vertical-align: bottom">
-                  <label class="checkbox">
-                    <input v-model="lock_aspect_ratio" type="checkbox" />
-                    Lock aspect ratio
-                  </label>
-                  <br />
-                  <template v-if="aspect_ratio && aspect_ratio.text">
-                    <input
-                      v-model="aspect_ratio.text"
-                      class="input is-border-colorless is-paddingless"
-                      style="height: 1.5em"
-                      readonly="readonly"
-                    />
-                  </template>
-                  <template v-else>&nbsp;</template>
-                </td>
-                <td width="16.7%"></td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="field">
-                    <label class="label" title="The time needed to move to the next frame"
-                      >Delay (seconds)</label
-                    >
-                    <div class="control">
-                      <input
-                        v-model="criteria.delay"
-                        v-on:keydown="numConstrain($event, true, false)"
-                        v-on:input="delayConstrain"
-                        class="input is-neon-white"
-                        type="number"
-                        min="0"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="field">
-                    <label class="label"
-                      title="How many frames will be consecutively displayed per second.">Frame rate</label>
-                    <div class="control">
-                      <input
-                        v-model="criteria.fps"
-                        v-on:keydown="numConstrain($event, true, false)"
-                        v-on:input="fpsConstrain"
-                        class="input is-neon-white"
-                        type="number"
-                        min="0"
-                        max="50"
-                        step="0.01"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <div class="field">
-                    <label
-                      class="label"
-                      title="How many times the GIF/APNG will loop. Zero/blank for infinite loop"
-                      >Loop count</label
-                    >
-                    <div class="control">
-                      <input
-                        v-model="criteria.loop_count"
-                        v-on:keydown="numConstrain($event, true, true)"
-                        class="input is-neon-white"
-                        type="number"
-                        min="0"
-                        max="999"
-                        step="1"
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td>
-                </td>
-                <td style="vertical-align: bottom">
-                  <label class="checkbox" title="Flip the image horizontally">
-                    <input v-model="criteria.flip_x" type="checkbox" />
-                    Flip X
-                  </label>
-                  <br />
-                  <label class="checkbox" title="Flip the image vertically">
-                    <input v-model="criteria.flip_y" type="checkbox" />
-                    Flip Y
-                  </label>
-                </td>
-                <td style="vertical-align: bottom">
-                  <label class="checkbox" title="Preserve transparent pixels">
-                    <input v-model="criteria.preserve_alpha" type="checkbox" />
-                    Preserve Alpha
-                  </label>
-                  <br />
-                  <label class="checkbox" title="Reverse the animation">
-                    <input v-model="criteria.is_reversed" type="checkbox" />
-                    Reversed
-                  </label>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="4" style="padding-top: 15px">
-                  <div class="field has-addons">
-                    <div class="control">
-                      <a class="button is-neon-cyan" v-on:click="btnSetSavePath">
-                        <span class="icon is-small">
-                          <i class="fas fa-save"></i>
-                        </span>
-                        <span>Save to</span>
-                      </a>
-                    </div>
-                    <div class="control is-expanded">
-                      <input
-                        v-model="savePath"
-                        class="input is-neon-white"
-                        type="text"
-                        placeholder="Output file"
-                        readonly
-                      />
-                    </div>
-                  </div>
-                </td>
-                <td colspan="1" style="padding-top: 15px">
-                  <div class="field">
-                    <!-- <label class="label">Format</label> -->
-                    <div class="control">
-                      <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
-                        <select v-model="criteria.format">
-                          <option value="GIF">GIF</option>
-                          <option value="PNG">APNG</option>
-                        </select>
+                  </td>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label" title="The width of the GIF/APNG">Width</label>
+                      <div class="control">
+                        <input 
+                          v-bind:value="criteria.width" 
+                          @keydown="numConstrain($event, true, true)"
+                          @input="widthHandler(criteria.width, $event)" 
+                          class="input is-neon-white"
+                          type="number" 
+                          min="1"/>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td colspan="1" style="padding-top: 15px">
-                  <div class="field">
-                    <div class="control">
-                      <a
-                        v-on:click="btnCreateAIMG"
-                        class="button is-neon-cyan"
-                        v-bind:class="{
-                          'is-loading': CRT_IS_CREATING == true,
-                          'non-interactive': isButtonFrozen,
-                        }">CREATE</a>
+                  </td>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label class="label" title="The height of the GIF/APNG">Height</label>
+                      <div class="control">
+                        <input
+                          v-bind:value="criteria.height"
+                          @keydown="numConstrain($event, true, true)"
+                          @input="heightHandler(criteria.height, $event)"
+                          class="input is-neon-white"
+                          type="number"
+                          min="1"
+                        />
+                      </div>
                     </div>
-                  </div>
-                </td>
-              </tr>
-              <tr>
-                <td colspan="6">
-                  <input
-                    v-model="create_msgbox"
-                    type="text"
-                    class="input is-left-paddingless is-border-colorless"
-                    readonly="readonly"
-                  />
-                </td>
-              </tr>
-            </table>
+                  </td>
+                  <td width="16.7%">
+                    <div class="field">
+                      <label
+                        class="label"
+                        title="Which algorithm to use when resizing the image. Default is Bicubic"
+                        >Resize Method</label
+                      >
+                      <div class="control">
+                        <div class="select is-neon-cyan">
+                          <select v-model="criteria.resize_method">
+                            <option
+                              value="BICUBIC"
+                              title="General-use resizing algorithm for most images"
+                            >
+                              Bicubic
+                            </option>
+                            <option
+                              value="NEAREST"
+                              title="Preserve sharp edges. Ideal for pixel art"
+                            >
+                              Nearest
+                            </option>
+                            <option
+                              value="BILINEAR"
+                              title="Similar to Bicubic, but not as smooth"
+                            >
+                              Bilinear
+                            </option>
+                            <option value="BOX">Box</option>
+                            <option value="HAMMING">Hamming</option>
+                            <option value="LANCZOS">Lanczos</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td width="16.7%">
+                    <label class="checkbox">
+                      <input v-model="lock_aspect_ratio" type="checkbox" />
+                      Lock aspect ratio
+                    </label>
+                    <br />
+                    <template v-if="aspect_ratio && aspect_ratio.text">
+                      <input
+                        v-model="aspect_ratio.text"
+                        class="input is-border-colorless is-paddingless"
+                        style="height: 1.5em"
+                        readonly="readonly"
+                      />
+                    </template>
+                    <template v-else>&nbsp;</template>
+                  </td>
+                  <td width="16.7%" style="vertical-align: bottom">
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div class="field">
+                      <label class="label" title="The time needed to move to the next frame"
+                        >Delay (seconds)</label
+                      >
+                      <div class="control">
+                        <input
+                          v-model="criteria.delay"
+                          v-on:keydown="numConstrain($event, true, false)"
+                          v-on:input="delayConstrain"
+                          class="input is-neon-white"
+                          type="number"
+                          min="0"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="field">
+                      <label class="label"
+                        title="How many frames will be consecutively displayed per second.">Frame rate</label>
+                      <div class="control">
+                        <input
+                          v-model="criteria.fps"
+                          v-on:keydown="numConstrain($event, true, false)"
+                          v-on:input="fpsConstrain"
+                          class="input is-neon-white"
+                          type="number"
+                          min="0"
+                          max="50"
+                          step="0.01"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="field">
+                      <label
+                        class="label"
+                        title="How many times the GIF/APNG will loop. Zero/blank for infinite loop"
+                        >Loop count</label
+                      >
+                      <div class="control">
+                        <input
+                          v-model="criteria.loop_count"
+                          v-on:keydown="numConstrain($event, true, true)"
+                          class="input is-neon-white"
+                          type="number"
+                          min="0"
+                          max="999"
+                          step="1"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="field">
+                      <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
+                      <div class="control">
+                        <input v-model="criteria.start_frame" @keydown="numConstrain($event, true, true)" class="input is-neon-white" 
+                          type="number" min="0" step="1"/>
+                      </div>
+                    </div>
+                  </td>
+                  <td style="vertical-align: bottom">
+                    <label class="checkbox" title="Flip the image horizontally">
+                      <input v-model="criteria.flip_x" type="checkbox" />
+                      Flip X
+                    </label>
+                    <br />
+                    <label class="checkbox" title="Flip the image vertically">
+                      <input v-model="criteria.flip_y" type="checkbox" />
+                      Flip Y
+                    </label>
+                  </td>
+                  <td style="vertical-align: bottom">
+                    <label class="checkbox" title="Preserve transparent pixels">
+                      <input v-model="criteria.preserve_alpha" type="checkbox" />
+                      Preserve Alpha
+                    </label>
+                    <br />
+                    <label class="checkbox" title="Reverse the animation">
+                      <input v-model="criteria.is_reversed" type="checkbox" />
+                      Reversed
+                    </label>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="4" style="padding-top: 15px">
+                    <div class="field has-addons">
+                      <div class="control">
+                        <a class="button is-neon-cyan" v-on:click="btnSetSavePath">
+                          <span class="icon is-small">
+                            <i class="fas fa-save"></i>
+                          </span>
+                          <span>Save to</span>
+                        </a>
+                      </div>
+                      <div class="control is-expanded">
+                        <input
+                          v-model="save_dir"
+                          class="input is-neon-white"
+                          type="text"
+                          placeholder="Output folder"
+                        />
+                      </div>
+                    </div>
+                  </td>
+                  <td colspan="1" style="padding-top: 15px">
+                    <div class="field">
+                      <!-- <label class="label">Format</label> -->
+                      <div class="control">
+                        <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
+                          <select v-model="criteria.format">
+                            <option v-for="(item, name, index) in SUPPORTED_CREATE_EXTENSIONS" :key="index" :value="name">
+                              {{ item }}
+                            </option>
+                            <!-- <option value="GIF">GIF</option>
+                            <option value="PNG">APNG</option> -->
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td colspan="1" style="padding-top: 15px">
+                    <div class="field">
+                      <div class="control">
+                        <a
+                          v-on:click="btnCreateAIMG"
+                          class="button is-neon-cyan"
+                          v-bind:class="{
+                            'is-loading': CRT_IS_CREATING == true,
+                            'non-interactive': isButtonFrozen,
+                          }">CREATE</a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="6">
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <div v-show="crt_menuselection == 1">
+              <table
+                class="mod-new-control-table is-hpaddingless medium-size-label"
+                width="100%"
+              >
+                <GIFOptimizationRow
+                  :is_optimized.sync="gif_opt_criteria.is_optimized"
+                  :optimization_level.sync="gif_opt_criteria.optimization_level"
+                  :is_lossy.sync="gif_opt_criteria.is_lossy"
+                  :lossy_value.sync="gif_opt_criteria.lossy_value"
+                  :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
+                  :color_space.sync="gif_opt_criteria.color_space"
+                  :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+                  :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
+                  :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
+                  :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
+                />
+                <!-- <GIFUnoptimizationRow
+                        :is_optimized.sync="is_optimized"
+                        :is_lossy.sync="is_lossy"
+                        :is_reduced_color.sync="is_reduced_color"
+                        :is_unoptimized.sync="is_unoptimized"
+                      /> -->
+              </table>
+            </div>
+            <div v-show="crt_menuselection == 2">
+              <table
+                class="mod-new-control-table is-hpaddingless medium-size-label"
+                width="100%"
+              >
+                <APNGOptimizationRow
+                  :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
+                  :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
+                  :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
+                  :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                  :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
+                  :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
+                  :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+                />
+                <!-- <APNGUnoptimizationRow
+                        :apng_is_optimized.sync="apng_is_optimized"
+                        :apng_is_lossy.sync="apng_is_lossy"
+                        :apng_is_unoptimized.sync="apng_is_unoptimized"
+                      /> -->
+              </table>
+            </div>
           </div>
-          <div v-show="crt_menuselection == 1">
-            <table
-              class="table mod-new-control-table is-hpaddingless medium-size-label"
-              width="100%"
-            >
-              <GIFOptimizationRow
-                :is_optimized.sync="gif_opt_criteria.is_optimized"
-                :optimization_level.sync="gif_opt_criteria.optimization_level"
-                :is_lossy.sync="gif_opt_criteria.is_lossy"
-                :lossy_value.sync="gif_opt_criteria.lossy_value"
-                :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
-                :color_space.sync="gif_opt_criteria.color_space"
-                :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
-                :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
-                :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
-                :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
-              />
-              <!-- <GIFUnoptimizationRow
-                      :is_optimized.sync="is_optimized"
-                      :is_lossy.sync="is_lossy"
-                      :is_reduced_color.sync="is_reduced_color"
-                      :is_unoptimized.sync="is_unoptimized"
-                    /> -->
-            </table>
-          </div>
-          <div v-show="crt_menuselection == 2">
-            <table
-              class="table mod-new-control-table is-hpaddingless medium-size-label"
-              width="100%"
-            >
-              <APNGOptimizationRow
-                :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
-                :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
-                :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
-                :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
-                :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
-                :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
-                :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
-              />
-              <!-- <APNGUnoptimizationRow
-                      :apng_is_optimized.sync="apng_is_optimized"
-                      :apng_is_lossy.sync="apng_is_lossy"
-                      :apng_is_unoptimized.sync="apng_is_unoptimized"
-                    /> -->
-            </table>
+          <div class="cpc-right-bottom-panel">
+            <StatusBar :bus="statusBarBus"></StatusBar>
           </div>
         </div>
       </div>
@@ -469,28 +469,38 @@
 import { ipcRenderer } from 'electron';
 import lodashClonedeep from 'lodash.clonedeep';
 import { dirname, basename, join } from "path";
+import { access, accessSync, constants } from "fs";
+const SUPPORTED_CREATE_EXTENSIONS = {
+  'gif': 'GIF',
+  'png': 'APNG',
+}
 
 import { tridentEngine } from "../modules/streams/trident_engine";
 import { numConstrain } from "../modules/events/constraints";
-import { escapeLocalPath, stem } from "../modules/utility/pathutils";
+import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { formatBytes, randString } from "../modules/utility/stringutils";
 import { gcd } from "../modules/utility/calculations";
 import { PREVIEWS_PATH } from "../modules/constants/appconfig";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
 
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
+import StatusBar from "./components/StatusBar.vue";
+
 import { createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
+import Vue from 'vue';
 
+/*
 let data = {
   criteria: {
     // name: "",
     fps: "",
     delay: "",
-    format: "GIF",
+    format: "gif",
     is_reversed: false,
     preserve_alpha: false,
     flip_x: false,
@@ -524,6 +534,8 @@ let data = {
     apng_convert_color_mode: false,
     apng_new_color_mode: "RGBA",
   },
+  fname: "",
+  supported_create_extensions: SUPPORTED_CREATE_EXTENSIONS,
   crt_menuselection: 0,
   image_paths: [],
   sequence_info: [],
@@ -554,11 +566,15 @@ let data = {
 
   popperIsVisible: false,
 };
+*/
 
-let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
+let extension_filters = [{ name: "Images", extensions: Object.keys(SUPPORTED_CREATE_EXTENSIONS) }];
 let img_dialog_props = ["openfile"];
 let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
+
+
+/*
 
 function toggleLoadButtonAnim(ops, state = false) {
   if (ops == "insert") {
@@ -647,7 +663,8 @@ function btnLoadImages(ops) {
           console.log(info);
           renderSequence(info, { operation: ops });
           data.total_size = `Total size: ${info.total_size}`;
-          data.save_fstem = stem(data.save_fstem || info.name);
+          // data.save_fstem = stem(data.save_fstem || info.name);
+          data.fname = data.fname || info.name
           data.criteria.width = data.criteria.width || info.width;
           data.criteria.height = data.criteria.height || info.height;
           data.criteria.fps = data.criteria.fps || 50;
@@ -679,27 +696,24 @@ function renderSequence(pyinfo, options) {
     // data.image_paths = pyinfo.sequence;
     // data.sequence_info = pyinfo.sequence_info;
   // } else if (["insert", "smart_insert"].includes(operation)) {
-    console.log("BB");
-    let image_paths = []
-    let sequence_info = []
-    /*
-    if (operation == "insert") {
-      image_paths.push(pyinfo.general_info.absolute_url.value);
-      sequence_info.push(pyinfo.general_info)
-    }
-    else if (operation == "smart_insert") {
-      image_paths.push(...pyinfo.sequence);
-      sequence_info.push(...pyinfo.sequence_info);
-    }
-    */
-    if (data.insert_index) {
-      data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
-      data.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
-    } else {
-      data.image_paths.push(...pyinfo.sequence);
-      data.sequence_info.push(...pyinfo.sequence_info);
-    }
-  // }
+  console.log("BB");
+  let image_paths = []
+  let sequence_info = []
+  if (operation == "insert") {
+    image_paths.push(pyinfo.general_info.absolute_url.value);
+    sequence_info.push(pyinfo.general_info)
+  }
+  else if (operation == "smart_insert") {
+    image_paths.push(...pyinfo.sequence);
+    sequence_info.push(...pyinfo.sequence_info);
+  }
+  if (data.insert_index) {
+    data.image_paths.splice(data.insert_index, 0, ...pyinfo.sequence);
+    data.sequence_info.splice(data.insert_index, 0, ...pyinfo.sequence_info);
+  } else {
+    data.image_paths.push(...pyinfo.sequence);
+    data.sequence_info.push(...pyinfo.sequence_info);
+  }
 }
 
 function removeFrame(index) {
@@ -716,11 +730,24 @@ function singleSaveOption() {
   }
 }
 
-function setSavePath(afterSaveCallback) {
+function setSaveDirFromDialog(afterSaveCallback) {
+  let options = { properties: dir_dialog_props };
+  ipcRenderer.invoke('open-dialog', options).then((result) => {
+    let out_dirs = result.filePaths;
+    console.log(out_dirs);
+    if (out_dirs && out_dirs.length > 0) { 
+      data.save_dir = out_dirs[0];
+    }
+    data.create_msgbox = "";
+  });
+}
+
+function setSavePathFromDialog(afterSaveCallback) {
   ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
     if (result.canceled) return;
     console.log(result);
     let save_path = result.filePath;
+    // data.savePathInput = save_path;
     // data.save_path = save_path;
     data.save_dir = dirname(save_path);
     data.save_fstem = stem(basename(save_path));
@@ -731,7 +758,8 @@ function setSavePath(afterSaveCallback) {
 }
 
 function btnSetSavePath() {
-  setSavePath();
+  // setSavePathFromDialog();
+  setSaveDirFromDialog();
 }
 
 
@@ -843,12 +871,22 @@ function btnCreateAIMG() {
     data.create_msgbox = "Please load at least 2 images!";
     return;
   }
-  if (savePath()) {
-    createAnimatedImage();
+  if (data.save_dir) {
+    if (validateFilename(data.fname))
+      createAnimatedImage();
+    else
+      data.create_msgbox = "File name contains characters that are not allowed"
   }
   else {
     btnSetSavePath(createAnimatedImage);
   }
+}
+
+function getSavePath() {
+  let file_name = `${data.fname}.${data.criteria.format}`;
+  let save_path = join(data.save_dir, file_name);
+  console.log(`getSavePath ${save_path}`);
+  return save_path;
 }
 
 function createAnimatedImage() {
@@ -873,14 +911,14 @@ function createAnimatedImage() {
       "gif_opt_criteria": data.gif_opt_criteria,
       "apng_opt_criteria": data.apng_opt_criteria,
     });
-    tridentEngine(["combine_image", data.image_paths, savePath(), criteria_pack], (error, res) => {
+    tridentEngine(["combine_image", data.image_paths, getSavePath(), criteria_pack], (error, res) => {
       if (error) {
         try {
           data.create_msgbox = error;
           data.CRT_IS_CREATING = false;
         }
         catch (e) {
-          data.split_msgbox = error;
+          data.create_msgbox = error;
         }
       } else if (res) {
         console.log(`res -> ${res}`);
@@ -907,13 +945,6 @@ function computeTotalSequenceSize() {
 
 function saveFileName() {
   return `${data.save_fstem}.${data.criteria.format.toLowerCase()}`;
-}
-
-function savePath() {
-  if (data.save_dir && data.save_fstem)
-    return join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
-  else
-    return "";
 }
 
 function btnToggleCheckerBG() {
@@ -1011,55 +1042,608 @@ function fpsConstrain(event) {
   }
 }
 
-function sequenceCounter() {
-  if (data.sequence_info.length > 0) {
-    return `${data.sequence_info.length} images`;
-  } else return "";
-}
-
 function previewPathCacheBreaker() {
   // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
   let cb_url = `${data.preview_path}`;
   console.log("Cache breaker url", cb_url);
   data.preview_path_cb = cb_url;
 }
-
-window.onresize = closeLoadPopper;
+*/
 
 export default {
+  created() {
+    window.addEventListener("resize", this.closeLoadPopper);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.closeLoadPopper);
+  },
   data: function () {
-    return data;
+    return {
+      criteria: {
+        // name: "",
+        fps: "",
+        delay: "",
+        format: "gif",
+        is_reversed: false,
+        preserve_alpha: false,
+        flip_x: false,
+        flip_y: false,
+        width: "",
+        height: "",
+        resize_method: "BICUBIC",
+        loop_count: "",
+        start_frame: "",
+        rotation: 0,
+      },
+      gif_opt_criteria: {
+        is_optimized: false,
+        optimization_level: "1",
+        is_lossy: false,
+        lossy_value: "",
+        is_reduced_color: false,
+        color_space: "",
+        is_unoptimized: false,
+        is_dither_alpha: false,
+        dither_alpha_method: "SCREENDOOR",
+        dither_alpha_threshold: 50,
+      },
+      apng_opt_criteria: {
+        apng_is_optimized: false,
+        apng_optimization_level: "1",
+        apng_is_lossy: false,
+        apng_lossy_value: "",
+        apng_is_unoptimized: false,
+        apng_preconvert_rgba: false,
+        apng_convert_color_mode: false,
+        apng_new_color_mode: "RGBA",
+      },
+      fname: "",
+      SUPPORTED_CREATE_EXTENSIONS: SUPPORTED_CREATE_EXTENSIONS,
+      crt_menuselection: 0,
+      image_paths: [],
+      sequence_info: [],
+      latest_load_count: 0,
+      save_fstem: "",
+      save_dir: "",
+      insert_index: "",
+      total_size: "",
+      orig_width: "",
+      old_width: "",
+      orig_height: "",
+      old_height: "",
+      outdir: "",
+      preview_path: "",
+      preview_path_cb: "",
+      preview_info: "",
+      aspect_ratio: "",
+      lock_aspect_ratio: false,
+
+      create_msgbox: "",
+      // sequence_counter: "",
+      checkerbg_active: false,
+      CRT_INSERT_LOAD: false,
+      CRT_SMARTINSERT_LOAD: false,
+      CRT_REPLACE_LOAD: false,
+      CRT_IS_LOADING: false,
+      CRT_IS_PREVIEWING: false,
+      CRT_IS_CREATING: false,
+
+      popperIsVisible: false,
+
+      statusBarBus: new Vue(),
+    };
   },
   components: {
     GIFOptimizationRow,
     GIFUnoptimizationRow,
     APNGOptimizationRow,
     APNGUnoptimizationRow,
+    StatusBar,
   },
   methods: {
-    btnToggleLoadPopper: btnToggleLoadPopper,
-    closeLoadPopper: closeLoadPopper,
-    btnLoadImages: btnLoadImages,
-    removeFrame: removeFrame,
-    btnClearAll: btnClearAll,
-    btnPreviewAIMG: btnPreviewAIMG,
-    btnSetSavePath: btnSetSavePath,
-    btnCreateAIMG: btnCreateAIMG,
-    btnToggleCheckerBG: btnToggleCheckerBG,
+    toggleLoadButtonAnim(ops, state = false) {
+      if (ops == "insert") {
+        this.CRT_INSERT_LOAD = state;
+      } else if (ops == "smart_insert") {
+        this.CRT_SMARTINSERT_LOAD = state;
+      } else if (ops == "replace") {
+        this.CRT_REPLACE_LOAD = state;
+      }
+    },
+    btnToggleLoadPopper() {
+      if (!this.popperIsVisible) {
+      let popper = document.querySelector("#crtLoadPopper");
+      let button = document.querySelector("#addPopperBtn");
+      this.popper = createPopper(button, popper, {
+        placement: 'top-start',
+      });
+      console.log("btnToggleLoadPopper");
+      this.popperIsVisible = true;
+      }
+      else {
+        this.popperIsVisible = false;
+      }
+    },
+    closeLoadPopper(event) {
+      console.log(`closeLoadPopper ${this.popperIsVisible}, ${this.popper}`);
+      console.log(event);
+      if (this.popperIsVisible) {
+        this.popperIsVisible = false;
+      }
+    },
+    btnLoadImages(ops) {
+      console.log("crt load image with ops:", ops);
+      let props = ops == "replace" ? imgs_dialog_props : img_dialog_props;
+      let cmd_args = [];
+      switch (ops) {
+        case "insert":
+          // Add one image uses inspect-many instead of inspect-one because of the different data structure returned.
+          // inspect-one is suited for singular file inspection, while inspect-many can support 1 to n amount of images.
+          cmd_args.push("inspect_many"); break;
+        case "smart_insert":
+          cmd_args.push("inspect_smart"); break;
+        case "replace":
+          cmd_args.push("inspect_many"); break;
+      }
+      console.log("obtained props", props);
+      var options = {
+        filters: extension_filters,
+        properties: props,
+      };
+
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let img_paths = result.filePaths;
+        console.log(img_paths);
+        if (img_paths === undefined || img_paths.length == 0) {
+          return;
+        }
+
+        this.CRT_IS_LOADING = true;
+        this.toggleLoadButtonAnim(ops, true);
+
+        cmd_args.push(img_paths)
+
+        tridentEngine(cmd_args, (error, res) => {
+          if (error) {
+            try {
+              this._logError(error);
+            }
+            catch (e) {
+              this._logError(error);
+            }
+            this.CRT_IS_LOADING = false;
+            this.toggleLoadButtonAnim(ops, false);
+          } else if (res) {
+            if (res && res.msg) {
+              this._logProcessing(res.msg);
+            } else if (res && res.data) {
+              let info = res.data;
+              console.log("sequence info");
+              console.log(info.sequence_info);
+              console.log(info);
+              this._renderSequence(info, { operation: ops });
+              this.total_size = `Total size: ${info.total_size}`;
+              // data.save_fstem = stem(data.save_fstem || info.name);
+              this.fname = this.fname || info.name
+              this.criteria.width = this.criteria.width || info.width;
+              this.criteria.height = this.criteria.height || info.height;
+              this.criteria.fps = this.criteria.fps || 50;
+              this.criteria.delay = this.criteria.delay || 0.02;
+              this.orig_width = info.width;
+              this.orig_height = info.height;
+              this.latest_load_count = info.total;
+              this._logSuccess(`Loaded ${this.latest_load_count} images`);
+              this._updateAspectRatio(this.criteria.width, this.criteria.height);
+              this.CRT_IS_LOADING = false;
+              this.toggleLoadButtonAnim(ops, false);
+              this.lock_aspect_ratio = true;
+            }
+          }
+        });
+      });
+    },
+    _renderSequence(pyinfo, options) {
+      let operation = options.operation;
+      // if (operation == "replace") {
+        // console.log("AA");
+        // data.image_paths = pyinfo.sequence;
+        // data.sequence_info = pyinfo.sequence_info;
+      // } else if (["insert", "smart_insert"].includes(operation)) {
+        console.log("BB");
+        let image_paths = []
+        let sequence_info = []
+        /*
+        if (operation == "insert") {
+          image_paths.push(pyinfo.general_info.absolute_url.value);
+          sequence_info.push(pyinfo.general_info)
+        }
+        else if (operation == "smart_insert") {
+          image_paths.push(...pyinfo.sequence);
+          sequence_info.push(...pyinfo.sequence_info);
+        }
+        */
+        if (this.insert_index) {
+          this.image_paths.splice(this.insert_index, 0, ...pyinfo.sequence);
+          this.sequence_info.splice(this.insert_index, 0, ...pyinfo.sequence_info);
+        } else {
+          this.image_paths.push(...pyinfo.sequence);
+          this.sequence_info.push(...pyinfo.sequence_info);
+        }
+      // }
+    },
+    _setMinimalDimensions() {
+      if (this.criteria.width == 0)
+        this.criteria.width = 1;
+      if (this.criteria.height == 0)
+        this.criteria.height = 1;
+    },
+    previewAIMG() {
+      console.log("preview called");
+      this._logClear();
+      if (this.sequence_info.length < 2) {
+        // this.create_msgbox = "Please load at least 2 images!";
+        this._logError("Please load at least 2 images!");
+        return;
+      }
+      this._setMinimalDimensions();
+      // let validator = validateFilename(data.criteria.name);
+      // if (!validator.valid) {
+      //   console.error(validator.msg);
+      //   data.create_msgbox = validator.msg;
+      //   return;
+      // }
+      this.CRT_IS_PREVIEWING = true;
+      // console.log(this);
+      let criteria_pack = lodashClonedeep({
+        "criteria": this.criteria,
+        "gif_opt_criteria": this.gif_opt_criteria,
+        "apng_opt_criteria": this.apng_opt_criteria,
+      });
+      let preview_filename = `${this.fname}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
+      let preview_savepath = join(PREVIEWS_PATH, preview_filename);
+      console.log(preview_savepath);
+      tridentEngine(["combine_image", this.image_paths, preview_savepath, criteria_pack], (error, res) => {
+        if (error) {
+          // console.error(error);
+          // let error_data = JSON.parse(error);
+          this._logError(error)
+          this.CRT_IS_PREVIEWING = false;
+        } else if (res) {
+          if (res.msg) {
+            this._logProcessing(res.msg);
+            // this.create_msgbox = res.msg;
+          }
+          if (res.preview_path) {
+            this.preview_path = res.preview_path;
+            this._previewPathCacheBreaker();
+          }
+        }},
+        () => tridentEngine(["inspect_one", this.preview_path], (error, info) => {
+          if (error) {
+            console.error(error);
+            this.CRT_IS_PREVIEWING = false;
+          } else if (info) {
+            let inspectionData = info.data;
+            console.log("preview inspect");
+            console.log(inspectionData);
+            this.preview_info = inspectionData;
+            this._logSuccess("Previewed!");
+            this.CRT_IS_PREVIEWING = false;
+          }
+        })
+      );
+    },
+    _previewPathCacheBreaker() {
+      // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+      let cb_url = `${this.preview_path}`;
+      console.log("Cache breaker url", cb_url);
+      this.preview_path_cb = cb_url;
+    },
+    removeFrame(index) {
+      this.image_paths.splice(index, 1);
+      this.sequence_info.splice(index, 1);
+    },
+    btnClearAll() {
+      this.clearSequence();
+      this.clearPreviewAIMG();
+      this.clearAuxInfo();
+      this.clearFields();
+      this.lock_aspect_ratio = false;
+    },
+    clearSequence() {
+      this.image_paths = [];
+      this.sequence_info = [];
+      this.save_fstem = "";
+    },
+    clearPreviewAIMG() {
+      this.preview_path = "";
+      this.preview_path_cb = "";
+      this.preview_info = "";
+    },
+    clearAuxInfo() {
+      this.total_size = "";
+      this.orig_width = "";
+      this.old_width = "";
+      this.orig_height = "";
+      this.old_height = "";
+      this._logClear();
+      // this.create_msgbox = "";
+      let empty_aspect_ratio = {
+        w_ratio: "",
+        h_ratio: "",
+        text: "",
+      };
+      this.aspect_ratio = empty_aspect_ratio;
+    },
+    clearFields() {
+      this.criteria.name = "";
+      this.criteria.delay = "";
+      this.criteria.fps = "";
+      this.criteria.loop_count = "";
+      this.criteria.width = "";
+      this.criteria.height = "";
+    },
+    btnPreviewAIMG() {
+      this.previewAIMG();
+    },
+    btnSetSavePath() {
+      // setSavePathFromDialog();
+      this.setSaveDirFromDialog();
+    },
+    setSaveDirFromDialog(afterSaveCallback) {
+      let options = { properties: dir_dialog_props };
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        if (result.canceled)
+          return;
+        let out_dirs = result.filePaths;
+        console.log(out_dirs);
+        if (out_dirs && out_dirs.length > 0) { 
+          this.save_dir = out_dirs[0];
+        }
+        this._logClear();
+        if (afterSaveCallback) {
+          afterSaveCallback();
+        }
+      });
+    },
+    btnCreateAIMG() {
+      if (this.sequence_info.length < 2) {
+        this._logError("please load at least 2 messages!");
+        // this.create_msgbox = "Please load at least 2 images!";
+        return;
+      }
+      if (this.save_dir) {
+        if (validateFilename(this.fname))
+          this.createAnimatedImage();
+        else
+          this._logError("File name contains characters that are not allowed");
+          // this.create_msgbox = "File name contains characters that are not allowed"
+      }
+      else {
+        this.setSaveDirFromDialog(this.createAnimatedImage);
+      }
+    },
+    createAnimatedImage() {
+      let proceed_create = true;
+      this._logClear();
+      // this.create_msgbox = "";
+      this._setMinimalDimensions();
+      // if (fileExists(data.save_path)) {
+      //   let WINDOW = remote.getCurrentWindow();
+      //   let options = {
+      //     buttons: ["Yes", "Cancel"],
+      //     message:
+      //       "A file with the same name already exists in the output folder. Do you want to override it?",
+      //   };
+      //   let response = dialog.showMessageBoxSync(WINDOW, options);
+      //   if (response == 1) proceed_create = false;
+      // }
+
+      if (proceed_create) {
+        this.CRT_IS_CREATING = true;
+        let criteria_pack = lodashClonedeep({
+          "criteria": this.criteria,
+          "gif_opt_criteria": this.gif_opt_criteria,
+          "apng_opt_criteria": this.apng_opt_criteria,
+        });
+        tridentEngine(["combine_image", this.image_paths, this._getSavePath(), criteria_pack], (error, res) => {
+          if (error) {
+            try {
+              this._logError(error);
+              // this.create_msgbox = error;
+              this.CRT_IS_CREATING = false;
+            }
+            catch (e) {
+              this._logError(e);
+              // this.create_msgbox = error;
+            }
+          } else if (res) {
+            console.log(`res -> ${res}`);
+            if (res) {
+              console.log(res);
+              if (res.msg) {
+                this._logProcessing(res.msg);
+                // this.create_msgbox = res.msg;
+              }
+            }
+          }
+        },
+        () => {
+          this._logSuccess(`${this.criteria.format.toUpperCase()} created!`);
+          // this.create_msgbox = `${this.criteria.format.toUpperCase()} created!`;
+          this.CRT_IS_CREATING = false;
+        });
+      }
+    },
+    btnToggleCheckerBG() {
+      this.checkerbg_active = !this.checkerbg_active;
+      console.log("now checkerbg is", this.checkerbg_active);
+    },
+    _getSavePath() {
+      let file_name = `${this.fname}.${this.criteria.format}`;
+      let save_path = join(this.save_dir, file_name);
+      console.log(`getSavePath ${save_path}`);
+      return save_path;
+    },
     numConstrain: numConstrain,
-    widthHandler: widthHandler,
-    heightHandler: heightHandler,
-    delayConstrain: delayConstrain,
-    fpsConstrain: fpsConstrain,
-    removeFrame: removeFrame,
+    widthHandler(width, event) {
+      this.old_width = parseInt(width);
+      let newWidth = event.target.value;
+      this.criteria.width = parseInt(newWidth);
+      if (this.lock_aspect_ratio && this.aspect_ratio.h_ratio > 0) {
+        // Change height if lock_aspect_ratio is true and height is not 0
+        let raHeight = Math.round(
+          (newWidth / this.aspect_ratio.w_ratio) * this.aspect_ratio.h_ratio
+        );
+        this.criteria.height = raHeight > 0 ? parseInt(raHeight) : "";
+      } else {
+        this._updateAspectRatio(this.criteria.width, this.criteria.height);
+      }
+    },
+    heightHandler(height, event) {
+      this.old_height = parseInt(height);
+      let newHeight = event.target.value;
+      this.criteria.height = parseInt(newHeight);
+      if (this.lock_aspect_ratio && this.aspect_ratio.w_ratio > 0) {
+        let raWidth = Math.round(
+          (newHeight / this.aspect_ratio.h_ratio) * this.aspect_ratio.w_ratio
+        );
+        console.log(raWidth);
+        this.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
+      } else {
+        this._updateAspectRatio(this.criteria.width, this.criteria.height);
+      }
+    },
+    _updateAspectRatio(width, height) {
+      if (this.criteria.width && this.criteria.height) {
+        console.log("uAR", width, height);
+        let divisor = gcd(width, height);
+        let w_ratio = width / divisor;
+        let h_ratio = height / divisor;
+        let ARData = {
+          w_ratio: w_ratio,
+          h_ratio: h_ratio,
+          text: `${w_ratio}:${h_ratio}`,
+        };
+        console.log(ARData);
+        this.aspect_ratio = ARData;
+      }
+    },
+    delayConstrain(event) {
+      console.log("delay event", event);
+      let value = event.target.value;
+      if (value && value.includes(".")) {
+        let numdec = value.split(".");
+        console.log("numdec", numdec);
+        let precision = 2;
+        if (this.criteria.format == "GIF") {
+          precision = GIF_DELAY_DECIMAL_PRECISION;
+        } else if (this.criteria.format == "PNG") {
+          precision = APNG_DELAY_DECIMAL_PRECISION;
+        }
+        if (numdec[1].length > precision) {
+          let decs = numdec[1].substring(0, precision);
+          console.log("decs limit triggered", decs);
+          this.criteria.delay = `${numdec[0]}.${decs}`;
+        }
+      }
+      this.criteria.fps = Math.round(1000 / this.criteria.delay) / 1000;
+    },
+    fpsConstrain(event) {
+      console.log("fps event", event);
+      let value = event.target.value;
+      if (value) {
+        let mult = 100;
+        if (this.criteria.format == "GIF") {
+          mult = 100;
+        } else if (this.criteria.format == "PNG") {
+          mult = 1000;
+        }
+        this.criteria.delay = Math.round(mult / this.criteria.fps) / mult;
+      }
+    },
+    _logClear() {
+      this.statusBarBus.$emit("logClear");
+    },
+    _logProcessing(message) {
+      this.statusBarBus.$emit("logProcessing", message);
+    },
+    _logMessage(message) {
+      this.statusBarBus.$emit("logMessage", message);
+    },
+    _logSuccess(message) {
+      this.statusBarBus.$emit("logSuccess", message);
+    },
+    _logWarning(message) {
+      this.statusBarBus.$emit("logWarning", message);
+    },
+    _logError(message) {
+      this.statusBarBus.$emit("logError", message);
+    },
     escapeLocalPath: escapeLocalPath,
   },
   computed: {
-    isButtonFrozen: isButtonFrozen,
-    sequenceCounter: sequenceCounter,
-    computeTotalSequenceSize: computeTotalSequenceSize,
-    saveFileName: saveFileName,
-    savePath: savePath,
+    isButtonFrozen() {
+      if (this.CRT_IS_LOADING || this.CRT_IS_PREVIEWING || this.CRT_IS_CREATING) return true;
+      else return false;
+    },
+    sequenceCounter() {
+      if (this.sequence_info.length > 0) {
+        return `${this.sequence_info.length} images`;
+      } else return "";
+    },
+    computeTotalSequenceSize() {
+      console.log("computeTotalSequenceSize");
+      console.log(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
+      return formatBytes(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
+    },
+    /*
+    savePathInput: {
+      get() {
+        console.log(`getter obtain dir: ${this.save_dir}`)
+        console.log(`getter obtain stem: ${this.save_fstem}`)
+        console.log(`getter obtain format: ${this.criteria.format.toLowerCase()}`)
+        if (this.save_dir && this.save_fstem){
+          let p = join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
+          return p;
+        }
+        else
+          return "";
+      },
+      set(value) {
+        let dir = dirname(value);
+        let fstem = stem(basename(value));
+        console.log(`setter stem remove end: ${fstem.slice(-1)}`);
+        if (fstem && fstem.slice(-1) == '.') {
+          console.log('sliceddddd')
+          fstem = fstem.slice(0, -1);
+        }
+        let ext = "";
+        let frags = value.split('.');
+        console.log(`setter frags: ${frags}`);
+        if (frags.length >= 2)
+          ext = frags.pop();
+        console.log(`setter value: ${value}`);
+        console.log(`setter dir: ${dir}`);
+        console.log(`setter stem: ${fstem}`);
+        console.log(`setter ext: ${ext}`);
+        this.save_dir = dir;
+        this.save_fstem = fstem;
+        access(dir, constants.F_OK, (err) => {
+          if (!err){
+            this.save_dir = dir;
+          }
+          else {
+            console.error(`${dir} does not exist`);
+          }
+        })
+          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is false`)
+        if (ext && ext.toLowerCase() in SUPPORTED_CREATE_EXTENSIONS){
+          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is true`)
+          data.criteria.format = ext.toLowerCase();
+        }
+      }
+    },*/
   },
   directives:{
     ClickOutside,

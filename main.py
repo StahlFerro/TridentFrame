@@ -117,7 +117,7 @@ class TridentFrameImager:
             stdio.warn(str(missing_paths))
         return
 
-    def split_image(self, image_path: str, out_dir: str, criteria_vals: SplitCriteria):
+    def split_image(self, image_path: str, out_dir: str, criteria_vals: Dict):
         """Split all the frames of a GIF/APNG into a sequence of images"""
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")

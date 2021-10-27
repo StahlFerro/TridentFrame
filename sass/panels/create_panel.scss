@@ -68,8 +68,17 @@
         }
         .cpc-right-panel {
             border: 2px solid $white-d;
+            margin: 0;
             border-left: 0;
             min-width: 93%;
+            .cpc-right-top-panel {
+                height: 90%;
+            }
+            .cpc-right-bottom-panel {
+                height: 10%;
+                border-top: 1.5px solid $white-d;
+                display: flex;
+            }
         }
         table {
             width: 100%;

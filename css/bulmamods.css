@@ -1331,6 +1331,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .non-interactive {
   pointer-events: none;
   box-shadow: none;
@@ -1343,6 +1351,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .button.square-button {
@@ -1440,6 +1456,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .context-menu {
   width: 180px;
   box-shadow: 0 5px 10px 4px rgba(0, 0, 0, 0.5);
@@ -1509,6 +1533,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .rtable {
@@ -1612,6 +1644,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .input {
   /* Grey-block inputs. */
   /* Neon-white inputs. */
@@ -1666,6 +1706,33 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #616877;
 }
 
+div.status-bar {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+div.status-bar .status-icon {
+  display: flex;
+  width: 5%;
+  border-right: 1.5px solid #cccccc;
+  align-items: center;
+  justify-content: center;
+}
+div.status-bar .status-textbox {
+  display: flex;
+  width: 95%;
+  padding-left: 5px;
+}
+div.status-bar .status-textbox input {
+  width: 100%;
+  border: none;
+  color: #cccccc;
+  background-color: transparent;
+}
+div.status-bar .status-textbox input:focus-visible {
+  outline: none;
+}
+
 /* Color definitions */
 .is-white-d {
   color: #cccccc;
@@ -1673,6 +1740,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 /* component style */
@@ -1808,6 +1883,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   color: #ff5555;
 }
 
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
+}
+
 .create-panel-root {
   display: flex;
   flex-direction: column;
@@ -1878,8 +1961,17 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 }
 .create-panel-root .create-panel-controls .cpc-right-panel {
   border: 2px solid #cccccc;
+  margin: 0;
   border-left: 0;
   min-width: 93%;
+}
+.create-panel-root .create-panel-controls .cpc-right-panel .cpc-right-top-panel {
+  height: 90%;
+}
+.create-panel-root .create-panel-controls .cpc-right-panel .cpc-right-bottom-panel {
+  height: 10%;
+  border-top: 1.5px solid #cccccc;
+  display: flex;
 }
 .create-panel-root .create-panel-controls table {
   width: 100%;
@@ -1908,6 +2000,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .split-panel-root {
@@ -2009,6 +2109,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .modify-panel-root {
@@ -2123,6 +2231,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   border-left: 0;
   min-width: 93%;
 }
+.modify-panel-root .modify-panel-controls .mpc-right-panel .mpc-right-top-panel {
+  height: 90%;
+}
+.modify-panel-root .modify-panel-controls .mpc-right-panel .mpc-right-bottom-panel {
+  height: 10%;
+  border-top: 1.5px solid #cccccc;
+  display: flex;
+}
 .modify-panel-root .modify-panel-controls .mpc-right-panel table {
   width: 100%;
   padding: 0;
@@ -2150,6 +2266,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 .inspect-panel-root {
@@ -2249,6 +2373,14 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 div.about-content {
@@ -12651,14 +12783,14 @@ label.checkbox {
   color: #31363b;
 }
 
+/*
 .is-cyan {
-  color: #34caf8 !important;
+    color: $cyan !important;
 }
-
 .is-white-d {
-  color: #cccccc !important;
+    color: $white-d !important;
 }
-
+*/
 .has-background-dark-2 {
   background-color: #232629;
 }
@@ -13221,6 +13353,14 @@ canvas.slicegrid-canvas {
 
 .is-crimson {
   color: #ff5555;
+}
+
+.is-emerald {
+  color: #44d444;
+}
+
+.is-blue {
+  color: #2e3cd5;
 }
 
 select, option.is-selected {

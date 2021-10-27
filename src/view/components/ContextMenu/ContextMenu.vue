@@ -22,12 +22,7 @@ console.log(`POPPER`);
 console.log(`CLICKOUTSIDE`);
 console.log(ClickOutside);
 // @vue/component
-let data = {
-  isVisible: false,
-  contextData: {},
-  originalEvent: null,
-  rcmPopper: null,
-};
+
 
 // function openPopper(evt, contextData) {
 //   data.isVisible = true;
@@ -97,10 +92,8 @@ export default {
 
       this.rcmPopper = createPopper(
         this.referenceObject(evt),
-        document.querySelector("#generalRClickMenu"),
-        {
+        document.querySelector("#generalRClickMenu"), {
           placement: "right-start",
-          modifiers: {},
         }
       );
       // Recalculate position
@@ -109,7 +102,7 @@ export default {
       });
     },
     callOptionFunction(callback) {
-      callback(data.originalEvent);
+      callback(this.originalEvent);
       this.closePopper();
     },
     closePopper() {
@@ -138,8 +131,8 @@ export default {
     },
   },
   beforeDestroy() {
-    if (data.rcmPopper !== undefined) {
-      data.rcmPopper.destroy();
+    if (this.rcmPopper !== undefined) {
+      this.rcmPopper.destroy();
     }
   },
 };

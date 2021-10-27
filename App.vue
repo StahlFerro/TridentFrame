@@ -163,7 +163,7 @@
         <ModifyPanel v-show="menuselection == 'modify_panel'" />
         <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
         <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
-        <InspectPanel v-show="menuselection == 'inspect_panel'" @inspect-ctxmenu="openContextMenu"/>
+        <InspectPanel v-show="menuselection == 'inspect_panel'" @open-root-ctxmenu="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu"/>
         <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
         <SettingsPanel v-show="menuselection == 'settings_panel'" />
         <AboutPanel v-show="menuselection == 'about_panel'" />
@@ -206,6 +206,12 @@ import AboutPanel from "./src/view/AboutPanel.vue";
 
 
 export default {
+  created() {
+    window.addEventListener("resize", this.closeRootContextMenu);
+  },
+  destroyed() {
+    window.removeEventListener("resize", this.closeRootContextMenu);
+  },
   name: "app",
   data: function () {
     return {
@@ -226,11 +232,14 @@ export default {
     ContextMenuItem,
   },
   methods: {
-    openContextMenu(event, payload) {
+    openRootContextMenu(event, payload) {
       console.log("openContextMenu");
       console.log(event);
       console.log(payload);
       this.$refs.ctxmenu.openPopper(event, payload);
+    },
+    closeRootContextMenu(event){
+      this.$refs.ctxmenu.closePopper();
     },
     whatClicked(event) {
       console.log(`CLICK!!!`);
