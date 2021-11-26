@@ -1299,7 +1299,7 @@ export default {
         "gif_opt_criteria": this.gif_opt_criteria,
         "apng_opt_criteria": this.apng_opt_criteria,
       });
-      let preview_filename = `${this.fname}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
+      let preview_filename = `createPanel_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
       let preview_savepath = join(PREVIEWS_PATH, preview_filename);
       console.log(preview_savepath);
       tridentEngine(["combine_image", this.image_paths, preview_savepath, criteria_pack], (error, res) => {
@@ -1413,11 +1413,11 @@ export default {
         return;
       }
       if (this.save_dir) {
-        if (validateFilename(this.fname))
-          this.createAnimatedImage();
-        else
+        if (!validateFilename(this.fname)) {
           this._logError("File name contains characters that are not allowed");
-          // this.create_msgbox = "File name contains characters that are not allowed"
+          return;
+        }
+        this.createAnimatedImage();
       }
       else {
         this.setSaveDirFromDialog(this.createAnimatedImage);

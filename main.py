@@ -145,6 +145,8 @@ class TridentFrameImager:
             raise Exception("Please choose an output folder!")
         image_path = Path(image_path).resolve()
         out_path = Path(out_path).resolve()
+        if not out_path.parent.exists():
+            raise FileNotFoundError(f"The directory {str(out_path.parent)} is not found!")
         if not image_path.exists():
             raise FileNotFoundError(image_path.name)
         crbundle = CriteriaBundle({

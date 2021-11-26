@@ -475,7 +475,7 @@ import { roundPrecise, gcd } from "../modules/utility/calculations";
 import { floatConstrain, numConstrain } from "../modules/events/constraints";
 import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
 import { randString } from "../modules/utility/stringutils";
-import { escapeLocalPath, stem } from "../modules/utility/pathutils";
+import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { PREVIEWS_PATH, TEMP_PATH } from "../modules/constants/appconfig";
 
 import { dirname, join, basename } from "path";
@@ -1353,7 +1353,7 @@ export default {
         "gif_opt_criteria": this.gif_opt_criteria,
         "apng_opt_criteria": this.apng_opt_criteria,
       });
-      let preview_filename = `${this.fname}_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
+      let preview_filename = `modifyPanel_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
       let preview_savepath = join(PREVIEWS_PATH, preview_filename);
       // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
       tridentEngine(["modify_image", this.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
