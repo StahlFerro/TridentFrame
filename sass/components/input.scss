@@ -70,17 +70,20 @@ div.status-bar {
     display: flex;
     width: 100%;
     flex-direction: row;
+    height: 100%;
     .status-icon {
         display: flex;
         width: 5%;
         border-right: 1.5px solid $white-d;
         align-items: center;
         justify-content: center;
+        height: 100%;
     }
     .status-textbox {
         display: flex;
         width: 95%;
         padding-left: 5px;
+        height: 100%;
         input {
             width: 100%;
             border: none;

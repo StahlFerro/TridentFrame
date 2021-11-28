@@ -1408,7 +1408,7 @@ export default {
     },
     btnCreateAIMG() {
       if (this.sequence_info.length < 2) {
-        this._logError("please load at least 2 messages!");
+        this._logError("Please load at least 2 messages!");
         // this.create_msgbox = "Please load at least 2 images!";
         return;
       }

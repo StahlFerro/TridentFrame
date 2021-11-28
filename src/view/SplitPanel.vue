@@ -133,103 +133,97 @@
         </div>
       </div>
       <div class="split-panel-controls">
-        <table width="100%">
-          <tr>
-            <td width="20%">
-              <div class="field">
-                <label class="label">Rename sequence</label>
-                <div class="control">
-                  <input
-                    v-model="criteria.new_name"
-                    class="input is-neon-white"
-                  />
+        <div class="spc-top">
+          <table width="100%">
+            <tr>
+              <td width="20%">
+                <div class="field">
+                  <label class="label">Rename sequence</label>
+                  <div class="control">
+                    <input
+                      v-model="criteria.new_name"
+                      class="input is-neon-white"
+                    />
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td width="20%">
-              <div class="field">
-                <label class="label">Pad count</label>
-                <div class="control">
-                  <input
-                    v-model="criteria.pad_count"
-                    class="input is-neon-white"
-                    type="number"
-                    min="0"
-                    max="6"
-                    v-on:keydown="numConstrain($event, true, true)"
-                  />
+              </td>
+              <td width="20%">
+                <div class="field">
+                  <label class="label">Pad count</label>
+                  <div class="control">
+                    <input
+                      v-model="criteria.pad_count"
+                      class="input is-neon-white"
+                      type="number"
+                      min="0"
+                      max="6"
+                      v-on:keydown="numConstrain($event, true, true)"
+                    />
+                  </div>
                 </div>
-              </div>
-            </td>
-            <td width="20%" style="vertical-align: middle;">
-              <!-- <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
-                <input v-model="criteria.is_duration_sensitive" type="checkbox" />
-                Duration-sensitive
-              </label> -->
-              <label class="checkbox" title="Reconstructs the original image of each frame. Use on optimized GIFs">
-                <input v-model="criteria.is_unoptimized" type="checkbox" />
-                Unoptimize
-              </label>
-              <br/>
-              <label class="checkbox" title="Convert each frame into a PNG with RGBA color mode">
-                <input v-model="criteria.convert_to_rgba" type="checkbox" />
-                Convert to RGBA
-              </label>
-              <br/>
-              <label class="checkbox" title="Generate a file containing the delay information of each frame">
-                <input v-model="criteria.extract_delay_info" type="checkbox" />
-                Extract frame delays
-              </label>
-              <!-- <label class="checkbox">
-                <input v-model="is_reduced_color" type="checkbox" />
-                Reduce Colors
-              </label> -->
-            </td>
-            <td width="20%" style="vertical-align: middle;">
-              <br/>
-            </td>
-            <td width="20%" style="vertical-align: middle;">
-              <br/>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="4">
-              <div class="field has-addons">
-                <div class="control">
-                  <a v-on:click="chooseOutDir" class="button is-neon-cyan">
-                    <span class="icon is-small">
-                      <i class="fas fa-save"></i>
-                    </span>
-                    <span>Save to</span>
-                  </a>
+              </td>
+              <td width="20%" style="vertical-align: middle;">
+                <!-- <label class="checkbox" title="Split the GIF into more frames, calculated from frames has higher delay than others">
+                  <input v-model="criteria.is_duration_sensitive" type="checkbox" />
+                  Duration-sensitive
+                </label> -->
+                <label class="checkbox" title="Reconstructs the original image of each frame. Use on optimized GIFs">
+                  <input v-model="criteria.is_unoptimized" type="checkbox" />
+                  Unoptimize
+                </label>
+                <br/>
+                <label class="checkbox" title="Convert each frame into a PNG with RGBA color mode">
+                  <input v-model="criteria.convert_to_rgba" type="checkbox" />
+                  Convert to RGBA
+                </label>
+                <br/>
+                <label class="checkbox" title="Generate a file containing the delay information of each frame">
+                  <input v-model="criteria.extract_delay_info" type="checkbox" />
+                  Extract frame delays
+                </label>
+                <!-- <label class="checkbox">
+                  <input v-model="is_reduced_color" type="checkbox" />
+                  Reduce Colors
+                </label> -->
+              </td>
+              <td width="20%" style="vertical-align: middle;">
+                <br/>
+              </td>
+              <td width="20%" style="vertical-align: middle;">
+                <br/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="4">
+                <div class="field has-addons">
+                  <div class="control">
+                    <a v-on:click="btnChooseOutDir" class="button is-neon-cyan">
+                      <span class="icon is-small">
+                        <i class="fas fa-save"></i>
+                      </span>
+                      <span>Save to</span>
+                    </a>
+                  </div>
+                  <div class="control is-expanded">
+                    <input
+                      v-model="outdir"
+                      class="input is-neon-white"
+                      type="text"
+                      placeholder="Output folder"
+                    />
+                  </div>
                 </div>
-                <div class="control is-expanded">
-                  <input
-                    v-model="outdir"
-                    class="input is-neon-white"
-                    type="text"
-                    placeholder="Output folder"
-                    readonly
-                  />
-                </div>
-              </div>
-            </td>
-            <td class="has-text-centered">
-              <a v-on:click="splitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'non-interactive': isButtonFrozen}">
-                Split to folder</a>
-            </td>
-          </tr>
-          <tr>
-            <td colspan="5">
-              <input
-                v-model="split_msgbox"
-                type="text"
-                class="input is-left-paddingless is-border-colorless"
-                readonly="readonly"
-              />
-            </td>
-          </tr>
-        </table>
+              </td>
+              <td class="has-text-centered">
+                <a v-on:click="btnSplitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'non-interactive': isButtonFrozen}">
+                  Split to folder</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div class="spc-bottom">
+          <StatusBar :bus="statusBarBus"></StatusBar>
+        </div>
       </div>
     </div>
   </div>
@@ -247,6 +241,10 @@ import { tridentEngine } from "../modules/streams/trident_engine";
 let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
+
+import Vue from 'vue';
+
+import StatusBar from "./components/StatusBar.vue";
 
 var defaults = {
   info_header: "Information",
@@ -266,196 +264,216 @@ var defaults = {
   has_transparency: "",
   preview_path: "",
   preview_path_cb: "",
-  split_msgbox: ""
 };
-
-var data = {
-  info_header: "Information",
-  name: "",
-  criteria: {
-    new_name: "",
-    pad_count: "",
-    color_space: "",
-    is_duration_sensitive: false,
-    is_unoptimized: false,
-    convert_to_rgba: false,
-    extract_delay_info: false,
-  },
-  dimensions: "",
-  file_size: "",
-  file_size_hr: "",
-  frame_count: "",
-  frame_count_ds: "",
-  fps: "",
-  average_delay: "",
-  delays_are_even: "",
-  delays: "",
-  loop_duration: "",
-  loop_count: "",
-  has_transparency: "",
-  preview_path: "",
-  preview_path_cb: "",
-  checkerbg_active: false,
-  is_reduced_color: false,
-  outdir: "",
-  split_msgbox: "",
-  SPL_IS_LOADING: false,
-  SPL_IS_SPLITTING: false,
-};
-
-function loadImage() {
-  console.log("spl load iamge");
-  var options = {
-    filters: extension_filters,
-    properties: file_dialog_props
-  };
-  ipcRenderer.invoke('open-dialog', options).then((result) => {
-    let chosen_path = result.filePaths;
-    console.log(`chosen path: ${chosen_path}`);
-    if (chosen_path === undefined || chosen_path.length == 0) {
-      console.debug('chosen path undefined/null. returning...')
-      return;
-    }
-    data.SPL_IS_LOADING = true;
-    console.log(chosen_path);
-    tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
-      if (error) {        
-        try {
-          data.split_msgbox = error;
-        }
-        catch (e) {
-          data.split_msgbox = error;
-        }
-        // mboxError(split_msgbox, error);
-        data.SPL_IS_LOADING = false;
-      } else if (res) {
-        if (res && res.msg) {
-          data.split_msgbox = res.msg;
-        } else if (res && res.data) {
-          let info = res.data;
-          var geninfo = info.general_info;
-          var ainfo = info.animation_info;
-          data.name = geninfo.name.value;
-          data.dimensions = `${geninfo.width.value} x ${geninfo.height.value}`;
-          data.info_header = `${geninfo.format.value} Information`;
-          data.file_size = geninfo.fsize.value;
-          data.file_size_hr = geninfo.fsize_hr.value;
-          data.has_transparency = geninfo.has_transparency.value;
-          data.frame_count = `${ainfo.frame_count.value} frames`;
-          // data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`
-          data.fps = `${ainfo.fps.value} fps`;
-          // let delay_info = `${ainfo.avg_delay.value} seconds`;
-          // if (ainfo.delay_is_even.value) {
-          //   delay_info += ` (even)`;
-          // }
-          // data.delay = delay_info;
-          data.average_delay = ainfo.average_delay.value;
-          data.delays_are_even = ainfo.delays_are_even.value;
-          data.delays = ainfo.delays.value;
-          data.loop_duration = `${ainfo.loop_duration.value} seconds`;
-          data.loop_count = ainfo.loop_count.value;
-          data.preview_path = geninfo.absolute_url.value;
-          data.criteria.pad_count = 3;
-          if (data.is_reduced_color) {
-            data.criteria.color_space - 256;
-          }
-          data.split_msgbox = "";
-          data.SPL_IS_LOADING = false;
-          previewPathCacheBreaker();
-          // loadAIMG(res);
-          // SPL_pad_count.value = 3;
-          // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
-        }
-      }
-    });
-  });
-}
-
-function clearImage() {
-  Object.assign(data, defaults);
-}
-
-
-function previewPathCacheBreaker() {
-  let cb_url = data.preview_path;
-  // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
-  console.log("Cache breaker url", cb_url);
-  data.preview_path_cb = cb_url;
-}
-
-
-function toggleCheckerBG() {
-  data.checkerbg_active = !data.checkerbg_active;
-  console.log("now checkerbg is", data.checkerbg_active);
-}
-
-function chooseOutDir() {
-  var options = { properties: dir_dialog_props };
-  ipcRenderer.invoke('open-dialog', options).then((result) => {
-    let out_dirs = result.filePaths;
-    console.log(out_dirs);
-    if (out_dirs && out_dirs.length > 0) { 
-      data.outdir = out_dirs[0];
-    }
-    data.split_msgbox = "";
-  });
-}
-
-function splitImage() {
-  let new_name = data.criteria.new_name;
-  if (new_name && !validateFilename(new_name)) {
-    let error = `File name must not contain these characters: ${getSystemForbiddenFilenameCharacters().join(" ")}`;
-    console.error(error);
-    data.split_msgbox = error;
-    return;
-  }
-  data.SPL_IS_SPLITTING = true;
-  // freezeButtons();
-  // console.log(`in path: ${in_path} out path: ${out_path}`);
-  var color_space = data.criteria.color_space;
-  if (!data.is_reduced_color || color_space == "") {
-    color_space = 0;
-  }
-  console.log(data);
-  tridentEngine(["split_image", data.preview_path, data.outdir, data.criteria], (error, res) => {
-    if (error) {
-      try {
-        data.split_msgbox = error;
-      }
-      catch (e) {
-        data.split_msgbox = error;
-      }
-      data.SPL_IS_SPLITTING = false;
-    } else if (res) {
-      if (res.msg) {
-        data.split_msgbox = res.msg;
-      }
-    }
-  },
-  () => {
-    data.split_msgbox = "All frames successfully split!"
-    data.SPL_IS_SPLITTING = false;
-  });
-}
-
-function isButtonFrozen() {
-  if (data.SPL_IS_LOADING || data.SPL_IS_SPLITTING) return true;
-  else return false;
-}
 
 export default {
   data: function() {
-    return data;
+    return {
+      info_header: "Information",
+      name: "",
+      criteria: {
+        new_name: "",
+        pad_count: "",
+        color_space: "",
+        is_duration_sensitive: false,
+        is_unoptimized: false,
+        convert_to_rgba: false,
+        extract_delay_info: false,
+      },
+      dimensions: "",
+      file_size: "",
+      file_size_hr: "",
+      frame_count: "",
+      frame_count_ds: "",
+      fps: "",
+      average_delay: "",
+      delays_are_even: "",
+      delays: "",
+      loop_duration: "",
+      loop_count: "",
+      has_transparency: "",
+      preview_path: "",
+      preview_path_cb: "",
+      checkerbg_active: false,
+      is_reduced_color: false,
+      outdir: "",
+      SPL_IS_LOADING: false,
+      SPL_IS_SPLITTING: false,
+      statusBarBus: new Vue(),
+    };
+  },
+  components: {
+    StatusBar,
   },
   computed: {
-    isButtonFrozen: isButtonFrozen,
+    isButtonFrozen() {
+      if (this.SPL_IS_LOADING || this.SPL_IS_SPLITTING) return true;
+      else return false;
+    },
   },
   methods: {
-    loadImage: loadImage,
-    clearImage: clearImage,
-    toggleCheckerBG: toggleCheckerBG,
-    chooseOutDir: chooseOutDir,
-    splitImage: splitImage,
+    loadImage() {
+      console.log("spl load iamge");
+      let options = {
+        filters: extension_filters,
+        properties: file_dialog_props
+      };
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let chosen_path = result.filePaths;
+        console.log(`chosen path: ${chosen_path}`);
+        if (chosen_path === undefined || chosen_path.length == 0) {
+          console.debug('chosen path undefined/null. returning...')
+          return;
+        }
+        this.SPL_IS_LOADING = true;
+        console.log(chosen_path);
+        tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
+          if (error) {        
+            try {
+              this._logError(error);
+            }
+            catch (e) {
+              this._logError(e);
+            }
+            // mboxError(split_msgbox, error);
+            this.SPL_IS_LOADING = false;
+          } else if (res) {
+            if (res && res.msg) {
+              this._logProcessing(res.msg);
+            } else if (res && res.data) {
+              let info = res.data;
+              var geninfo = info.general_info;
+              var ainfo = info.animation_info;
+              this.name = geninfo.name.value;
+              this.dimensions = `${geninfo.width.value} x ${geninfo.height.value}`;
+              this.info_header = `${geninfo.format.value} Information`;
+              this.file_size = geninfo.fsize.value;
+              this.file_size_hr = geninfo.fsize_hr.value;
+              this.has_transparency = geninfo.has_transparency.value;
+              this.frame_count = `${ainfo.frame_count.value} frames`;
+              // data.frame_count_ds = `${ainfo.frame_count_ds.value} frames`
+              this.fps = `${ainfo.fps.value} fps`;
+              // let delay_info = `${ainfo.avg_delay.value} seconds`;
+              // if (ainfo.delay_is_even.value) {
+              //   delay_info += ` (even)`;
+              // }
+              // data.delay = delay_info;
+              this.average_delay = ainfo.average_delay.value;
+              this.delays_are_even = ainfo.delays_are_even.value;
+              this.delays = ainfo.delays.value;
+              this.loop_duration = `${ainfo.loop_duration.value} seconds`;
+              this.loop_count = ainfo.loop_count.value;
+              this.preview_path = geninfo.absolute_url.value;
+              this.criteria.pad_count = 3;
+              if (this.is_reduced_color) {
+                this.criteria.color_space - 256;
+              }
+              this._logSuccess("Loaded image");
+              this.SPL_IS_LOADING = false;
+              this.previewPathCacheBreaker();
+              // loadAIMG(res);
+              // SPL_pad_count.value = 3;
+              // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
+            }
+          }
+        });
+      });
+    },
+    clearImage() {
+      Object.assign(this, defaults);
+      this._logClear();
+    },
+    toggleCheckerBG() {
+      this.checkerbg_active = !this.checkerbg_active;
+      console.log("now checkerbg is", this.checkerbg_active);
+    },
+    btnChooseOutDir() {
+      this.chooseOutDir();
+    },
+    chooseOutDir(afterSaveCallback) {
+      let options = { properties: dir_dialog_props };
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let out_dirs = result.filePaths;
+        console.log(out_dirs);
+        if (out_dirs && out_dirs.length > 0) { 
+          this.outdir = out_dirs[0];
+        }
+        this._logClear();
+        if (afterSaveCallback) {
+          afterSaveCallback();
+        }
+      });
+    },
+    btnSplitImage() {
+      if (this.preview_path == "") {
+        this._logError("Please load the image first!");
+        return;
+      }
+      if (this.outdir) {
+        this.splitImage();
+      }
+      else {
+        this.chooseOutDir(this.splitImage);
+      }
+    },
+    splitImage() {
+      let new_name = this.criteria.new_name;
+      if (new_name && !validateFilename(new_name)) {
+        this._logError("File name contains characters that are not allowed");
+        return;
+      }
+      this.SPL_IS_SPLITTING = true;
+      // freezeButtons();
+      // console.log(`in path: ${in_path} out path: ${out_path}`);
+      var color_space = this.criteria.color_space;
+      if (!this.is_reduced_color || color_space == "") {
+        color_space = 0;
+      }
+      console.log(this);
+      tridentEngine(["split_image", this.preview_path, this.outdir, this.criteria], (error, res) => {
+        if (error) {
+          try {
+            this._logError(error);
+          }
+          catch (e) {
+            this._logError(e);
+          }
+          this.SPL_IS_SPLITTING = false;
+        } else if (res) {
+          if (res.msg) {
+            this._logProcessing(res.msg);
+          }
+        }
+      },
+      () => {
+        this._logSuccess("All frames successfully split!");
+        this.SPL_IS_SPLITTING = false;
+      });
+    },
+    previewPathCacheBreaker() {
+      let cb_url = this.preview_path;
+      // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+      console.log("Cache breaker url", cb_url);
+      this.preview_path_cb = cb_url;
+    },
+    _logClear() {
+      this.statusBarBus.$emit("logClear");
+    },
+    _logProcessing(message) {
+      this.statusBarBus.$emit("logProcessing", message);
+    },
+    _logMessage(message) {
+      this.statusBarBus.$emit("logMessage", message);
+    },
+    _logSuccess(message) {
+      this.statusBarBus.$emit("logSuccess", message);
+    },
+    _logWarning(message) {
+      this.statusBarBus.$emit("logWarning", message);
+    },
+    _logError(message) {
+      this.statusBarBus.$emit("logError", message);
+    },
     numConstrain: numConstrain,
     escapeLocalPath: escapeLocalPath,
     roundPrecise: roundPrecise,

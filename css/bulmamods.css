@@ -1710,6 +1710,7 @@ div.status-bar {
   display: flex;
   width: 100%;
   flex-direction: row;
+  height: 100%;
 }
 div.status-bar .status-icon {
   display: flex;
@@ -1717,11 +1718,13 @@ div.status-bar .status-icon {
   border-right: 1.5px solid #cccccc;
   align-items: center;
   justify-content: center;
+  height: 100%;
 }
 div.status-bar .status-textbox {
   display: flex;
   width: 95%;
   padding-left: 5px;
+  height: 100%;
 }
 div.status-bar .status-textbox input {
   width: 100%;
@@ -2082,23 +2085,30 @@ div.status-bar .status-textbox input:focus-visible {
   height: calc(100vh - 55vh - 57px - calc(10px * 2));
   border: 2px solid #cccccc;
 }
-.split-panel-root .split-panel-controls table {
+.split-panel-root .split-panel-controls .spc-top {
+  height: 85%;
+}
+.split-panel-root .split-panel-controls .spc-top table {
   width: 100%;
   padding: 0;
   margin: 0;
   border: 0 !important;
   margin: 0 !important;
 }
-.split-panel-root .split-panel-controls table th {
+.split-panel-root .split-panel-controls .spc-top table th {
   border: 0 !important;
 }
-.split-panel-root .split-panel-controls table td {
+.split-panel-root .split-panel-controls .spc-top table td {
   border: 0 !important;
   padding: 1vh !important;
   border: 1px solid black;
 }
-.split-panel-root .split-panel-controls table label {
+.split-panel-root .split-panel-controls .spc-top table label {
   margin: 0px !important;
+}
+.split-panel-root .split-panel-controls .spc-bottom {
+  height: 15%;
+  border-top: 1.5px solid #cccccc;
 }
 
 /* Modify Panel */

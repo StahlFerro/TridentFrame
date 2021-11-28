@@ -76,23 +76,30 @@
     .split-panel-controls {
         height: calc(100vh - 55vh - 57px - #{$root-height-offset});
         border: 2px solid $white-d;
-        table {
-            width: 100%;
-            padding: 0;
-            margin: 0;
-            border: 0 !important;
-            margin: 0 !important;
-            th {
+        .spc-top {
+            height: 85%;
+            table {
+                width: 100%;
+                padding: 0;
+                margin: 0;
                 border: 0 !important;
+                margin: 0 !important;
+                th {
+                    border: 0 !important;
+                }
+                td {
+                    border: 0 !important;
+                    padding: 1vh !important;
+                    border: 1px solid black;
+                }
+                label {
+                    margin: 0px !important;
+                }
             }
-            td {
-                border: 0 !important;
-                padding: 1vh !important;
-                border: 1px solid black;
-            }
-            label {
-                margin: 0px !important;
-            }
+        }
+        .spc-bottom {
+            height: 15%;
+            border-top: 1.5px solid $white-d;
         }
     }
 }

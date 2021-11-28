@@ -130,7 +130,7 @@ class TridentFrameImager:
         if not image_path.exists():
             raise FileNotFoundError(image_path.name)
         if not out_dir.exists():
-            raise FileNotFoundError(out_dir)
+            raise FileNotFoundError(f"The directory {out_dir} is not found!")
         criteria = SplitCriteria(criteria_vals)
         split_aimg(image_path, out_dir, criteria)
         return
