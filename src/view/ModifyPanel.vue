@@ -2,9 +2,6 @@
   <div id="modify_panel">
     <div class="modify-panel-root">
 
-      <div class="mod-orig-info-container" style="display: none;">
-      </div>
-
       <div class="modify-panel-displays">
         <div class="modify-old-container silver-bordered-no-right"
           v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active }">

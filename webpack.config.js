@@ -10,17 +10,17 @@ module.exports = env => {
   console.log("NODE ENV", env.NODE_ENV);
   console.log(__dirname);
   let dev_plugins = env.NODE_ENV === "DEV"? [
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: path.resolve(__dirname, 'node_modules/devtron/manifest.json'),
-        }, 
-        {
-          from: path.resolve(__dirname, 'node_modules/devtron/out/browser-globals.js'),
-          to: path.resolve(__dirname, 'out'),
-        }
-      ]
-    }),
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     {
+    //       from: path.resolve(__dirname, 'node_modules/devtron/manifest.json'),
+    //     }, 
+    //     {
+    //       from: path.resolve(__dirname, 'node_modules/devtron/out/browser-globals.js'),
+    //       to: path.resolve(__dirname, 'out'),
+    //     }
+    //   ]
+    // }),
     new BundleAnalyzerPlugin(),
     new DashboardPlugin({ port: 8091 }),
   ] : [];
@@ -83,7 +83,12 @@ module.exports = env => {
     },
     devServer: {
       hot: true,
-      contentBase: "/",
+      static: {
+        directory: path.join(__dirname, 'dist'),
+      }
+    },
+    optimization: {
+      usedExports: true,
     },
     plugins: [
       new HtmlWebpackPlugin({
@@ -98,6 +103,7 @@ module.exports = env => {
     ],
     output: {
       filename: 'bundle.js',
+      path: path.resolve(__dirname, "./dist"),
       publicPath: "",
       // path: path.resolve(__dirname, 'release/html'),
     },

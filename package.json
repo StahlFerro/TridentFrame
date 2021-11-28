@@ -33,7 +33,7 @@
     "prod-windows": "npm run wpbuild && npm run buildpy-windows && npm run prod",
     "prod-linux": "npm run wpbuild && npm run buildpy-linux && npm run prod",
     "liverelease": "npm run clean-dist && webpack --watch",
-    "wpserve": "webpack-dashboard --port 8091 -- webpack serve --mode development --env NODE_ENV=DEV",
+    "wpserve": "webpack serve --mode development --env NODE_ENV=DEV",
     "wpbuild": "npm run clean-dist && webpack --mode production --env NODE_ENV=PROD",
     "elbuild": "npm run clean-release && electron-builder",
     "engine-clean": "rimraf ./engine/*",
@@ -118,6 +118,7 @@
     ]
   },
   "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.15.4",
     "@popperjs/core": "^2.11.0",
     "lodash.clonedeep": "^4.5.0",
     "mime-types": "^2.1.34",

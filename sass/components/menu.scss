@@ -1,0 +1,44 @@
+@import "../components/_colors.scss";
+
+/* Selected menu box */
+
+aside.menu {
+    height: 100% !important;
+}
+
+/* Left menu div directly under the left td that encloses the entire menu bar, and makes it scrollable */
+div.left-menu {
+    // height: 640px;
+    height: 100%;
+    overflow: scroll;
+}
+div.left-menu::-webkit-scrollbar { width: 0px; }
+
+
+.menu-item {
+    border: 2px solid $dark-2;
+    background-color: $dark-2;
+    a { padding: 0.3em 0em; }
+    &:hover { border: 2px solid $dark-4; }
+}
+.menu-item.is-selected { 
+    border: 2px solid $cyan;
+    p, &.is-selected i, svg { color: $cyan !important; }
+}
+.crt-menu-subtab {
+    border-right: 2px solid $dark-6 !important;
+}
+.mod-menu-subtab {
+    border-right: 2px solid $dark-6 !important;
+}
+
+/* Menu-item on Modify UI */
+.subtab-menu-item { border: 2px solid $dark-3; }
+.subtab-menu-item a { padding: 0.3em 0em; }
+.subtab-menu-item a.is-disabled svg { color: $dark-6 !important; }
+.subtab-menu-item a.is-disabled p { color: $dark-6 !important; }
+.subtab-menu-item a:active { border-color: $dark-5 !important; }
+/* Overrides */
+.menu-list a:hover { background-color: $dark-4 !important; }
+.menu-list a:active { background-color: $dark-5 !important; border-color: $dark-5 !important; }
+.subtab-menu-item.is-selected p, .subtab-menu-item.is-selected svg { color: $cyan !important; }
