@@ -47,14 +47,21 @@ $bw: 3px;
     position: absolute;
     top: 0;
     right: 0;
-    &:hover i {
+    background-color: transparent;
+    background-repeat: no-repeat;
+    border: none;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    padding: 0;
+    &:hover svg {
         opacity: 1.0;
     }
-    &:active i {
+    &:active svg {
         opacity: 1.0;
         color: lighten($crimson, 20%);
     }
-    i {
+    svg {
         opacity: 0.3;
         color: $crimson;
         &:hover {

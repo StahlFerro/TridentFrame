@@ -1,3 +1,5 @@
+import { env, cwd, platform } from "process";
+
 const FORBIDDEN_FILENAME_CHARACTERS_WINDOWS = [
   '<', '>', ':', '"', '/', '\\', '|', '?', '*'
 ];
@@ -10,7 +12,8 @@ const FORBIDDEN_FILENAME_CHARACTERS_LINUX = [
 ];
 
 const WIN_VALID_FILENAME_REGEX = new RegExp(/^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\..*)(\..+)?$)[^\x00-\x1f\\?*:\";|/]+$/, "g");
-
+const LINUX_VALID_FILENAME_REGEX = new RegExp(/^[^\x00\/]+$/, "g");
+const OSX_VALID_FILENAME_REGEX = new RegExp(/^(?![.])[^\x00\/:]+$/, "g");
 
 const SlashDirection = Object.freeze({
   FORWARD: "forward",
@@ -18,9 +21,9 @@ const SlashDirection = Object.freeze({
 })
 
 function _getSystemForbiddenFilenameCharacters() {
-  if (process.platform == "win32")
+  if (platform == "win32")
     return FORBIDDEN_FILENAME_CHARACTERS_WINDOWS;
-  else if (process.platform == "linux")
+  else if (platform == "linux")
     return FORBIDDEN_FILENAME_CHARACTERS_LINUX;
 }
 
@@ -98,15 +101,15 @@ export function escapeLocalPath(localPath) {
  * @returns {boolean} true if filename is valid, else false.
  */
 export function validateFilename(filename) {
-  let is_valid = filename.match(WIN_VALID_FILENAME_REGEX);
+  let fnameRegex = "";
+  if (platform == "win32")
+    fnameRegex = WIN_VALID_FILENAME_REGEX;
+  else if (platform == "linux")
+    fnameRegex = LINUX_VALID_FILENAME_REGEX;
+  else if (platform == "darwin")
+    fnameRegex = OSX_VALID_FILENAME_REGEX;
+  let is_valid = filename.match(fnameRegex);
   return is_valid;
-  /*
-  let forbidden_string = forbiddenFileCharsRegex();
-  console.log(forbidden_string);
-  let regex = new RegExp(escape(forbidden_string), 'g');
-  let is_valid = !filename.match(regex);
-  return is_valid;
-  */
 }
 
 

@@ -1697,22 +1697,29 @@ fieldset[disabled] .file-name, fieldset[disabled] .select select, .select fields
   position: absolute;
   top: 0;
   right: 0;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  padding: 0;
 }
-.del-anchor:hover i {
+.del-anchor:hover svg {
   opacity: 1;
 }
-.del-anchor:active i {
+.del-anchor:active svg {
   opacity: 1;
   color: #ffbbbb;
 }
-.del-anchor i {
+.del-anchor svg {
   opacity: 0.3;
   color: #ff5555;
 }
-.del-anchor i:hover {
+.del-anchor svg:hover {
   opacity: 1;
 }
-.del-anchor i:active {
+.del-anchor svg:active {
   opacity: 1;
   color: #ffbbbb;
 }

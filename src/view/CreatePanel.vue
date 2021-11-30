@@ -16,12 +16,12 @@
               <span class="index-anchor is-white-d">
                 {{ parseInt(index) + 1 }}
               </span>
-              <a class="del-anchor" v-on:click="removeFrame(parseInt(index))">
+              <button class="del-anchor" v-on:click="removeFrame(parseInt(index))">
                 <span class="icon" v-on:click="removeFrame(parseInt(index))">
-                  <i class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(index))"
-                  ></i>
+                  <svg class="fas fa-minus-circle" v-on:click="removeFrame(parseInt(index))"
+                  ></svg>
                 </span>
-              </a>
+              </button>
             </div>
           </div>
 
