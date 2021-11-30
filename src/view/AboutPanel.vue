@@ -5,7 +5,10 @@
         <img v-bind:src="logo" class="about-logo no-select-drag"/>
         <h1 class="about-software-name">TridentFrame</h1>
         <p class="about-software-version">v0.1.0-beta.9</p>
-        <p class="about-software-copyright">Copyright <span class="icon"><i class="far fa-copyright"></i></span>
+        <p class="about-software-copyright">Copyright 
+          <span class="icon">
+            <font-awesome-icon :icon="['far', 'copyright']"/>
+          </span>
               2021 StahlFerro</p>
         <!-- <p class="about-software-author">Developed by StahlFerro</p> -->
       </div>
@@ -14,7 +17,8 @@
           <p class="control">
             <a v-on:click="warpGithub" class="button is-neon-cyan is-medium">
               <span class="icon">
-                <i class="fab fa-github"></i>
+                <font-awesome-icon :icon="['fab', 'github']"/>
+                <!-- <i class="fab fa-github"></i> -->
               </span>
               <span>Github</span>
             </a>

@@ -111,7 +111,8 @@
         <div class="spl-control-btn">
           <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': SPL_IS_LOADING, 'non-interactive': isButtonFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-plus"></i>
+              <font-awesome-icon icon="plus"/>
+              <!-- <i class="fas fa-plus"></i> -->
             </span>
             <span>Load GIF/APNG</span>
           </a>
@@ -119,7 +120,8 @@
         <div class="spl-control-btn">
           <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': isButtonFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-times"></i>
+              <font-awesome-icon icon="times"/>
+              <!-- <i class="fas fa-times"></i> -->
             </span>
             <span>Clear</span>
           </a>
@@ -127,7 +129,8 @@
         <div class="spl-control-btn">
           <a v-on:click="toggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
             <span class="icon is-medium">
-              <i class="fas fa-chess-board"></i>
+              <font-awesome-icon icon="chess-board"/>
+              <!-- <i class="fas fa-chess-board"></i> -->
             </span>
           </a>
         </div>
@@ -199,7 +202,8 @@
                   <div class="control">
                     <a v-on:click="btnChooseOutDir" class="button is-neon-cyan">
                       <span class="icon is-small">
-                        <i class="fas fa-save"></i>
+                        <font-awesome-icon icon="save"/>
+                        <!-- <i class="fas fa-save"></i> -->
                       </span>
                       <span>Save to</span>
                     </a>

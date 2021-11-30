@@ -5,7 +5,7 @@
         <td>
           <a v-on:click="refreshWindow" class="button is-large is-neon-cyan">
             <span class="icon is-large">
-              <i class="fas fa-redo-alt"></i>
+              <font-awesome-icon icon="redo-alt"/>
             </span>
             <span>Reload Window</span>
           </a>
@@ -13,7 +13,8 @@
         <td>
           <a v-on:click="openInspector" class="button is-large is-neon-cyan">
             <span class="icon is-large">
-              <i class="fas fa-bug"></i>
+              <font-awesome-icon icon="bug"/>
+              <!-- <i class="fas fa-bug"></i> -->
             </span>
             <span>Open Inspector</span>
           </a>

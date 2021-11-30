@@ -9,7 +9,7 @@
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
           <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
-            <h2 class="is-2 is-white-d"><span class="icon is-large"><i class="fas fa-file-upload fa-2x"></i></span></h2>
+            <h2 class="is-2 is-white-d"><span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x"/></span></h2>
             <p class="is-border-colorless is-white-d">Drop your image here</p>
           </div>
           <div class="inspect-panel-image" v-bind:class="{'has-checkerboard-bg': checkerbg_active }" v-else-if="img_path !== ''">
@@ -75,14 +75,16 @@
             'non-interactive': isButtonFrozen,
           }">
           <span class="icon is-small">
-            <i class="fas fa-plus"></i>
+            <font-awesome-icon icon="plus"/>
+            <!-- <i class="fas fa-plus"></i> -->
           </span>
           <span>Load Image</span>
         </a>
         <a v-on:click="clearButton" class="button is-neon-crimson"
           v-bind:class="{'non-interactive': isButtonFrozen}">
           <span class="icon is-small">
-            <i class="fas fa-times"></i>
+            <font-awesome-icon icon="times"/>
+            <!-- <i class="fas fa-times"></i> -->
           </span>
           <span>Clear</span>
         </a>
@@ -92,7 +94,8 @@
           v-bind:class="{ 'is-active': checkerbg_active }"
         >
           <span class="icon is-medium">
-            <i class="fas fa-chess-board"></i>
+            <font-awesome-icon icon="chess-board"/>
+            <!-- <i class="fas fa-chess-board"></i> -->
           </span>
         </a>
       </div>

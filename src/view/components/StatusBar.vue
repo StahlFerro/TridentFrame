@@ -2,16 +2,20 @@
   <div class="status-bar">
     <div class="status-icon"> 
       <span class="icon" v-show="logLevel == EnumStatusLogLevel.INFO">
-        <i class="fas fa-info-circle is-cyan"></i>
+        <font-awesome-icon icon="info-circle" class="is-cyan"/>
+        <!-- <i class="fas fa-info-circle is-cyan"></i> -->
       </span>
       <span class="icon" v-show="logLevel == EnumStatusLogLevel.PROCESSING">
-        <i class="fas fa-spinner fa-pulse is-white-d"></i>
+        <font-awesome-icon icon="spinner" class="is-white-d" pulse/>
+        <!-- <i class="fas fa-spinner fa-pulse is-white-d"></i> -->
       </span>
       <span class="icon" v-show="logLevel == EnumStatusLogLevel.SUCCESS">
-        <i class="fas fa-check is-emerald"></i>
+        <font-awesome-icon icon="check" class="is-emerald"/>
+        <!-- <i class="fas fa-check is-emerald"></i> -->
       </span>
       <span class="icon" v-show="logLevel == EnumStatusLogLevel.ERROR">
-        <i class="fas fa-times is-crimson"></i>
+        <font-awesome-icon icon="times" class="is-crimson"/>
+        <!-- <i class="fas fa-times is-crimson"></i> -->
       </span>
     </div>
     <div class="status-textbox">

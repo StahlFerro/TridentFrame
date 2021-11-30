@@ -137,20 +137,20 @@
         <div class="mpb-load-buttons">
           <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-plus"></i>
+              <font-awesome-icon icon="plus"/>
             </span>
             <span>Load Image</span>
           </a>
           <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-times"></i>
+              <font-awesome-icon icon="times"/>
             </span>
             <span>Clear</span>
           </a>
           <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white"
             v-bind:class="{'is-active': orig_checkerbg_active}">
             <span class="icon is-medium">
-              <i class="fas fa-chess-board"></i>
+              <font-awesome-icon icon="chess-board"/>
             </span>
           </a>
         </div>
@@ -158,20 +158,20 @@
         <div class="mpb-preview-buttons">
           <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-eye"></i>
+              <font-awesome-icon :icon="['far', 'eye']"/>
             </span>
             <span>Preview</span>
           </a>
           <a v-on:click="clearPreviewImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
             <span class="icon is-small">
-              <i class="fas fa-times"></i>
+              <font-awesome-icon icon="times"/>
             </span>
             <span>Clear</span>
           </a>
           <a v-on:click="toggleNewCheckerBG" class="button is-neon-white"
             v-bind:class="{'is-active': new_checkerbg_active}">
             <span class="icon is-medium">
-              <i class="fas fa-chess-board"></i>
+              <font-awesome-icon icon="chess-board"/>
             </span>
           </a>
         </div>
@@ -184,7 +184,8 @@
                 v-bind:class="{'is-selected': mod_menuselection == 0}">
                 <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
                   <span class="icon is-large">
-                    <i class="fas fa-image fa-2x fa-inverse"></i>
+                    <font-awesome-icon icon="image" size="2x" inverse/>
+                    <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d">General</p>
                 </a>
@@ -194,7 +195,8 @@
                 <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
                   v-bind:class="{'is-disabled': criteria.format != 'gif'}">
                   <span class="icon is-large">
-                    <i class="far fa-images fa-2x fa-inverse"></i>
+                    <font-awesome-icon icon="images" size="2x" inverse/>
+                    <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d is-large">GIF</p>
                 </a>
@@ -204,7 +206,8 @@
                 <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
                   v-bind:class="{'is-disabled': criteria.format != 'png'}">
                   <span class="icon is-large">
-                    <i class="far fa-images fa-2x fa-inverse"></i>
+                    <font-awesome-icon icon="images" size="2x" inverse/>
+                    <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d is-large">APNG</p>
                 </a>
@@ -369,7 +372,8 @@
                       <div class="control">
                         <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
                           <span class="icon is-small">
-                            <i class="fas fa-save"></i>
+                            <font-awesome-icon icon="save"/>
+                            <!-- <i class="fas fa-save"></i> -->
                           </span>
                           <span>Save to</span>
                         </a>

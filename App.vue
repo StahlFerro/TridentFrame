@@ -45,7 +45,8 @@
             >
               <a id="create_panel" v-on:click="menuselection = 'create_panel'">
                 <span class="icon is-large">
-                  <i class="fas fa-image fa-2x fa-inverse"></i>
+                  <font-awesome-icon icon="image" size="2x" inverse/>
+                  <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Create AIMG</p>
               </a>
@@ -57,7 +58,8 @@
             >
               <a id="split_panel" v-on:click="menuselection = 'split_panel'">
                 <span class="icon is-large">
-                  <i class="far fa-images fa-2x fa-inverse"></i>
+                  <font-awesome-icon icon="images" size="2x" inverse/>
+                  <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Split AIMG</p>
               </a>
@@ -69,7 +71,8 @@
             >
               <a id="modify_panel" v-on:click="menuselection = 'modify_panel'">
                 <span class="icon is-large">
-                  <i class="fas fa-exchange-alt fa-2x fa-inverse"></i>
+                  <font-awesome-icon icon="exchange-alt" size="2x" inverse/>
+                  <!-- <i class="fas fa-exchange-alt fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Modify AIMG</p>
               </a>
@@ -111,7 +114,8 @@
             >
               <a id="inspect_panel" v-on:click="menuselection = 'inspect_panel'">
                 <span class="icon is-large">
-                  <i class="fas fa-search fa-2x fa-inverse"></i>
+                  <font-awesome-icon icon="search" size="2x" inverse/>
+                  <!-- <i class="fas fa-search fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Inspect Image</p>
               </a>
@@ -135,7 +139,8 @@
             >
               <a id="settings_panel" v-on:click="menuselection = 'settings_panel'">
                 <span class="icon is-large">
-                  <i class="fas fa-cog fa-2x fa-inverse"></i>
+                  <font-awesome-icon icon="cog" size="2x" inverse/>
+                  <!-- <i class="fas fa-cog fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Settings</p>
               </a>
@@ -147,7 +152,8 @@
             >
               <a id="about_panel" v-on:click="menuselection = 'about_panel'">
                 <span class="icon is-large">
-                  <i class="fas fa-info-circle fa-2x fa-inverse"></i>
+                  <font-awesome-icon icon="info-circle" size="2x" inverse/>
+                  <!-- <i class="fas fa-info-circle fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">About</p>
               </a>
