@@ -158,6 +158,7 @@
     "playwright": "^1.16.3",
     "rimraf": "^3.0.2",
     "sass": "^1.43.5",
+    "sass-loader": "^12.3.0",
     "spectron": "^15.0.0",
     "terser-webpack-plugin": "^5.2.5",
     "vue": "^2.6.14",

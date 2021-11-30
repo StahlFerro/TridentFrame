@@ -2,7 +2,8 @@ import Vue from 'vue';
 import App from './App.vue';
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
-import './css/bulmamods.css';
+// import './css/bulmamods.css';
+import "./sass/bulmamods.scss";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faImage } from '@fortawesome/free-solid-svg-icons/faImage';

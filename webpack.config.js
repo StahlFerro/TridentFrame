@@ -51,30 +51,53 @@ module.exports = env => {
         },
         {
           test: /\.css$/,
-          use: [{
-            loader: MiniCssExtractPlugin.loader,
-            // options: {
-            //   name: 'style.css',
-            //   outputPath: 'css/',
-            //   hmr: env.NODE_ENV == 'DEV'
-            // },
-          }, 'css-loader', ]
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              // options: {
+              //   name: 'style.css',
+              //   outputPath: 'css/',
+              //   hmr: env.NODE_ENV == 'DEV' 
+              // },
+            }, "css-loader"
+          ]
+        },
+        {
+          test: /\.s[ac]ss$/i,
+          // test: /\.css$/,
+          use: [
+            {
+              loader: MiniCssExtractPlugin.loader,
+              // options: {
+              //   name: 'style.css',
+              //   outputPath: 'css/',
+              //   hmr: env.NODE_ENV == 'DEV' 
+              // },
+            }, 
+            {
+              loader: "css-loader",
+              options: {
+                url: false,
+              }
+            }, "sass-loader"
+          ]
         },
         {
           test: /\.(png|svg|jpg|gif)$/,
-          loader: 'file-loader',
+          loader: "file-loader",
           options: {
             esModule: false,
+             name: "[name].[ext]",
+             outputPath: "imgs",
             // publicPath: '../',
           },
-
         },
         {
           test: /\.(ttf|otf|eot|svg|woff(2)?)(\?[a-z0-9]+)?$/,
           use: [{
-            loader: 'file-loader',
+            loader: "file-loader",
             options: {
-              name: '[name].[ext]',
+              name: "[name].[ext]",
               outputPath: 'webfonts/',
               esModule: false,
               // publicPath: '../',
@@ -91,7 +114,7 @@ module.exports = env => {
     devServer: {
       hot: true,
       static: {
-        directory: path.join(__dirname, 'dist'),
+        directory: path.join(__dirname, "dist"),
       }
     },
     optimization: {
@@ -104,7 +127,7 @@ module.exports = env => {
       ],
     },
     output: {
-      filename: 'bundle.js',
+      filename: "bundle.js",
       path: path.resolve(__dirname, "./dist"),
       publicPath: "",
       // path: path.resolve(__dirname, 'release/html'),
