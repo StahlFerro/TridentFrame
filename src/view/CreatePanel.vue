@@ -475,7 +475,6 @@
 
 <script>
 import { ipcRenderer } from 'electron';
-import lodashClonedeep from 'lodash.clonedeep';
 import { dirname, basename, join } from "path";
 import { access, accessSync, constants } from "fs";
 const SUPPORTED_CREATE_EXTENSIONS = {
@@ -1302,11 +1301,11 @@ export default {
       // }
       this.CRT_IS_PREVIEWING = true;
       // console.log(this);
-      let criteria_pack = lodashClonedeep({
+      let criteria_pack = {
         "criteria": this.criteria,
         "gif_opt_criteria": this.gif_opt_criteria,
         "apng_opt_criteria": this.apng_opt_criteria,
-      });
+      };
       let preview_filename = `createPanel_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
       let preview_savepath = join(PREVIEWS_PATH, preview_filename);
       console.log(preview_savepath);
@@ -1449,11 +1448,11 @@ export default {
 
       if (proceed_create) {
         this.CRT_IS_CREATING = true;
-        let criteria_pack = lodashClonedeep({
+        let criteria_pack = {
           "criteria": this.criteria,
           "gif_opt_criteria": this.gif_opt_criteria,
           "apng_opt_criteria": this.apng_opt_criteria,
-        });
+        };
         tridentEngine(["combine_image", this.image_paths, this._getSavePath(), criteria_pack], (error, res) => {
           if (error) {
             try {
