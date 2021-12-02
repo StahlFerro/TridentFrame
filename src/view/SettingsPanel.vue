@@ -20,35 +20,44 @@
           </a>
         </td>
       </tr>
-      <!-- <tr>
+      <tr>
         <td>
-          <a v-on:click="ipcWindow" class="button is-large is-neon-cyan">
+          <a v-on:click="btnGetSettings" class="button is-large is-neon-cyan">
             <span class="icon is-large">
-              <i class="fas fa-window-maximize"></i>
+              <font-awesome-icon icon="bug"/>
             </span>
-            <span>IPC Window Test</span>
+            <span>Get Settings</span>
           </a>
         </td>
-      </tr> -->
+        <td>
+          <a v-on:click="btnSaveSettings" class="button is-large is-neon-cyan">
+            <span class="icon is-large">
+              <font-awesome-icon icon="bug"/>
+            </span>
+            <span>Set Settings</span>
+          </a>
+        </td>
+      </tr>
 
-      <!-- <tr>
+      <tr>
         <td>
-          <a v-on:click="purgeCacheTemp" class="button is-large is-neon-cyan">
+          <a v-on:click="btnRelaunchApp" class="button is-large is-neon-cyan">
             <span class="icon is-large">
-              <i class="fas fa-ban"></i>
+              <font-awesome-icon icon="power-off"/>
             </span>
-            <span>Purge Cache</span>
+            <span>Relaunch App</span>
           </a>
         </td>
-        <td>
+        <!-- <td>
           <a v-on:click="testGenerator" class="button is-large is-neon-cyan">
             <span class="icon is-large">
               <i class="fas fa-bug"></i>
             </span>
             <span>Test Generator</span>
           </a>
-        </td>
+        </td> -->
       </tr>
+      <!-- 
       <tr>
         <td>
           <a v-on:click="openConfirm" class="button is-large is-neon-cyan">
@@ -83,6 +92,16 @@ export default {
     },
     openInspector() {
       ipcRenderer.invoke('open-inspector');
+    },
+    btnGetSettings() {
+      const SETTINGS = ipcRenderer.sendSync("get-settings");
+      console.log(SETTINGS);
+    },
+    btnSaveSettings() {
+      ipcRenderer.sendSync("set-settings", "light");
+    },
+    btnRelaunchApp() {
+      ipcRenderer.invoke("relaunch-application");
     },
     ipcWindow: function() {
       let extension_filters = [

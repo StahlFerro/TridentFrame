@@ -6,9 +6,12 @@ const dialog = electron.dialog;
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
-let appath = app.getAppPath();
+
+const SettingStore = require("./store/settings.js");
+SettingStore.initialize();
+
 console.log('DIRNAME', __dirname);
-console.log('APP PATH', appath);
+console.log('APP PATH', app.getAppPath());
 
 if (deploy_env && deploy_env == 'DEV') {
 	var wtf = require('wtfnode');
@@ -106,6 +109,11 @@ ipcMain.on('get-app-path', function (event, args) {
 
 ipcMain.handle('reload-window', async (event, args) => {
 	reloadWindow();
+});
+
+ipcMain.handle("relaunch-application", async(event, args) => {
+	app.relaunch();
+	app.exit();
 });
 
 function reloadWindow() {
