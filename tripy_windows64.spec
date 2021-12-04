@@ -13,6 +13,7 @@ added_files = [
     ('temp/previews/.include', 'temp/previews/'),
     ('config/imagers.json', 'config/'),
     ('config/settings.json', 'config/'),
+    ('config/settings.toml', 'config/'),
 ]
 added_files.extend(imaging_engines)
 a = Analysis(['main.py'],

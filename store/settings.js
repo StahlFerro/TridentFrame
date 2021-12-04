@@ -1,5 +1,5 @@
 const { join } = require("path");
-const { parse } = require("toml");
+// const { parse } = require("toml");
 const concat = require("concat-stream");
 const { createReadStream } = require("fs");
 const { app, ipcMain, ipcRenderer } = require("electron");
@@ -17,7 +17,7 @@ readStream.pipe(concatStream)
 function readSettingsBytes(settingsBuffer) {
   console.log(`TOML settingsBuffer:`);
   console.log(settingsBuffer);
-  SETTINGS = parse(settingsBuffer);
+  SETTINGS = settingsBuffer;
   console.log(`Parsed settings TOML:`);
   console.log(SETTINGS);
 }
