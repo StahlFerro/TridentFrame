@@ -658,11 +658,11 @@ let common_metadata = {
 //   console.log("new checkerbg is", data.new_checkerbg_active);
 // }
 
-// let extension_filters = [
-//     { name: 'Images', extensions: Object.keys(SUPPORTED_MODIFY_EXTENSIONS) },
-// ];
-// let file_dialog_props = ['openfile'];
-// let dir_dialog_props = ['openDirectory', 'createDirectory'];
+let extension_filters = [
+    { name: 'Images', extensions: Object.keys(SUPPORTED_MODIFY_EXTENSIONS) },
+];
+let file_dialog_props = ['openfile'];
+let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
 // function loadImage() {
 //   console.log("mod load image called");
@@ -877,21 +877,6 @@ let common_metadata = {
 //   }
 // }
 
-// function updateAspectRatio(width, height) {
-//   if (data.criteria.width && data.criteria.height) {
-//     console.log('uAR', width, height);
-//     let divisor = gcd(width, height);
-//     let w_ratio = width / divisor;
-//     let h_ratio = height / divisor;
-//     let ARData = {
-//       "w_ratio": w_ratio,
-//       "h_ratio": h_ratio,
-//       "text": `${w_ratio}:${h_ratio}`,
-//     };
-//     console.log(ARData);
-//     data.aspect_ratio = ARData;
-//   }
-// }
 
 // function btnModifyImage() {
 //   if (!data.orig_attribute.path) {
@@ -1208,7 +1193,22 @@ export default {
       this.criteria.delay = roundPrecise(ainfo.average_delay.value, 3) / 1000;
       this.criteria.fps = roundPrecise(ainfo.fps.value, 3);
       this.criteria.loop_count = ainfo.loop_count.value;
-      updateAspectRatio(this.criteria.width, this.criteria.height);
+      this.updateAspectRatio(this.criteria.width, this.criteria.height);
+    },
+    updateAspectRatio(width, height) {
+      if (this.criteria.width && this.criteria.height) {
+        console.log('uAR', width, height);
+        let divisor = gcd(width, height);
+        let w_ratio = width / divisor;
+        let h_ratio = height / divisor;
+        let ARData = {
+          "w_ratio": w_ratio,
+          "h_ratio": h_ratio,
+          "text": `${w_ratio}:${h_ratio}`,
+        };
+        console.log(ARData);
+        this.aspect_ratio = ARData;
+      }
     },
     loadImage() {
       console.log("mod load image called");
@@ -1309,7 +1309,6 @@ export default {
       this.aspect_ratio = ARData;
     },
     clearImage() {
-      console.log(data);
       this.clearOrigMetadata();
       this.clearCriteriaFields();
       this.clearPreviewImage();
