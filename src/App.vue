@@ -197,18 +197,18 @@
 // import { client } from "./src/Client.vue";
 // import { client, ImageViewer } from "./src/Client.vue";
 // const { tridentEngine } = require("./src/modules/streams/trident_engine")
-import ContextMenu from './src/view/components/ContextMenu/ContextMenu.vue';
-import ContextMenuItem from './src/view/components/ContextMenu/ContextMenuItem.vue';
+import ContextMenu from './view/components/ContextMenu/ContextMenu.vue';
+import ContextMenuItem from './view/components/ContextMenu/ContextMenuItem.vue';
 
-import CreatePanel from "./src/view/CreatePanel.vue";
-import SplitPanel from "./src/view/SplitPanel.vue";
-import ModifyPanel from "./src/view/ModifyPanel.vue";
+import CreatePanel from "./view/CreatePanel.vue";
+import SplitPanel from "./view/SplitPanel.vue";
+import ModifyPanel from "./view/ModifyPanel.vue";
 // import BuildSpritesheetPanel from "./src/BuildSpritesheetPanel.vue";
 // import SliceSpritesheetPanel from "./src/SliceSpritesheetPanel.vue";
-import InspectPanel from "./src/view/InspectPanel.vue";
+import InspectPanel from "./view/InspectPanel.vue";
 // import TilesPanel from "./src/TilesPanel.vue";
-import SettingsPanel from "./src/view/SettingsPanel.vue";
-import AboutPanel from "./src/view/AboutPanel.vue";
+import SettingsPanel from "./view/SettingsPanel.vue";
+import AboutPanel from "./view/AboutPanel.vue";
 
 
 export default {

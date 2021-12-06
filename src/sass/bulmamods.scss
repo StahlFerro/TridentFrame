@@ -1,5 +1,5 @@
-@import "../node_modules/bulma/sass/utilities/_all.sass";
-@import "../node_modules/bulma/sass/elements/button.sass";
+@import "../../node_modules/bulma/sass/utilities/_all.sass";
+@import "../../node_modules/bulma/sass/elements/button.sass";
 
 @import "components/_globalvars.scss";
 @import "components/_colors.scss";
@@ -33,7 +33,7 @@ $input-radius: 0px;
 $input-imod-active-color: $white-d;
 $input-imod-color: $white-d;
 
-@import "../node_modules/bulma/bulma.sass";
+@import "../../node_modules/bulma/bulma.sass";
 
 
 /* Global font setup */
@@ -257,7 +257,7 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 
 /* Checkerboard background image */
 .has-checkerboard-bg {
-    background-image: url("../imgs/Transparency500.png");
+    background-image: url("../../assets/imgs/Transparency500.png");
 }
 
 

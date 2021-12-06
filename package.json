@@ -61,7 +61,7 @@
     "asar": false,
     "win": {
       "target": [],
-      "icon": "release/tridentframe/win-unpacked/resources/app/imgs/TridentFrame_logo_256x256.ico"
+      "icon": "release/tridentframe/win-unpacked/resources/app/assets/icons/TridentFrame_logo_256x256.ico"
     },
     "linux": {
       "target": [
@@ -70,7 +70,7 @@
         "tar.gz",
         "zip"
       ],
-      "icon": "release/tridentframe/linux-unpacked/resources/app/imgs/TridentFrame_logo_256x256.png",
+      "icon": "release/tridentframe/linux-unpacked/resources/app/assets/icons/TridentFrame_logo_256x256.png",
       "category": "Graphics"
     },
     "files": [
@@ -83,14 +83,10 @@
       "!.vscode/**",
       "!.venv/**",
       "!.mocharc.json",
-      "!app.js",
-      "!index.html",
       "!jsconfig.json",
       "!bin/**",
       "!config/**",
-      "!css/**",
       "!pycore/**",
-      "!sass/**",
       "!src/**",
       "src/modules/constants/appconfig.js",
       "!temp/**",

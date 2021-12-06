@@ -23,7 +23,7 @@ module.exports = env => {
   ] : [];
 
   return {
-    entry: './app.js',
+    entry: './src/app.js',
     target: 'electron-main',
     node: {
       __dirname: false,
@@ -31,7 +31,7 @@ module.exports = env => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './index.html',
+        template: './src/index.html',
       }),
       new MiniCssExtractPlugin({
         filename: IS_DEV_MODE? '[name].css' : '[name].[contenthash].css',

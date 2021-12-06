@@ -39,7 +39,7 @@
 
 <script>
 import { shell } from 'electron';
-import logo from '../../imgs/TridentFrame_logo_512x512.png';
+import logo from '../../assets/imgs/TridentFrame_logo_512x512.png';
 
 export default {
   data: function() {
