@@ -52,7 +52,7 @@ if (_process.env.DEPLOY_ENV == "DEV") {
   }
 
   settings_path = join(engine_dir, "config", "settings.toml");
-  settings = JSON.parse(readFileSync(join(appPath, "config", "settings.json")));
+  settings = JSON.parse(readFileSync(join(engine_dir, "config", "settings.json")));
   temp_path = join(engine_dir, "temp");
   previews_path = join(temp_path, "previews");
 }

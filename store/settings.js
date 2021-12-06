@@ -1,23 +1,24 @@
 const { join } = require("path");
-// const { parse } = require("toml");
-const concat = require("concat-stream");
-const { createReadStream } = require("fs");
+const { createReadStream, createWriteStream } = require("fs");
 const { app, ipcMain, ipcRenderer } = require("electron");
 const { SETTINGS_PATH } = require("../src/modules/constants/appconfig.js")
-
-// const SETTINGS_PATH = join(app.getAppPath(), "config", "settings.toml");
-const readStream = createReadStream(SETTINGS_PATH, "utf-8");
-const concatStream = concat(readSettingsBytes);
+const concat = require("concat-stream");
+const toml = require("toml");
 
 let SETTINGS;
 
-readStream.on("error", readSettingsError)
-readStream.pipe(concatStream)
+function loadSettingsFromFile() {
+  const readStream = createReadStream(SETTINGS_PATH, "utf-8");
+  const concatStream = concat(readSettings);
+  readStream.on("error", readSettingsError)
+  readStream.pipe(concatStream)
+}
 
-function readSettingsBytes(settingsBuffer) {
+
+function readSettings(settingsBuffer) {
   console.log(`TOML settingsBuffer:`);
   console.log(settingsBuffer);
-  SETTINGS = settingsBuffer;
+  SETTINGS = toml.parse(settingsBuffer);
   console.log(`Parsed settings TOML:`);
   console.log(SETTINGS);
 }
@@ -44,6 +45,7 @@ const initStoreListener = () => {
 
 class SettingStore {
   static initialize() {
+    loadSettingsFromFile();
     initStoreListener();
   }
 }
