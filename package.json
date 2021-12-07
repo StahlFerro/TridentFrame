@@ -88,7 +88,7 @@
       "!config/**",
       "!pycore/**",
       "!src/**",
-      "src/modules/constants/appconfig.js",
+      "src/common/paths.js",
       "!temp/**",
       "!tests/**",
       "!venv/**",

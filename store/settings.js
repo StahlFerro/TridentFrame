@@ -1,7 +1,7 @@
 const { join } = require("path");
 const { createReadStream, createWriteStream } = require("fs");
 const { app, ipcMain, ipcRenderer } = require("electron");
-const { SETTINGS_PATH } = require("../src/modules/constants/appconfig.js")
+const { SETTINGS_PATH } = require("../src/common/paths.js")
 const concat = require("concat-stream");
 const toml = require("toml");
 

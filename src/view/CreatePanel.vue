@@ -487,7 +487,7 @@ import { numConstrain } from "../modules/events/constraints";
 import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { formatBytes, randString } from "../modules/utility/stringutils";
 import { gcd } from "../modules/utility/calculations";
-import { PREVIEWS_PATH } from "../modules/constants/appconfig";
+import { PREVIEWS_PATH } from "../common/paths";
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
 

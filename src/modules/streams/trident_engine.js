@@ -2,7 +2,7 @@
 import { env, cwd } from "process";
 import { spawn } from "child_process";
 import { PythonShell } from "python-shell";
-import { PYTHON_PATH, ENGINE_EXEC_PATH } from "../constants/appconfig";
+import { PYTHON_PATH, ENGINE_EXEC_PATH } from "../../common/paths";
 import { NewlineTransformer } from "./stream_transformer";
 import { isNullOrWhitespace } from "../utility/stringutils";
 

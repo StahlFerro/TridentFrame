@@ -110,7 +110,7 @@ import { roundPrecise } from "../modules/utility/calculations";
 import { varToSpaceUpper } from "../modules/utility/stringutils";
 import { escapeLocalPath } from "../modules/utility/pathutils";
 import { tridentEngine } from "../modules/streams/trident_engine";
-import { SETTINGS } from "../modules/constants/appconfig";
+import { SETTINGS } from "../common/paths";
 import { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } from "../modules/constants/images";
 import { extension as mime_extension } from "mime-types";
 

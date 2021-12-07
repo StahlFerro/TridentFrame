@@ -478,7 +478,7 @@ import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../mo
 import { randString } from "../modules/utility/stringutils";
 import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { structuredClone } from "../modules/utility/objectutils";
-import { PREVIEWS_PATH, TEMP_PATH } from "../modules/constants/appconfig";
+import { PREVIEWS_PATH } from "../common/paths";
 
 import { dirname, join, basename } from "path";
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
