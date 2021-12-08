@@ -48,14 +48,12 @@
             <span>Relaunch App</span>
           </a>
         </td>
-        <!-- <td>
-          <a v-on:click="testGenerator" class="button is-large is-neon-cyan">
-            <span class="icon is-large">
-              <i class="fas fa-bug"></i>
-            </span>
-            <span>Test Generator</span>
-          </a>
-        </td> -->
+        <td>
+          <label class="checkbox">
+            <input v-model="USER_SETTINGS.fullscreen" type="checkbox" />
+            Start in fullscreen
+          </label>
+        </td>
       </tr>
       <!-- 
       <tr>
@@ -86,6 +84,11 @@ import { ipcRenderer } from "electron";
 import { tridentEngine } from "../modules/streams/trident_engine.js";
 
 export default {
+  data: function() {
+    return {
+      USER_SETTINGS: {}
+    };
+  },
   methods: {
     refreshWindow() {
       ipcRenderer.invoke('reload-window');
@@ -94,11 +97,10 @@ export default {
       ipcRenderer.invoke('open-inspector');
     },
     btnGetSettings() {
-      const SETTINGS = ipcRenderer.sendSync("get-settings");
-      console.log(SETTINGS);
+      console.log(this.USER_SETTINGS);
     },
     btnSaveSettings() {
-      ipcRenderer.sendSync("set-settings", "light");
+      ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
     },
     btnRelaunchApp() {
       ipcRenderer.invoke("relaunch-application");
@@ -127,7 +129,9 @@ export default {
     }
   },
   mounted: function() {
-    ipcRenderer.invoke('reload-window-once');
+    // ipcRenderer.invoke('reload-window-once');
+    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    this.USER_SETTINGS = { ...SETTINGS.user };
   }
   /** 
    * *TODO: Find the actual cause of this bug.

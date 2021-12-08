@@ -1,6 +1,6 @@
 [user]
 theme = "dark"
-fullscreen = true
+fullscreen = false
 
 [app]
 cache_dir = "temp/cache"
@@ -21,11 +21,11 @@ apngopt = "apngopt-1.4-bin-linux/apngopt"
 apngdis = "apngdis-2.9-bin-linux/apngdis"
 pngquant = "pngquant/pngquant"
 
-  [app.image_metadata]
-  categories = [ "general_info", "animation_info" ]
+[app.image_metadata]
+categories = [ "general_info", "animation_info" ]
 
-    [app.image_metadata.attributes]
-    general_info = [
+[app.image_metadata.attributes]
+general_info = [
   "name",
   "width",
   "height",
@@ -42,7 +42,7 @@ pngquant = "pngquant/pngquant"
   "exif",
   "is_animated"
 ]
-    animation_info = [
+animation_info = [
   "frame_count",
   "average_delay",
   "delays_are_even",
