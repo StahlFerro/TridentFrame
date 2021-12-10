@@ -16,7 +16,7 @@ module.exports = env => {
   console.log(__dirname);
   let dev_plugins = IS_DEV_MODE? [
     new BundleAnalyzerPlugin({
-      analyzerPort: 8888,
+      analyzerPort: 8998,
       defaultSizes: "stat",
     }),
     new DashboardPlugin({ port: 8091 }),
@@ -88,7 +88,27 @@ module.exports = env => {
           options: {
             esModule: false,
              name: "[name].[ext]",
-             outputPath: "imgs",
+             outputPath: "assets/imgs",
+            // publicPath: '../',
+          },
+        },
+        {
+          test: /\.(toml)$/,
+          loader: "file-loader",
+          options: {
+            esModule: false,
+             name: "[name].[ext]",
+             outputPath: "config/",
+            // publicPath: '../',
+          },
+        },
+        {
+          test: /\.(ico|icns)$/,
+          loader: "file-loader",
+          options: {
+            esModule: false,
+             name: "[name].[ext]",
+             outputPath: "assets/icons",
             // publicPath: '../',
           },
         },
@@ -117,7 +137,7 @@ module.exports = env => {
         directory: path.join(__dirname, "dist"),
       }
     },
-    optimization: {
+    optimization: !IS_DEV_MODE? {
       usedExports: true,
       minimize: true,
       minimizer: [
@@ -125,7 +145,7 @@ module.exports = env => {
         new CssMinimizerPlugin(),
         new JsonMinimizerPlugin(),
       ],
-    },
+    }: {},
     output: {
       filename: "bundle.js",
       path: path.resolve(__dirname, "./dist"),

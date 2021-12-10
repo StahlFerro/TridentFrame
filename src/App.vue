@@ -145,7 +145,7 @@
                 <p class="is-white-d">Settings</p>
               </a>
             </li>
-            <li
+            <!-- <li
               id="about_box"
               class="menu-item"
               v-bind:class="{ 'is-selected': menuselection == 'about_panel' }"
@@ -153,11 +153,10 @@
               <a id="about_panel" v-on:click="menuselection = 'about_panel'">
                 <span class="icon is-large">
                   <font-awesome-icon icon="info-circle" size="2x" inverse/>
-                  <!-- <i class="fas fa-info-circle fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">About</p>
               </a>
-            </li>
+            </li> -->
           </ul>
         </aside>
       </div>
@@ -172,7 +171,7 @@
         <InspectPanel v-show="menuselection == 'inspect_panel'" @open-root-ctxmenu="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu"/>
         <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
         <SettingsPanel v-show="menuselection == 'settings_panel'" />
-        <AboutPanel v-show="menuselection == 'about_panel'" />
+        <!-- <AboutPanel v-show="menuselection == 'about_panel'" /> -->
     </div>
     <div>
       <ContextMenu ref="ctxmenu">
@@ -208,7 +207,7 @@ import ModifyPanel from "./view/ModifyPanel.vue";
 import InspectPanel from "./view/InspectPanel.vue";
 // import TilesPanel from "./src/TilesPanel.vue";
 import SettingsPanel from "./view/SettingsPanel.vue";
-import AboutPanel from "./view/AboutPanel.vue";
+// import AboutPanel from "./view/AboutPanel.vue";
 
 
 export default {
@@ -233,7 +232,7 @@ export default {
     InspectPanel,
     // TilesPanel,
     SettingsPanel,
-    AboutPanel,
+    // AboutPanel,
     ContextMenu,
     ContextMenuItem,
   },

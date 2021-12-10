@@ -3,7 +3,8 @@ $cyan: #34caf8;
 $blue: #2e3cd5;
 $cyan-bright: #98e7ff;
 $emerald: #44d444;
-$crimson: #ff5555;
+$crimson: #f74848;
+$sunset: #f5904d;
 $white-d: #cccccc;
 $dark-2: #232629;
 $dark-3: #31363b;
@@ -19,6 +20,9 @@ $white-a: #aaaaaa;
 }
 .is-crimson {
     color: $crimson;
+}
+.is-sunset {
+    color: $sunset;
 }
 .is-emerald {
     color: $emerald;

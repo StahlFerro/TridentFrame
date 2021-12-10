@@ -11,10 +11,12 @@
 @import "components/interaction.scss";
 @import "components/input.scss";
 @import "components/slider.scss";
+@import "components/tabs.scss";
 @import "panels/create_panel.scss";
 @import "panels/split_panel.scss";
 @import "panels/modify_panel.scss";
 @import "panels/inspect_panel.scss";
+@import "panels/settings_panel.scss";
 @import "panels/about_panel.scss";
 
 
@@ -40,7 +42,7 @@ $input-imod-color: $white-d;
 @font-face {
     font-family: 'Share Tech';
     font-style: normal;
-    src: url('../webfonts/ShareTech-Regular.ttf') format('truetype');
+    src: url('../../webfonts/ShareTech-Regular.ttf') format('truetype');
 }
 
 html {

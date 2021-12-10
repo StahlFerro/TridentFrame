@@ -5,6 +5,10 @@ import 'vue-slider-component/theme/default.css'
 // import './css/bulmamods.css';
 import "./sass/bulmamods.scss";
 import "../assets/imgs/Transparency500.png";
+import "../assets/icons/TridentFrame_logo_256x256.icns";
+import "../assets/icons/TridentFrame_logo_256x256.ico";
+import "../webfonts/ShareTech-Regular.ttf";
+import "../config/app.toml";
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faImage } from '@fortawesome/free-solid-svg-icons/faImage';

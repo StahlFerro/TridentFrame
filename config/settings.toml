@@ -1,6 +1,6 @@
 [user]
 theme = "dark"
-fullscreen = true
+fullscreen = false
 
 [app]
 cache_dir = "temp/cache"

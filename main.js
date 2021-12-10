@@ -8,7 +8,7 @@ const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
 
 const SettingStore = require("./store/settings.js");
-SettingStore.initialize();
+let SETTINGS;
 
 console.log('DIRNAME', __dirname);
 console.log('APP PATH', app.getAppPath());
@@ -62,6 +62,10 @@ const createWindow = () => {
 		);
 	}
 	mainWindow.focus();
+	console.log(SETTINGS);
+	if (SETTINGS.user.fullscreen) {
+		mainWindow.maximize();
+	}
 	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
@@ -69,6 +73,9 @@ const createWindow = () => {
 
 app.on('ready', () => {
 	// createPyProc();
+	console.log("calling SettingStore.initialize()");
+	SETTINGS = SettingStore.initialize();
+	console.log("calling createWindow()");
 	createWindow();
 	mainWindow.reload();
 });

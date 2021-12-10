@@ -85,7 +85,6 @@
       "!.mocharc.json",
       "!jsconfig.json",
       "!bin/**",
-      "!config/**",
       "!pycore/**",
       "!src/**",
       "src/common/paths.js",

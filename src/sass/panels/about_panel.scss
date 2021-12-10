@@ -7,7 +7,7 @@ div.about-content {
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-    height: calc(100vh - #{$root-height-offset});
+    height: calc(100vh - 70px - #{$root-height-offset});
     h1 { color: $white-d; }
     p { color: $white-d; margin-bottom: 0 !important; }
     display: flex;

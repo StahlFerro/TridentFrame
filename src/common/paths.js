@@ -20,13 +20,15 @@ if (ipcMain != null && app != null)
 else if (ipcRenderer)
   appPath = ipcRenderer.sendSync("get-app-path");
 else
-  throw new Error("Cannot get appPath for appconfig.js");
+  throw new Error("Cannot get appPath for common/paths.js");
 
 let python_path;
 let engine_dir;
 let engine_exec_path;
 let previews_path;
 let temp_path;
+let app_settings_path;
+let engine_settings_path;
 let settings_path;
 let settings; // console.log(appPath);
 // console.log(`current appPath: ${appPath}`);
@@ -37,6 +39,7 @@ let settings; // console.log(appPath);
 if (_process.env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py";
   settings_path = join(appPath, "config", "settings.toml");
+  app_settings_path = join(appPath, "config", "app.toml");
   settings = JSON.parse(readFileSync(join(appPath, "config", "settings.json")));
   temp_path = join(appPath, "temp");
   previews_path = join(temp_path, "previews");
@@ -50,7 +53,7 @@ if (_process.env.DEPLOY_ENV == "DEV") {
     engine_dir = join(appPath, "engine", "linux");
     engine_exec_path = join(engine_dir, "tridentengine");
   }
-
+  app_settings_path = join(appPath, "config", "app.toml");
   settings_path = join(engine_dir, "config", "settings.toml");
   settings = JSON.parse(readFileSync(join(engine_dir, "config", "settings.json")));
   temp_path = join(engine_dir, "temp");
@@ -62,6 +65,8 @@ const SETTINGS = settings;
 exports.SETTINGS = SETTINGS;
 const SETTINGS_PATH = settings_path;
 exports.SETTINGS_PATH = SETTINGS_PATH;
+const APP_SETTINGS_PATH = app_settings_path;
+exports.APP_SETTINGS_PATH = APP_SETTINGS_PATH;
 const PREVIEWS_PATH = previews_path;
 exports.PREVIEWS_PATH = PREVIEWS_PATH;
 const TEMP_PATH = temp_path;
