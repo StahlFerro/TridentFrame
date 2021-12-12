@@ -7,7 +7,7 @@ const ipcMain = electron.ipcMain;
 const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
 
-const SettingStore = require("./store/settings.js");
+const SettingStore = require("./src/store/settings.js");
 let SETTINGS;
 
 console.log('DIRNAME', __dirname);
@@ -110,15 +110,23 @@ ipcMain.handle('save-dialog', async (event, args) => {
 	return dialog.showSaveDialog(mainWindow, args);
 });
 
-ipcMain.on('get-app-path', function (event, args) {
+ipcMain.on('get-app-path-sync', function (event, args) {
 	event.returnValue = app.getAppPath();
 });
+
+ipcMain.on("show-msg-box-sync", function (event, args) {
+	event.returnValue = dialog.showMessageBoxSync(args);
+})
+
+ipcMain.handle("show-msg-box", async (event, args) => {
+	return dialog.showMessageBox(mainWindow, args);
+})
 
 ipcMain.handle('reload-window', async (event, args) => {
 	reloadWindow();
 });
 
-ipcMain.handle("relaunch-application", async(event, args) => {
+ipcMain.handle("relaunch-application", async (event, args) => {
 	app.relaunch();
 	app.exit();
 });
@@ -136,9 +144,13 @@ ipcMain.handle('reload-window-once', async (event, args) => {
 });
 
 ipcMain.handle('open-inspector', async (event, args) => {
-	mainWindow.webContents.openDevTools({mode: 'detach'});
+	mainWindow.webContents.openDevTools({
+		mode: 'detach'
+	});
 	var devtools = mainWindow.devToolsWebContents;
-	if (devtools) { devtools.focus(); }
+	if (devtools) {
+		devtools.focus();
+	}
 });
 
 // const selectPort = () => {

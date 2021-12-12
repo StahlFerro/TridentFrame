@@ -8,6 +8,7 @@ const JsonMinimizerPlugin = require("json-minimizer-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
+const regeneratorRuntime = require("regenerator-runtime");
 
 
 module.exports = env => {
@@ -23,7 +24,7 @@ module.exports = env => {
   ] : [];
 
   return {
-    entry: './src/app.js',
+    entry: ['./src/app.js'],
     target: 'electron-main',
     node: {
       __dirname: false,
@@ -34,8 +35,8 @@ module.exports = env => {
         template: './src/index.html',
       }),
       new MiniCssExtractPlugin({
-        filename: IS_DEV_MODE? '[name].css' : '[name].[contenthash].css',
-        chunkFilename: IS_DEV_MODE? '[id].css' : '[id].[contenthash].css',
+        filename: !IS_DEV_MODE? '[name].css' : '[name].[contenthash].css',
+        chunkFilename: !IS_DEV_MODE? '[id].css' : '[id].[contenthash].css',
       }),
       new VueLoaderPlugin(),
       ...dev_plugins,

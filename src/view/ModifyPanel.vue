@@ -485,6 +485,7 @@ import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
+import { existsSync } from 'fs';
 import Vue from 'vue';
 
 const SUPPORTED_MODIFY_EXTENSIONS = {
@@ -1323,23 +1324,96 @@ export default {
     },
     btnSetSavePath() {
       // setSavePath();
-      this.setSaveDirFromDialog();
+      this.setSaveDirFromDialogAsync();
     },
-    setSaveDirFromDialog(afterSaveCallback) {
+    async setSaveDirFromDialogAsync() {
       let options = { properties: dir_dialog_props };
-      ipcRenderer.invoke('open-dialog', options).then((result) => {
-        if (result.canceled)
+      let dirPath;
+      const result = await ipcRenderer.invoke('open-dialog', options);
+      if (result.canceled)
+        return {canceled: true, result: dirPath};
+      let out_dirs = result.filePaths;
+      console.log(out_dirs);
+      if (out_dirs && out_dirs.length > 0) { 
+        this.save_dir = out_dirs[0];
+      }
+      this._logClear();
+      return {canceled: false, result: dirPath};
+    },
+    async validateFilenameAsync() {
+      if (validateFilename(this.fname))
+        return true;
+      else
+        return false;
+    },
+    btnModifyImage() {
+      if (!this.orig_attribute.path) {
+        this._logError("Please load the animated image to be modified!");
+        return;
+      }
+
+
+
+      this.validateFilenameAsync().then(async (isValid) => {
+        if (isValid) {
+          if (!this.save_dir) {
+            const result = await this.setSaveDirFromDialogAsync()
+            if (result.canceled)
+              return Promise.reject("Directory selection cancelled");
+            else
+              return this._checkFileOverwriteAsync();
+          }
+          else 
+            return this._checkFileOverwriteAsync();
+        }
+        else {
+          let errMsg = "File name contains characters that are not allowed";
+          this._logError(errMsg);
+          return Promise.reject(errMsg);
+        }
+      }).then((proceed) => {
+        console.log(`proceed modify ${proceed}`);
+        if (proceed)
+          this.modifyImage();
+        else
           return;
-        let out_dirs = result.filePaths;
-        console.log(out_dirs);
-        if (out_dirs && out_dirs.length > 0) { 
-          this.save_dir = out_dirs[0];
-        }
-        this._logClear();
-        if (afterSaveCallback) {
-          afterSaveCallback();
-        }
+      }).catch((error) => {
+        console.error(error);
       });
+
+
+      
+    // if (this.save_dir)
+    //   this.modifyImage();
+    // else
+    //   this.setSaveDirFromDialogAsync().then((result) => {
+    //     if (result.canceled)
+    //       return Promise.reject("Directory selection cancelled.");
+    //     else
+    //       return this._checkFileOverwriteAsync();
+    //   }).then((proceed) => {
+    //     console.log(`proceed_create ${proceed}`);
+    //     if (proceed)
+    //       this.modifyImage();
+    //     else
+    //       return Promise.reject("Cancelled modification");
+    //   });
+    },
+    async _checkFileOverwriteAsync() {
+      let proceed = true;
+      if (existsSync(this._getSavePath())) {
+        let options = {
+          title: "TridentFrame",
+          buttons: ["Yes", "No"],
+          message:
+            "A file with the same name already exists in the output folder and it will get overwritten. Do you want to proceed?",
+        };
+        const promptResult = await ipcRenderer.invoke("show-msg-box", options);
+        console.log(`msgbox promptResult:`);
+        console.log(promptResult);
+        if (promptResult.response == 1) proceed = false;
+      }
+      return proceed;
     },
     // chooseOutDir: chooseOutDir,
     previewModImg() {
@@ -1389,16 +1463,6 @@ export default {
           this.MOD_IS_PREVIEWING = false;
         }})
       );
-    },
-    btnModifyImage() {
-      if (!this.orig_attribute.path) {
-        this._logError("Please load the animated image to be modified!");
-        return;
-      }
-      if (this.save_dir)
-        this.modifyImage();
-      else
-        this.setSaveDirFromDialog(this.modifyImage);
     },
     previewPathCacheBreaker() {
       let cb_url = `${this.preview_path}`;
@@ -1483,9 +1547,9 @@ export default {
         let numdec = value.split(".");
         console.log("numdec", numdec);
         let precision = 2;
-        if (this.criteria.format == "GIF") {
+        if (this.criteria.format.toUpperCase() == "GIF") {
           precision = GIF_DELAY_DECIMAL_PRECISION;
-        } else if (this.criteria.format == "PNG") {
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
           precision = APNG_DELAY_DECIMAL_PRECISION;
         }
         if (numdec[1].length > precision) {
@@ -1501,9 +1565,9 @@ export default {
       let value = event.target.value;
       if (value) {
         let mult = 100;
-        if (this.criteria.format == "GIF") {
+        if (this.criteria.format.toUpperCase() == "GIF") {
           mult = 100;
-        } else if (this.criteria.format == "PNG") {
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
           mult = 1000;
         }
         this.criteria.delay = Math.round(mult / this.criteria.fps) / mult;

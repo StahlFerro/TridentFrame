@@ -2,7 +2,7 @@ const { join } = require("path");
 const { createReadStream, readFileSync } = require("fs");
 const { writeFileSync } = require("atomically");
 const { app, ipcMain, ipcRenderer } = require("electron");
-const { APP_SETTINGS_PATH } = require("../src/common/paths.js")
+const { APP_SETTINGS_PATH } = require("../common/paths.js")
 const concat = require("concat-stream");
 const toml = require("@iarna/toml");
 
@@ -55,11 +55,11 @@ const initStoreListener = () => {
     console.log(SETTINGS);
     event.returnValue = SETTINGS;
   });
-  ipcMain.on("set-settings", function (event, args) {
-    console.log("set-settings invoked with args:");
+  ipcMain.on("set-user-settings", function (event, args) {
+    console.log("set-user-settings invoked with args:");
     console.log(args);
     SETTINGS.user = args;
-    console.log("set-settings finished invoked!");
+    console.log("set-user-settings finished invoked!");
     writeSettings();
     console.log("settings written to toml!");
     event.returnValue = null;

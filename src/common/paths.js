@@ -18,7 +18,7 @@ let appPath;
 if (ipcMain != null && app != null)
   appPath = app.getAppPath();
 else if (ipcRenderer)
-  appPath = ipcRenderer.sendSync("get-app-path");
+  appPath = ipcRenderer.sendSync("get-app-path-sync");
 else
   throw new Error("Cannot get appPath for common/paths.js");
 

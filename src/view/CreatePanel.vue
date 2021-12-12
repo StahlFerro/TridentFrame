@@ -476,7 +476,7 @@
 <script>
 import { ipcRenderer } from 'electron';
 import { dirname, basename, join } from "path";
-import { access, accessSync, constants } from "fs";
+import { access, accessSync, constants, existsSync } from "fs";
 const SUPPORTED_CREATE_EXTENSIONS = {
   'gif': 'GIF',
   'png': 'APNG',
@@ -500,6 +500,7 @@ import StatusBar from "./components/StatusBar.vue";
 import { createPopper } from '@popperjs/core';
 import ClickOutside from 'vue-click-outside';
 import Vue from 'vue';
+
 
 /*
 let data = {
@@ -1288,19 +1289,11 @@ export default {
       console.log("preview called");
       this._logClear();
       if (this.sequence_info.length < 2) {
-        // this.create_msgbox = "Please load at least 2 images!";
         this._logError("Please load at least 2 images!");
         return;
       }
       this._setMinimalDimensions();
-      // let validator = validateFilename(data.criteria.name);
-      // if (!validator.valid) {
-      //   console.error(validator.msg);
-      //   data.create_msgbox = validator.msg;
-      //   return;
-      // }
       this.CRT_IS_PREVIEWING = true;
-      // console.log(this);
       let criteria_pack = {
         "criteria": this.criteria,
         "gif_opt_criteria": this.gif_opt_criteria,
@@ -1311,14 +1304,11 @@ export default {
       console.log(preview_savepath);
       tridentEngine(["combine_image", this.image_paths, preview_savepath, criteria_pack], (error, res) => {
         if (error) {
-          // console.error(error);
-          // let error_data = JSON.parse(error);
           this._logError(error)
           this.CRT_IS_PREVIEWING = false;
         } else if (res) {
           if (res.msg) {
             this._logProcessing(res.msg);
-            // this.create_msgbox = res.msg;
           }
           if (res.preview_path) {
             this.preview_path = res.preview_path;
@@ -1341,7 +1331,6 @@ export default {
       );
     },
     _previewPathCacheBreaker() {
-      // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
       let cb_url = `${this.preview_path}`;
       console.log("Cache breaker url", cb_url);
       this.preview_path_cb = cb_url;
@@ -1374,7 +1363,6 @@ export default {
       this.orig_height = "";
       this.old_height = "";
       this._logClear();
-      // this.create_msgbox = "";
       let empty_aspect_ratio = {
         w_ratio: "",
         h_ratio: "",
@@ -1394,24 +1382,29 @@ export default {
       this.previewAIMG();
     },
     btnSetSavePath() {
-      // setSavePathFromDialog();
-      this.setSaveDirFromDialog();
+      this.setSaveDirFromDialogAsync();
     },
-    setSaveDirFromDialog(afterSaveCallback) {
+    async setSaveDirFromDialogAsync() {
       let options = { properties: dir_dialog_props };
-      ipcRenderer.invoke('open-dialog', options).then((result) => {
-        if (result.canceled)
-          return;
-        let out_dirs = result.filePaths;
-        console.log(out_dirs);
-        if (out_dirs && out_dirs.length > 0) { 
-          this.save_dir = out_dirs[0];
-        }
-        this._logClear();
-        if (afterSaveCallback) {
-          afterSaveCallback();
-        }
-      });
+      let dirPath;
+      const result = await ipcRenderer.invoke('open-dialog', options);
+      if (result.canceled) {
+        return {canceled: true, result: dirPath};
+      }
+      let out_dirs = result.filePaths;
+      console.log(out_dirs);
+      if (out_dirs && out_dirs.length > 0) { 
+        this.save_dir = out_dirs[0];
+        dirPath = this.save_dir;
+      }
+      this._logClear();
+      return {canceled: false, result: dirPath};
+    },
+    async validateFilenameAsync() {
+      if (validateFilename(this.fname))
+        return true;
+      else
+        return false;
     },
     btnCreateAIMG() {
       if (this.sequence_info.length < 2) {
@@ -1419,75 +1412,127 @@ export default {
         // this.create_msgbox = "Please load at least 2 images!";
         return;
       }
-      if (this.save_dir) {
-        if (!validateFilename(this.fname)) {
-          this._logError("File name contains characters that are not allowed");
-          return;
+      this.validateFilenameAsync().then(async (isValid) => {
+        if (isValid) {
+          if (!this.save_dir) {
+            const result = await this.setSaveDirFromDialogAsync()
+            if (result.canceled)
+              return Promise.reject("Directory selection cancelled");
+            else
+              return this._checkFileOverwriteAsync();
+          }
+          else 
+            return this._checkFileOverwriteAsync();
         }
-        this.createAnimatedImage();
+        else {
+          let errMsg = "File name contains characters that are not allowed";
+          this._logError(errMsg);
+          return Promise.reject(errMsg);
+        }
+      }).then((proceed) => {
+        console.log(`proceed create ${proceed}`);
+        if (proceed)
+          this.createAnimatedImage();
+        else
+          return;
+      }).catch((error) => {
+        console.error(error);
+      });
+
+      // if (this.save_dir) {
+      //   if (!validateFilename(this.fname)) {
+      //     this._logError("File name contains characters that are not allowed");
+      //     return;
+      //   }
+      //   this._checkFileOverwriteAsync().then((proceed_create) => {
+      //     if (proceed_create)
+      //       this.createAnimatedImage();
+      //     else
+      //       return;
+      //   })
+      // }
+      // else {
+      //   this.setSaveDirFromDialogAsync().then((result) => {
+      //     if (result.canceled)
+      //       return Promise.reject("Directory selection cancelled");
+      //     else
+      //       return this._checkFileOverwriteAsync()
+      //   }).then((proceed_create) => {
+      //     console.log(`proceed_create ${proceed_create}`);
+      //     if (proceed_create)
+      //       this.createAnimatedImage();
+      //     else
+      //       return Promise.reject("Cancelled creation");
+        // }).catch((error) => {
+        //   console.error(error);
+        // });
+      // }
+    },
+    async _checkFileOverwriteAsync() {
+      let proceed = true;
+      if (existsSync(this._getSavePath())) {
+        let options = {
+          title: "TridentFrame",
+          buttons: ["Yes", "No"],
+          message:
+            "A file with the same name already exists in the output folder and it will get overwritten. Do you want to proceed?",
+        };
+        const promptResult = await ipcRenderer.invoke("show-msg-box", options);
+        console.log(`msgbox promptResult:`);
+        console.log(promptResult);
+        if (promptResult.response == 1) proceed = false;
       }
-      else {
-        this.setSaveDirFromDialog(this.createAnimatedImage);
-      }
+      return proceed;
     },
     createAnimatedImage() {
-      let proceed_create = true;
+      // let proceed_create = true;
       this._logClear();
       // this.create_msgbox = "";
       this._setMinimalDimensions();
-      // if (fileExists(data.save_path)) {
-      //   let WINDOW = remote.getCurrentWindow();
-      //   let options = {
-      //     buttons: ["Yes", "Cancel"],
-      //     message:
-      //       "A file with the same name already exists in the output folder. Do you want to override it?",
-      //   };
-      //   let response = dialog.showMessageBoxSync(WINDOW, options);
-      //   if (response == 1) proceed_create = false;
-      // }
 
-      if (proceed_create) {
-        this.CRT_IS_CREATING = true;
-        let criteria_pack = {
-          "criteria": this.criteria,
-          "gif_opt_criteria": this.gif_opt_criteria,
-          "apng_opt_criteria": this.apng_opt_criteria,
-        };
-        tridentEngine(["combine_image", this.image_paths, this._getSavePath(), criteria_pack], (error, res) => {
-          if (error) {
-            try {
-              this._logError(error);
-              // this.create_msgbox = error;
-              this.CRT_IS_CREATING = false;
-            }
-            catch (e) {
-              this._logError(e);
-              // this.create_msgbox = error;
-            }
-          } else if (res) {
-            console.log(`res -> ${res}`);
-            if (res) {
-              console.log(res);
-              if (res.msg) {
-                this._logProcessing(res.msg);
-                // this.create_msgbox = res.msg;
-              }
+      this.CRT_IS_CREATING = true;
+      let criteria_pack = {
+        "criteria": this.criteria,
+        "gif_opt_criteria": this.gif_opt_criteria,
+        "apng_opt_criteria": this.apng_opt_criteria,
+      };
+      tridentEngine(["combine_image", this.image_paths, this._getSavePath(), criteria_pack], (error, res) => {
+        if (error) {
+          try {
+            this._logError(error);
+            // this.create_msgbox = error;
+            this.CRT_IS_CREATING = false;
+          }
+          catch (e) {
+            this._logError(e);
+            // this.create_msgbox = error;
+          }
+        } else if (res) {
+          console.log(`res -> ${res}`);
+          if (res) {
+            console.log(res);
+            if (res.msg) {
+              this._logProcessing(res.msg);
+              // this.create_msgbox = res.msg;
             }
           }
-        },
-        () => {
-          this._logSuccess(`${this.criteria.format.toUpperCase()} created!`);
-          // this.create_msgbox = `${this.criteria.format.toUpperCase()} created!`;
-          this.CRT_IS_CREATING = false;
-        });
-      }
+        }
+      },
+      () => {
+        this._logSuccess(`${this.criteria.format.toUpperCase()} created!`);
+        // this.create_msgbox = `${this.criteria.format.toUpperCase()} created!`;
+        this.CRT_IS_CREATING = false;
+      });
     },
     btnToggleCheckerBG() {
       this.checkerbg_active = !this.checkerbg_active;
       console.log("now checkerbg is", this.checkerbg_active);
     },
+    _getFullFilename() {
+      return `${this.fname}.${this.criteria.format}`;
+    },
     _getSavePath() {
-      let file_name = `${this.fname}.${this.criteria.format}`;
+      let file_name = this._getFullFilename();
       let save_path = join(this.save_dir, file_name);
       console.log(`getSavePath ${save_path}`);
       return save_path;
@@ -1543,9 +1588,9 @@ export default {
         let numdec = value.split(".");
         console.log("numdec", numdec);
         let precision = 2;
-        if (this.criteria.format == "GIF") {
+        if (this.criteria.format.toUpperCase() == "GIF") {
           precision = GIF_DELAY_DECIMAL_PRECISION;
-        } else if (this.criteria.format == "PNG") {
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
           precision = APNG_DELAY_DECIMAL_PRECISION;
         }
         if (numdec[1].length > precision) {
@@ -1561,9 +1606,9 @@ export default {
       let value = event.target.value;
       if (value) {
         let mult = 100;
-        if (this.criteria.format == "GIF") {
+        if (this.criteria.format.toUpperCase() == "GIF") {
           mult = 100;
-        } else if (this.criteria.format == "PNG") {
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
           mult = 1000;
         }
         this.criteria.delay = Math.round(mult / this.criteria.fps) / mult;

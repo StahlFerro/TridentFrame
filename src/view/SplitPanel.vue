@@ -200,7 +200,7 @@
               <td colspan="4">
                 <div class="field has-addons">
                   <div class="control">
-                    <a v-on:click="btnChooseOutDir" class="button is-neon-cyan">
+                    <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
                       <span class="icon is-small">
                         <font-awesome-icon icon="save"/>
                         <!-- <i class="fas fa-save"></i> -->
@@ -391,34 +391,81 @@ export default {
       this.checkerbg_active = !this.checkerbg_active;
       console.log("now checkerbg is", this.checkerbg_active);
     },
-    btnChooseOutDir() {
-      this.chooseOutDir();
+    btnSetSavePath() {
+      this.setSaveDirFromDialogAsync();
     },
-    chooseOutDir(afterSaveCallback) {
+    async setSaveDirFromDialogAsync() {
       let options = { properties: dir_dialog_props };
-      ipcRenderer.invoke('open-dialog', options).then((result) => {
-        let out_dirs = result.filePaths;
-        console.log(out_dirs);
-        if (out_dirs && out_dirs.length > 0) { 
-          this.outdir = out_dirs[0];
-        }
-        this._logClear();
-        if (afterSaveCallback) {
-          afterSaveCallback();
-        }
-      });
+      let dirPath;
+      const result = await ipcRenderer.invoke('open-dialog', options);
+      if (result.canceled) {
+        return {canceled: true, result: dirPath};
+      }
+      let out_dirs = result.filePaths;
+      console.log(out_dirs);
+      if (out_dirs && out_dirs.length > 0) { 
+        this.outdir = out_dirs[0];
+        dirPath = this.outdir;
+      }
+      this._logClear();
+      return {canceled: false, result: dirPath};
+    },
+    async validateFilenameAsync() {
+      if (validateFilename(this.new_name))
+        return true;
+      else
+        return false;
     },
     btnSplitImage() {
       if (this.preview_path == "") {
         this._logError("Please load the image first!");
         return;
       }
-      if (this.outdir) {
-        this.splitImage();
-      }
-      else {
-        this.chooseOutDir(this.splitImage);
-      }
+
+
+      this.validateFilenameAsync().then(async (isValid) => {
+        if (isValid) {
+          if (!this.save_dir) {
+            const result = await this.setSaveDirFromDialogAsync();
+            if(result.canceled)
+              return Promise.reject("Directory selection cancelled");
+            else
+              return true;
+          }
+          else 
+            return true;
+        }
+        else {
+          let errMsg = "File name contains characters that are not allowed";
+          this._logError(errMsg);
+          return Promise.reject(errMsg);
+        }
+      }).then((proceed_create) => {
+        console.log(`proceed create ${proceed_create}`);
+        if (proceed_create)
+          this.splitImage();
+        else
+          return;
+      }).catch((error) => {
+        console.error(error);
+      });
+
+
+
+      // if (this.outdir) {
+      //   this.splitImage();
+      // }
+      // else {
+      //   this.setSaveDirFromDialogAsync().then((result) => {
+      //     if (result.canceled)
+      //       return Promise.reject("Directory selection cancelled.");
+      //     else
+      //       return this.splitImage();
+      //   }).catch((error) => {
+      //     console.error(error);
+      //   });
+      // }
+
     },
     splitImage() {
       let new_name = this.criteria.new_name;

@@ -181,7 +181,7 @@ export default {
       console.log(ipcRenderer.sendSync("get-settings"));
     },
     btnSaveSettings() {
-      ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
+      ipcRenderer.sendSync("set-user-settings", this.USER_SETTINGS);
     },
     btnRelaunchApp() {
       ipcRenderer.invoke("relaunch-application");
@@ -194,7 +194,7 @@ export default {
     },
     applySettingsWatcher() {
       this.$watch("USER_SETTINGS", function() {
-        ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
+        ipcRenderer.sendSync("set-user-settings", this.USER_SETTINGS);
       }, { deep: true});
     },
     ipcWindow: function () {
