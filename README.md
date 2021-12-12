@@ -59,19 +59,13 @@ Make sure to have the following installed:
 
 Perform each of these commands in separate terminal windows:
 
-1. Start Sass to monitor changes in .scss files:
-
-    ```
-    $ npm run css-watch
-    ```
-  
-2. Then start up webpack dev server:
+1. Then start up webpack dev server:
 
     ```
     $ npm run wpserve
     ```
 
-3. Finally start Electron:
+2. Finally start Electron:
 
     ```
     $ npm run dev
