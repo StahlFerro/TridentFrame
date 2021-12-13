@@ -1,7 +1,7 @@
 {
   "name": "tridentframe",
   "productName": "TridentFrame",
-  "version": "0.1.0-beta.9",
+  "version": "0.1.0-beta.10",
   "description": "Desktop animated images swiss-army knife",
   "author": {
     "name": "StahlFerro",
@@ -61,6 +61,8 @@
     "asar": false,
     "win": {
       "target": [
+        "7z",
+        "zip"
       ],
       "icon": "release/tridentframe/win-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.ico"
     },

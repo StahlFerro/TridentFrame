@@ -38,7 +38,7 @@ class TridentFrameImager:
     def info(self):
         stdio.debug({
             "name": "TridentFrame",
-            "version": "0.1.0-beta.9",
+            "version": "0.1.0-beta.10",
         })
 
     def purge_previews_dir(self, excluded_images: List[str]):

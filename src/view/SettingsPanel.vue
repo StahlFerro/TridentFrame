@@ -112,7 +112,7 @@
             <div class="about-info">
               <img v-bind:src="logo" class="about-logo no-select-drag" />
               <h1 class="about-software-name">TridentFrame</h1>
-              <p class="about-software-version">v0.1.0-beta.9</p>
+              <p class="about-software-version">v0.1.0-beta.10</p>
               <p class="about-software-copyright">
                 Copyright
                 <span class="icon">
