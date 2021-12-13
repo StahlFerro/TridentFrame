@@ -35,8 +35,8 @@ module.exports = env => {
         template: './src/index.html',
       }),
       new MiniCssExtractPlugin({
-        filename: !IS_DEV_MODE? '[name].css' : '[name].[contenthash].css',
-        chunkFilename: !IS_DEV_MODE? '[id].css' : '[id].[contenthash].css',
+        filename: !IS_DEV_MODE? 'css/[name].css' : 'css/[name].[contenthash].css',
+        chunkFilename: !IS_DEV_MODE? 'css/[id].css' : 'css/[id].[contenthash].css',
       }),
       new VueLoaderPlugin(),
       ...dev_plugins,
@@ -50,37 +50,33 @@ module.exports = env => {
           test: /\.vue$/,
           use: 'vue-loader'
         },
+        // {
+        //   test: /\.css$/,
+        //   use: [
+        //     {
+        //       loader: MiniCssExtractPlugin.loader,
+        //       // options: {
+        //       //   name: 'style.css',
+        //       //   outputPath: 'css/',
+        //       //   hmr: env.NODE_ENV == 'DEV' 
+        //       // },
+        //     }, "css-loader"
+        //   ]
+        // },
         {
-          test: /\.css$/,
-          use: [
-            {
-              loader: MiniCssExtractPlugin.loader,
-              // options: {
-              //   name: 'style.css',
-              //   outputPath: 'css/',
-              //   hmr: env.NODE_ENV == 'DEV' 
-              // },
-            }, "css-loader"
-          ]
-        },
-        {
-          test: /\.s[ac]ss$/i,
+          test: /\.css$|\.s[ac]ss$/i,
           // test: /\.css$/,
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
-              // options: {
-              //   name: 'style.css',
-              //   outputPath: 'css/',
-              //   hmr: env.NODE_ENV == 'DEV' 
-              // },
             }, 
             {
               loader: "css-loader",
               options: {
                 url: false,
               }
-            }, "sass-loader"
+            },
+            "sass-loader"
           ]
         },
         {

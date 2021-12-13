@@ -42,7 +42,7 @@ $input-imod-color: $white-d;
 @font-face {
     font-family: 'Share Tech';
     font-style: normal;
-    src: url('../../webfonts/ShareTech-Regular.ttf') format('truetype');
+    src: url('../webfonts/ShareTech-Regular.ttf') format('truetype');
 }
 
 html {
@@ -259,7 +259,7 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 
 /* Checkerboard background image */
 .has-checkerboard-bg {
-    background-image: url("../../assets/imgs/Transparency500.png");
+    background-image: url("../assets/imgs/Transparency500.png");
 }
 
 

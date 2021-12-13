@@ -4,10 +4,10 @@ import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
 // import './css/bulmamods.css';
 import "./sass/bulmamods.scss";
-import "../assets/imgs/Transparency500.png";
-import "../assets/icons/TridentFrame_logo_256x256.icns";
-import "../assets/icons/TridentFrame_logo_256x256.ico";
-import "../webfonts/ShareTech-Regular.ttf";
+import "./assets/imgs/Transparency500.png";
+import "./assets/icons/TridentFrame_logo_256x256.icns";
+import "./assets/icons/TridentFrame_logo_256x256.ico";
+import "./webfonts/ShareTech-Regular.ttf";
 // import "../config/app.toml";
 
 import 'regenerator-runtime/runtime';

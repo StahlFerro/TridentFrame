@@ -2,17 +2,18 @@
   <div id="inspect_panel">
     <div class="inspect-panel-root">
       <div class="inspect-panel-display" >
-        <div class="inspect-panel-viewbox silver-bordered" @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)"
+        <div class="inspect-panel-viewbox silver-bordered" :class="{'has-checkerboard-bg': checkerbg_active }" 
+            @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)"
             v-cloak @drop.prevent="helidropFile" @dragover.prevent>
           <div v-if="load_has_error" class="inspect-panel-msgbox">
             <h2 class="is-2 is-crimson"><span class="icon is-large"><i class="fas fa-exclamation-circle fa-2x"></i></span></h2>
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
           <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
-            <h2 class="is-2 is-white-d"><span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x"/></span></h2>
-            <p class="is-border-colorless is-white-d">Drop your image here</p>
+            <h2 :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', is-border-colorless]"><span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x"/></span></h2>
+            <p :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', is-border-colorless]">Drop your image here</p>
           </div>
-          <div class="inspect-panel-image" v-bind:class="{'has-checkerboard-bg': checkerbg_active }" v-else-if="img_path !== ''">
+          <div class="inspect-panel-image" v-else-if="img_path !== ''">
             <img v-bind:src="escapeLocalPath(img_path)" v-show="inspect_msgbox === ''"/>
           </div>
         </div>

@@ -156,7 +156,7 @@
 <script>
 import { ipcRenderer, shell } from "electron";
 import { tridentEngine } from "../modules/streams/trident_engine.js";
-import logo from '../../assets/imgs/TridentFrame_logo_512x512.png';
+import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
 
 export default {
   data: function () {
