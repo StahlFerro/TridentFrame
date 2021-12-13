@@ -2,6 +2,7 @@ import os
 import io
 import shutil
 import math
+from fractions import Fraction
 from pathlib import Path
 
 from PIL import Image
@@ -107,8 +108,10 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             unoptimized_apng_frames = reversed(list(unoptimized_apng_frames))
         for index, (im, control) in enumerate(unoptimized_apng_frames):
             # logger.debug(png.chunks)
-            delay = int(mod_criteria.delay * 1000)
-            control.delay = delay
+            delay_fraction = Fraction(1/mod_criteria.fps).limit_denominator()
+            # delay = int(mod_criteria.delay * 1000)
+            control.delay = delay_fraction.numerator
+            control.delay_den = delay_fraction.denominator
             stdio.debug({"fr_control": control})
             if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode\
                     or aopt_criteria.is_unoptimized:
@@ -134,7 +137,8 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
                     im = im.convert(aopt_criteria.new_color_mode)
                 with io.BytesIO() as new_buf:
                     im.save(new_buf, "PNG")
-                    new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=delay)
+                    new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=delay_fraction.numerator,
+                                    delay_den=delay_fraction.denominator)
         stdio.debug(f"NEW FRAMES COUNT: {len(new_apng.frames)}")
         if len(new_apng.frames) > 0:
             apng_im = new_apng

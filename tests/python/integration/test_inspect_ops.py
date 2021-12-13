@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from pycore.inspect_ops import inspect_static_image, inspect_animated_png
+from pycore.inspect_ops import inspect_general, inspect_static_image, inspect_animated_gif, inspect_animated_png
 from apng import APNG
 
 #
@@ -10,17 +10,29 @@ from apng import APNG
 
 
 def test_inspect_static_image(fx_sequence_dir_contents):
-    metadata = inspect_static_image(fx_sequence_dir_contents[0])
+    metadata = inspect_general(fx_sequence_dir_contents[0])
     assert not metadata.is_animated['value']
     assert metadata.format['value'] == 'PNG'
     assert metadata.width['value'] == 4
     assert metadata.height['value'] == 4
 
 
-def test_inspect_animated_png(fx_checker_apng_path):
-    apng_im = APNG.open(fx_checker_apng_path)
-    metadata = inspect_animated_png(fx_checker_apng_path, apng_im)
+def test_inspect_agif(fx_checker_agif_path):
+    metadata = inspect_general(fx_checker_agif_path)
     assert metadata.is_animated['value']
+    assert metadata.format['value'] == 'GIF'
+    assert metadata.delays['value'] == [200 for r in range(0, 4)]
+    assert metadata.fps['value'] == 5
+    assert metadata.width['value'] == 371
+    assert metadata.height['value'] == 371
+
+
+def test_inspect_apng(fx_checker_apng_path):
+    # apng_im = APNG.open(fx_checker_apng_path)
+    metadata = inspect_general(fx_checker_apng_path)
+    # metadata = inspect_animated_png(fx_checker_apng_path, apng_im)
+    assert metadata.is_animated['value']
+    assert metadata.format['value'] == 'PNG'
     assert metadata.delays['value'] == [500 for r in range(0, 4)]
     assert metadata.fps['value'] == 2
     assert metadata.width['value'] == 256

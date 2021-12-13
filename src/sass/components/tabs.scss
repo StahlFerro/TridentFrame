@@ -1,0 +1,13 @@
+@import "_colors.scss";
+@import "../../../node_modules/bulma/sass/components/tabs.sass";
+
+
+$tabs-link-color: $white-a;
+$tabs-link-hover-color: $white-d;
+$tabs-link-active-color: $cyan;
+
+$tabs-border-bottom-color: $white-a;
+$tabs-link-hover-border-bottom-color: $white-a;
+$tabs-link-active-border-bottom-color: $cyan;
+
+$tabs-border-bottom-width: 2px;

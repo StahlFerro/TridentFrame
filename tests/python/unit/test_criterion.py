@@ -76,7 +76,7 @@ def test_split_criteria():
 
 
 def test_criteria_bundle(fx_json_dir):
-    with open(fx_json_dir.joinpath("createpanel_criteria_pack_001.json"), "r") as f:
+    with open(fx_json_dir.joinpath("crbundle_002_create_optimized_apng.json"), "r") as f:
         crpack = json.loads(f.read())
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),

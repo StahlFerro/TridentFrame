@@ -10,6 +10,7 @@ added_files = [
     ('temp/previews/.include', 'temp/previews/.include'),
     ('config/imagers.json', 'config/'),
     ('config/settings.json', 'config/'),
+    ('config/settings.toml', 'config/'),
 ]
 added_files.extend(imaging_engines)
 print(imaging_engines)

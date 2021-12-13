@@ -3,6 +3,7 @@ import io
 import shutil
 # import numpy as np
 from typing import List
+from fractions import Fraction
 from pathlib import Path
 
 from PIL import Image
@@ -221,7 +222,8 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     stdio.message("Saving APNG....")
     if criteria.start_frame:
         preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, criteria.start_frame)
-    apng = APNG.from_files(preprocessed_paths, delay=int(criteria.delay * 1000))
+    delay_fraction = Fraction(1/criteria.fps).limit_denominator()
+    apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)
     apng.num_plays = criteria.loop_count
     apng.save(out_full_path)
     # else:
@@ -256,13 +258,15 @@ def create_aimg(image_paths: List[Path], out_path: Path, crbundle: CriteriaBundl
     # if not os.path.exists(out_dir):
     #     raise Exception(f"The specified absolute out_dir does not exist!\n{out_dir}")
 
-    if img_format == "GIF":
+    if img_format.casefold() == "gif":
         # out_full_path = out_dir.joinpath(f"{filename}.gif")
         # filename = f"{filename}.gif"
         return _build_gif(img_paths, out_path, crbundle)
         # return _build_gif(img_paths, out_full_path, crbundle)
 
-    elif img_format == "PNG":
+    elif img_format.casefold() == "png":
         # out_full_path = out_dir.joinpath(f"{filename}.png")
         return _build_apng(img_paths, out_path, crbundle)
         # return _build_apng(img_paths, out_full_path, crbundle)
+    else:
+        stdio.error(f"The image format {img_format} is not supported")

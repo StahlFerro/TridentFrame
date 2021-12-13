@@ -269,9 +269,11 @@ jsconfig.json
 
 ### Mochawesome Reports
 
-
-
 **/mochawesome-report/**
+
+### Pytest-HTML Reports
+
+**/pytest-report/**
 
 
 

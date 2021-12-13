@@ -333,7 +333,8 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     width = png_one.width
     height = png_one.height
     # raise Exception(frames)
-    delays = [f[1].delay if f[1] else 0 for f in frames]
+    delays = [round(f[1].delay / f[1].delay_den * 1000, 3) if f[1] else 0 for f in frames]
+    stdio.debug([(f[1].delay, f[1].delay_den) if f[1] else 0 for f in frames])
     im = Image.open(abspath)
     stdio.debug(im.default_image)
     # for index in range(0, im.n_frames):

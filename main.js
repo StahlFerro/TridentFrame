@@ -6,11 +6,12 @@ const dialog = electron.dialog;
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
-let pyProc = null;
-let pyPort = null;
-let appath = app.getAppPath();
+
+const SettingStore = require("./src/store/settings.js");
+let SETTINGS;
+
 console.log('DIRNAME', __dirname);
-console.log('APP PATH', appath);
+console.log('APP PATH', app.getAppPath());
 
 if (deploy_env && deploy_env == 'DEV') {
 	var wtf = require('wtfnode');
@@ -18,6 +19,8 @@ if (deploy_env && deploy_env == 'DEV') {
 }
 
 let mainWindow = null;
+let onceReload = 0;
+
 const createWindow = () => {
 	console.log('Creating window...');
 	mainWindow = new BrowserWindow({
@@ -31,7 +34,7 @@ const createWindow = () => {
 		darkTheme: true,
 		fullscreen: false,
 		// resizable: false,
-		icon: path.join(__dirname, 'imgs/TridentFrame_logo_256x256.ico'),
+		icon: path.join(__dirname, 'assets/icons/TridentFrame_logo_256x256.ico'),
 		webPreferences: {
 			webSecurity: false,
 			nodeIntegration: true,
@@ -59,6 +62,10 @@ const createWindow = () => {
 		);
 	}
 	mainWindow.focus();
+	console.log(SETTINGS);
+	if (SETTINGS.user.fullscreen) {
+		mainWindow.maximize();
+	}
 	mainWindow.on('closed', () => {
 		mainWindow = null;
 	});
@@ -66,8 +73,13 @@ const createWindow = () => {
 
 app.on('ready', () => {
 	// createPyProc();
+	console.log("calling SettingStore.initialize()");
+	SETTINGS = SettingStore.initialize();
+	console.log("calling createWindow()");
 	createWindow();
+	mainWindow.reload();
 });
+
 app.on('window-all-closed', () => {
 	if (process.platform !== 'darwin') {
 		app.quit();
@@ -90,12 +102,55 @@ ipcMain.handle('open-dialog', async (event, args) => {
 	return dialog.showOpenDialog(mainWindow, args);
 });
 
+ipcMain.handle('choose-dir-dialog', async (event, args) => {
+	return "";
+});
+
 ipcMain.handle('save-dialog', async (event, args) => {
 	return dialog.showSaveDialog(mainWindow, args);
 });
 
-ipcMain.on('get-app-path', function (event, args) {
+ipcMain.on('get-app-path-sync', function (event, args) {
 	event.returnValue = app.getAppPath();
+});
+
+ipcMain.on("show-msg-box-sync", function (event, args) {
+	event.returnValue = dialog.showMessageBoxSync(args);
+})
+
+ipcMain.handle("show-msg-box", async (event, args) => {
+	return dialog.showMessageBox(mainWindow, args);
+})
+
+ipcMain.handle('reload-window', async (event, args) => {
+	reloadWindow();
+});
+
+ipcMain.handle("relaunch-application", async (event, args) => {
+	app.relaunch();
+	app.exit();
+});
+
+function reloadWindow() {
+	mainWindow.reload();
+	mainWindow.webContents.session.clearCache(() => {});
+}
+
+ipcMain.handle('reload-window-once', async (event, args) => {
+	if (process.platform == 'linux' && onceReload == 0) {
+		onceReload = 1;
+		reloadWindow();
+	}
+});
+
+ipcMain.handle('open-inspector', async (event, args) => {
+	mainWindow.webContents.openDevTools({
+		mode: 'detach'
+	});
+	var devtools = mainWindow.devToolsWebContents;
+	if (devtools) {
+		devtools.focus();
+	}
 });
 
 // const selectPort = () => {

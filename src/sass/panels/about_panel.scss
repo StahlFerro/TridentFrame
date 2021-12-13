@@ -1,0 +1,38 @@
+/* About Panel */
+@import "../components/globalvars.scss";
+@import "../components/_colors.scss";
+
+div.about-content {
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    height: calc(100vh - 70px - #{$root-height-offset});
+    h1 { color: $white-d; }
+    p { color: $white-d; margin-bottom: 0 !important; }
+    display: flex;
+    flex-direction: column;
+    .about-info {
+        height: 55vh;
+        .about-logo {
+            width: 30vh;
+            height: 30vh;
+        }
+        .about-software-name {
+            font-size: 7vh;
+        }
+        .about-software-version {
+            font-size: 2.5vh;
+        }
+        .about-software-copyright {
+            padding-top: 1vh;
+            font-size: 2.75vh
+        }
+        .about-software-author {
+            font-size: 3vh
+        }
+    }
+    .about-buttons {
+        height: 10vh;
+    }
+}

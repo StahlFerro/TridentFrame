@@ -33,12 +33,12 @@ from pycore.models.criterion import (
 
 class TridentFrameImager:
     def echo(self, msg):
-        stdio.debug(f"{msg} echoed")
+        stdio.debug(f"{msg}")
 
     def info(self):
         stdio.debug({
             "name": "TridentFrame",
-            "version": "0.1.0-beta.9",
+            "version": "0.1.0-beta.10",
         })
 
     def purge_previews_dir(self, excluded_images: List[str]):
@@ -117,7 +117,7 @@ class TridentFrameImager:
             stdio.warn(str(missing_paths))
         return
 
-    def split_image(self, image_path: str, out_dir: str, criteria_vals: SplitCriteria):
+    def split_image(self, image_path: str, out_dir: str, criteria_vals: Dict):
         """Split all the frames of a GIF/APNG into a sequence of images"""
         if not image_path and not out_dir:
             raise Exception("Please load a GIF or APNG and choose the output folder!")
@@ -130,7 +130,7 @@ class TridentFrameImager:
         if not image_path.exists():
             raise FileNotFoundError(image_path.name)
         if not out_dir.exists():
-            raise FileNotFoundError(out_dir)
+            raise FileNotFoundError(f"The directory {out_dir} is not found!")
         criteria = SplitCriteria(criteria_vals)
         split_aimg(image_path, out_dir, criteria)
         return
@@ -145,6 +145,8 @@ class TridentFrameImager:
             raise Exception("Please choose an output folder!")
         image_path = Path(image_path).resolve()
         out_path = Path(out_path).resolve()
+        if not out_path.parent.exists():
+            raise FileNotFoundError(f"The directory {str(out_path.parent)} is not found!")
         if not image_path.exists():
             raise FileNotFoundError(image_path.name)
         crbundle = CriteriaBundle({
