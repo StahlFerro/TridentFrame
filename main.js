@@ -45,13 +45,13 @@ const createWindow = () => {
 	mainWindow.setMenu(null);
 	if (deploy_env && deploy_env == 'DEV') {
 		// Development environment
-		console.log('------ DEVELOPMENT VERSION ------');
+		console.debug('------ DEVELOPMENT VERSION ------');
 		mainWindow.loadURL('http://localhost:8080/');
 		mainWindow.webContents.openDevTools({
 			mode: 'detach'
 		});
 	} else {
-		console.log('------ PRODUCTION VERSION ------');
+		console.debug('------ PRODUCTION VERSION ------');
 		// Production environment
 		mainWindow.loadURL(
 			require('url').format({
@@ -73,9 +73,9 @@ const createWindow = () => {
 
 app.on('ready', () => {
 	// createPyProc();
-	console.log("calling SettingStore.initialize()");
+	console.log("[Ready] Initialize settings");
 	SETTINGS = SettingStore.initialize();
-	console.log("calling createWindow()");
+	console.log("[Ready] Creating window...");
 	createWindow();
 	mainWindow.reload();
 });
