@@ -1,3 +1,10 @@
+###########################################################
+# TridentFrame's Electron Application Configuration #
+###########################################################
+
+# This configuration file dictates TridentFrame's UI front-end behaviour.
+# Do not alter the configurations below from this file directly unless you know well what you are doing.
+
 [user]
 theme = "dark"
 fullscreen = false
