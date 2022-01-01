@@ -10,8 +10,8 @@
             <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
           </div>
           <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
-            <h2 :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', is-border-colorless]"><span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x"/></span></h2>
-            <p :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', is-border-colorless]">Drop your image here</p>
+            <h2 :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']"><span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x"/></span></h2>
+            <p :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']">Drop your image here</p>
           </div>
           <div class="inspect-panel-image" v-else-if="img_path !== ''">
             <img v-bind:src="escapeLocalPath(img_path)" v-show="inspect_msgbox === ''"/>
