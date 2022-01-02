@@ -42,9 +42,18 @@ function loadSettingsFromFile() {
 // }
 
 /**
+ * Update main SETTINGS based on
+ * @param {Any} newSettings 
+ */
+function updateSettings(newSettings) {
+  SETTINGS = { ...newSettings };
+}
+
+/**
  * Serializes the TOML object and writes it to the file
  */
 function writeSettings(){
+  console.debug("writeSettings called")
   let tomlStr = toml.stringify(SETTINGS);
   writeFileSync(SETTINGS_PATH, tomlStr, {
     tmpPurge: false,
@@ -63,11 +72,11 @@ const initStoreListener = () => {
     console.debug(SETTINGS);
     event.returnValue = SETTINGS;
   });
-  ipcMain.on("set-user-settings", function (event, args) {
-    console.debug("set-user-settings invoked with args:");
+  ipcMain.on("set-settings", function (event, args) {
+    console.debug("set-settings invoked with args:");
     console.debug(args);
-    SETTINGS.user = args;
-    console.debug("set-user-settings finished invoked!");
+    updateSettings(args);
+    console.debug("set-settings finished invoked!");
     writeSettings();
     console.debug("settings written to toml!");
     event.returnValue = null;

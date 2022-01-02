@@ -34,7 +34,7 @@ const createWindow = () => {
 		darkTheme: true,
 		fullscreen: false,
 		// resizable: false,
-		icon: path.join(__dirname, 'assets/icons/TridentFrame_logo_256x256.ico'),
+		icon: path.join(__dirname, 'src/assets/icons/TridentFrame_logo_256x256.ico'),
 		webPreferences: {
 			webSecurity: false,
 			nodeIntegration: true,
@@ -47,9 +47,6 @@ const createWindow = () => {
 		// Development environment
 		console.debug('------ DEVELOPMENT VERSION ------');
 		mainWindow.loadURL('http://localhost:8080/');
-		mainWindow.webContents.openDevTools({
-			mode: 'detach'
-		});
 	} else {
 		console.debug('------ PRODUCTION VERSION ------');
 		// Production environment
@@ -61,9 +58,13 @@ const createWindow = () => {
 			})
 		);
 	}
+	if ((deploy_env && deploy_env == 'DEV') || SETTINGS.startup.open_devtools)
+		mainWindow.webContents.openDevTools({
+			mode: 'detach'
+		});
 	mainWindow.focus();
 	console.log(SETTINGS);
-	if (SETTINGS.user.fullscreen) {
+	if (SETTINGS.startup.fullscreen) {
 		mainWindow.maximize();
 	}
 	mainWindow.on('closed', () => {

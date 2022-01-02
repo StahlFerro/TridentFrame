@@ -135,6 +135,7 @@ export default {
       inspect_info_menu_options: [
         {'name': "Copy Info", 'callback': this.cmCopyInfo}
       ],
+      APP_SETTINGS: {},
     };
   },
   methods: {
@@ -267,6 +268,11 @@ export default {
     isButtonFrozen() {
       return this.INS_IS_INSPECTING;
     }
-  }
+  },
+  beforeMount: function () {
+    // ipcRenderer.invoke('reload-window-once');
+    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    this.APP_SETTINGS = { ...SETTINGS };
+  },
 };
 </script>

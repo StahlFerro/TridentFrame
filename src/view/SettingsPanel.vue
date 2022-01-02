@@ -21,7 +21,7 @@
           class="settings-subpanel-general"
           v-show="settings_tab_selection == 0"
         >
-          <table class="table is-borderless" style="padding: 5px" width="100%">
+          <!-- <table class="table is-borderless" style="padding: 5px" width="100%"> -->
             <!-- <tr>
               <td>
                 <a
@@ -47,15 +47,30 @@
               </td>
             </tr> -->
 
+            <!-- <tr>
+              <td class="">
+                <h1 class="title is-2 is-white-d">Startup</h1>
+              </td>
+            </tr>
             <tr>
               <td>
                 <label class="checkbox">
-                  <input v-model="USER_SETTINGS.fullscreen" type="checkbox" />
+                  <input v-model="APP_SETTINGS.display.fullscreen" type="checkbox" />
                   Start in fullscreen
                 </label>
               </td>
             </tr>
-          </table>
+          </table> -->
+          <h3 class="title is-3 settings-header">On startup</h3>
+          <hr>
+          <div class="field">
+            <input id="fullscreenCheckbox" class="is-checkradio is-white" v-model="APP_SETTINGS.startup.fullscreen" type="checkbox" />
+            <label for="fullscreenCheckbox">Start in fullscreen</label>
+          </div>
+          <div class="field">
+            <input id="openDebuggerCheckbox" class="is-checkradio is-white" v-model="APP_SETTINGS.startup.open_devtools" type="checkbox" />
+            <label for="openDebuggerCheckbox">Open developer tools</label>
+          </div>
         </div>
 
         <div
@@ -84,7 +99,7 @@
                     <font-awesome-icon icon="bug" />
                     <!-- <i class="fas fa-bug"></i> -->
                   </span>
-                  <span>Open Inspector</span>
+                  <span>Open Developer Tools</span>
                 </a>
               </td>
             </tr>
@@ -163,8 +178,8 @@ export default {
     return {
       logo: logo,
       settings_tab_selection: 0,
-      USER_SETTINGS: {},
-      USER_SETTINGS_PREVIOUS: {},
+      APP_SETTINGS: {},
+      APP_SETTINGS_PREVIOUS: {},
     };
   },
   methods: {
@@ -176,12 +191,12 @@ export default {
     },
     btnGetSettings() {
       console.log("Settings in panel");
-      console.log(this.USER_SETTINGS);
+      console.log(this.APP_SETTINGS);
       console.log("Settings in store");
       console.log(ipcRenderer.sendSync("get-settings"));
     },
     btnSaveSettings() {
-      ipcRenderer.sendSync("set-user-settings", this.USER_SETTINGS);
+      ipcRenderer.sendSync("set-settings", this.APP_SETTINGS);
     },
     btnRelaunchApp() {
       ipcRenderer.invoke("relaunch-application");
@@ -193,8 +208,8 @@ export default {
       shell.openExternal("https://en.liberapay.com/StahlFerro");
     },
     applySettingsWatcher() {
-      this.$watch("USER_SETTINGS", function() {
-        ipcRenderer.sendSync("set-user-settings", this.USER_SETTINGS);
+      this.$watch("APP_SETTINGS", function() {
+        ipcRenderer.sendSync("set-settings", this.APP_SETTINGS);
       }, { deep: true});
     },
     ipcWindow: function () {
@@ -231,11 +246,13 @@ export default {
   //     deep: true,
   //   },
   // },
-  mounted: function () {
+  beforeMount: function () {
+    console.debug("SettingsPanel mounted");
     // ipcRenderer.invoke('reload-window-once');
     const SETTINGS = ipcRenderer.sendSync("get-settings");
-    this.USER_SETTINGS = { ...SETTINGS.user };
-    this.USER_SETTINGS_PREVIOUS = { ...SETTINGS.user };
+    console.debug(SETTINGS);
+    this.APP_SETTINGS = { ...SETTINGS };
+    this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
     this.applySettingsWatcher();
   },
   /** 
