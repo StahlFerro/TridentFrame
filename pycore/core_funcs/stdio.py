@@ -7,6 +7,7 @@ from typing import Any
 from pathlib import Path
 from apng import FrameControl
 from pycore.models import criterion
+from pycore.models.diagnostics import CommandDiagnostics
 from pycore.utility.encoders import JSONEncoderTrident
 
 
@@ -70,4 +71,9 @@ def control(logmsg: str):
 
 def preview_path(logpath: Path):
     msg = {"preview_path": str(logpath)}
+    print(json.dumps(msg))
+
+
+def report_diagnostics(diag: CommandDiagnostics):
+    msg = {"diagnostics": diag.__dict__}
     print(json.dumps(msg))

@@ -1,6 +1,7 @@
 import sys
 import os
 import json
+import time
 from pathlib import Path
 
 
@@ -12,6 +13,7 @@ if IS_FROZEN:
 
 
 from pycore.core_funcs import stdio, exception
+from pycore.core_funcs.wrappers import enable_diagnostics
 from pycore.utility import filehandler
 from typing import Dict, List
 from pycore.inspect_ops import inspect_sequence, inspect_general, inspect_sequence_autodetect
@@ -32,6 +34,8 @@ from pycore.models.criterion import (
 
 
 class TridentFrameImager:
+    def __init__(self):
+        self.start_time = time.time()
     def echo(self, msg):
         stdio.debug(f"{msg}")
 
@@ -83,6 +87,7 @@ class TridentFrameImager:
         if info:
             stdio.data(info)
 
+    @enable_diagnostics
     # def combine_image(self, image_paths: List[str], out_dir: str, criteria_pack: Dict):
     def combine_image(self, image_paths: List[str], out_path: str, criteria_pack: Dict):
         """Combine a sequence of images into a GIF/APNG"""
@@ -111,6 +116,7 @@ class TridentFrameImager:
             "apng_opt_criteria": APNGOptimizationCriteria(criteria_pack["apng_opt_criteria"]),
         })
         out_path = create_aimg(resolved_paths, out_path, crbundle)
+        stdio.preview_path(out_path)
         if out_path:
             stdio.data(str(out_path))
         if len(missing_paths) > 0:
@@ -216,7 +222,10 @@ def main():
             raise Exception("No data received from stdin!")
         pyimager = TridentFrameImager()
         try:
+            print(dir(pyimager))
             method = getattr(pyimager, data["command"])
+            if method is None:
+                raise AttributeError
         except AttributeError:
             errmsg = f"Method {data['command']} not implemented"
             raise NotImplementedError(errmsg)
