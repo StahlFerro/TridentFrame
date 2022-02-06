@@ -74,17 +74,21 @@ class InternalImageAPI:
                 png.save(img_buf)
                 with Image.open(img_buf) as im:
                     stdio.debug({"index": index, "control": control, "mode": im.mode, "info": im.info})
+                    # If frame extraction doesn't require proper unoptimization (composition over other frames to yield the full visual frame), just return back the frame
                     if index == 0 or not unoptimize:
                         canvas = im.copy()
                         yield canvas.copy(), control
                     else:
                         prev_canvas = canvas.copy()
                         offsets = control.x_offset, control.y_offset
+                        # 0: APNG_BLEND_OP_SOURCE - Pixels of the frame (including alpha) completely overwrites the pixels on the canvas
                         if control.blend_op == 0:
                             canvas.paste(im, box=offsets)
+                        # 1: APNG_BLEND_OP_OVER - Frame pixels are alpha-composited over the canvas
                         elif control.blend_op == 1:
                             canvas.alpha_composite(im, dest=offsets)
                         yield canvas.copy(), control
+                        # 1: APNG_DISPOSE_OP_BACKGROUND - After yielding the extracted frame, convert the area where the frame was pasted on the canvas to transparent black
                         if control.depose_op == 1:
                             tp_mask: Image.Image
                             if im.mode == "P":
@@ -100,6 +104,7 @@ class InternalImageAPI:
                             elif im.mode == "RGBA":
                                 tp_mask = Image.new("RGBA", size=im.size)
                             canvas.paste(tp_mask, box=offsets)
+                        # 2: APNG_DISPOSE_OP_PREVIOUS - After yielding the extracted frame, revertthe area where the frame was pasted on the canvas to the original canvas
                         elif control.depose_op == 2:
                             canvas = prev_canvas.copy()
 

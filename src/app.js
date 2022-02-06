@@ -36,10 +36,11 @@ import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { faEye as farEye } from '@fortawesome/free-regular-svg-icons/faEye';
 import { faCopyright as farCopyright } from '@fortawesome/free-regular-svg-icons/faCopyright';
 import { faGithub as fabGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
+import { faFlask } from '@fortawesome/free-solid-svg-icons/faFlask';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add([faImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, faCheck, faSpinner,
-  faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub]);
+  faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub, faFlask]);
 
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 

@@ -115,6 +115,17 @@
                   <span>Relaunch App</span>
                 </a>
               </td>
+              <td>
+                <a
+                  v-on:click="testCInterface"
+                  class="button is-large is-neon-crimson"
+                >
+                  <span class="icon is-large">
+                    <font-awesome-icon icon="flask" />
+                  </span>
+                  <span>Call CF</span>
+                </a>
+              </td>
             </tr>
           </table>
         </div>
@@ -211,6 +222,16 @@ export default {
       this.$watch("APP_SETTINGS", function() {
         ipcRenderer.sendSync("set-settings", this.APP_SETTINGS);
       }, { deep: true});
+    },
+    testCInterface() {
+      tridentEngine(["ping_c_interface"], (error, res) => {
+        if (error) {
+          console.error(error);
+        }
+        else {
+          console.debug(res);
+        }
+      });
     },
     ipcWindow: function () {
       let extension_filters = [

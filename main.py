@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import time
+import ctypes
 from pathlib import Path
 
 
@@ -31,13 +32,19 @@ from pycore.models.criterion import (
     GIFOptimizationCriteria,
     APNGOptimizationCriteria,
 )
+from pycore.core_funcs.c_interface import c_ping
 
 
 class TridentFrameImager:
     def __init__(self):
         self.start_time = time.time()
+
     def echo(self, msg):
         stdio.debug(f"{msg}")
+
+    def ping_c_interface(self):
+        msg = c_ping()
+        stdio.message(msg)
 
     def info(self):
         stdio.debug({
@@ -222,7 +229,7 @@ def main():
             raise Exception("No data received from stdin!")
         pyimager = TridentFrameImager()
         try:
-            print(dir(pyimager))
+            # print(dir(pyimager))
             method = getattr(pyimager, data["command"])
             if method is None:
                 raise AttributeError
@@ -239,4 +246,7 @@ def main():
 
 
 if __name__ == "__main__":
+    # TRIDENT_CLIB = ctypes.CDLL("ccore/release/libtridentframe_cf.so")
+    # val = ctypes.c_char_p(TRIDENT_CLIB.ping()).value
+    # print(val)
     main()
