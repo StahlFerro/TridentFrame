@@ -9,16 +9,16 @@ from apng import APNG
 #                  if p.stem.startswith("checker_4x4_")]
 
 
-def test_inspect_static_image(fx_sequence_dir_contents):
-    metadata = inspect_general(fx_sequence_dir_contents[0])
+def test_inspect_static_image(fx_samples_sequence_dir_contents):
+    metadata = inspect_general(fx_samples_sequence_dir_contents[0])
     assert not metadata.is_animated['value']
     assert metadata.format['value'] == 'PNG'
     assert metadata.width['value'] == 4
     assert metadata.height['value'] == 4
 
 
-def test_inspect_agif(fx_checker_agif_path):
-    metadata = inspect_general(fx_checker_agif_path)
+def test_inspect_agif(fx_samples_checker_agif_path):
+    metadata = inspect_general(fx_samples_checker_agif_path)
     assert metadata.is_animated['value']
     assert metadata.format['value'] == 'GIF'
     assert metadata.delays['value'] == [200 for r in range(0, 4)]
@@ -27,10 +27,10 @@ def test_inspect_agif(fx_checker_agif_path):
     assert metadata.height['value'] == 371
 
 
-def test_inspect_apng(fx_checker_apng_path):
-    # apng_im = APNG.open(fx_checker_apng_path)
-    metadata = inspect_general(fx_checker_apng_path)
-    # metadata = inspect_animated_png(fx_checker_apng_path, apng_im)
+def test_inspect_apng(fx_samples_checker_apng_path):
+    # apng_im = APNG.open(fx_samples_checker_apng_path)
+    metadata = inspect_general(fx_samples_checker_apng_path)
+    # metadata = inspect_animated_png(fx_samples_checker_apng_path, apng_im)
     assert metadata.is_animated['value']
     assert metadata.format['value'] == 'PNG'
     assert metadata.delays['value'] == [500 for r in range(0, 4)]

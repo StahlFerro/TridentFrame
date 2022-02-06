@@ -5,21 +5,21 @@
 # This configuration file dictates TridentFrame's imaging engine's fundamental behaviour.
 # Do not alter the configurations below unless you know well what you are doing.
 
-[engine]
+temp_dir = "temp"
 cache_dir = "temp/cache"
-imagers_dir = "bin"
 previews_dir = "temp/previews"
+imagers_dir = "bin"
 
-[engine.imagers.win]
+[imagers.win]
 apngdis = "apngdis-2.9-bin-win64/apngdis.exe"
 apngopt = "apngopt-1.4-bin-win32/apngopt.exe"
 gifsicle = "gifsicle-1.92-win64/gifsicle.exe"
-imagemagick = "ImageMagick-7.0.8-61-win/convert.exe"
-pngquant = "pngquant/pngquant.exe"
+imagemagick = "ImageMagick-7.0.11-14-win/convert.exe"
+pngquant = "pngquant-2.17.0/pngquant.exe"
 
-[engine.imagers.linux]
+[imagers.linux]
 apngdis = "apngdis-2.9-bin-linux/apngdis"
 apngopt = "apngopt-1.4-bin-linux/apngopt"
 gifsicle = "gifsicle-1.92-2+b1_amd64/gifsicle"
 imagemagick = "ImageMagick-7.1.0-2-unix/magick"
-pngquant = "pngquant/pngquant"
+pngquant = "pngquant-2.17.0/pngquant"

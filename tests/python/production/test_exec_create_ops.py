@@ -7,13 +7,13 @@ from itertools import chain
 from pathlib import Path
 
 
-def test_create_gif_prod(fx_prod_exec_path: Path, fx_sequence_dir_contents: List[Path], scaffold_spaced_dir: Path):
+def test_create_gif_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_contents: List[Path], scaffold_spaced_dir: Path):
     fname = "good gif.gif"
     tmp_out_path = scaffold_spaced_dir.joinpath(fname)
     json_command = {
         "command": "combine_image",
         "args": [
-            [str(sq) for sq in fx_sequence_dir_contents],
+            [str(sq) for sq in fx_samples_sequence_dir_contents],
             str(tmp_out_path),
             {
                 "criteria": {
@@ -71,13 +71,13 @@ def test_create_gif_prod(fx_prod_exec_path: Path, fx_sequence_dir_contents: List
     assert Path(data) == tmp_out_path
 
 
-def test_create_apng_prod(fx_prod_exec_path: Path, fx_sequence_dir_contents: List[Path], scaffold_spaced_dir: Path):
+def test_create_apng_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_contents: List[Path], scaffold_spaced_dir: Path):
     fname = "$ome #apng.gif"
     tmp_out_path = scaffold_spaced_dir.joinpath(fname)
     json_command = {
         "command": "combine_image",
         "args": [
-            [str(sq) for sq in fx_sequence_dir_contents],
+            [str(sq) for sq in fx_samples_sequence_dir_contents],
             str(tmp_out_path),
             {
                 "criteria": {

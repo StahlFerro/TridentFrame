@@ -13,12 +13,15 @@ def test_previews_dir_exists(fx_prod_previews_dir: Path):
     assert fx_prod_previews_dir.exists()
 
 
-def test_imagers_jsonfile_exists(fx_prod_imagers_jsonpath: Path):
-    assert fx_prod_imagers_jsonpath.exists()
+# def test_imagers_jsonfile_exists(fx_prod_imagers_jsonpath: Path):
+#     assert fx_prod_imagers_jsonpath.exists()
 
 
-def test_settings_jsonfile_exists(fx_prod_settings_jsonpath: Path):
-    assert fx_prod_settings_jsonpath.exists()
+# def test_settings_jsonfile_exists(fx_prod_settings_jsonpath: Path):
+#     assert fx_prod_settings_jsonpath.exists()
+
+def test_engine_config_file_exists(fx_prod_config_engine_file: Path):
+    assert fx_prod_config_engine_file.exists()
 
 
 def test_exec_exists(fx_prod_exec_path: Path):

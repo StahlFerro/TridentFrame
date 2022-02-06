@@ -734,17 +734,18 @@ class APNGDisAPI:
         return fragment_paths
         # Remove generated text file and copied APNG file
 
+
 # class PNGQuantAPI:
-
+#
 #     pngquant_path = config.imager_exec_path("pngquant")
-
+#
 #     @classmethod
 #     def _pngquant_args_builder(cls, apngopt_criteria: APNGOptimizationCriteria) -> List[str]:
 #         """Get a list of pngquant arguments from an APNGOptimizationCriteria
-
+#
 #         Args:
 #             apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
-
+#
 #         Returns:
 #             List[Tuple[str, str]]: List of two valued tuples containing pngquant argument on the first value, and a status string to echo out on the second value
 #         """
@@ -756,12 +757,12 @@ class APNGDisAPI:
 #                 args.append(f"--quality={lossyval}")
 #             if speedval:
 #                 args.append(f"--speed={speedval}")
-#         logger.debug(f"aopt_criteria ------> {apngopt_criteria}")
-#         logger.debug(f"internal args ------> {args}")
+#         stdio.debug(f"aopt_criteria ------> {apngopt_criteria}")
+#         stdio.debug(f"internal args ------> {args}")
 #         # if criteria.apng_is_lossy:
 #         # args.append(())
 #         return args
-
+#
 #     @classmethod
 #     def quantize_png_image(
 #         cls,
@@ -770,12 +771,12 @@ class APNGDisAPI:
 #         out_dir: Path = "",
 #     ) -> Path:
 #         """Use pngquant to perform an array of modifications on a sequence of PNG images.
-
+#
 #         Args:
 #             pq_args (List): pngquant arguments.
 #             image_paths (List[Path]): Path to each image
 #             optional_out_path (Path, optional): Optional path to save the quantized PNGs to. Defaults to "".
-
+#
 #         Returns:
 #             List[Path]: [description]
 #         """
@@ -796,15 +797,15 @@ class APNGDisAPI:
 #             str(image_path),
 #         ]
 #         cmd = " ".join(args)
-#         logger.debug(f"PNQUANT ARGSdddddddddddd ---------> {cmd}")
+#         stdio.debug(f"PNQUANT ARGSdddddddddddd ---------> {cmd}")
 #         result = subprocess.check_output(args)
 #         # Convert back to RGBA image
 #         with Image.open(image_path).convert("RGBA") as rgba_im:
 #             rgba_im.save(image_path)
 #         # yield {"ssdsdsssdsd": quantized_frames}
 #         return image_path
-
-
+#
+#
 #     @classmethod
 #     def quantize_png_images(
 #         cls,
@@ -813,12 +814,12 @@ class APNGDisAPI:
 #         out_dir: Path = "",
 #     ) -> List[Path]:
 #         """Use pngquant to perform an array of modifications on a sequence of PNG images.
-
+#
 #         Args:
 #             pq_args (List): pngquant arguments.
 #             image_paths (List[Path]): Path to each image
 #             optional_out_path (Path, optional): Optional path to save the quantized PNGs to. Defaults to "".
-
+#
 #         Returns:
 #             List[Path]: [description]
 #         """
@@ -826,29 +827,29 @@ class APNGDisAPI:
 #             out_dir = filehandler.mk_cache_dir(prefix_name="quant_temp")
 #         pq_args = cls._pngquant_args_builder(apngopt_criteria)
 #         quantized_frames = []
-#         logger.debug("WILL QUANTIZE")
+#         stdio.debug("WILL QUANTIZE")
 #         # quantization_args = " ".join([arg[0] for arg in pq_args])
 #         # descriptions = " ".join([arg[1] for arg in pq_args])
 #         # quant_dir = mk_cache_dir(prefix_name="quant_dir")
 #         shout_nums = imageutils.shout_indices(len(image_paths), 1)
-#         for index, ipath in enumerate(image_paths):
-#             target_path = out_dir.joinpath(ipath.name)
-#             if shout_nums.get(index):
-#                 logger.message(f"Quantizing PNGs... ({shout_nums.get(index)})")
-#             args = [
-#                 str(cls.pngquant_path),
-#                 *pq_args,
-#                 str(ipath),
-#                 "--force",
-#                 "--output",
-#                 str(target_path),
-#             ]
-#             cmd = " ".join(args)
-#             logger.debug(f"PNQUANT ARGS ---------> {cmd}")
-#             result = subprocess.check_output(args)
-#             # Convert back to RGBA image
-#             with Image.open(target_path).convert("RGBA") as rgba_im:
-#                 rgba_im.save(target_path)
-#             quantized_frames.append(target_path)
-#         # yield {"ssdsdsssdsd": quantized_frames}
-#         return quantized_frames
+# #         for index, ipath in enumerate(image_paths):
+# #             target_path = out_dir.joinpath(ipath.name)
+# #             if shout_nums.get(index):
+# #                 logger.message(f"Quantizing PNGs... ({shout_nums.get(index)})")
+# #             args = [
+# #                 str(cls.pngquant_path),
+# #                 *pq_args,
+# #                 str(ipath),
+# #                 "--force",
+# #                 "--output",
+# #                 str(target_path),
+# #             ]
+# #             cmd = " ".join(args)
+# #             logger.debug(f"PNQUANT ARGS ---------> {cmd}")
+# #             result = subprocess.check_output(args)
+# #             # Convert back to RGBA image
+# #             with Image.open(target_path).convert("RGBA") as rgba_im:
+# #                 rgba_im.save(target_path)
+# #             quantized_frames.append(target_path)
+# #         # yield {"ssdsdsssdsd": quantized_frames}
+# #         return quantized_frames

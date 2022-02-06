@@ -9,16 +9,16 @@ from pycore.utility.sysinfo import shell_type
 from pycore.models.criterion import CriteriaBundle, CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria
 
 
-def test_malformed_combine_cmd_builder(fx_spaced_dir_apng_checker: Path,
-                                       fx_crbundle_002_create_optimized_apng_json: Path):
-    crpack = fx_crbundle_002_create_optimized_apng_json
+def test_malformed_combine_cmd_builder(fx_samples_spaced_dir_apng_checker: Path,
+                                       fx_samples_crbundle_002_create_optimized_apng_json: Path):
+    crpack = fx_samples_crbundle_002_create_optimized_apng_json
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),
         "gif_opt_criteria": GIFOptimizationCriteria(crpack["gif_opt_criteria"]),
         "apng_opt_criteria": APNGOptimizationCriteria(crpack["apng_opt_criteria"]),
     })
     must_quote = os_platform() == OS.LINUX
-    malicious_path = Path(str(fx_spaced_dir_apng_checker) + "; echo 'rm -rf';").resolve()
+    malicious_path = Path(str(fx_samples_spaced_dir_apng_checker) + "; echo 'rm -rf';").resolve()
     with pytest.raises(MalformedCommandException) as excinfo:
         cmd_list = GifsicleAPI._combine_cmd_builder(malicious_path, crbundle, must_quote)
     assert 'is malformed' in str(excinfo.value)
