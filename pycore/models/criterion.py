@@ -198,6 +198,9 @@ class APNGOptimizationCriteria(CriteriaBase):
         self.optimization_level = int(vals.get("apng_optimization_level") or 0)
         self.is_lossy = vals["apng_is_lossy"]
         self.lossy_value = int(vals.get("apng_lossy_value") or 0)
+        self.quantization_enabled = vals["apng_quantization_enabled"]
+        self.quantization_quality = int(vals.get("apng_quantization_quality") or 0)
+        self.quantization_speed = int(vals.get("apng_quantization_speed") or 0)
         self.speed_value = int(vals.get("apng_speed_value") or 0)
         self.is_unoptimized = vals["apng_is_unoptimized"]
         self.convert_color_mode = vals["apng_convert_color_mode"]

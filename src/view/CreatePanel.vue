@@ -452,6 +452,9 @@
                   :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
                   :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
                   :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
+                  :apng_quantization_enabled.sync="apng_opt_criteria.apng_quantization_enabled"
+                  :apng_quantization_quality.sync="apng_opt_criteria.apng_quantization_quality"
+                  :apng_quantization_speed.sync="apng_opt_criteria.apng_quantization_speed"
                   :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
                   :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
                   :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
@@ -1100,6 +1103,9 @@ export default {
         apng_optimization_level: "1",
         apng_is_lossy: false,
         apng_lossy_value: "",
+        apng_quantization_enabled: false,
+        apng_quantization_quality: 70,
+        apng_quantization_speed: 3,
         apng_is_unoptimized: false,
         apng_preconvert_rgba: false,
         apng_convert_color_mode: false,

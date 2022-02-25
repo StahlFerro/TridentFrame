@@ -24,11 +24,63 @@
       <td class="force-vcenter" width="25%"></td>
       <td class="force-vcenter" width="25%"></td>
     </tr>
+    
     <tr>
       <td class="force-vcenter">
         <label
           class="checkbox"
-          title="Limits the number of colors for all frames of the APNG. Ranging from 2 colors (monochrome) to 256 (maximum for PNG palettes)."
+          title="Use pngquant to lossy-compress PNG images."
+        >
+          <input v-model="apng_quantization_enabled" type="checkbox" v-bind:disabled="apng_is_unoptimized"
+            @change="$emit('update:apng_quantization_enabled', apng_quantization_enabled)" />
+          Quantize frames
+        </label>
+      </td>
+      <td class="force-vcenter">
+        <div class="field">
+          <label class="label"
+            title="Quality to preserve. Ranging from 0 (worst quality but strongest compression) to 100 (best quality, weakest compression)">Quality</label>
+          <div class="control">
+            <input
+              v-model="apng_quantization_quality"
+              @change="$emit('update:apng_quantization_quality', apng_quantization_quality)"
+              class="input is-neon-white"
+              type="number"
+              min="0"
+              max="100"
+              placeholder="0 - 100"
+              v-bind:disabled="!apng_quantization_enabled"
+              v-on:keydown="numConstrain($event, true, true)"
+            />
+          </div>
+        </div>
+      </td>
+      <td class="force-vcenter">
+        <div class="field">
+          <label class="label"
+          title="Speed/quality trade-off. Ranging from 1 (slowest but preserves quality as much as possible) to 10 (fastest, but results in 10% lower quality)">Speed</label>
+          <div class="control">
+            <input
+              v-model="apng_quantization_speed"
+              @change="$emit('update:apng_quantization_speed', apng_quantization_speed)"
+              class="input is-neon-white"
+              type="number"
+              min="1"
+              max="10"
+              placeholder="21- 10"
+              v-bind:disabled="!apng_quantization_enabled"
+              v-on:keydown="numConstrain($event, true, true)"
+            />
+          </div>
+        </div>
+      </td>
+      <td class="force-vcenter" width="25%"></td>
+    </tr>
+    <tr>
+      <td class="force-vcenter">
+        <label
+          class="checkbox"
+          title="Use pngquant to lossy-compress each PNG images before combining them into a single APNG"
         >
           <input v-model="apng_is_lossy" type="checkbox" v-bind:disabled="apng_is_unoptimized"
             @change="$emit('update:apng_is_lossy', apng_is_lossy)" />
@@ -54,31 +106,10 @@
           </div>
         </div>
       </td>
+      <td class="force-vcenter" width="25%"></td>
+      <td class="force-vcenter" width="25%"></td>
     </tr>
-<!--     
-    <tr>
-      <td class="force-vcenter">
-        <label class="checkbox" title="Change color mode of image sequence before combinging them into APNG">
-          <input v-model="apng_convert_color_mode" type="checkbox" 
-              @change="$emit('update:apng_convert_color_mode', apng_convert_color_mode)"/>
-          Change Color Mode
-        </label>
-      </td>
-      <td class="force-vcenter">
-        <div class="field">
-          <div class="control">
-            <div class="select is-neon-cyan">
-              <select v-model="apng_new_color_mode" v-bind:disabled="!apng_convert_color_mode"
-                @change="$emit('update:apng_new_color_mode', apng_new_color_mode)">
-                <option value="RGBA" title="RGB + Alpha color mode">RGBA</option>
-                <option value="RGB" title="RGB color mode">RGB</option>
-                <option value="P" title="Palette color mode">Palette</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr> -->
+    
     <!-- <tr>
       <td class="force-vcenter">
         <label class="checkbox" title="Unoptimizes the APNG">
@@ -107,6 +138,9 @@ export default {
       apng_optimization_level: "1",
       apng_is_lossy: false,
       apng_lossy_value: "",
+      apng_quantization_enabled: false,
+      apng_quantization_quality: 70,
+      apng_quantization_speed: 3,
       apng_speed_value: "",
       apng_convert_color_mode: false,
       apng_new_color_mode: "RGBA",
