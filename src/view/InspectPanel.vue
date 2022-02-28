@@ -19,12 +19,12 @@
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
           <table v-if="info_data" class="table ins-info-table is-paddingless" width="100%">
-            <template v-for="meta_categ in metadata_settings.categories">
+            <template v-for="attr_group in INSPECT_PANEL_SETTINGS.image_attributes">
             <!-- <template v-for="(meta_list, meta_categ) in info_data"> -->
               <!-- <span v-bind:key="key"/> -->
-              <template v-if="info_data[meta_categ]">
-                <tr :key="meta_categ">
-                  <td colspan="2" class="is-cyan">{{ varToSpaceUpper(meta_categ) }}</td>
+              <template v-if="info_data[attr_group.category]">
+                <tr :key="attr_group.category">
+                  <td colspan="2" class="is-cyan">{{ attr_group.label }}</td>
                 </tr>
                 <!-- <tr v-if="meta_categ == 'general_info'" :key="'general_info_' + meta_categ">
                   <td colspan="2" class="is-cyan">GENERAL INFO</td>
@@ -32,13 +32,13 @@
                 <tr v-if="meta_categ == 'animation_info'" :key="'animation_info_' + meta_categ">
                   <td colspan="2" class="is-cyan">ANIMATION INFO</td>
                 </tr> -->
-                <tr v-for="attribute in metadata_settings.attributes[meta_categ]" 
-                    :set="metadata_field = info_data[meta_categ][attribute]"
-                    :key="'iprop_' + meta_categ + '_' + attribute">
+                <tr v-for="attribute in attr_group.attributes" 
+                    :set="attr_field = info_data[attr_group.category][attribute]"
+                    :key="'iprop_' + attr_group.category + '_' + attribute">
                   <td style="width: 123px">
-                    <strong><span class="is-white-d">{{ metadata_field.label }}</span></strong>
+                    <strong><span class="is-white-d">{{ attr_field.label }}</span></strong>
                   </td>
-                  <template v-if="attribute == 'loop_count' && metadata_field.value == 0">
+                  <template v-if="attribute == 'loop_count' && attr_field.value == 0">
                     <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
                   </template>
                   <!-- <template v-else-if="attribute == 'is_animated'">
@@ -47,20 +47,20 @@
                   <template v-else-if="attribute == 'delays_are_even'">
                     <td style="max-width: 369px; word-wrap: break-all">{{ delays_are_even.value? "Yes" : "No" }}</td>
                   </template> -->
-                  <template v-else-if="typeof metadata_field.value == 'boolean'">
+                  <template v-else-if="typeof attr_field.value == 'boolean'">
                     <td style="max-width: 369px; word-wrap: break-all">
-                      {{ metadata_field.value? "Yes" : "No" }}
+                      {{ attr_field.value? "Yes" : "No" }}
                     </td>
                   </template>
-                  <template v-else-if="typeof metadata_field.value == 'number'">
+                  <template v-else-if="typeof attr_field.value == 'number'">
                     <td style="max-width: 369px; word-wrap: break-all">
-                      {{ roundPrecise(metadata_field.value, 3) }}
+                      {{ roundPrecise(attr_field.value, 3) }}
                       </td>
                   </template>
                   <template v-else>
                     <!-- <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)"> -->
                     <td style="max-width: 369px; word-wrap: break-all">
-                      {{ metadata_field.value }}
+                      {{ attr_field.value }}
                     </td>
                   </template>
                 </tr>
@@ -111,7 +111,7 @@ import { roundPrecise } from "../modules/utility/calculations";
 import { varToSpaceUpper } from "../modules/utility/stringutils";
 import { escapeLocalPath } from "../modules/utility/pathutils";
 import { tridentEngine } from "../modules/streams/trident_engine";
-import { SETTINGS } from "../common/paths";
+// import { SETTINGS } from "../common/paths";
 import { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } from "../modules/constants/images";
 import { extension as mime_extension } from "mime-types";
 
@@ -126,7 +126,6 @@ export default {
       info_data: {},
       inspect_msgbox: "",
       load_has_error: false,
-      metadata_settings: SETTINGS.image_metadata,
       inspect_image_menu_options: [
         {'id': 'copy_image', 'name': "Copy Image", 'callback': this.cmCopyImage},
         {'id': 'share_image', 'name': "Share Image", 'callback': this.cmShareImage},
@@ -135,8 +134,14 @@ export default {
       inspect_info_menu_options: [
         {'name': "Copy Info", 'callback': this.cmCopyInfo}
       ],
-      APP_SETTINGS: {},
+      INSPECT_PANEL_SETTINGS: {},
     };
+  },
+  beforeMount: function () {
+    // ipcRenderer.invoke('reload-window-once');
+    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    this.INSPECT_PANEL_SETTINGS = { ...SETTINGS.inspect_panel };
+    console.log(this);
   },
   methods: {
     loadImage() {
@@ -268,11 +273,6 @@ export default {
     isButtonFrozen() {
       return this.INS_IS_INSPECTING;
     }
-  },
-  beforeMount: function () {
-    // ipcRenderer.invoke('reload-window-once');
-    const SETTINGS = ipcRenderer.sendSync("get-settings");
-    this.APP_SETTINGS = { ...SETTINGS };
   },
 };
 </script>

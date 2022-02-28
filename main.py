@@ -32,7 +32,7 @@ from pycore.models.criterion import (
     GIFOptimizationCriteria,
     APNGOptimizationCriteria,
 )
-from pycore.core_funcs.c_interface import c_ping
+# from pycore.core_funcs.c_interface import c_ping
 
 
 class TridentFrameImager:
@@ -43,6 +43,7 @@ class TridentFrameImager:
         stdio.debug(f"{msg}")
 
     def ping_c_interface(self):
+        pass
         msg = c_ping()
         stdio.message(msg)
 

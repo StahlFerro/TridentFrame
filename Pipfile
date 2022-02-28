@@ -8,6 +8,7 @@ apng = "*"
 pillow = "~=8.4.0"
 psutil = "*"
 toml = "*"
+hitherdither = {git = "https://www.github.com/hbldh/hitherdither"}
 
 [dev-packages]
 pywin32 = {version = "*", sys_platform = "== 'win32'"}

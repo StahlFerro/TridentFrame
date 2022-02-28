@@ -63,7 +63,7 @@ const createWindow = () => {
 			mode: 'detach'
 		});
 	mainWindow.focus();
-	console.log(SETTINGS);
+	console.log(JSON.stringify(SETTINGS, null, 4));
 	if (SETTINGS.startup.fullscreen) {
 		mainWindow.maximize();
 	}

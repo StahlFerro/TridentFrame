@@ -7,14 +7,14 @@ const concat = require("concat-stream");
 const toml = require("@iarna/toml");
 
 let SETTINGS;
-const SETTINGS_PATH = APP_SETTINGS_PATH;
+// const SETTINGS_PATH = APP_SETTINGS_PATH;
 
 /**
  * Read the TOML settings file and parse it as an object
  */
 function loadSettingsFromFile() {
   console.debug("Start loading data from settings file...");
-  const tomlStr = readFileSync(SETTINGS_PATH, { encoding: "utf-8"});
+  const tomlStr = readFileSync(APP_SETTINGS_PATH, { encoding: "utf-8"});
   SETTINGS = toml.parse(tomlStr);
   console.debug("Finished reading and parsing TOML...");
 }
@@ -55,7 +55,7 @@ function updateSettings(newSettings) {
 function writeSettings(){
   console.debug("writeSettings called")
   let tomlStr = toml.stringify(SETTINGS);
-  writeFileSync(SETTINGS_PATH, tomlStr, {
+  writeFileSync(APP_SETTINGS_PATH, tomlStr, {
     tmpPurge: false,
   });
 }

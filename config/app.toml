@@ -3,17 +3,10 @@ fullscreen = false
 open_debugger = false
 open_devtools = false
 
-[inspect_panel.image_attributes]
-animation_info = [
-  "frame_count",
-  "average_delay",
-  "delays_are_even",
-  "delays",
-  "fps",
-  "loop_duration",
-  "loop_count"
-]
-general_info = [
+[[inspect_panel.image_attributes]]
+category = "general_info"
+label = "General Info"
+attributes = [
   "name",
   "width",
   "height",
@@ -29,4 +22,17 @@ general_info = [
   "bit_depth",
   "exif",
   "is_animated"
+]
+
+[[inspect_panel.image_attributes]]
+category = "animation_info"
+label = "Animation Info"
+attributes = [
+  "frame_count",
+  "average_delay",
+  "delays_are_even",
+  "delays",
+  "fps",
+  "loop_duration",
+  "loop_count"
 ]

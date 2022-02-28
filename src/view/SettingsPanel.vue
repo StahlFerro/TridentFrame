@@ -271,7 +271,7 @@ export default {
     console.debug("SettingsPanel mounted");
     // ipcRenderer.invoke('reload-window-once');
     const SETTINGS = ipcRenderer.sendSync("get-settings");
-    console.debug(SETTINGS);
+    // console.debug(SETTINGS);
     this.APP_SETTINGS = { ...SETTINGS };
     this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
     this.applySettingsWatcher();
