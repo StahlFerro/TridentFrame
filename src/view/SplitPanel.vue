@@ -246,7 +246,7 @@ let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
-import Vue from 'vue';
+// import Vue from 'vue';
 
 import StatusBar from "./components/StatusBar.vue";
 
@@ -303,7 +303,7 @@ export default {
       outdir: "",
       SPL_IS_LOADING: false,
       SPL_IS_SPLITTING: false,
-      statusBarBus: new Vue(),
+      // statusBarBus: new Vue(),
     };
   },
   components: {

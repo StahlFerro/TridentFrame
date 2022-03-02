@@ -1,5 +1,4 @@
 <template>
-  <Fragment>
     <tr>
       <td class="force-vcenter" width="25%">
         <label class="checkbox" title="Optimize APNG to decrease file size without affecting quality">
@@ -109,29 +108,16 @@
       <td class="force-vcenter" width="25%"></td>
       <td class="force-vcenter" width="25%"></td>
     </tr>
-    
-    <!-- <tr>
-      <td class="force-vcenter">
-        <label class="checkbox" title="Unoptimizes the APNG">
-          <input v-model="apng_is_unoptimized" type="checkbox" v-bind:disabled="apng_is_optimized || apng_is_lossy"
-            @change="$emit('update:apng_is_unoptimized', apng_is_unoptimized)" />
-          Unoptimize
-        </label>
-      </td>
-    </tr> -->
-  <!-- </table> -->
-  </Fragment>
 </template>
 
 <script>
-import { Fragment } from 'vue-fragment';
 import { numConstrain } from "../../modules/events/constraints";
 
 
 export default {
   name: "APNGOptimizationRow",
   props: ['apng_is_unoptimized'],
-  components: { Fragment },
+  // components: { Fragment },
   data: function() {
     return {
       apng_is_optimized: false,

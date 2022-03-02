@@ -1,38 +1,4 @@
 <template>
-  <!-- <table class="table root-table is-borderless" v-on:click="whatClicked($event)">
-    <thead> -->
-  <!-- <tr class="has-background-dark-2 frame-title-bar">
-        <td width="10%" class="is-paddingless" style="vertical-align: middle;">
-          <span style="padding-left: 10px;" class="is-white-d">TridentFrame</span>
-        </td>
-        <td width="90%" class="is-paddingless">
-          <nav class="level is-marginless">
-            <div class="level-left"></div>
-            <div class="level-right has-text-centered">
-              <div class="level-item">
-                <a v-on:click="minimizeWindow" class="minimize-button">
-                  <span class="icon is-medium">
-                    <i class="far fa-window-minimize fa-inverse"></i>
-                  </span>
-                </a>
-                <a v-on:click="maximizeWindow" class="exit-button">
-                  <span class="icon is-medium">
-                    <i class="fas fa-window-maximize fa-inverse"></i>
-                  </span>
-                </a>
-                <a v-on:click="exitApp" class="exit-button">
-                  <span class="icon is-medium">
-                    <i class="fas fa-times fa-inverse"></i>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </nav>
-        </td>
-      </tr>
-    </thead> -->
-  <!-- <tbody>
-      <tr> -->
   <div class="root-container">
     <div class="root-sidebar">
       <div class="left-menu">
@@ -175,9 +141,9 @@
     </div>
     <div>
       <ContextMenu ref="ctxmenu">
-        <template slot-scope="{ contextData }">
+        <template v-slot="{ contextData }">
           <ContextMenuItem v-for="(ctxData, ctxIndex) in contextData" v-bind:key="ctxIndex" 
-            @click.native="$refs.ctxmenu.callOptionFunction(ctxData.callback);">
+            @click="$refs.ctxmenu.callOptionFunction(ctxData.callback);">
               {{ ctxData.name }}
           </ContextMenuItem>
         </template>

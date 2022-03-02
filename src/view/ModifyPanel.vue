@@ -420,40 +420,40 @@
             <div v-show="mod_menuselection == 1">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
                 <GIFOptimizationRow
-                  :is_optimized.sync="gif_opt_criteria.is_optimized"
-                  :optimization_level.sync="gif_opt_criteria.optimization_level"
-                  :is_lossy.sync="gif_opt_criteria.is_lossy"
-                  :lossy_value.sync="gif_opt_criteria.lossy_value"
-                  :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
-                  :color_space.sync="gif_opt_criteria.color_space"
-                  :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
-                  :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
-                  :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
-                  :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
+                  v-model:is_optimized="gif_opt_criteria.is_optimized"
+                  v-model:optimization_level="gif_opt_criteria.optimization_level"
+                  v-model:is_lossy="gif_opt_criteria.is_lossy"
+                  v-model:lossy_value="gif_opt_criteria.lossy_value"
+                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
+                  v-model:color_space="gif_opt_criteria.color_space"
+                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
+                  v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
+                  v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
+                  v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
                 />
                 <GIFUnoptimizationRow
-                :is_optimized.sync="gif_opt_criteria.is_optimized"
-                :is_lossy.sync="gif_opt_criteria.is_lossy"
-                :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
-                :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+                v-model:is_optimized="gif_opt_criteria.is_optimized"
+                v-model:is_lossy="gif_opt_criteria.is_lossy"
+                v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
+                v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
                 />
               </table>
             </div>
             <div v-show="mod_menuselection == 2">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
                 <APNGOptimizationRow
-                  :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
-                  :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
-                  :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
-                  :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
-                  :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
-                  :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
-                  :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
+                  v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
+                  v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
+                  v-model:apng_lossy_value="apng_opt_criteria.apng_lossy_value"
+                  v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
+                  v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
+                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
                 />
                 <APNGUnoptimizationRow
-                  :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
-                  :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
-                  :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
+                  v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
+                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
                 />
               </table>
             </div>
@@ -486,7 +486,7 @@ import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import { existsSync } from 'fs';
-import Vue from 'vue';
+// import Vue from 'vue';
 
 const SUPPORTED_MODIFY_EXTENSIONS = {
   'gif': 'GIF',
@@ -1110,7 +1110,7 @@ export default {
       MOD_IS_PREVIEWING: false,
       modify_msgbox: "",
       SUPPORTED_MODIFY_EXTENSIONS: SUPPORTED_MODIFY_EXTENSIONS,
-      statusBarBus: new Vue(),
+      // statusBarBus: new Vue(),
     };
   },
   components: {

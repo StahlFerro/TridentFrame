@@ -29,10 +29,9 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import { EnumStatusLogLevel } from "../../modules/constants/loglevels.js";
 export default {
-  data: function() {
+  data() {
     return {
       statusText: "",
       logLevel: "",
@@ -40,7 +39,7 @@ export default {
     }
   },
   props: {
-    bus: Vue,
+    // bus: Vue,
   },
   methods: {
     logClear() {
@@ -79,12 +78,12 @@ export default {
     },
   },
   mounted() {
-    this.bus.$on("logClear", this.logClear);
-    this.bus.$on("logProcessing", this.logProcessing);
-    this.bus.$on("logMessage", this.logInfo);
-    this.bus.$on("logSuccess", this.logSuccess);
-    this.bus.$on("logWarning", this.logWarning);
-    this.bus.$on("logError", this.logError);
+    // this.bus.$on("logClear", this.logClear);
+    // this.bus.$on("logProcessing", this.logProcessing);
+    // this.bus.$on("logMessage", this.logInfo);
+    // this.bus.$on("logSuccess", this.logSuccess);
+    // this.bus.$on("logWarning", this.logWarning);
+    // this.bus.$on("logError", this.logError);
   }
 };
 </script>

@@ -1,4 +1,5 @@
-import Vue from 'vue';
+// import Vue from 'vue';
+import { createApp } from 'vue'
 import App from './App.vue';
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/default.css'
@@ -42,12 +43,19 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 library.add([faImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, faCheck, faSpinner,
   faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub, faFlask]);
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+const app = createApp(App);
 
-Vue.config.devtools = true;
-Vue.component('VueSlider', VueSlider);
+app.component('font-awesome-icon', FontAwesomeIcon);
+app.component('VueSlider', VueSlider);
+// app.config.dev
+// Vue.component('VueSlider', VueSlider);
+// Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-new Vue({
-  el: '#app',
-  render: h => h(App),
-});
+// Vue.config.devtools = true;
+
+// new Vue({
+//   el: '#app',
+//   render: h => h(App),
+// });
+
+app.mount("#app");

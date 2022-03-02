@@ -1,6 +1,4 @@
 <template>
-  <!-- <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%"> -->
-    <Fragment>
     <tr>
       <td colspan="2" class="force-vcenter">
         <label
@@ -12,20 +10,14 @@
         </label>
       </td>
     </tr>
-    </Fragment>
-  <!-- </table> -->
 </template>
 
 <script>
-// import Vue from 'vue';
-// import { Plugin } from 'vue'
-import { Fragment }  from 'vue-fragment';
 
 export default {
-  components: { Fragment },
   props: ['is_optimized', 'is_lossy', 'is_reduced_color'],
   name: "GIFUnoptimizationRow",
-  data: function() {
+  data() {
     return {
       preserve_alpha: false,
     //   is_optimized: false,
