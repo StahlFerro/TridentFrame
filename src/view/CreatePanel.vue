@@ -501,7 +501,8 @@ import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import StatusBar from "./components/StatusBar.vue";
 
 import { createPopper } from '@popperjs/core';
-import ClickOutside from 'vue-click-outside';
+import vClickOutside from 'click-outside-vue3'
+// import ClickOutside from 'vue-click-outside';
 // import Vue from 'vue';
 
 
@@ -1704,7 +1705,8 @@ export default {
     },*/
   },
   directives:{
-    ClickOutside,
+    // ClickOutside,
+    clickOutside: vClickOutside.directive,
   },
 };
 </script>

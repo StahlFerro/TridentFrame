@@ -17,10 +17,11 @@
 
 <script>
 import { popper, createPopper } from "@popperjs/core";
-import ClickOutside from "vue-click-outside";
+// import ClickOutside from "vue-click-outside";
+import vClickOutside from 'click-outside-vue3'
 console.log(`POPPER`);
 console.log(`CLICKOUTSIDE`);
-console.log(ClickOutside);
+console.log(vClickOutside);
 // @vue/component
 
 
@@ -79,7 +80,8 @@ export default {
     };
   },
   directives: {
-    ClickOutside,
+    // ClickOutside,
+    clickOutside: vClickOutside.directive
   },
   methods: {
     openPopper(evt, contextData) {
