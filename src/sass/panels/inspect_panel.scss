@@ -90,5 +90,8 @@
     .inspect-panel-controls {
         flex-basis: calc(10vh - #{$root-height-offset});
         padding-top: 10px;
+        a.button {
+            margin-right: 10px;
+        }
     }
 }

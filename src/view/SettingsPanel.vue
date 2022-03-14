@@ -18,11 +18,11 @@
       </div>
       <div class="settings-subpanels">
         <div
-          class="settings-subpanel-general"
           v-show="settings_tab_selection == 0"
+          class="settings-subpanel-general"
         >
           <!-- <table class="table is-borderless" style="padding: 5px" width="100%"> -->
-            <!-- <tr>
+          <!-- <tr>
               <td>
                 <a
                   v-on:click="btnGetSettings"
@@ -47,7 +47,7 @@
               </td>
             </tr> -->
 
-            <!-- <tr>
+          <!-- <tr>
               <td class="">
                 <h1 class="title is-2 is-white-d">Startup</h1>
               </td>
@@ -61,28 +61,30 @@
               </td>
             </tr>
           </table> -->
-          <h3 class="title is-3 settings-header">On startup</h3>
-          <hr>
+          <h3 class="title is-3 settings-header">
+            On startup
+          </h3>
+          <hr />
           <div class="field">
-            <input id="fullscreenCheckbox" class="is-checkradio is-white" v-model="APP_SETTINGS.startup.fullscreen" type="checkbox" />
+            <input id="fullscreenCheckbox" v-model="APP_SETTINGS.startup.fullscreen" class="is-checkradio is-white" type="checkbox" />
             <label for="fullscreenCheckbox">Start in fullscreen</label>
           </div>
           <div class="field">
-            <input id="openDebuggerCheckbox" class="is-checkradio is-white" v-model="APP_SETTINGS.startup.open_devtools" type="checkbox" />
+            <input id="openDebuggerCheckbox" v-model="APP_SETTINGS.startup.open_devtools" class="is-checkradio is-white" type="checkbox" />
             <label for="openDebuggerCheckbox">Open developer tools</label>
           </div>
         </div>
 
         <div
-          class="settings-subpanel-window"
           v-show="settings_tab_selection == 1"
+          class="settings-subpanel-window"
         >
           <table class="table is-borderless" style="padding: 5px" width="100%">
             <tr>
               <td>
                 <a
-                  v-on:click="refreshWindow"
                   class="button is-large is-neon-cyan"
+                  @click="refreshWindow"
                 >
                   <span class="icon is-large">
                     <font-awesome-icon icon="redo-alt" />
@@ -92,8 +94,8 @@
               </td>
               <td>
                 <a
-                  v-on:click="openInspector"
                   class="button is-large is-neon-white"
+                  @click="openInspector"
                 >
                   <span class="icon is-large">
                     <font-awesome-icon icon="bug" />
@@ -106,8 +108,8 @@
             <tr>
               <td>
                 <a
-                  v-on:click="btnRelaunchApp"
                   class="button is-large is-neon-sunset"
+                  @click="btnRelaunchApp"
                 >
                   <span class="icon is-large">
                     <font-awesome-icon icon="power-off" />
@@ -117,8 +119,8 @@
               </td>
               <td>
                 <a
-                  v-on:click="testCInterface"
                   class="button is-large is-neon-crimson"
+                  @click="testCInterface"
                 >
                   <span class="icon is-large">
                     <font-awesome-icon icon="flask" />
@@ -131,14 +133,18 @@
         </div>
 
         <div
-          class="settings-subpanel-about"
           v-show="settings_tab_selection == 2"
+          class="settings-subpanel-about"
         >
           <div class="about-content">
             <div class="about-info">
-              <img v-bind:src="logo" class="about-logo no-select-drag" />
-              <h1 class="about-software-name">TridentFrame</h1>
-              <p class="about-software-version">v0.1.0-beta.10</p>
+              <img :src="logo" class="about-logo no-select-drag" />
+              <h1 class="about-software-name">
+                TridentFrame
+              </h1>
+              <p class="about-software-version">
+                v0.1.0-beta.10
+              </p>
               <p class="about-software-copyright">
                 Copyright
                 <span class="icon">
@@ -152,8 +158,8 @@
               <div class="field is-grouped is-grouped-centered">
                 <p class="control">
                   <a
-                    v-on:click="warpGithub"
                     class="button is-neon-cyan is-medium"
+                    @click="warpGithub"
                   >
                     <span class="icon">
                       <font-awesome-icon :icon="['fab', 'github']" />
@@ -192,6 +198,27 @@ export default {
       APP_SETTINGS: {},
       APP_SETTINGS_PREVIOUS: {},
     };
+  },
+  // watch: {
+  //   USER_SETTINGS: {
+  //     handler: function (val) {
+  //       // console.log("old:");
+  //       // console.log(this.USER_SETTINGS_PREVIOUS);
+  //       // console.log("new:");
+  //       // console.log(val);
+  //       // ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
+  //     },
+  //     deep: true,
+  //   },
+  // },
+  beforeMount: function () {
+    console.debug("SettingsPanel mounted");
+    // ipcRenderer.invoke('reload-window-once');
+    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    // console.debug(SETTINGS);
+    this.APP_SETTINGS = { ...SETTINGS };
+    this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
+    this.applySettingsWatcher();
   },
   methods: {
     refreshWindow() {
@@ -254,27 +281,6 @@ export default {
       });
       console.log("after invoke here");
     },
-  },
-  // watch: {
-  //   USER_SETTINGS: {
-  //     handler: function (val) {
-  //       // console.log("old:");
-  //       // console.log(this.USER_SETTINGS_PREVIOUS);
-  //       // console.log("new:");
-  //       // console.log(val);
-  //       // ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
-  //     },
-  //     deep: true,
-  //   },
-  // },
-  beforeMount: function () {
-    console.debug("SettingsPanel mounted");
-    // ipcRenderer.invoke('reload-window-once');
-    const SETTINGS = ipcRenderer.sendSync("get-settings");
-    // console.debug(SETTINGS);
-    this.APP_SETTINGS = { ...SETTINGS };
-    this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
-    this.applySettingsWatcher();
   },
   /** 
    * *TODO: Find the actual cause of this bug.

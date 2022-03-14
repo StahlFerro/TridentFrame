@@ -53,6 +53,10 @@
         .cpb-preview-buttons {
             width: 40%;
             text-align: center;
+            a.button {
+                margin-left: 5px;
+                margin-right: 5px;
+            }
         }
     }
     .create-panel-controls {

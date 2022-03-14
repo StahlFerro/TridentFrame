@@ -2,50 +2,64 @@
   <div id="split_panel">
     <div class="split-panel-root">
       <div class="split-panel-display">
-        <div class="split-panel-image silver-bordered" 
-          v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
-          <img v-bind:src="escapeLocalPath(preview_path_cb)" />
+        <div
+          class="split-panel-image silver-bordered" 
+          :class="{'has-checkerboard-bg': checkerbg_active }"
+        >
+          <img :src="escapeLocalPath(preview_path_cb)" />
         </div>
         <div class="split-panel-info silver-bordered-no-left">
           <table class="table spl-info-table" width="100%">
             <thead>
               <tr>
                 <th colspan="2">
-                  <p class="is-white-d">{{ info_header }}</p>
+                  <p class="is-white-d">
+                    {{ info_header }}
+                  </p>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="spl-info-label is-cyan">Name</td>
+                <td class="spl-info-label is-cyan">
+                  Name
+                </td>
                 <td class="spl-info-data">
                   <span v-if="name">{{ name }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Dimensions</td>
+                <td class="spl-info-label is-cyan">
+                  Dimensions
+                </td>
                 <td class="spl-info-data">
                   <span v-if="dimensions">{{ dimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">File Size</td>
+                <td class="spl-info-label is-cyan">
+                  File Size
+                </td>
                 <td class="spl-info-data">
                   <span v-if="file_size">{{ file_size_hr }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Has Transparency</td>
+                <td class="spl-info-label is-cyan">
+                  Has Transparency
+                </td>
                 <td class="spl-info-data">
                   <span v-if="has_transparency">{{ has_transparency? "Yes" : "No" }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Total frames</td>
+                <td class="spl-info-label is-cyan">
+                  Total frames
+                </td>
                 <td class="spl-info-data">
                   <span v-if="frame_count">{{ frame_count }}</span>
                   <!-- <span v-else>-</span> -->
@@ -59,48 +73,60 @@
                 </td>
               </tr> -->
               <tr>
-                <td class="spl-info-label is-cyan">Average delay (ms)</td>
+                <td class="spl-info-label is-cyan">
+                  Average delay (ms)
+                </td>
                 <td class="spl-info-data">                  
                   <span v-if="average_delay">{{ roundPrecise(average_delay, 3) }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Delays are even</td>
+                <td class="spl-info-label is-cyan">
+                  Delays are even
+                </td>
                 <td class="spl-info-data">                  
                   <span v-if="delays">{{ delays_are_even? "Yes" : "No" }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Delays</td>
+                <td class="spl-info-label is-cyan">
+                  Delays
+                </td>
                 <td class="spl-info-data">                  
                   <span v-if="delays">{{ delays }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Frame rate (FPS)</td>
+                <td class="spl-info-label is-cyan">
+                  Frame rate (FPS)
+                </td>
                 <td class="spl-info-data">
                   <span v-if="fps">{{ fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Loop duration</td>
+                <td class="spl-info-label is-cyan">
+                  Loop duration
+                </td>
                 <td class="spl-info-data">
                   <span v-if="loop_duration">{{ loop_duration }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Loop count</td>
+                <td class="spl-info-label is-cyan">
+                  Loop count
+                </td>
                 <td class="spl-info-data">
-                    <template v-if="preview_path">
-                      <span v-if="loop_count == 0">Infinite</span>
-                      <span v-else>{{ loop_count }}</span>
-                    </template>
-                    <!-- <template v-else>-</template> -->
+                  <template v-if="preview_path">
+                    <span v-if="loop_count == 0">Infinite</span>
+                    <span v-else>{{ loop_count }}</span>
+                  </template>
+                  <!-- <template v-else>-</template> -->
                 </td>
               </tr>
             </tbody>
@@ -109,27 +135,27 @@
       </div>
       <div class="split-panel-middlebar">
         <div class="spl-control-btn">
-          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': SPL_IS_LOADING, 'non-interactive': isButtonFrozen}">
+          <a class="button is-neon-emerald" :class="{'is-loading': SPL_IS_LOADING, 'non-interactive': isButtonFrozen}" @click="loadImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="plus"/>
+              <font-awesome-icon icon="plus" />
               <!-- <i class="fas fa-plus"></i> -->
             </span>
             <span>Load GIF/APNG</span>
           </a>
         </div>
         <div class="spl-control-btn">
-          <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': isButtonFrozen}">
+          <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="times"/>
+              <font-awesome-icon icon="times" />
               <!-- <i class="fas fa-times"></i> -->
             </span>
             <span>Clear</span>
           </a>
         </div>
         <div class="spl-control-btn">
-          <a v-on:click="toggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
+          <a class="button is-neon-white" :class="{'is-active': checkerbg_active}" @click="toggleCheckerBG">
             <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board"/>
+              <font-awesome-icon icon="chess-board" />
               <!-- <i class="fas fa-chess-board"></i> -->
             </span>
           </a>
@@ -160,7 +186,7 @@
                       type="number"
                       min="0"
                       max="6"
-                      v-on:keydown="numConstrain($event, true, true)"
+                      @keydown="numConstrain($event, true, true)"
                     />
                   </div>
                 </div>
@@ -174,12 +200,12 @@
                   <input v-model="criteria.is_unoptimized" type="checkbox" />
                   Unoptimize
                 </label>
-                <br/>
+                <br />
                 <label class="checkbox" title="Convert each frame into a PNG with RGBA color mode">
                   <input v-model="criteria.convert_to_rgba" type="checkbox" />
                   Convert to RGBA
                 </label>
-                <br/>
+                <br />
                 <label class="checkbox" title="Generate a file containing the delay information of each frame">
                   <input v-model="criteria.extract_delay_info" type="checkbox" />
                   Extract frame delays
@@ -190,19 +216,19 @@
                 </label> -->
               </td>
               <td width="20%" style="vertical-align: middle;">
-                <br/>
+                <br />
               </td>
               <td width="20%" style="vertical-align: middle;">
-                <br/>
+                <br />
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <div class="field has-addons">
                   <div class="control">
-                    <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
+                    <a class="button is-neon-cyan" @click="btnSetSavePath">
                       <span class="icon is-small">
-                        <font-awesome-icon icon="save"/>
+                        <font-awesome-icon icon="save" />
                         <!-- <i class="fas fa-save"></i> -->
                       </span>
                       <span>Save to</span>
@@ -219,14 +245,14 @@
                 </div>
               </td>
               <td class="has-text-centered">
-                <a v-on:click="btnSplitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'non-interactive': isButtonFrozen}">
+                <a class="button is-neon-cyan" :class="{'is-loading': SPL_IS_SPLITTING, 'non-interactive': isButtonFrozen}" @click="btnSplitImage">
                   Split to folder</a>
               </td>
             </tr>
           </table>
         </div>
         <div class="spc-bottom">
-          <StatusBar :bus="statusBarBus"></StatusBar>
+          <StatusBar :bus="statusBarBus" />
         </div>
       </div>
     </div>
@@ -271,6 +297,9 @@ var defaults = {
 };
 
 export default {
+  components: {
+    StatusBar,
+  },
   data: function() {
     return {
       info_header: "Information",
@@ -305,9 +334,6 @@ export default {
       SPL_IS_SPLITTING: false,
       // statusBarBus: new Vue(),
     };
-  },
-  components: {
-    StatusBar,
   },
   computed: {
     isButtonFrozen() {
@@ -508,22 +534,22 @@ export default {
       this.preview_path_cb = cb_url;
     },
     _logClear() {
-      this.statusBarBus.$emit("logClear");
+      this.emitter.emit("status-bar-log-clear");
     },
     _logProcessing(message) {
-      this.statusBarBus.$emit("logProcessing", message);
+      this.emitter.emit("status-bar-log-processing", message);
     },
     _logMessage(message) {
-      this.statusBarBus.$emit("logMessage", message);
+      this.emitter.emit("status-bar-log-message", message);
     },
     _logSuccess(message) {
-      this.statusBarBus.$emit("logSuccess", message);
+      this.emitter.emit("status-bar-log-success", message);
     },
     _logWarning(message) {
-      this.statusBarBus.$emit("logWarning", message);
+      this.emitter.emit("status-bar-log-warning", message);
     },
     _logError(message) {
-      this.statusBarBus.$emit("logError", message);
+      this.emitter.emit("status-bar-log-error", message);
     },
     numConstrain: numConstrain,
     escapeLocalPath: escapeLocalPath,

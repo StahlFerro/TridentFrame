@@ -4,29 +4,31 @@
       <div class="create-panel-display">
         <div class="create-panel-sequence silver-bordered">
           <div class="rtable rtable-5cols">
-            <div class="rtable-cell" v-for="(item, index) in sequence_info" v-bind:key="index"
-              v-bind:title="sequence_info?                    
+            <div
+              v-for="(item, index) in sequence_info" :key="index" class="rtable-cell"
+              :title="sequence_info?                    
                 `Name: ${item.name.value}\n` +
                 `Dimensions: ${item.width.value} x ${item.height.value}\n` +
                 `Format: ${item.format.value}\n` +
                 `Mode: ${item.color_mode.value}\n` +
                 `Comment: ${item.comments.value || 'None'}` : ''
-              ">
-              <img v-bind:src="escapeLocalPath(item.absolute_url.value)" />
+              "
+            >
+              <img :src="escapeLocalPath(item.absolute_url.value)" />
               <span class="index-anchor is-white-d">
                 {{ parseInt(index) + 1 }}
               </span>
-              <button class="del-anchor" v-on:click="removeFrame(parseInt(index))">
-                <span class="icon" v-on:click="removeFrame(parseInt(index))">
-                  <font-awesome-icon icon="minus-circle" v-on:click="removeFrame(parseInt(index))"/>
+              <button class="del-anchor" @click="removeFrame(parseInt(index))">
+                <span class="icon" @click="removeFrame(parseInt(index))">
+                  <font-awesome-icon icon="minus-circle" @click="removeFrame(parseInt(index))" />
                 </span>
               </button>
             </div>
           </div>
-
         </div>
-        <div class="create-panel-preview silver-bordered-no-left"
-          v-bind:title="preview_info? 
+        <div
+          class="create-panel-preview silver-bordered-no-left"
+          :title="preview_info? 
             `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
             `File size: ${preview_info.general_info.fsize_hr.value}\n` +
             `Total frames: ${preview_info.animation_info.frame_count.value}\n` +
@@ -35,24 +37,30 @@
             `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
             `Format: ${preview_info.general_info.format.value}` : ''
           "
-          v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
+          :class="{'has-checkerboard-bg': checkerbg_active }"
+        >
           <!-- <div v-if="preview_info" class="crt-aimg-container"> -->
-          <img v-if="preview_info" v-bind:src="escapeLocalPath(preview_path_cb)" />
+          <img v-if="preview_info" :src="escapeLocalPath(preview_path_cb)" />
           <!-- </div> -->
         </div>
       </div>
 
       <div class="create-panel-middlebar">
-        <div id="crtLoadPopper" class="context-menu" ref="popper" v-show="popperIsVisible" tabindex="-1" style="display: block;">
+        <div
+          v-show="popperIsVisible" id="crtLoadPopper" ref="popper" class="context-menu"
+          tabindex="-1" style="display: block;"
+        >
           <ul class="context-menu-options">
             <li class="context-menu-option" @click="btnLoadImages('insert')">
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small">
-                    <font-awesome-icon icon="plus"/>
+                    <font-awesome-icon icon="plus" />
                   </span>
                 </div>
-                <div class="ctxmenu-text"><span>Images</span></div>
+                <div class="ctxmenu-text">
+                  <span>Images</span>
+                </div>
               </div>
             </li>
             <!-- <li class="context-menu-option" @click="btnLoadImages('replace')">
@@ -69,20 +77,24 @@
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small">
-                    <font-awesome-icon icon="plus-circle"/>
+                    <font-awesome-icon icon="plus-circle" />
                   </span>
                 </div>
-                <div class="ctxmenu-text">Autodetect sequence</div>
+                <div class="ctxmenu-text">
+                  Autodetect sequence
+                </div>
               </div>
             </li>
           </ul>
         </div>
         <div class="cpb-sequence-buttons">
           <div class="cpb-sequence-btn">
-            <a id="addPopperBtn" v-on:click="btnToggleLoadPopper" v-click-outside="closeLoadPopper" class="button is-neon-emerald"
-              v-bind:class="{'is-loading': CRT_IS_LOADING, 'non-interactive': isButtonFrozen }" title="Open image loading dialog">
+            <a
+              id="addPopperBtn" v-click-outside="closeLoadPopper" class="button is-neon-emerald" :class="{'is-loading': CRT_IS_LOADING, 'non-interactive': isButtonFrozen }"
+              title="Open image loading dialog" @click="btnToggleLoadPopper"
+            >
               <span class="icon is-small">
-                <font-awesome-icon icon="plus"/>
+                <font-awesome-icon icon="plus" />
               </span>
               <span>Add...</span>
             </a>
@@ -91,19 +103,22 @@
             <span class="is-white-d compact-line">Insert<br />after</span>
           </div>
           <div class="cpb-sequence-btn">
-            <input v-model="insert_index" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0" style="width: 70px"
-              title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving this field empty is the default operation (append the new sequence after the last frame)"/>
+            <input
+              v-model="insert_index" class="input is-neon-white" type="number" min="0" style="width: 70px"
+              title="The frame number at which new sequence of images will be inserted after. Setting 0 will add the new sequence before the first frame, and leaving this field empty is the default operation (append the new sequence after the last frame)"
+              @keydown="numConstrain($event, true, true)"
+            />
           </div>
           <div class="cpb-sequence-btn">
-            <a v-on:click="btnClearAll" class="button is-neon-crimson" v-bind:class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence">
+            <a class="button is-neon-crimson" :class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence" @click="btnClearAll">
               <span class="icon is-small">
-                <font-awesome-icon icon="times"/>
+                <font-awesome-icon icon="times" />
               </span>
               <span>Clear</span>
             </a>
           </div>
           <div class="cpb-sequence-btn">
-             <span class="is-white-d" v-if="sequence_info.length &gt; 0">Total: {{ computeTotalSequenceSize }} </span>
+            <span v-if="sequence_info.length &gt; 0" class="is-white-d">Total: {{ computeTotalSequenceSize }} </span>
           </div>
           <!-- <a
             v-on:click="loadImages('replace')"
@@ -118,20 +133,24 @@
           </a> -->
         </div>
         <div class="cpb-preview-buttons">
-          <a v-on:click="btnPreviewAIMG" class="button is-neon-cyan"
-            v-bind:class="{
+          <a
+            class="button is-neon-cyan" :class="{
               'is-loading': CRT_IS_PREVIEWING,
               'non-interactive': isButtonFrozen,
-            }">
+            }"
+            @click="btnPreviewAIMG"
+          >
             <span class="icon is-medium">
-              <font-awesome-icon id="autoprev_icon" :icon="['far', 'eye']"/>
+              <font-awesome-icon id="autoprev_icon" :icon="['far', 'eye']" />
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="btnToggleCheckerBG" class="button is-neon-white"
-            v-bind:class="{'is-active': checkerbg_active}">
+          <a
+            class="button is-neon-white" :class="{'is-active': checkerbg_active}"
+            @click="btnToggleCheckerBG"
+          >
             <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board"/>
+              <font-awesome-icon icon="chess-board" />
             </span>
           </a>
         </div>
@@ -141,32 +160,40 @@
         <div class="cpc-left-panel">
           <aside class="menu has-text-centered" style="margin: 0">
             <ul class="menu-list">
-              <li class="subtab-menu-item" v-bind:class="{ 'is-selected': crt_menuselection == 0 }">
-                <a v-on:click="crt_menuselection = 0">
+              <li class="subtab-menu-item" :class="{ 'is-selected': crt_menuselection == 0 }">
+                <a @click="crt_menuselection = 0">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="image" size="2x" inverse/>
+                    <font-awesome-icon icon="image" size="2x" inverse />
                     <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d">General</p>
                 </a>
               </li>
-              <li class="subtab-menu-item is-cyan"
-                v-bind:class="{ 'is-selected': crt_menuselection == 1 }">
-                <a v-on:click="crt_menuselection = 1"
-                  v-bind:class="{ 'is-disabled': criteria.format != 'gif' }">
+              <li
+                class="subtab-menu-item is-cyan"
+                :class="{ 'is-selected': crt_menuselection == 1 }"
+              >
+                <a
+                  :class="{ 'is-disabled': criteria.format != 'gif' }"
+                  @click="crt_menuselection = 1"
+                >
                   <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse/>
+                    <font-awesome-icon icon="images" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d is-large">GIF</p>
                 </a>
               </li>
-              <li class="subtab-menu-item"
-                v-bind:class="{ 'is-selected': crt_menuselection == 2 }">
-                <a v-on:click="crt_menuselection = 2"
-                  v-bind:class="{ 'is-disabled': criteria.format != 'png' }">
+              <li
+                class="subtab-menu-item"
+                :class="{ 'is-selected': crt_menuselection == 2 }"
+              >
+                <a
+                  :class="{ 'is-disabled': criteria.format != 'png' }"
+                  @click="crt_menuselection = 2"
+                >
                   <span class="icon is-large">                    
-                    <font-awesome-icon icon="images" size="2x" inverse/>
+                    <font-awesome-icon icon="images" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d is-large">APNG</p>
@@ -193,12 +220,13 @@
                       <label class="label" title="The width of the GIF/APNG">Width</label>
                       <div class="control">
                         <input 
-                          v-bind:value="criteria.width" 
-                          @keydown="numConstrain($event, true, true)"
-                          @input="widthHandler(criteria.width, $event)" 
+                          :value="criteria.width" 
                           class="input is-neon-white"
                           type="number" 
-                          min="1"/>
+                          min="1"
+                          @keydown="numConstrain($event, true, true)" 
+                          @input="widthHandler(criteria.width, $event)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -207,12 +235,12 @@
                       <label class="label" title="The height of the GIF/APNG">Height</label>
                       <div class="control">
                         <input
-                          v-bind:value="criteria.height"
-                          @keydown="numConstrain($event, true, true)"
-                          @input="heightHandler(criteria.height, $event)"
+                          :value="criteria.height"
                           class="input is-neon-white"
                           type="number"
                           min="1"
+                          @keydown="numConstrain($event, true, true)"
+                          @input="heightHandler(criteria.height, $event)"
                         />
                       </div>
                     </div>
@@ -222,8 +250,7 @@
                       <label
                         class="label"
                         title="Which algorithm to use when resizing the image. Default is Bicubic"
-                        >Resize Method</label
-                      >
+                      >Resize Method</label>
                       <div class="control">
                         <div class="select is-neon-cyan">
                           <select v-model="criteria.resize_method">
@@ -245,9 +272,15 @@
                             >
                               Bilinear
                             </option>
-                            <option value="BOX">Box</option>
-                            <option value="HAMMING">Hamming</option>
-                            <option value="LANCZOS">Lanczos</option>
+                            <option value="BOX">
+                              Box
+                            </option>
+                            <option value="HAMMING">
+                              Hamming
+                            </option>
+                            <option value="LANCZOS">
+                              Lanczos
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -267,43 +300,44 @@
                         readonly="readonly"
                       />
                     </template>
-                    <template v-else>&nbsp;</template>
+                    <template v-else>
+&nbsp;
+                    </template>
                   </td>
-                  <td width="16.7%" style="vertical-align: bottom">
-                  </td>
+                  <td width="16.7%" style="vertical-align: bottom" />
                 </tr>
                 <tr>
                   <td>
                     <div class="field">
-                      <label class="label" title="The time needed to move to the next frame"
-                        >Delay (seconds)</label
-                      >
+                      <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
                       <div class="control">
                         <input
                           v-model="criteria.delay"
-                          v-on:keydown="numConstrain($event, true, false)"
-                          v-on:input="delayConstrain"
                           class="input is-neon-white"
                           type="number"
                           min="0"
+                          @keydown="numConstrain($event, true, false)"
+                          @input="delayConstrain"
                         />
                       </div>
                     </div>
                   </td>
                   <td>
                     <div class="field">
-                      <label class="label"
-                        title="How many frames will be consecutively displayed per second.">Frame rate</label>
+                      <label
+                        class="label"
+                        title="How many frames will be consecutively displayed per second."
+                      >Frame rate</label>
                       <div class="control">
                         <input
                           v-model="criteria.fps"
-                          v-on:keydown="numConstrain($event, true, false)"
-                          v-on:input="fpsConstrain"
                           class="input is-neon-white"
                           type="number"
                           min="0"
                           max="50"
                           step="0.01"
+                          @keydown="numConstrain($event, true, false)"
+                          @input="fpsConstrain"
                         />
                       </div>
                     </div>
@@ -313,17 +347,16 @@
                       <label
                         class="label"
                         title="How many times the GIF/APNG will loop. Zero/blank for infinite loop"
-                        >Loop count</label
-                      >
+                      >Loop count</label>
                       <div class="control">
                         <input
                           v-model="criteria.loop_count"
-                          v-on:keydown="numConstrain($event, true, true)"
                           class="input is-neon-white"
                           type="number"
                           min="0"
                           max="999"
                           step="1"
+                          @keydown="numConstrain($event, true, true)"
                         />
                       </div>
                     </div>
@@ -332,8 +365,10 @@
                     <div class="field">
                       <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
                       <div class="control">
-                        <input v-model="criteria.start_frame" @keydown="numConstrain($event, true, true)" class="input is-neon-white" 
-                          type="number" min="0" step="1"/>
+                        <input
+                          v-model="criteria.start_frame" class="input is-neon-white" type="number" 
+                          min="0" step="1" @keydown="numConstrain($event, true, true)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -364,9 +399,9 @@
                   <td colspan="4" style="padding-top: 15px">
                     <div class="field has-addons">
                       <div class="control">
-                        <a class="button is-neon-cyan" v-on:click="btnSetSavePath">
+                        <a class="button is-neon-cyan" @click="btnSetSavePath">
                           <span class="icon is-small">
-                            <font-awesome-icon icon="save"/>
+                            <font-awesome-icon icon="save" />
                           </span>
                           <span>Save to</span>
                         </a>
@@ -385,7 +420,7 @@
                     <div class="field">
                       <!-- <label class="label">Format</label> -->
                       <div class="control">
-                        <div class="select is-neon-cyan" v-bind:class="{'non-interactive': isButtonFrozen}">
+                        <div class="select is-neon-cyan" :class="{'non-interactive': isButtonFrozen}">
                           <select v-model="criteria.format">
                             <option v-for="(item, name, index) in SUPPORTED_CREATE_EXTENSIONS" :key="index" :value="name">
                               {{ item }}
@@ -401,19 +436,19 @@
                     <div class="field">
                       <div class="control">
                         <a
-                          v-on:click="btnCreateAIMG"
                           class="button is-neon-cyan"
-                          v-bind:class="{
+                          :class="{
                             'is-loading': CRT_IS_CREATING == true,
                             'non-interactive': isButtonFrozen,
-                          }">CREATE</a>
+                          }"
+                          @click="btnCreateAIMG"
+                        >CREATE</a>
                       </div>
                     </div>
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="6">
-                  </td>
+                  <td colspan="6" />
                 </tr>
               </table>
             </div>
@@ -468,7 +503,7 @@
             </div>
           </div>
           <div class="cpc-right-bottom-panel">
-            <StatusBar :bus="statusBarBus"></StatusBar>
+            <StatusBar :bus="statusBarBus" />
           </div>
         </div>
       </div>
@@ -1063,11 +1098,16 @@ function previewPathCacheBreaker() {
 */
 
 export default {
-  created() {
-    window.addEventListener("resize", this.closeLoadPopper);
+  components: {
+    GIFOptimizationRow,
+    GIFUnoptimizationRow,
+    APNGOptimizationRow,
+    APNGUnoptimizationRow,
+    StatusBar,
   },
-  destroyed() {
-    window.removeEventListener("resize", this.closeLoadPopper);
+  directives:{
+    // ClickOutside,
+    clickOutside: vClickOutside.directive,
   },
   data: function () {
     return {
@@ -1148,12 +1188,74 @@ export default {
       // statusBarBus: new Vue(),
     };
   },
-  components: {
-    GIFOptimizationRow,
-    GIFUnoptimizationRow,
-    APNGOptimizationRow,
-    APNGUnoptimizationRow,
-    StatusBar,
+  computed: {
+    isButtonFrozen() {
+      if (this.CRT_IS_LOADING || this.CRT_IS_PREVIEWING || this.CRT_IS_CREATING) return true;
+      else return false;
+    },
+    sequenceCounter() {
+      if (this.sequence_info.length > 0) {
+        return `${this.sequence_info.length} images`;
+      } else return "";
+    },
+    computeTotalSequenceSize() {
+      console.log("computeTotalSequenceSize");
+      console.log(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
+      return formatBytes(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
+    },
+    /*
+    savePathInput: {
+      get() {
+        console.log(`getter obtain dir: ${this.save_dir}`)
+        console.log(`getter obtain stem: ${this.save_fstem}`)
+        console.log(`getter obtain format: ${this.criteria.format.toLowerCase()}`)
+        if (this.save_dir && this.save_fstem){
+          let p = join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
+          return p;
+        }
+        else
+          return "";
+      },
+      set(value) {
+        let dir = dirname(value);
+        let fstem = stem(basename(value));
+        console.log(`setter stem remove end: ${fstem.slice(-1)}`);
+        if (fstem && fstem.slice(-1) == '.') {
+          console.log('sliceddddd')
+          fstem = fstem.slice(0, -1);
+        }
+        let ext = "";
+        let frags = value.split('.');
+        console.log(`setter frags: ${frags}`);
+        if (frags.length >= 2)
+          ext = frags.pop();
+        console.log(`setter value: ${value}`);
+        console.log(`setter dir: ${dir}`);
+        console.log(`setter stem: ${fstem}`);
+        console.log(`setter ext: ${ext}`);
+        this.save_dir = dir;
+        this.save_fstem = fstem;
+        access(dir, constants.F_OK, (err) => {
+          if (!err){
+            this.save_dir = dir;
+          }
+          else {
+            console.error(`${dir} does not exist`);
+          }
+        })
+          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is false`)
+        if (ext && ext.toLowerCase() in SUPPORTED_CREATE_EXTENSIONS){
+          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is true`)
+          data.criteria.format = ext.toLowerCase();
+        }
+      }
+    },*/
+  },
+  created() {
+    window.addEventListener("resize", this.closeLoadPopper);
+  },
+  unmounted() {
+    window.removeEventListener("resize", this.closeLoadPopper);
   },
   methods: {
     toggleLoadButtonAnim(ops, state = false) {
@@ -1622,91 +1724,25 @@ export default {
       }
     },
     _logClear() {
-      this.statusBarBus.$emit("logClear");
+      this.emitter.emit("status-bar-log-clear");
+      // this.statusBarBus.$emit("logClear");
     },
     _logProcessing(message) {
-      this.statusBarBus.$emit("logProcessing", message);
+      this.emitter.emit("status-bar-log-processing", message);
     },
     _logMessage(message) {
-      this.statusBarBus.$emit("logMessage", message);
+      this.emitter.emit("status-bar-log-message", message);
     },
     _logSuccess(message) {
-      this.statusBarBus.$emit("logSuccess", message);
+      this.emitter.emit("status-bar-log-success", message);
     },
     _logWarning(message) {
-      this.statusBarBus.$emit("logWarning", message);
+      this.emitter.emit("status-bar-log-warning", message);
     },
     _logError(message) {
-      this.statusBarBus.$emit("logError", message);
+      this.emitter.emit("status-bar-log-error", message);
     },
     escapeLocalPath: escapeLocalPath,
-  },
-  computed: {
-    isButtonFrozen() {
-      if (this.CRT_IS_LOADING || this.CRT_IS_PREVIEWING || this.CRT_IS_CREATING) return true;
-      else return false;
-    },
-    sequenceCounter() {
-      if (this.sequence_info.length > 0) {
-        return `${this.sequence_info.length} images`;
-      } else return "";
-    },
-    computeTotalSequenceSize() {
-      console.log("computeTotalSequenceSize");
-      console.log(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
-      return formatBytes(this.sequence_info.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
-    },
-    /*
-    savePathInput: {
-      get() {
-        console.log(`getter obtain dir: ${this.save_dir}`)
-        console.log(`getter obtain stem: ${this.save_fstem}`)
-        console.log(`getter obtain format: ${this.criteria.format.toLowerCase()}`)
-        if (this.save_dir && this.save_fstem){
-          let p = join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
-          return p;
-        }
-        else
-          return "";
-      },
-      set(value) {
-        let dir = dirname(value);
-        let fstem = stem(basename(value));
-        console.log(`setter stem remove end: ${fstem.slice(-1)}`);
-        if (fstem && fstem.slice(-1) == '.') {
-          console.log('sliceddddd')
-          fstem = fstem.slice(0, -1);
-        }
-        let ext = "";
-        let frags = value.split('.');
-        console.log(`setter frags: ${frags}`);
-        if (frags.length >= 2)
-          ext = frags.pop();
-        console.log(`setter value: ${value}`);
-        console.log(`setter dir: ${dir}`);
-        console.log(`setter stem: ${fstem}`);
-        console.log(`setter ext: ${ext}`);
-        this.save_dir = dir;
-        this.save_fstem = fstem;
-        access(dir, constants.F_OK, (err) => {
-          if (!err){
-            this.save_dir = dir;
-          }
-          else {
-            console.error(`${dir} does not exist`);
-          }
-        })
-          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is false`)
-        if (ext && ext.toLowerCase() in SUPPORTED_CREATE_EXTENSIONS){
-          console.log(`${ext} in ${SUPPORTED_CREATE_EXTENSIONS} is true`)
-          data.criteria.format = ext.toLowerCase();
-        }
-      }
-    },*/
-  },
-  directives:{
-    // ClickOutside,
-    clickOutside: vClickOutside.directive,
   },
 };
 </script>

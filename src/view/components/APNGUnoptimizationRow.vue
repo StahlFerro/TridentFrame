@@ -1,13 +1,15 @@
 <template>
-    <tr>
-      <td class="force-vcenter">
-        <label class="checkbox" title="Unoptimizes the APNG">
-          <input v-model="apng_is_unoptimized" type="checkbox" v-bind:disabled="apng_is_optimized || apng_is_lossy"
-            @change="$emit('update:apng_is_unoptimized', apng_is_unoptimized)" />
-          Unoptimize
-        </label>
-      </td>
-    </tr>
+  <tr>
+    <td class="force-vcenter">
+      <label class="checkbox" title="Unoptimizes the APNG">
+        <input
+          v-model="apng_is_unoptimized" type="checkbox" :disabled="apngIsOptimized || apngIsLossy"
+          @change="$emit('update:apng_is_unoptimized', apng_is_unoptimized)"
+        />
+        Unoptimize
+      </label>
+    </td>
+  </tr>
 </template>
 
 <script>
@@ -15,7 +17,11 @@
 
 export default {
   name: "APNGUnoptimizationRow",
-  props: ['apng_is_optimized', 'apng_is_lossy'],
+  props: {
+    apngIsOptimized: Boolean,
+    apngIsLossy: Boolean,
+  },
+  emits: ['update:apng_is_unoptimized'],
   // components: { Fragment },
   data: function() {
     return {

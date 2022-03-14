@@ -1,11 +1,12 @@
 <template>
   <div id="modify_panel">
     <div class="modify-panel-root">
-
       <div class="modify-panel-displays">
-        <div class="modify-old-container silver-bordered-no-right"
-          v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active }">
-          <img v-bind:src="escapeLocalPath(orig_attribute.path)" />
+        <div
+          class="modify-old-container silver-bordered-no-right"
+          :class="{'has-checkerboard-bg': orig_checkerbg_active }"
+        >
+          <img :src="escapeLocalPath(orig_attribute.path)" />
         </div>
         <div class="modify-image-info silver-bordered">
           <table class="mod-info-table is-hpaddingless" style="width: 100%;">
@@ -30,7 +31,9 @@
                   <span v-if="orig_attribute">{{ origDimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Dimensions</td>
+                <td class="mod-info-label is-cyan">
+                  Dimensions
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ previewDimensions }}</span>
                 </td>
@@ -43,7 +46,7 @@
                 <td class="mod-info-label is-cyan">
                   File size
                   <template v-if="preview_attribute">
-                    <br/>
+                    <br />
                     {{ previewSizePercentage }}
                   </template>
                 </td>
@@ -56,7 +59,9 @@
                   <span v-if="orig_attribute">{{ orig_attribute.format }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Format</td>
+                <td class="mod-info-label is-cyan">
+                  Format
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ preview_attribute.format }}</span>
                 </td>
@@ -66,7 +71,9 @@
                   <span v-if="orig_attribute">{{ orig_attribute.frame_count }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Total frames</td>
+                <td class="mod-info-label is-cyan">
+                  Total frames
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_info">{{ preview_attribute.frame_count }}</span>
                 </td>
@@ -76,7 +83,9 @@
                   <span v-if="orig_attribute">{{ orig_attribute.fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Frame rate</td>
+                <td class="mod-info-label is-cyan">
+                  Frame rate
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_info">{{ preview_attribute.fps }}</span>
                 </td>
@@ -86,7 +95,9 @@
                   <span v-if="orig_attribute">{{ orig_attribute.delay_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Avg. Delay</td>
+                <td class="mod-info-label is-cyan">
+                  Avg. Delay
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ preview_attribute.delay_info }}</span>
                 </td>
@@ -95,7 +106,9 @@
                 <td class="mod-info-data">
                   <span v-if="orig_attribute && orig_attribute.loop_duration">{{ roundPrecise(orig_attribute.loop_duration, 3) }} seconds</span>
                 </td>
-                <td class="mod-info-label is-cyan">Loop duration</td>
+                <td class="mod-info-label is-cyan">
+                  Loop duration
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute && preview_attribute.loop_duration">{{ roundPrecise(preview_attribute.loop_duration, 3) }} seconds</span>
                 </td>
@@ -109,7 +122,9 @@
                   </template>
                   <!-- <template v-else>-</template> -->
                 </td>
-                <td class="mod-info-label is-cyan">Loop count</td>
+                <td class="mod-info-label is-cyan">
+                  Loop count
+                </td>
                 <td class="mod-info-data">
                   <template v-if="preview_attribute">
                     {{ preview_attribute.loop_count }}
@@ -120,58 +135,63 @@
               </tr>
             </tbody>
           </table>
-
         </div>
-        <div class="modify-new-container silver-bordered-no-left" 
-          v-bind:title="preview_info?
+        <div
+          class="modify-new-container silver-bordered-no-left" 
+          :title="preview_info?
             `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
             `File size: ${preview_info.general_info.fsize_hr.value}\n` +
             `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
             `Format: ${preview_info.general_info.format.value}` : ''
           "
-          v-bind:class="{'has-checkerboard-bg': new_checkerbg_active }">
-          <img v-bind:src="escapeLocalPath(preview_path_cb)" />
+          :class="{'has-checkerboard-bg': new_checkerbg_active }"
+        >
+          <img :src="escapeLocalPath(preview_path_cb)" />
         </div>
       </div>
       <div class="modify-panel-middlebar">
         <div class="mpb-load-buttons">
-          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}" @click="loadImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="plus"/>
+              <font-awesome-icon icon="plus" />
             </span>
             <span>Load Image</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="times"/>
+              <font-awesome-icon icon="times" />
             </span>
             <span>Clear</span>
           </a>
-          <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white"
-            v-bind:class="{'is-active': orig_checkerbg_active}">
+          <a
+            class="button is-neon-white" :class="{'is-active': orig_checkerbg_active}"
+            @click="toggleOrigCheckerBG"
+          >
             <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board"/>
+              <font-awesome-icon icon="chess-board" />
             </span>
           </a>
         </div>
-        <div class="mpb-center-buttons"></div>
+        <div class="mpb-center-buttons" />
         <div class="mpb-preview-buttons">
-          <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}" @click="previewModImg">
             <span class="icon is-small">
-              <font-awesome-icon :icon="['far', 'eye']"/>
+              <font-awesome-icon :icon="['far', 'eye']" />
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="clearPreviewImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearPreviewImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="times"/>
+              <font-awesome-icon icon="times" />
             </span>
             <span>Clear</span>
           </a>
-          <a v-on:click="toggleNewCheckerBG" class="button is-neon-white"
-            v-bind:class="{'is-active': new_checkerbg_active}">
+          <a
+            class="button is-neon-white" :class="{'is-active': new_checkerbg_active}"
+            @click="toggleNewCheckerBG"
+          >
             <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board"/>
+              <font-awesome-icon icon="chess-board" />
             </span>
           </a>
         </div>
@@ -180,33 +200,43 @@
         <div class="mpc-left-panel">
           <aside class="menu has-text-centered" style="margin: 0;">
             <ul class="menu-list">
-              <li id="MOD_box_general" class="subtab-menu-item"
-                v-bind:class="{'is-selected': mod_menuselection == 0}">
-                <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
+              <li
+                id="MOD_box_general" class="subtab-menu-item"
+                :class="{'is-selected': mod_menuselection == 0}"
+              >
+                <a id="MOD_menu_general" @click="mod_menuselection = 0">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="image" size="2x" inverse/>
+                    <font-awesome-icon icon="image" size="2x" inverse />
                     <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d">General</p>
                 </a>
               </li>
-              <li id="MOD_box_gif" class="subtab-menu-item is-cyan"
-                v-bind:class="{'is-selected': mod_menuselection == 1}">
-                <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
-                  v-bind:class="{'is-disabled': criteria.format != 'gif'}">
+              <li
+                id="MOD_box_gif" class="subtab-menu-item is-cyan"
+                :class="{'is-selected': mod_menuselection == 1}"
+              >
+                <a
+                  id="MOD_menu_gif" :class="{'is-disabled': criteria.format != 'gif'}"
+                  @click="mod_menuselection = 1"
+                >
                   <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse/>
+                    <font-awesome-icon icon="images" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d is-large">GIF</p>
                 </a>
               </li>
-              <li id="MOD_box_apng" class="subtab-menu-item"
-                v-bind:class="{'is-selected': mod_menuselection == 2}">
-                <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
-                  v-bind:class="{'is-disabled': criteria.format != 'png'}">
+              <li
+                id="MOD_box_apng" class="subtab-menu-item"
+                :class="{'is-selected': mod_menuselection == 2}"
+              >
+                <a
+                  id="MOD_menu_apng" :class="{'is-disabled': criteria.format != 'png'}"
+                  @click="mod_menuselection = 2"
+                >
                   <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse/>
+                    <font-awesome-icon icon="images" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d is-large">APNG</p>
@@ -232,8 +262,10 @@
                     <div class="field">
                       <label class="label">Width</label>
                       <div class="control">
-                        <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(criteria.width, $event)" 
-                          class="input is-neon-white" type="number" min="1" step="1"/>
+                        <input
+                          :value="criteria.width" class="input is-neon-white" type="number" 
+                          min="1" step="1" @keydown="numConstrain($event, true, true)" @input="widthHandler(criteria.width, $event)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -241,8 +273,10 @@
                     <div class="field">
                       <label class="label">Height</label>
                       <div class="control">
-                        <input v-bind:value="criteria.height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(criteria.height, $event)"
-                        class="input is-neon-white" type="number" min="1" step="1"/>
+                        <input
+                          :value="criteria.height" class="input is-neon-white" type="number"
+                          min="1" step="1" @keydown="numConstrain($event, true, true)" @input="heightHandler(criteria.height, $event)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -251,8 +285,7 @@
                       <label
                         class="label"
                         title="Which algorithm to use when resizing the image. Default is Bicubic"
-                        >Resize Method</label
-                      >
+                      >Resize Method</label>
                       <div class="control">
                         <div class="select is-neon-cyan">
                           <select v-model="criteria.resize_method">
@@ -274,9 +307,15 @@
                             >
                               Bilinear
                             </option>
-                            <option value="BOX">Box</option>
-                            <option value="HAMMING">Hamming</option>
-                            <option value="LANCZOS">Lanczos</option>
+                            <option value="BOX">
+                              Box
+                            </option>
+                            <option value="HAMMING">
+                              Hamming
+                            </option>
+                            <option value="LANCZOS">
+                              Lanczos
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -287,7 +326,7 @@
                       <input v-model="criteria.flip_x" type="checkbox" />
                       Flip X
                     </label>
-                    <br/>
+                    <br />
                     <label class="checkbox" title="Flip the image vertically">
                       <input v-model="criteria.flip_y" type="checkbox" />
                       Flip Y
@@ -298,13 +337,13 @@
                       <input v-model="criteria.is_reversed" type="checkbox" />
                       Reversed
                     </label>
-                    <br/>
+                    <br />
                     <!-- <label class="checkbox" title="Preserve transparent pixels">
                       <input v-model="preserve_alpha" type="checkbox" />
                       Preserve Alpha
                     </label> -->
                     <label class="checkbox">
-                      <input v-model="lock_aspect_ratio" type="checkbox"/>
+                      <input v-model="lock_aspect_ratio" type="checkbox" />
                       Lock aspect ratio
                     </label>
                   </td>
@@ -314,7 +353,10 @@
                     <div class="field">
                       <label class="label">Frame rate</label>
                       <div class="control">
-                        <input v-model="criteria.fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                        <input
+                          v-model="criteria.fps" class="input is-neon-white" type="number" min="0"
+                          @input="fpsConstrain" @keydown="numConstrain($event, true, false)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -322,7 +364,10 @@
                     <div class="field">
                       <label class="label">Delay (seconds)</label>
                       <div class="control">
-                        <input v-model="criteria.delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                        <input
+                          v-model="criteria.delay" class="input is-neon-white" type="number" min="0"
+                          @input="delayConstrain" @keydown="numConstrain($event, true, false)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -330,7 +375,10 @@
                     <div class="field">
                       <label class="label">Loop count</label>
                       <div class="control">
-                        <input v-model="criteria.loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0"/>
+                        <input
+                          v-model="criteria.loop_count" class="input is-neon-white" type="number" min="0"
+                          @keydown="numConstrain($event, true, true)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -350,36 +398,37 @@
                       </div>
                     </div>
                   </td> -->
-                  <td width="16.7%">
-                  </td>
+                  <td width="16.7%" />
                   <td width="16.7%" class="force-vcenter">
                     <!-- <label class="checkbox">
                       <input v-model="lock_aspect_ratio" type="checkbox"/>
                       Lock aspect ratio
                     </label> -->
-                    <br/>
+                    <br />
                     <template v-if="aspect_ratio && aspect_ratio.text">
-                      <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                      <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
                     </template>
-                    <template v-else>&nbsp;</template>
+                    <template v-else>
+&nbsp;
+                    </template>
                   </td>
                 </tr>
-                <tr>
-                </tr>
+                <tr />
                 <tr>
                   <td colspan="4">
                     <div class="field has-addons">
                       <div class="control">
-                        <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
+                        <a class="button is-neon-cyan" @click="btnSetSavePath">
                           <span class="icon is-small">
-                            <font-awesome-icon icon="save"/>
+                            <font-awesome-icon icon="save" />
                             <!-- <i class="fas fa-save"></i> -->
                           </span>
                           <span>Save to</span>
                         </a>
                       </div>
                       <div class="control is-expanded">
-                        <input v-model="save_dir"
+                        <input
+                          v-model="save_dir"
                           class="input is-neon-white"
                           type="text"
                           placeholder="Output folder"
@@ -390,7 +439,7 @@
                   <td colspan="1">
                     <div class="field">
                       <div class="control">
-                        <div class="select is-neon-cyan" v-bind:class="{'non-interactive': buttonIsFrozen}">
+                        <div class="select is-neon-cyan" :class="{'non-interactive': buttonIsFrozen}">
                           <select v-model="criteria.format">
                             <option v-for="(item, name, index) in SUPPORTED_MODIFY_EXTENSIONS" :key="index" :value="name">
                               {{ item }}
@@ -401,7 +450,7 @@
                     </div>
                   </td>
                   <td colspan="1">
-                    <a v-on:click="btnModifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
+                    <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}" @click="btnModifyImage">
                       MODIFY</a>
                   </td>
                 </tr>
@@ -432,10 +481,10 @@
                   v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
                 />
                 <GIFUnoptimizationRow
-                v-model:is_optimized="gif_opt_criteria.is_optimized"
-                v-model:is_lossy="gif_opt_criteria.is_lossy"
-                v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
-                v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
+                  v-model:is_optimized="gif_opt_criteria.is_optimized"
+                  v-model:is_lossy="gif_opt_criteria.is_lossy"
+                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
+                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
                 />
               </table>
             </div>
@@ -459,7 +508,7 @@
             </div>
           </div>
           <div class="mpc-right-bottom-panel">
-            <StatusBar :bus="statusBarBus"></StatusBar>
+            <StatusBar :bus="statusBarBus" />
           </div>
         </div>
       </div>
@@ -1051,6 +1100,13 @@ let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
 
 export default {
+  components: {
+    GIFOptimizationRow,
+    GIFUnoptimizationRow,
+    APNGOptimizationRow,
+    APNGUnoptimizationRow,
+    StatusBar,
+  },
   data: function() {
     return {
       orig_attribute: structuredClone(common_metadata),
@@ -1113,12 +1169,38 @@ export default {
       // statusBarBus: new Vue(),
     };
   },
-  components: {
-    GIFOptimizationRow,
-    GIFUnoptimizationRow,
-    APNGOptimizationRow,
-    APNGUnoptimizationRow,
-    StatusBar,
+  computed: {
+    origDimensions() {
+      if (this.orig_attribute.width && this.orig_attribute.height) {
+        return `${this.orig_attribute.width} x ${this.orig_attribute.height}`;
+      }
+      else {
+        return "";
+      }
+    },
+    previewDimensions() {
+      if (this.preview_attribute.width && this.preview_attribute.height) {
+        return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
+      }
+      else {
+        return "";
+      }
+    },
+    buttonIsFrozen() {
+      if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
+      else return false;
+    },
+    previewSizePercentage() {
+      if (this.orig_attribute.path && this.preview_attribute.path) {
+        let oldSize = this.orig_attribute.file_size
+        let previewSize = this.preview_attribute.file_size;
+        console.log(oldSize, previewSize);
+        let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
+        let text = `${newSizePercentage}%`;
+        return text;
+      }
+      else return "";
+    },
   },
   methods: {
     loadOrigMetadata(res) {
@@ -1574,60 +1656,27 @@ export default {
       }
     },
     _logClear() {
-      this.statusBarBus.$emit("logClear");
+      this.emitter.emit("status-bar-log-clear");
     },
     _logProcessing(message) {
-      this.statusBarBus.$emit("logProcessing", message);
+      this.emitter.emit("status-bar-log-processing", message);
     },
     _logMessage(message) {
-      this.statusBarBus.$emit("logMessage", message);
+      this.emitter.emit("status-bar-log-message", message);
     },
     _logSuccess(message) {
-      this.statusBarBus.$emit("logSuccess", message);
+      this.emitter.emit("status-bar-log-success", message);
     },
     _logWarning(message) {
-      this.statusBarBus.$emit("logWarning", message);
+      this.emitter.emit("status-bar-log-warning", message);
     },
     _logError(message) {
-      this.statusBarBus.$emit("logError", message);
+      this.emitter.emit("status-bar-log-error", message);
     },
     floatConstrain: floatConstrain,
     numConstrain: numConstrain,
     roundPrecise: roundPrecise,
     escapeLocalPath: escapeLocalPath,
-  },
-  computed: {
-    origDimensions() {
-      if (this.orig_attribute.width && this.orig_attribute.height) {
-        return `${this.orig_attribute.width} x ${this.orig_attribute.height}`;
-      }
-      else {
-        return "";
-      }
-    },
-    previewDimensions() {
-      if (this.preview_attribute.width && this.preview_attribute.height) {
-        return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
-      }
-      else {
-        return "";
-      }
-    },
-    buttonIsFrozen() {
-      if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
-      else return false;
-    },
-    previewSizePercentage() {
-      if (this.orig_attribute.path && this.preview_attribute.path) {
-        let oldSize = this.orig_attribute.file_size
-        let previewSize = this.preview_attribute.file_size;
-        console.log(oldSize, previewSize);
-        let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
-        let text = `${newSizePercentage}%`;
-        return text;
-      }
-      else return "";
-    },
   }
 };
 </script>

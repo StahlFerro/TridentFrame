@@ -90,6 +90,10 @@
         flex-grow: 1;
         align-items: center;
         height: 57px;
+        a.button {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
         .mpb-load-buttons {
             flex-grow: inherit;
             width: 33%;

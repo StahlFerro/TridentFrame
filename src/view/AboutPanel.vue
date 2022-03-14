@@ -2,22 +2,28 @@
   <div id="about_panel" class="container" style="display: none;">
     <div class="about-content">
       <div class="about-info">
-        <img v-bind:src="logo" class="about-logo no-select-drag"/>
-        <h1 class="about-software-name">TridentFrame</h1>
-        <p class="about-software-version">v0.1.0-beta.10</p>
-        <p class="about-software-copyright">Copyright 
+        <img :src="logo" class="about-logo no-select-drag" />
+        <h1 class="about-software-name">
+          TridentFrame
+        </h1>
+        <p class="about-software-version">
+          v0.1.0-beta.10
+        </p>
+        <p class="about-software-copyright">
+          Copyright 
           <span class="icon">
-            <font-awesome-icon :icon="['far', 'copyright']"/>
+            <font-awesome-icon :icon="['far', 'copyright']" />
           </span>
-              2021 StahlFerro</p>
+          2021 StahlFerro
+        </p>
         <!-- <p class="about-software-author">Developed by StahlFerro</p> -->
       </div>
       <div class="about-buttons">
         <div class="field is-grouped is-grouped-centered">
           <p class="control">
-            <a v-on:click="warpGithub" class="button is-neon-cyan is-medium">
+            <a class="button is-neon-cyan is-medium" @click="warpGithub">
               <span class="icon">
-                <font-awesome-icon :icon="['fab', 'github']"/>
+                <font-awesome-icon :icon="['fab', 'github']" />
                 <!-- <i class="fab fa-github"></i> -->
               </span>
               <span>Github</span>
