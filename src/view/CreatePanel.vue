@@ -503,7 +503,7 @@
             </div>
           </div>
           <div class="cpc-right-bottom-panel">
-            <StatusBar :bus="statusBarBus" />
+            <StatusBar :status-bar-id="statusBarId" />
           </div>
         </div>
       </div>
@@ -526,17 +526,19 @@ import { escapeLocalPath, stem, validateFilename } from "../modules/utility/path
 import { formatBytes, randString } from "../modules/utility/stringutils";
 import { gcd } from "../modules/utility/calculations";
 import { PREVIEWS_PATH } from "../common/paths";
-import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
 
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
-import StatusBar from "./components/StatusBar.vue";
 
 import { createPopper } from '@popperjs/core';
 import vClickOutside from 'click-outside-vue3'
+
+import StatusBar from "./components/StatusBar.vue";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
 // import ClickOutside from 'vue-click-outside';
 // import Vue from 'vue';
 
@@ -1184,6 +1186,7 @@ export default {
       CRT_IS_CREATING: false,
 
       popperIsVisible: false,
+      statusBarId: "createPanelStatusBar",
 
       // statusBarBus: new Vue(),
     };
@@ -1724,23 +1727,22 @@ export default {
       }
     },
     _logClear() {
-      this.emitter.emit("status-bar-log-clear");
-      // this.statusBarBus.$emit("logClear");
-    },
-    _logProcessing(message) {
-      this.emitter.emit("status-bar-log-processing", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
     _logMessage(message) {
-      this.emitter.emit("status-bar-log-message", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
+    },
+    _logProcessing(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.PROCESSING, message);
     },
     _logSuccess(message) {
-      this.emitter.emit("status-bar-log-success", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.SUCCESS, message);
     },
     _logWarning(message) {
-      this.emitter.emit("status-bar-log-warning", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.WARNING, message);
     },
     _logError(message) {
-      this.emitter.emit("status-bar-log-error", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.ERROR, message);
     },
     escapeLocalPath: escapeLocalPath,
   },

@@ -508,7 +508,7 @@
             </div>
           </div>
           <div class="mpc-right-bottom-panel">
-            <StatusBar :bus="statusBarBus" />
+            <StatusBar :status-bar-id="statusBarId" />
           </div>
         </div>
       </div>
@@ -535,14 +535,16 @@ import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import { existsSync } from 'fs';
+
+import StatusBar from "./components/StatusBar.vue";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
 // import Vue from 'vue';
 
 const SUPPORTED_MODIFY_EXTENSIONS = {
   'gif': 'GIF',
   'png': 'APNG',
 }
-
-import StatusBar from "./components/StatusBar.vue";
 
 let common_metadata = {
   fname: "",
@@ -1166,6 +1168,7 @@ export default {
       MOD_IS_PREVIEWING: false,
       modify_msgbox: "",
       SUPPORTED_MODIFY_EXTENSIONS: SUPPORTED_MODIFY_EXTENSIONS,
+      statusBarId: "modifyPanelStatusBar",
       // statusBarBus: new Vue(),
     };
   },
@@ -1430,7 +1433,7 @@ export default {
     },
     btnModifyImage() {
       if (!this.orig_attribute.path) {
-        this._logError("Please load the animated image to be modified!");
+        this._logError("Please load an image first!");
         return;
       }
 
@@ -1656,22 +1659,22 @@ export default {
       }
     },
     _logClear() {
-      this.emitter.emit("status-bar-log-clear");
-    },
-    _logProcessing(message) {
-      this.emitter.emit("status-bar-log-processing", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
     _logMessage(message) {
-      this.emitter.emit("status-bar-log-message", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
+    },
+    _logProcessing(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.PROCESSING, message);
     },
     _logSuccess(message) {
-      this.emitter.emit("status-bar-log-success", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.SUCCESS, message);
     },
     _logWarning(message) {
-      this.emitter.emit("status-bar-log-warning", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.WARNING, message);
     },
     _logError(message) {
-      this.emitter.emit("status-bar-log-error", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.ERROR, message);
     },
     floatConstrain: floatConstrain,
     numConstrain: numConstrain,

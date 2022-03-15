@@ -252,7 +252,7 @@
           </table>
         </div>
         <div class="spc-bottom">
-          <StatusBar :bus="statusBarBus" />
+          <StatusBar :status-bar-id="statusBarId" />
         </div>
       </div>
     </div>
@@ -275,6 +275,8 @@ let dir_dialog_props = ["openDirectory", "createDirectory"];
 // import Vue from 'vue';
 
 import StatusBar from "./components/StatusBar.vue";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
 
 var defaults = {
   info_header: "Information",
@@ -333,6 +335,7 @@ export default {
       SPL_IS_LOADING: false,
       SPL_IS_SPLITTING: false,
       // statusBarBus: new Vue(),
+      statusBarId: "splitPanelStatusBar",
     };
   },
   computed: {
@@ -444,7 +447,7 @@ export default {
     },
     btnSplitImage() {
       if (this.preview_path == "") {
-        this._logError("Please load the image first!");
+        this._logError("Please load an image first!");
         return;
       }
 
@@ -534,22 +537,22 @@ export default {
       this.preview_path_cb = cb_url;
     },
     _logClear() {
-      this.emitter.emit("status-bar-log-clear");
-    },
-    _logProcessing(message) {
-      this.emitter.emit("status-bar-log-processing", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
     _logMessage(message) {
-      this.emitter.emit("status-bar-log-message", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
+    },
+    _logProcessing(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.PROCESSING, message);
     },
     _logSuccess(message) {
-      this.emitter.emit("status-bar-log-success", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.SUCCESS, message);
     },
     _logWarning(message) {
-      this.emitter.emit("status-bar-log-warning", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.WARNING, message);
     },
     _logError(message) {
-      this.emitter.emit("status-bar-log-error", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.ERROR, message);
     },
     numConstrain: numConstrain,
     escapeLocalPath: escapeLocalPath,

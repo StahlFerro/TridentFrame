@@ -2,7 +2,8 @@
 import { createApp } from 'vue'
 import App from './App.vue';
 import VueSlider from 'vue-slider-component'
-import mitt from 'mitt';
+// import mitt from 'mitt';
+import _emitter from './modules/events/emitter';
 import 'vue-slider-component/theme/default.css'
 // import './css/bulmamods.css';
 import "./sass/bulmamods.scss";
@@ -45,8 +46,8 @@ library.add([faImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, fa
   faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub, faFlask]);
 
 const app = createApp(App);
-const emitter = mitt();
-app.config.globalProperties.emitter = emitter;
+// const emitter = mitt();
+app.config.globalProperties.emitter = _emitter;
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('VueSlider', VueSlider);
