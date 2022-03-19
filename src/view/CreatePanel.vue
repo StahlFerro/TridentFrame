@@ -465,6 +465,8 @@
                   v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
                   v-model:color_space="gif_opt_criteria.color_space"
                   v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
+                  v-model:dither_method="gif_opt_criteria.dither_method"
+                  v-model:palletization_method="gif_opt_criteria.palletization_method"
                   v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
                   v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
                   v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
@@ -539,6 +541,8 @@ import vClickOutside from 'click-outside-vue3'
 import StatusBar from "./components/StatusBar.vue";
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
+
+import emitter from "../modules/events/emitter";
 // import ClickOutside from 'vue-click-outside';
 // import Vue from 'vue';
 
@@ -1137,6 +1141,8 @@ export default {
         is_reduced_color: false,
         color_space: "",
         is_unoptimized: false,
+        dither_method: "FLOYD_STEINBERG",
+        palletization_method: "ADAPTIVE",
         is_dither_alpha: false,
         dither_alpha_method: "SCREENDOOR",
         dither_alpha_threshold: 50,
@@ -1452,6 +1458,7 @@ export default {
       this.sequence_info.splice(index, 1);
     },
     btnClearAll() {
+      console.log(this.emitter == emitter);
       this.clearSequence();
       this.clearPreviewAIMG();
       this.clearAuxInfo();

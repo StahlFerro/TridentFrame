@@ -99,6 +99,64 @@
   <tr>
     <td class="force-vcenter">
       <label
+        class="label"
+        title="The method of 'smoothing' gradients of colors on a limited palette like GIFs by utilizing different available methods of color quantization"
+      >
+        Dither method
+      </label>
+    </td>
+    <td class="force-vcenter">
+      <div class="field">
+        <!-- <label class="label">Color space</label> -->
+        <div class="control">
+          <div class="select is-neon-cyan">
+            <select v-model="dither_method" @change="$emit('update:dither_method', dither_method)">
+              <option value="FLOYD_STEINBERG" title="Floyd-Steinberg dithering method (default)">
+                Floyd-Steinberg
+              </option>
+              <option value="BAYER" title="Bayer dithering method (experimental)">
+                Bayer ⚠
+              </option>
+              <option value="YLILUOMA_1" title="Yliluoma's dithering algorithm 1 (experimental)">
+                Yliluoma 1 ⚠
+              </option>
+              <option value="NONE" title="None">
+                None
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </td>
+    <td class="force-vcenter">
+      <label 
+        class="label"
+        title="Different methods of color pallete selection to fit 256 colors of GIF frames"
+      >
+        Palletization method
+      </label>
+    </td>
+    <td class="force-vcenter">
+      <div class="field">
+        <!-- <label class="label">Color space</label> -->
+        <div class="control">
+          <div class="select is-neon-cyan">
+            <select v-model="palletization_method" @change="$emit('update:palletization_method', palletization_method)">
+              <option value="ADAPTIVE" title="Adaptive">
+                Adaptive
+              </option>
+              <option value="WEB" title="Web">
+                Web
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>
+  <tr>
+    <td class="force-vcenter">
+      <label
         class="checkbox"
         title="Perform dithering on translucent source pixels to either fully transparent or opaque depending on the chosen method"
       >
@@ -157,8 +215,8 @@ export default {
   props: {
     isUnoptimized: Boolean
   },
-  emits: ['update:optimization_level', 'update:is_optimized', 'update:is_lossy', 'update:lossy_value', 'update:is_reduced_color', 'update:color_space', 
-  'update:is_dither_alpha', 'update:dither_alpha_method', 'update:dither_alpha_threshold',],
+  emits: ['update:optimization_level', 'update:is_optimized', 'update:is_lossy', 'update:lossy_value', 'update:is_reduced_color', 'update:color_space',
+  'update:dither_method', 'update:palletization_method', 'update:is_dither_alpha', 'update:dither_alpha_method', 'update:dither_alpha_threshold',],
   data: function() {
     return {
       preserve_alpha: false,
@@ -168,6 +226,8 @@ export default {
       lossy_value: "",
       is_reduced_color: false,
       color_space: "",
+      dither_method: "FLOYD_STEINBERG",
+      palletization_method: "ADAPTIVE",
       is_dither_alpha: false,
       dither_alpha_method: "SCREENDOOR",
       dither_alpha_threshold: 50,

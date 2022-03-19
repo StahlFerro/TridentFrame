@@ -22,6 +22,8 @@
         "is_reduced_color": false,
         "color_space": "",
         "is_unoptimized": false,
+        "dither_method": "FLYOD_STEINBERG",
+        "palletization_method": "ADAPTIVE",
         "is_dither_alpha": true,
         "dither_alpha_method": "screendoor",
         "dither_alpha_threshold": 50
@@ -32,6 +34,9 @@
         "apng_is_lossy": false,
         "apng_lossy_value": "",
         "apng_is_unoptimized": false,
+        "apng_quantization_enabled": true,
+        "apng_quantization_quality": 70,
+        "apng_quantization_speed": 3,
         "apng_preconvert_rgba": false,
         "apng_convert_color_mode": false,
         "apng_new_color_mode": "RGBA"
