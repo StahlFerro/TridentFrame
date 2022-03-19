@@ -19,6 +19,7 @@ TridentFrame consists of two main parts. The python backend handling image proce
 * [pyAPNG](https://github.com/eight04/pyAPNG) : APNG creation & splitting.
 * [apngdis](http://apngdis.sourceforge.net/) : APNG disassembler.
 * [apngopt](https://sourceforge.net/projects/apng/files/APNG_Optimizer/) : APNG modification.
+* [pngquant](https://pngquant.org/) : PNG lossy compression.
 * [Bulma](https://bulma.io/) : For the clean UI.
 * [Sass](https://sass-lang.com/) : Modifying bulma's styles.
 * [Font Awesome](https://fontawesome.com/) : Icons.
