@@ -1,30 +1,42 @@
 <template>
   <div id="inspect_panel">
     <div class="inspect-panel-root">
-      <div class="inspect-panel-display" >
-        <div class="inspect-panel-viewbox silver-bordered" :class="{'has-checkerboard-bg': checkerbg_active }" 
-            @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)"
-            v-cloak @drop.prevent="helidropFile" @dragover.prevent>
+      <div class="inspect-panel-display">
+        <div
+          v-cloak class="inspect-panel-viewbox silver-bordered" 
+          :class="{'has-checkerboard-bg': checkerbg_active }"
+          @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)" @drop.prevent="helidropFile" @dragover.prevent
+        >
           <div v-if="load_has_error" class="inspect-panel-msgbox">
-            <h2 class="is-2 is-crimson"><span class="icon is-large"><i class="fas fa-exclamation-circle fa-2x"></i></span></h2>
-            <p class="is-left-paddingless is-border-colorless is-white-d">{{ inspect_msgbox }}</p>
+            <h2 class="is-2 is-crimson">
+              <span class="icon is-large"><i class="fas fa-exclamation-circle fa-2x" /></span>
+            </h2>
+            <p class="is-left-paddingless is-border-colorless is-white-d">
+              {{ inspect_msgbox }}
+            </p>
           </div>
           <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
-            <h2 :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']"><span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x"/></span></h2>
-            <p :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']">Drop your image here</p>
+            <h2 :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']">
+              <span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x" /></span>
+            </h2>
+            <p :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']">
+              Drop your image here
+            </p>
           </div>
-          <div class="inspect-panel-image" v-else-if="img_path !== ''">
-            <img v-bind:src="escapeLocalPath(img_path)" v-show="inspect_msgbox === ''"/>
+          <div v-else-if="img_path !== ''" class="inspect-panel-image">
+            <img v-show="inspect_msgbox === ''" :src="escapeLocalPath(img_path)" />
           </div>
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
           <table v-if="info_data" class="table ins-info-table is-paddingless" width="100%">
             <template v-for="attr_group in INSPECT_PANEL_SETTINGS.image_attributes">
-            <!-- <template v-for="(meta_list, meta_categ) in info_data"> -->
+              <!-- <template v-for="(meta_list, meta_categ) in info_data"> -->
               <!-- <span v-bind:key="key"/> -->
               <template v-if="info_data[attr_group.category]">
                 <tr :key="attr_group.category">
-                  <td colspan="2" class="is-cyan">{{ attr_group.label }}</td>
+                  <td colspan="2" class="is-cyan">
+                    {{ attr_group.label }}
+                  </td>
                 </tr>
                 <!-- <tr v-if="meta_categ == 'general_info'" :key="'general_info_' + meta_categ">
                   <td colspan="2" class="is-cyan">GENERAL INFO</td>
@@ -32,14 +44,18 @@
                 <tr v-if="meta_categ == 'animation_info'" :key="'animation_info_' + meta_categ">
                   <td colspan="2" class="is-cyan">ANIMATION INFO</td>
                 </tr> -->
-                <tr v-for="attribute in attr_group.attributes" 
-                    :set="attr_field = info_data[attr_group.category][attribute]"
-                    :key="'iprop_' + attr_group.category + '_' + attribute">
+                <tr
+                  v-for="attribute in attr_group.attributes" 
+                  :key="'iprop_' + attr_group.category + '_' + attribute"
+                  :set="attr_field = info_data[attr_group.category][attribute]"
+                >
                   <td style="width: 123px">
                     <strong><span class="is-white-d">{{ attr_field.label }}</span></strong>
                   </td>
                   <template v-if="attribute == 'loop_count' && attr_field.value == 0">
-                    <td style="max-width: 369px; word-wrap: break-all">Infinite</td>
+                    <td style="max-width: 369px; word-wrap: break-all">
+                      Infinite
+                    </td>
                   </template>
                   <!-- <template v-else-if="attribute == 'is_animated'">
                     <td style="max-width: 369px; word-wrap: break-all">{{ metadata_field.value? "Yes" : "No" }}</td>
@@ -55,7 +71,7 @@
                   <template v-else-if="typeof attr_field.value == 'number'">
                     <td style="max-width: 369px; word-wrap: break-all">
                       {{ roundPrecise(attr_field.value, 3) }}
-                      </td>
+                    </td>
                   </template>
                   <template v-else>
                     <!-- <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)"> -->
@@ -70,32 +86,33 @@
         </div>
       </div>
       <div class="inspect-panel-controls">
-        <a v-on:click="loadImage" class="button is-neon-emerald"
-          v-bind:class="{
+        <a
+          class="button is-neon-emerald" :class="{
             'is-loading': INS_IS_INSPECTING,
             'non-interactive': isButtonFrozen,
-          }">
+          }"
+          @click="loadImage"
+        >
           <span class="icon is-small">
-            <font-awesome-icon icon="plus"/>
+            <font-awesome-icon icon="plus" />
             <!-- <i class="fas fa-plus"></i> -->
           </span>
           <span>Load Image</span>
         </a>
-        <a v-on:click="clearButton" class="button is-neon-crimson"
-          v-bind:class="{'non-interactive': isButtonFrozen}">
+        <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearButton">
           <span class="icon is-small">
-            <font-awesome-icon icon="times"/>
+            <font-awesome-icon icon="times" />
             <!-- <i class="fas fa-times"></i> -->
           </span>
           <span>Clear</span>
         </a>
         <a
-          v-on:click="toggleCheckerBG"
           class="button is-neon-white"
-          v-bind:class="{ 'is-active': checkerbg_active }"
+          :class="{ 'is-active': checkerbg_active }"
+          @click="toggleCheckerBG"
         >
           <span class="icon is-medium">
-            <font-awesome-icon icon="chess-board"/>
+            <font-awesome-icon icon="chess-board" />
             <!-- <i class="fas fa-chess-board"></i> -->
           </span>
         </a>
@@ -117,6 +134,7 @@ import { extension as mime_extension } from "mime-types";
 
 
 export default {
+  emits: ['open-root-ctxmenu'],
   data: function () {
     return {
       img_path: "",
@@ -136,6 +154,11 @@ export default {
       ],
       INSPECT_PANEL_SETTINGS: {},
     };
+  },
+  computed: {
+    isButtonFrozen() {
+      return this.INS_IS_INSPECTING;
+    }
   },
   beforeMount: function () {
     // ipcRenderer.invoke('reload-window-once');
@@ -267,11 +290,6 @@ export default {
       console.log(`text ${text}`);
       if (text)
         clipboard.writeText(text);
-    }
-  },
-  computed: {
-    isButtonFrozen() {
-      return this.INS_IS_INSPECTING;
     }
   },
 };
