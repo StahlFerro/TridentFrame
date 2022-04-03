@@ -215,7 +215,7 @@ export default {
     console.debug("SettingsPanel mounted");
     // ipcRenderer.invoke('reload-window-once');
     const SETTINGS = ipcRenderer.sendSync("get-settings");
-    // console.debug(SETTINGS);
+    console.debug(SETTINGS);
     this.APP_SETTINGS = { ...SETTINGS };
     this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
     this.applySettingsWatcher();
@@ -247,7 +247,11 @@ export default {
     },
     applySettingsWatcher() {
       this.$watch("APP_SETTINGS", function() {
-        ipcRenderer.sendSync("set-settings", this.APP_SETTINGS);
+        console.debug(this.APP_SETTINGS);
+        // Need to convert Vue proxy objects to plain object so that ipc can transmit the object
+        let new_settings = JSON.parse(JSON.stringify(this.APP_SETTINGS));
+        console.debug(new_settings);
+        ipcRenderer.sendSync("set-settings", new_settings);
       }, { deep: true});
     },
     testCInterface() {
