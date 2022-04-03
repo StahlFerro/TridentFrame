@@ -6,7 +6,7 @@
           v-cloak class="inspect-panel-viewbox silver-bordered" 
           :class="{'has-checkerboard-bg': checkerbg_active }"
           @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)" 
-          @drop.prevent="helidropFile" @dragenter.prevent="dragEnter" @dragover.prevent="dragOver"
+          @drop.prevent="helidropFile"
         >
           <div v-if="load_has_error" class="inspect-panel-msgbox">
             <h2 class="is-2 is-crimson">
