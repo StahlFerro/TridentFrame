@@ -5,7 +5,8 @@
         <div
           v-cloak class="inspect-panel-viewbox silver-bordered" 
           :class="{'has-checkerboard-bg': checkerbg_active }"
-          @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)" @drop.prevent="helidropFile" @dragover.prevent
+          @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)" 
+          @drop.prevent="helidropFile" @dragenter.prevent="dragEnter" @dragover.prevent="dragOver"
         >
           <div v-if="load_has_error" class="inspect-panel-msgbox">
             <h2 class="is-2 is-crimson">
@@ -145,12 +146,12 @@ export default {
       inspect_msgbox: "",
       load_has_error: false,
       inspect_image_menu_options: [
-        {'id': 'copy_image', 'name': "Copy Image", 'callback': this.cmCopyImage},
-        {'id': 'share_image', 'name': "Share Image", 'callback': this.cmShareImage},
-        {'id': 'send_to', 'name': 'Send To', 'callback': this.cmSendTo},
+        {id: 'copy_image', name: "Copy Image", callback: this.cmCopyImage},
+        {id: 'share_image', name: "Share Image", callback: this.cmShareImage},
+        {id: 'send_to', name: 'Send To', callback: this.cmSendTo},
       ],
       inspect_info_menu_options: [
-        {'name': "Copy Info", 'callback': this.cmCopyInfo}
+        {id: 'copy_info', name: "Copy Info", callback: this.cmCopyInfo}
       ],
       INSPECT_PANEL_SETTINGS: {},
     };
@@ -212,7 +213,7 @@ export default {
             // To allow loading images with percent signs on their name.
             this.img_path = localPath;
             // }
-            this._addExtraCtxOptions([{'id': 'format', 'name': 'Format', 'callback': this.cmFormatShouter}])
+            this._addExtraCtxOptions([{id: 'format', name: 'Format', callback: this.cmFormatShouter}])
           }
         }
         this.INS_IS_INSPECTING = false;
@@ -235,13 +236,34 @@ export default {
       this.load_has_error = false;
       this.inspect_msgbox = "";
     },
-    _addExtraCtxOptions(payloads) {
-      let combined_payload = this.inspect_image_menu_options.concat(payloads);
-      this.inspect_image_menu_options = combined_payload;
+    /**
+     * Add extra options on the right click context menu. Automatically updates ones that already exist by id
+     */
+    _addExtraCtxOptions(options) {
+      // let existing_options = this.inspect_image_menu_options.filter()
+      console.debug(options);
+      console.debug(this.inspect_image_menu_options);
+      for (let opt of options){
+        let exist_opt = this.inspect_image_menu_options.find(o => o.id == opt.id);
+        console.debug("exist opt:");
+        console.debug(exist_opt);
+        if (exist_opt){
+          /** 
+           * TODO: For now do nothing if attempting to add a new option with the same id. In the future option updating with the same id must be supported.
+           */
+          // exist_opt = opt
+        }
+        else{
+          this.inspect_image_menu_options.push(opt);
+        }
+      }
+      // this.inspect_image_menu_options = menu_options;
+      // let combined_payload = this.inspect_image_menu_options.concat(options);
+      // this.inspect_image_menu_options = combined_payload;
     },
     _removeExtraCtxOptions(ids) {
-      let filtered_payloads = this.inspect_image_menu_options.filter(payload => !ids.includes(payload.id));
-      this.inspect_image_menu_options = filtered_payloads;
+      let remaining_options = this.inspect_image_menu_options.filter(payload => !ids.includes(payload.id));
+      this.inspect_image_menu_options = remaining_options;
     },
     toggleCheckerBG() {
       this.checkerbg_active = !this.checkerbg_active;
@@ -250,6 +272,14 @@ export default {
     varToSpaceUpper: varToSpaceUpper,
     roundPrecise: roundPrecise,
     escapeLocalPath: escapeLocalPath,
+    dragEnter(e) {
+      console.warn("dragEnter");
+      console.warn(e);
+    },
+    dragOver(e) {
+      console.warn("dragOver");
+      console.warn(e);
+    },
     helidropFile(e) {
       let droppedFiles = e.dataTransfer.files;
       console.log({"droppedFiles": droppedFiles})
@@ -257,6 +287,7 @@ export default {
       else if (droppedFiles.length > 1) console.error("error");
       else {
         let file = droppedFiles[0];
+        if (!file.path || file.path == '') return; /** NOTE: Do nothing if image already on the view panel is dragged and dropped back to the panel again */
         console.log({a: INSPECTING_IMG_EXTS, r: file.type, b: mime_extension(file.type)});
         if (INSPECTING_IMG_EXTS.includes(mime_extension(file.type))) {
           console.log({exttee: file});
