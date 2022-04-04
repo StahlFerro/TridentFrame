@@ -98,7 +98,7 @@ module.exports = env => {
           ]
         },
         {
-          test: /\.(png|svg|jpg|gif)$/,
+          test: /\.(png|svg|jpg|gif|webp)$/,
           loader: "file-loader",
           options: {
             esModule: false,

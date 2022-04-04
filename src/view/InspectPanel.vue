@@ -17,10 +17,10 @@
             </p>
           </div>
           <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
-            <h2 :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']">
+            <h2 :class="[checkerbg_active? 'is-white-d' : 'is-white-d', 'is-border-colorless']">
               <span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x" /></span>
             </h2>
-            <p :class="[checkerbg_active? 'is-dark-2' : 'is-white-d', 'is-border-colorless']">
+            <p :class="[checkerbg_active? 'is-white-d' : 'is-white-d', 'is-border-colorless']">
               Drop your image here
             </p>
           </div>
@@ -111,6 +111,8 @@
           class="button is-neon-white"
           :class="{ 'is-active': checkerbg_active }"
           @click="toggleCheckerBG"
+          @click.middle.prevent="toggleCheckerBG"
+          @contextmenu.prevent="toggleCheckerBG"
         >
           <span class="icon is-medium">
             <font-awesome-icon icon="chess-board" />
@@ -265,9 +267,12 @@ export default {
       let remaining_options = this.inspect_image_menu_options.filter(payload => !ids.includes(payload.id));
       this.inspect_image_menu_options = remaining_options;
     },
-    toggleCheckerBG() {
-      this.checkerbg_active = !this.checkerbg_active;
-      console.log("now checkerbg is", this.checkerbg_active);
+    toggleCheckerBG(e) {
+      console.debug(e);
+      if (e.button == 0){
+        this.checkerbg_active = !this.checkerbg_active;
+        console.log("now checkerbg is", this.checkerbg_active);
+      }
     },
     varToSpaceUpper: varToSpaceUpper,
     roundPrecise: roundPrecise,

@@ -8,6 +8,7 @@ import 'vue-slider-component/theme/default.css'
 // import './css/bulmamods.css';
 import "./sass/bulmamods.scss";
 import "./assets/imgs/Transparency500.png";
+import "./assets/imgs/Generated_Grey_Checker_nl_0.webp";
 import "./assets/icons/TridentFrame_logo_256x256.icns";
 import "./assets/icons/TridentFrame_logo_256x256.ico";
 import "./webfonts/ShareTech-Regular.ttf";
