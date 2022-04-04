@@ -2,10 +2,86 @@
 // //! PLAYWRIGHT CURRENTLY NOT WORKING PROPERLY
 
 // const { _electron } = require('playwright');
+// const { test } = require('@playwright/test');
+
+// test('launch app', async () => {
+//   const electronApp = await _electron.launch({ args: ['main.js'] })
+//   // close app
+//   await electronApp.close()
+// })
+
+import { _electron } from 'playwright';
+import { env } from "process";
+import assert from 'assert';
+import path from 'path';
+import { expect } from 'chai';  // Using Expect style
+import { should } from 'chai';  // Using Should style
+// import { expect } from 'chai';
+
+
+let _tridentFrame;
+let _appPath;
+let _windowTitle;
+
+
+before(async() => {
+  _tridentFrame = await _electron.launch({ args: [path.join(__dirname, '../../../main.js')] });
+  _appPath = await _tridentFrame.evaluate(({ app }) => {
+    // This runs in the main Electron process, parameter here is always
+    // the result of the require('electron') in the main app script.
+    return app.getAppPath();
+  });
+  console.log(_appPath);
+  // const window = await _tridentFrame.windows();
+  // const w = window.map( ww => ww.title)
+  // _windowTitle = await window.title();
+});
+
+after(async () => {
+  await _tridentFrame.close();
+});
+// let page;
+// beforeEach(async() => {
+//   page = await _tridentFrame.newPage();
+// });
+// afterEach(async () => {
+//   await _tridentFrame.close();
+// });
+
+describe("Application launch", function () {
+  it('should initialize windows', async() => {
+    const windows = await _tridentFrame.windows();
+    // console.log(windows.filter(w => w.title));
+    if (env.DEPLOY_ENV == "DEV"){
+      assert.equal(windows.length, 2);
+    }
+    else{
+      assert.equal(windows.length, 1);
+    }
+    // assert.equal(await _tridentFrame.first, 'TridentFrame');
+  });
+  
+  it('should have correct windows based on DEPLOY_ENV', async() => {
+    const windows = await _tridentFrame.windows();
+    const windows_titles = await Promise.all(windows.map(async (w) => { return await w.title(); }));
+    // console.log(windows_titles);
+    if (env.DEPLOY_ENV == "DEV"){
+      // assert.deepStrictEqual(['TridentFrame', 'DevTools'], windows_titles);
+      expect(windows_titles).to.include('TridentFrame');
+      expect(windows_titles).to.include('DevTools');
+    }
+    else{
+      expect(windows_titles).to.include('TridentFrame');
+      // assert.deepStrictEqual(['TridentFrame'], windows_titles);
+    }
+    // assert.equal(await _tridentFrame.first, 'TridentFrame');
+  });
+});
+
+// const { test } = 
 // const assert = require('assert');
 // const { env, platform, electron } = require("process");
 // const electronPath = require('electron');
-// const path = require('path');
 // // var wtf = require('wtfnode');
 // // wtf.dump();
 

@@ -137,8 +137,10 @@
           class="settings-subpanel-about"
         >
           <div class="about-content">
-            <div class="about-info">
+            <div class="about-logo">
               <img :src="logo" class="about-logo no-select-drag" />
+            </div>
+            <div class="about-info">
               <h1 class="about-software-name">
                 TridentFrame
               </h1>
@@ -146,11 +148,16 @@
                 v0.1.0-beta.10
               </p>
               <p class="about-software-copyright">
-                Copyright
-                <span class="icon">
+                Author: StahlFerro
+                <!-- <span class="icon">
                   <font-awesome-icon :icon="['far', 'copyright']" />
-                </span>
-                2021 StahlFerro
+                </span> -->
+              </p>
+              <p class="about-software-license">
+                TridentFrame is free software licensed under the GNU General Public License
+                <!-- <span class="icon">
+                  <font-awesome-icon :icon="['far', 'copyright']" />
+                </span> -->
               </p>
               <!-- <p class="about-software-author">Developed by StahlFerro</p> -->
             </div>
@@ -168,14 +175,14 @@
                     <span>Github</span>
                   </a>
                 </p>
-                <!-- <p class="control">
-                  <a v-on:click="warpDonate" class="button is-neon-cyan is-medium">
+                <p class="control">
+                  <a class="button is-neon-cyan is-medium" @click="warpLicense">
                     <span class="icon">
-                      <i class="fas fa-heart"></i>
+                      <font-awesome-icon icon="globe" />
                     </span>
-                    <span>Donate</span>
+                    <span>License</span>
                   </a>
-                </p> -->
+                </p>
               </div>
             </div>
           </div>
@@ -241,6 +248,9 @@ export default {
     },
     warpGithub() {
       shell.openExternal("https://github.com/StahlFerro/TridentFrame");
+    },
+    warpLicense() {
+      shell.openExternal("https://www.gnu.org/licenses/gpl-3.0.en.html");
     },
     warpDonate() {
       shell.openExternal("https://en.liberapay.com/StahlFerro");
