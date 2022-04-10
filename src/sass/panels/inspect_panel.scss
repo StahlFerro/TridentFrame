@@ -6,22 +6,24 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    .inspect-panel-display {
+    .inspect-panel-main-view {
         display: flex;
         flex-direction: row;
-        flex-grow: 1;
-        align-items: stretch;
-        flex: 1;
-        height: 88vh;
+        // flex-grow: 1;
+        // align-items: stretch;
+        // flex: 1;
+        height: calc(100vh - 57px - #{$status-bar-height} - #{$root-height-offset});
+        width: 100%;
         .inspect-panel-viewbox {
             display: flex;
-            flex-grow: inherit;
-            flex-wrap: wrap;
-            width: 60%;
-            height: 88vh;
+            // flex-grow: inherit;
+            // flex-wrap: wrap;
+            // width: 60%;
+            // height: 78vh;
+            flex: 1 1 60%;
             justify-content: center;
             align-items: center;
-            flex-shrink: 1; /* adjusted */
+            // flex-shrink: 1; /* adjusted */
             .inspect-panel-image {
                 display: flex;
                 width: 100%;
@@ -50,16 +52,17 @@
             .inspect-panel-hint {
                 padding: 7px;
                 display: flex;
-                flex-grow: 1;
+                flex: 1 1 auto;
                 flex-direction: column;
                 justify-content: center;
                 align-items: center;
             }
         }
         .inspect-panel-info {
-            flex-grow: inherit;
-            width: 40%;
-            height: 88vh;
+            // flex-grow: inherit;
+            // width: 40%;
+            // height: 78vh;
+            flex: 1 1 40%;
             margin: 0;
             padding: 0;
             overflow: auto;
@@ -88,10 +91,19 @@
         }
     }
     .inspect-panel-controls {
-        flex-basis: calc(10vh - #{$root-height-offset});
-        padding-top: 10px;
+        display: flex;
+        height: 57px;
+        // justify-content: center;
+        align-items: center;
+        // padding-top: 10px;
+        // padding-bottom: 10px;
         a.button {
             margin-right: 10px;
         }
+    }
+    .inspect-panel-bottom-bar {
+        display: flex;
+        border: 1px solid $white-d;
+        height: $status-bar-height;
     }
 }

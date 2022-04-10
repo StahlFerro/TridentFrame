@@ -6,7 +6,7 @@
           class="split-panel-image silver-bordered" 
           :class="{'has-checkerboard-bg': checkerbg_active }"
         >
-          <img :src="escapeLocalPath(preview_path_cb)" />
+          <img :src="escapeLocalPath(previewPathCB)" />
         </div>
         <div class="split-panel-info silver-bordered-no-left">
           <table class="table spl-info-table" width="100%">
@@ -122,7 +122,7 @@
                   Loop count
                 </td>
                 <td class="spl-info-data">
-                  <template v-if="preview_path">
+                  <template v-if="previewPath">
                     <span v-if="loop_count == 0">Infinite</span>
                     <span v-else>{{ loop_count }}</span>
                   </template>
@@ -236,7 +236,7 @@
                   </div>
                   <div class="control is-expanded">
                     <input
-                      v-model="outdir"
+                      v-model="outDir"
                       class="input is-neon-white"
                       type="text"
                       placeholder="Output folder"
@@ -294,8 +294,8 @@ var defaults = {
   loop_duration: "",
   loop_count: "",
   has_transparency: "",
-  preview_path: "",
-  preview_path_cb: "",
+  previewPath: "",
+  previewPathCB: "",
 };
 
 export default {
@@ -327,11 +327,11 @@ export default {
       loop_duration: "",
       loop_count: "",
       has_transparency: "",
-      preview_path: "",
-      preview_path_cb: "",
+      previewPath: "",
+      previewPathCB: "",
       checkerbg_active: false,
       is_reduced_color: false,
-      outdir: "",
+      outDir: "",
       SPL_IS_LOADING: false,
       SPL_IS_SPLITTING: false,
       // statusBarBus: new Vue(),
@@ -396,7 +396,7 @@ export default {
               this.delays = ainfo.delays.value;
               this.loop_duration = `${ainfo.loop_duration.value} seconds`;
               this.loop_count = ainfo.loop_count.value;
-              this.preview_path = geninfo.absolute_url.value;
+              this.previewPath = geninfo.absolute_url.value;
               this.criteria.pad_count = 3;
               if (this.is_reduced_color) {
                 this.criteria.color_space - 256;
@@ -433,28 +433,31 @@ export default {
       let out_dirs = result.filePaths;
       console.log(out_dirs);
       if (out_dirs && out_dirs.length > 0) { 
-        this.outdir = out_dirs[0];
-        dirPath = this.outdir;
+        this.outDir = out_dirs[0];
+        dirPath = this.outDir;
       }
       this._logClear();
       return {canceled: false, result: dirPath};
     },
     async validateFilenameAsync() {
-      if (validateFilename(this.new_name))
+      let nameToCheck = this.new_name? this.new_name : this.name;
+      if (validateFilename(nameToCheck))
         return true;
       else
         return false;
     },
     btnSplitImage() {
-      if (this.preview_path == "") {
+      if (this.previewPath == "") {
         this._logError("Please load an image first!");
         return;
       }
-
-
+      // else if (this.outDir == "") {
+      //   this._logError("Please specifiy an output folder first!");
+      //   return;
+      // }
       this.validateFilenameAsync().then(async (isValid) => {
         if (isValid) {
-          if (!this.save_dir) {
+          if (!this.outDir) {
             const result = await this.setSaveDirFromDialogAsync();
             if(result.canceled)
               return Promise.reject("Directory selection cancelled");
@@ -466,7 +469,7 @@ export default {
         }
         else {
           let errMsg = "File name contains characters that are not allowed";
-          this._logError(errMsg);
+          this._logError(error);
           return Promise.reject(errMsg);
         }
       }).then((proceed_create) => {
@@ -478,22 +481,6 @@ export default {
       }).catch((error) => {
         console.error(error);
       });
-
-
-
-      // if (this.outdir) {
-      //   this.splitImage();
-      // }
-      // else {
-      //   this.setSaveDirFromDialogAsync().then((result) => {
-      //     if (result.canceled)
-      //       return Promise.reject("Directory selection cancelled.");
-      //     else
-      //       return this.splitImage();
-      //   }).catch((error) => {
-      //     console.error(error);
-      //   });
-      // }
 
     },
     splitImage() {
@@ -510,7 +497,7 @@ export default {
         color_space = 0;
       }
       console.log(this);
-      tridentEngine(["split_image", this.preview_path, this.outdir, this.criteria], (error, res) => {
+      tridentEngine(["split_image", this.previewPath, this.outDir, this.criteria], (error, res) => {
         if (error) {
           try {
             this._logError(error);
@@ -531,10 +518,10 @@ export default {
       });
     },
     previewPathCacheBreaker() {
-      let cb_url = this.preview_path;
-      // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+      let cb_url = this.previewPath;
+      // let cb_url = `${data.previewPath}?cachebreaker=${randString()}`;
       console.log("Cache breaker url", cb_url);
-      this.preview_path_cb = cb_url;
+      this.previewPathCB = cb_url;
     },
     _logClear() {
       logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);

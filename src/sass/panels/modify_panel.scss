@@ -123,10 +123,11 @@
         .mpc-right-panel {
             
             .mpc-right-top-panel {
-                height: 90%;
+                height: calc(100% - #{$status-bar-height});
+                overflow-y: auto;
             }
             .mpc-right-bottom-panel {
-                height: 10%;
+                height: $status-bar-height;
                 border-top: 1.5px solid $white-d;
                 display: flex;
             }
@@ -135,6 +136,7 @@
             border-left: 0;
             min-width: 93%;
             
+
             table {
                 width: 100%;
                 padding: 0;

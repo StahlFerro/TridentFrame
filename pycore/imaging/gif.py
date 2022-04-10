@@ -201,4 +201,5 @@ def gif_encode(im: PIL.Image.Image, crbundle: CriteriaBundle, bg_im: PIL.Image.I
         else:
             pass
             # im.save(save_path)
+            
     return im

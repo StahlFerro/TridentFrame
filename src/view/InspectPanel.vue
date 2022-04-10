@@ -1,39 +1,31 @@
 <template>
   <div id="inspect_panel">
     <div class="inspect-panel-root">
-      <div class="inspect-panel-display">
+      <div class="inspect-panel-main-view">
         <div
           v-cloak class="inspect-panel-viewbox silver-bordered" 
-          :class="{'has-checkerboard-bg': checkerbg_active }"
-          @contextmenu="$emit('open-root-ctxmenu', $event, inspect_image_menu_options)" 
-          @drop.prevent="helidropFile"
+          :class="{'has-checkerboard-bg': checkerBGIsActive }"
+          @contextmenu="$emit('open-root-ctxmenu', $event, imageContextMenuOptions)" 
+          @drop.prevent="helidropFile" @dragenter.prevent @dragover.prevent
         >
-          <div v-if="load_has_error" class="inspect-panel-msgbox">
-            <h2 class="is-2 is-crimson">
-              <span class="icon is-large"><i class="fas fa-exclamation-circle fa-2x" /></span>
-            </h2>
-            <p class="is-left-paddingless is-border-colorless is-white-d">
-              {{ inspect_msgbox }}
-            </p>
-          </div>
-          <div v-else-if="inspect_msgbox === '' && img_path === ''" class="inspect-panel-hint">
-            <h2 :class="[checkerbg_active? 'is-white-d' : 'is-white-d', 'is-border-colorless']">
+          <div v-if="imageFilePath === ''" class="inspect-panel-hint">
+            <h2 :class="[checkerBGIsActive? 'is-white-d' : 'is-white-d', 'is-border-colorless']">
               <span class="icon is-large"><font-awesome-icon icon="file-upload" size="2x" /></span>
             </h2>
-            <p :class="[checkerbg_active? 'is-white-d' : 'is-white-d', 'is-border-colorless']">
+            <p :class="[checkerBGIsActive? 'is-white-d' : 'is-white-d', 'is-border-colorless']">
               Drop your image here
             </p>
           </div>
-          <div v-else-if="img_path !== ''" class="inspect-panel-image">
-            <img v-show="inspect_msgbox === ''" :src="escapeLocalPath(img_path)" />
+          <div v-else class="inspect-panel-image">
+            <img :src="escapeLocalPath(imageFilePath)" />
           </div>
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
-          <table v-if="info_data" class="table ins-info-table is-paddingless" width="100%">
+          <table v-if="imageInfo" class="table ins-info-table is-paddingless" width="100%">
             <template v-for="attr_group in INSPECT_PANEL_SETTINGS.image_attributes">
-              <!-- <template v-for="(meta_list, meta_categ) in info_data"> -->
+              <!-- <template v-for="(meta_list, meta_categ) in imageInfo"> -->
               <!-- <span v-bind:key="key"/> -->
-              <template v-if="info_data[attr_group.category]">
+              <template v-if="imageInfo[attr_group.category]">
                 <tr :key="attr_group.category">
                   <td colspan="2" class="is-cyan">
                     {{ attr_group.label }}
@@ -48,7 +40,7 @@
                 <tr
                   v-for="attribute in attr_group.attributes" 
                   :key="'iprop_' + attr_group.category + '_' + attribute"
-                  :set="attr_field = info_data[attr_group.category][attribute]"
+                  :set="attr_field = imageInfo[attr_group.category][attribute]"
                 >
                   <td style="width: 123px">
                     <strong><span class="is-white-d">{{ attr_field.label }}</span></strong>
@@ -75,7 +67,7 @@
                     </td>
                   </template>
                   <template v-else>
-                    <!-- <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, inspect_info_menu_options)"> -->
+                    <!-- <td style="max-width: 369px; word-wrap: break-all" @contextmenu="$emit('inspect-ctxmenu', $event, infoContextMenuOptions)"> -->
                     <td style="max-width: 369px; word-wrap: break-all">
                       {{ attr_field.value }}
                     </td>
@@ -109,7 +101,7 @@
         </a>
         <a
           class="button is-neon-white"
-          :class="{ 'is-active': checkerbg_active }"
+          :class="{ 'is-active': checkerBGIsActive }"
           @click="toggleCheckerBG"
           @click.middle.prevent="toggleCheckerBG"
           @contextmenu.prevent="toggleCheckerBG"
@@ -119,6 +111,9 @@
             <!-- <i class="fas fa-chess-board"></i> -->
           </span>
         </a>
+      </div>
+      <div class="inspect-panel-bottom-bar">
+        <StatusBar :status-bar-id="statusBarId" />
       </div>
     </div>
   </div>
@@ -135,27 +130,34 @@ import { tridentEngine } from "../modules/streams/trident_engine";
 import { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } from "../modules/constants/images";
 import { extension as mime_extension } from "mime-types";
 
+import StatusBar from "./components/StatusBar.vue";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
+
 
 export default {
+  components: {
+    StatusBar
+  },
   emits: ['open-root-ctxmenu'],
   data: function () {
     return {
-      img_path: "",
-      checkerbg_active: false,
+      imageFilePath: "",
+      checkerBGIsActive: false,
       // isButtonFrozen: false,
       INS_IS_INSPECTING: false,
-      info_data: {},
-      inspect_msgbox: "",
-      load_has_error: false,
-      inspect_image_menu_options: [
+      imageInfo: {},
+      // inspect_msgbox: "",
+      imageContextMenuOptions: [
         {id: 'copy_image', name: "Copy Image", callback: this.cmCopyImage},
         {id: 'share_image', name: "Share Image", callback: this.cmShareImage},
         {id: 'send_to', name: 'Send To', callback: this.cmSendTo},
       ],
-      inspect_info_menu_options: [
+      infoContextMenuOptions: [
         {id: 'copy_info', name: "Copy Info", callback: this.cmCopyInfo}
       ],
       INSPECT_PANEL_SETTINGS: {},
+      statusBarId: "inspectPanelStatusBar",
     };
   },
   computed: {
@@ -193,8 +195,8 @@ export default {
       tridentEngine(["inspect_one", image_path], (error, res) => {
         if (error) {
           try {
-            this.load_has_error = true;
-            this.inspect_msgbox = error;
+            // this.load_has_error = true;
+            this._logError(error);
             this._clearImage(); 
             this._clearInfo();
           }
@@ -204,16 +206,15 @@ export default {
         }
         else {
           if (res.data) {
-            this.clearMsgBox();
-            let res_data = res.data;
-            this.info_data = res_data;
+            this._logClear();
+            this.imageInfo = res.data;
             // if (res_data.general_info || res_data.animation_info) {
-            // data.img_path = `${
+            // data.imageFilePath = `${
             //   res_data.general_info.absolute_url.value
             // }?timestamp=${randString()}`;
-            let localPath = res_data.general_info.absolute_url.value;
+            let localPath = this.imageInfo.general_info.absolute_url.value;
             // To allow loading images with percent signs on their name.
-            this.img_path = localPath;
+            this.imageFilePath = localPath;
             // }
             this._addExtraCtxOptions([{id: 'format', name: 'Format', callback: this.cmFormatShouter}])
           }
@@ -224,29 +225,25 @@ export default {
     clearButton() {
       this._clearImage(); 
       this._clearInfo();
-      this.clearMsgBox();
+      this._logClear();
     },
     _clearInfo() {
-      this.info_data = "";
+      this.imageInfo = "";
     },
     _clearImage() {
-      this.img_path = "";
+      this.imageFilePath = "";
       this._removeExtraCtxOptions(['format']);
       webFrame.clearCache();
-    },
-    clearMsgBox() {
-      this.load_has_error = false;
-      this.inspect_msgbox = "";
     },
     /**
      * Add extra options on the right click context menu. Automatically updates ones that already exist by id
      */
     _addExtraCtxOptions(options) {
-      // let existing_options = this.inspect_image_menu_options.filter()
+      // let existing_options = this.imageContextMenuOptions.filter()
       console.debug(options);
-      console.debug(this.inspect_image_menu_options);
+      console.debug(this.imageContextMenuOptions);
       for (let opt of options){
-        let exist_opt = this.inspect_image_menu_options.find(o => o.id == opt.id);
+        let exist_opt = this.imageContextMenuOptions.find(o => o.id == opt.id);
         console.debug("exist opt:");
         console.debug(exist_opt);
         if (exist_opt){
@@ -256,22 +253,22 @@ export default {
           // exist_opt = opt
         }
         else{
-          this.inspect_image_menu_options.push(opt);
+          this.imageContextMenuOptions.push(opt);
         }
       }
-      // this.inspect_image_menu_options = menu_options;
-      // let combined_payload = this.inspect_image_menu_options.concat(options);
-      // this.inspect_image_menu_options = combined_payload;
+      // this.imageContextMenuOptions = menu_options;
+      // let combined_payload = this.imageContextMenuOptions.concat(options);
+      // this.imageContextMenuOptions = combined_payload;
     },
     _removeExtraCtxOptions(ids) {
-      let remaining_options = this.inspect_image_menu_options.filter(payload => !ids.includes(payload.id));
-      this.inspect_image_menu_options = remaining_options;
+      let remaining_options = this.imageContextMenuOptions.filter(payload => !ids.includes(payload.id));
+      this.imageContextMenuOptions = remaining_options;
     },
     toggleCheckerBG(e) {
       console.debug(e);
       if (e.button == 0){
-        this.checkerbg_active = !this.checkerbg_active;
-        console.log("now checkerbg is", this.checkerbg_active);
+        this.checkerBGIsActive = !this.checkerBGIsActive;
+        console.log("now checkerbg is", this.checkerBGIsActive);
       }
     },
     varToSpaceUpper: varToSpaceUpper,
@@ -299,14 +296,32 @@ export default {
           this._inspectImage(file.path);
         }
         else {
-          this.load_has_error = true;
-          this.inspect_msgbox = "File is not an image, try loading a valid image file.";
+          // this.load_has_error = true;
+          this._logError("File is not an image, try loading a valid image file.");
         }
       }
     },
+    _logClear() {
+      logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
+    },
+    _logMessage(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
+    },
+    _logProcessing(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.PROCESSING, message);
+    },
+    _logSuccess(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.SUCCESS, message);
+    },
+    _logWarning(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.WARNING, message);
+    },
+    _logError(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.ERROR, message);
+    },
     cmFormatShouter(event) {
       console.log("cmFormatShouter");
-      let format = this.info_data.general_info.format.value;
+      let format = this.imageInfo.general_info.format.value;
       console.log(format);
     }, 
     cmCopyImage(event) {

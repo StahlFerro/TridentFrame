@@ -77,7 +77,7 @@
         height: calc(100vh - 55vh - 57px - #{$root-height-offset});
         border: 2px solid $white-d;
         .spc-top {
-            height: 85%;
+            height: calc(100% - #{$status-bar-height});
             table {
                 width: 100%;
                 padding: 0;
@@ -98,7 +98,7 @@
             }
         }
         .spc-bottom {
-            height: 15%;
+            height: $status-bar-height;
             border-top: 1.5px solid $white-d;
         }
     }
