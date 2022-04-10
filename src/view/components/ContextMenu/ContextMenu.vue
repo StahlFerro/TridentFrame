@@ -1,13 +1,7 @@
 <template>
   <div
-    id="generalRClickMenu"
-    class="context-menu"
-    ref="popper"
-    v-show="isVisible"
-    tabindex="-1"
-    v-click-outside="closePopper"
-    @contextmenu.capture.prevent
-    style="display: block;"
+    v-show="isVisible" id="generalRClickMenu" ref="popper" v-click-outside="closePopper" class="context-menu"
+    tabindex="-1" style="display: block;" @contextmenu.capture.prevent
   >
     <ul class="context-menu-options">
       <slot :contextData="contextData" />
@@ -17,10 +11,11 @@
 
 <script>
 import { popper, createPopper } from "@popperjs/core";
-import ClickOutside from "vue-click-outside";
+// import ClickOutside from "vue-click-outside";
+import vClickOutside from 'click-outside-vue3'
 console.log(`POPPER`);
 console.log(`CLICKOUTSIDE`);
-console.log(ClickOutside);
+console.log(vClickOutside);
 // @vue/component
 
 
@@ -61,6 +56,10 @@ console.log(ClickOutside);
 // window.onresize = closePopper;
 
 export default {
+  directives: {
+    // ClickOutside,
+    clickOutside: vClickOutside.directive
+  },
   props: {
     boundariesElement: {
       type: String,
@@ -78,8 +77,10 @@ export default {
       rcmPopper: null,
     };
   },
-  directives: {
-    ClickOutside,
+  beforeUnmount() {
+    if (this.rcmPopper !== undefined) {
+      this.rcmPopper.destroy();
+    }
   },
   methods: {
     openPopper(evt, contextData) {
@@ -129,11 +130,6 @@ export default {
         }),
       };
     },
-  },
-  beforeDestroy() {
-    if (this.rcmPopper !== undefined) {
-      this.rcmPopper.destroy();
-    }
   },
 };
 </script>

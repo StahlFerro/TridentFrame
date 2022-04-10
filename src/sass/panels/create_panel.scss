@@ -53,6 +53,10 @@
         .cpb-preview-buttons {
             width: 40%;
             text-align: center;
+            a.button {
+                margin-left: 5px;
+                margin-right: 5px;
+            }
         }
     }
     .create-panel-controls {
@@ -72,10 +76,10 @@
             border-left: 0;
             min-width: 93%;
             .cpc-right-top-panel {
-                height: 90%;
+                height: calc(100% - #{$status-bar-height});
             }
             .cpc-right-bottom-panel {
-                height: 10%;
+                height: $status-bar-height;
                 border-top: 1.5px solid $white-d;
                 display: flex;
             }

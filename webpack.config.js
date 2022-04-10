@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 const TerserPlugin = require("terser-webpack-plugin");
 const JsonMinimizerPlugin = require("json-minimizer-webpack-plugin");
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -24,6 +24,11 @@ module.exports = env => {
   ] : [];
 
   return {
+    // resolve: {
+    //   alias: {
+    //     vue: '@vue/compat'
+    //   }
+    // },
     entry: ['./src/app.js'],
     target: 'electron-main',
     node: {
@@ -46,9 +51,22 @@ module.exports = env => {
           test: /\.js$/,
           use: 'babel-loader'
         },
+        // {
+        //   test: /\.vue$/,
+        //   use: {
+        //     loader: 'vue-loader',
+        //     options: {
+        //       compilerOptions: {
+        //         compatConfig: {
+        //           MODE: 2
+        //         }
+        //       }
+        //     } 
+        //   }
+        // },
         {
           test: /\.vue$/,
-          use: 'vue-loader'
+          use: 'vue-loader',
         },
         // {
         //   test: /\.css$/,
@@ -80,7 +98,7 @@ module.exports = env => {
           ]
         },
         {
-          test: /\.(png|svg|jpg|gif)$/,
+          test: /\.(png|svg|jpg|gif|webp)$/,
           loader: "file-loader",
           options: {
             esModule: false,

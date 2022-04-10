@@ -12,12 +12,12 @@ div.about-content {
     p { color: $white-d; margin-bottom: 0 !important; }
     display: flex;
     flex-direction: column;
+    .about-logo {
+        width: 30vh;
+        height: 30vh;
+    }
     .about-info {
-        height: 55vh;
-        .about-logo {
-            width: 30vh;
-            height: 30vh;
-        }
+        height: 30vh;
         .about-software-name {
             font-size: 7vh;
         }
@@ -27,6 +27,10 @@ div.about-content {
         .about-software-copyright {
             padding-top: 1vh;
             font-size: 2.75vh
+        }
+        .about-software-license {
+            padding-top: 1vh;
+            font-size: 2vh
         }
         .about-software-author {
             font-size: 3vh

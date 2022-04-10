@@ -251,7 +251,7 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     comments = []
     for f in range(0, gif.n_frames):
         gif.seek(f)
-        stdio.debug(gif.info)
+        # stdio.debug(gif.info)
         # if f in range(0, 3):
         #     logger.debug(f"Frame #{f}\nDisposal: {gif.disposal_method}\nBackground: {gif.info.get('background', '')}\n"
         #         f"Transparency: {gif.info.get('transparency', '')}")

@@ -30,7 +30,7 @@ def test_create_gif(scaffold_spaced_dir, fx_samples_crbundle_001_create_optimize
     assert metadata.average_delay['value'] == 100
     assert metadata.frame_count['value'] == 4
     assert not metadata.has_transparency['value']
-    assert metadata.hash_sha1['value'] == "17912c45bf386ca5ca86c50c6dad2edc11220ed1"
+    assert metadata.hash_sha1['value'] == "61b6cd7e939d90fc08c190b02d9745037f96edf7"
 
 
 def test_create_apng(scaffold_spaced_dir: Path, fx_samples_crbundle_002_create_optimized_apng_json: Dict,
@@ -55,4 +55,4 @@ def test_create_apng(scaffold_spaced_dir: Path, fx_samples_crbundle_002_create_o
     assert metadata.average_delay['value'] == 200
     assert metadata.frame_count['value'] == 4
     assert metadata.has_transparency['value']
-    assert metadata.hash_sha1['value'] == "657b0c1b7231fc150337bad43a0db2bcea11ea8d"
+    assert metadata.hash_sha1['value'] == "8f74b431b3e70a83d0a95910e70f482a14c0d0f0"

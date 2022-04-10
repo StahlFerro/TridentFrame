@@ -130,7 +130,7 @@ export function tridentEngine(args, outCallback, endCallback) {
     
     console.log("DEBUG 4");
     pyshell.end(function (err,code,signal) {
-      console.log("pycommander exit start >>>");
+      console.log(`pycommander exit (${code}) start >>>`);
       console.log({status: "exited", code: code, signal: signal});
       if (err) {
         console.error(err);
