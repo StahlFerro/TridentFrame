@@ -163,7 +163,7 @@
               <li class="subtab-menu-item" :class="{ 'is-selected': crtSubMenuSelection == 0 }">
                 <a @click="crtSubMenuSelection = 0">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="image" size="2x" inverse />
+                    <font-awesome-icon :icon="['far', 'image']" size="2x" inverse />
                     <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d">General</p>
@@ -173,30 +173,12 @@
                 class="subtab-menu-item is-cyan"
                 :class="{ 'is-selected': crtSubMenuSelection == 1 }"
               >
-                <a
-                  :class="{ 'is-disabled': criteria.format != 'gif' }"
-                  @click="crtSubMenuSelection = 1"
-                >
+                <a @click="crtSubMenuSelection = 1">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse />
+                    <font-awesome-icon icon="sliders" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
-                  <p class="is-white-d is-large">GIF</p>
-                </a>
-              </li>
-              <li
-                class="subtab-menu-item"
-                :class="{ 'is-selected': crtSubMenuSelection == 2 }"
-              >
-                <a
-                  :class="{ 'is-disabled': criteria.format != 'png' }"
-                  @click="crtSubMenuSelection = 2"
-                >
-                  <span class="icon is-large">                    
-                    <font-awesome-icon icon="images" size="2x" inverse />
-                    <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
-                  </span>
-                  <p class="is-white-d is-large">APNG</p>
+                  <p class="is-white-d">Advanced</p>
                 </a>
               </li>
             </ul>
@@ -301,7 +283,7 @@
                       />
                     </template>
                     <template v-else>
-&nbsp;
+                      &nbsp;
                     </template>
                   </td>
                   <td width="16.7%" style="vertical-align: bottom" />
@@ -452,7 +434,7 @@
                 </tr>
               </table>
             </div>
-            <div v-show="crtSubMenuSelection == 1">
+            <div v-show="crtSubMenuSelection == 1 && criteria.format == 'gif'">
               <table
                 class="mod-new-control-table is-hpaddingless medium-size-label"
                 width="100%"
@@ -479,7 +461,7 @@
                       /> -->
               </table>
             </div>
-            <div v-show="crtSubMenuSelection == 2">
+            <div v-show="crtSubMenuSelection == 1 && criteria.format == 'png'">
               <table
                 class="mod-new-control-table is-hpaddingless medium-size-label"
                 width="100%"
@@ -883,6 +865,7 @@ export default {
       this.aspectRatio = emptyAspectRatio;
     },
     clearFields() {
+      this.fname = "";
       this.criteria.name = "";
       this.criteria.delay = "";
       this.criteria.fps = "";

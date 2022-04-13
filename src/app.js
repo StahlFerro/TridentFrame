@@ -19,6 +19,7 @@ import 'regenerator-runtime/runtime';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faImage } from '@fortawesome/free-solid-svg-icons/faImage';
 import { faImages } from '@fortawesome/free-solid-svg-icons/faImages';
+import { faImage as farImage } from '@fortawesome/free-regular-svg-icons/faImage';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons/faExchangeAlt';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
@@ -42,10 +43,11 @@ import { faCopyright as farCopyright } from '@fortawesome/free-regular-svg-icons
 import { faGithub as fabGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
 import { faFlask } from '@fortawesome/free-solid-svg-icons/faFlask';
 import { faGlobe } from '@fortawesome/free-solid-svg-icons/faGlobe';
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons/faSlidersH';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add([faImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, faCheck, faSpinner,
-  faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub, faFlask, faGlobe]);
+library.add([faImage, farImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, faCheck, 
+  faSpinner, faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub, faFlask, faGlobe, faSlidersH]);
 
 const app = createApp(App);
 // const emitter = mitt();

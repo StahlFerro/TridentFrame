@@ -69,6 +69,7 @@
             min-width: 7%;
             overflow: auto;
             &::-webkit-scrollbar { width: 0px; height: 0px; }
+            p { font-size: $subtab-font-size; }
         }
         .cpc-right-panel {
             border: 2px solid $white-d;

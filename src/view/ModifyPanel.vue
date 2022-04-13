@@ -202,11 +202,11 @@
             <ul class="menu-list">
               <li
                 id="MOD_box_general" class="subtab-menu-item"
-                :class="{'is-selected': mod_menuselection == 0}"
+                :class="{'is-selected': modSubMenuSelection == 0}"
               >
-                <a id="MOD_menu_general" @click="mod_menuselection = 0">
+                <a id="MOD_menu_general" @click="modSubMenuSelection = 0">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="image" size="2x" inverse />
+                    <font-awesome-icon :icon="['far', 'image']" size="2x" inverse />
                     <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d">General</p>
@@ -214,32 +214,14 @@
               </li>
               <li
                 id="MOD_box_gif" class="subtab-menu-item is-cyan"
-                :class="{'is-selected': mod_menuselection == 1}"
+                :class="{'is-selected': modSubMenuSelection == 1}"
               >
-                <a
-                  id="MOD_menu_gif" :class="{'is-disabled': criteria.format != 'gif'}"
-                  @click="mod_menuselection = 1"
-                >
+                <a id="MOD_menu_gif" @click="modSubMenuSelection = 1">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse />
+                    <font-awesome-icon icon="sliders" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
-                  <p class="is-white-d is-large">GIF</p>
-                </a>
-              </li>
-              <li
-                id="MOD_box_apng" class="subtab-menu-item"
-                :class="{'is-selected': mod_menuselection == 2}"
-              >
-                <a
-                  id="MOD_menu_apng" :class="{'is-disabled': criteria.format != 'png'}"
-                  @click="mod_menuselection = 2"
-                >
-                  <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse />
-                    <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
-                  </span>
-                  <p class="is-white-d is-large">APNG</p>
+                  <p class="is-white-d">Advanced</p>
                 </a>
               </li>
             </ul>
@@ -247,7 +229,7 @@
         </div>
         <div class="mpc-right-panel">
           <div class="mpc-right-top-panel">
-            <div v-show="mod_menuselection == 0">
+            <div v-show="modSubMenuSelection == 0">
               <table class="" width="100%">
                 <tr>
                   <td width="16.7%">
@@ -466,7 +448,7 @@
                 </tr>
               </table>
             </div>
-            <div v-show="mod_menuselection == 1">
+            <div v-show="modSubMenuSelection == 1 && criteria.format == 'gif'">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
                 <GIFOptimizationRow
                   v-model:is_optimized="gif_opt_criteria.is_optimized"
@@ -490,7 +472,7 @@
                 />
               </table>
             </div>
-            <div v-show="mod_menuselection == 2">
+            <div v-show="modSubMenuSelection == 1 && criteria.format == 'png'">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
                 <APNGOptimizationRow
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
@@ -641,7 +623,7 @@ export default {
       preview_size_hr: "",
       aspect_ratio: "",
       lock_aspect_ratio: false,
-      mod_menuselection: 0,
+      modSubMenuSelection: 0,
       orig_checkerbg_active: false,
       new_checkerbg_active: false,
       MOD_IS_LOADING: false,
@@ -857,6 +839,7 @@ export default {
       this._logClear();
     },
     clearCriteriaFields() {
+      this.fname = "";
       this.criteria.old_width = "";
       this.criteria.width = "";
       this.criteria.old_height = "";

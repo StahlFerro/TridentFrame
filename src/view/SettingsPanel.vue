@@ -117,7 +117,7 @@
                   <span>Relaunch App</span>
                 </a>
               </td>
-              <td>
+              <!-- <td>
                 <a
                   class="button is-large is-neon-crimson"
                   @click="testCInterface"
@@ -127,7 +127,7 @@
                   </span>
                   <span>Call CF</span>
                 </a>
-              </td>
+              </td> -->
             </tr>
           </table>
         </div>
