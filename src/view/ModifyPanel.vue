@@ -56,14 +56,14 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.format }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.format_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
                   Format
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.format }}</span>
+                  <span v-if="preview_attribute">{{ preview_attribute.format_info }}</span>
                 </td>
               </tr>
               <tr>
@@ -80,7 +80,7 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.fps }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.fps_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
@@ -116,7 +116,7 @@
               <tr>
                 <td class="mod-info-data">
                   <template v-if="orig_attribute">
-                    {{ orig_attribute.loop_count }}
+                    {{ orig_attribute.loop_count_info }}
                     <!-- <span v-if="orig_attribute.loop_count == 0">Infinite</span>
                     <span v-else>{{ orig_attribute.loop_count }}</span> -->
                   </template>
@@ -127,7 +127,7 @@
                 </td>
                 <td class="mod-info-data">
                   <template v-if="preview_attribute">
-                    {{ preview_attribute.loop_count }}
+                    {{ preview_attribute.loop_count_info }}
                     <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
                     <span v-else>{{ preview_attribute.loop_count }}</span> -->
                   </template>
@@ -146,7 +146,7 @@
           "
           :class="{'has-checkerboard-bg': new_checkerbg_active }"
         >
-          <img :src="escapeLocalPath(preview_path_cb)" />
+          <img :src="escapeLocalPath(previewPathCB)" />
         </div>
       </div>
       <div class="modify-panel-middlebar">
@@ -172,13 +172,22 @@
             </span>
           </a>
         </div>
-        <div class="mpb-center-buttons" />
+        <div class="mpb-center-buttons">
+          <p class="is-white-d">
+            {{ hasModification }}
+          </p>
+        </div>
         <div class="mpb-preview-buttons">
-          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}" @click="previewModImg">
+          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}" @click="btnPreviewModImg">
             <span class="icon is-small">
               <font-awesome-icon :icon="['far', 'eye']" />
             </span>
             <span>Preview</span>
+          </a>
+          <a class="button is-neon-cyan" @click="btnPreviewSaveAIMG">
+            <span class="icon is-medium">
+              <font-awesome-icon icon="save" />
+            </span>
           </a>
           <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearPreviewImage">
             <span class="icon is-small">
@@ -451,6 +460,7 @@
             <div v-show="modSubMenuSelection == 1 && criteria.format == 'gif'">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
                 <GIFOptimizationRow
+                  v-model:hasOptimization="hasGIFOptimization"
                   v-model:is_optimized="gif_opt_criteria.is_optimized"
                   v-model:optimization_level="gif_opt_criteria.optimization_level"
                   v-model:is_lossy="gif_opt_criteria.is_lossy"
@@ -474,7 +484,9 @@
             </div>
             <div v-show="modSubMenuSelection == 1 && criteria.format == 'png'">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
-                <APNGOptimizationRow
+                <APNGOptimizationRow 
+                  ref="apngOptimRow"
+                  v-model:hasOptimizaton="hasAPNGOptimization"
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
                   v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
                   v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
@@ -487,6 +499,7 @@
                   v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
                 />
                 <APNGUnoptimizationRow
+                  ref="apngUnoptimRow"
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
                   v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
                   v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
@@ -540,13 +553,16 @@ let common_metadata = {
   frame_count: "",
   frame_count_ds: "",
   fps: "",
+  fps_info: "",
   delay: "",
   delay_info: "",
   loop_duration: "",
   loop_count: "",
+  loop_count_info: "",
   file_size: "",
   file_size_hr: "",
   format: "",
+  format_info: "",
   path: "",
   hash_sha1: "",
   last_modified_dt: "",
@@ -567,7 +583,7 @@ export default {
     APNGUnoptimizationRow,
     StatusBar,
   },
-  data: function() {
+  data() {
     return {
       orig_attribute: structuredClone(common_metadata),
       preview_attribute: structuredClone(common_metadata),
@@ -601,23 +617,26 @@ export default {
         dither_alpha_method: "SCREENDOOR",
         dither_alpha_threshold: 50,
       },
+      hasGIFOptimization: false,
       apng_opt_criteria: {
         apng_is_optimized: false,
         apng_optimization_level: "1",
         apng_is_lossy: false,
         apng_lossy_value: "",
         apng_quantization_enabled: false,
-        apng_quantization_quality: 70,
+        apng_quantization_quality: "",
         apng_quantization_speed: 3,
         apng_is_unoptimized: false,
         apng_convert_color_mode: false,
         apng_new_color_mode: "RGBA",
       },
+      hasAPNGOptimization: false,
+
       fname: "",
-      preview_path: "",
-      preview_path_cb: "",
+      previewPath: "",
+      previewPathCB: "",
       preview_info: "",
-      save_fstem: "",
+      // save_fstem: "",
       save_dir: "",
       preview_size: "",
       preview_size_hr: "",
@@ -667,18 +686,69 @@ export default {
       }
       else return "";
     },
+    hasGeneralModification() {
+      // console.debug(`${this.orig_attribute.width != this.criteria.width}`);
+      // console.debug(`${this.orig_attribute.width != this.criteria.height}`);
+      // console.debug(`${this.orig_attribute.delay} ${this.criteria.delay} ${this.orig_attribute.delay != this.criteria.delay}`);
+      // console.debug(`${this.orig_attribute.fps} ${this.criteria.fps} ${this.orig_attribute.fps != this.criteria.fps}`);
+      // console.debug(`${this.orig_attribute.loop_count} ${this.criteria.loop_count} ${this.orig_attribute.loop_count != this.criteria.loop_count}`);
+      // console.debug(`${this.orig_attribute.format} ${this.criteria.format} ${this.orig_attribute.format != this.criteria.format}`);
+      if (this.orig_attribute.width != this.criteria.width || 
+          this.orig_attribute.height != this.criteria.height || 
+          this.orig_attribute.fps != this.criteria.fps || 
+          this.orig_attribute.loop_count != this.criteria.loop_count || 
+          this.orig_attribute.format != this.criteria.format ||
+          this.criteria.flip_x || this.criteria.flip_y || this.criteria.is_reversed)
+          return true;
+      else return false;
+    },
+    hasFormatOptimization() {
+      let hasOptim = false;
+      let outFormat = this.criteria.format.toLowerCase();
+      if (outFormat == 'gif') {
+        let gifCriteria = this.gif_opt_criteria;
+        hasOptim = gifCriteria.is_optimized || gifCriteria.is_lossy || gifCriteria.is_reduced_color || gifCriteria.is_dither_alpha;
+      }
+      else if (outFormat == 'png') {
+        hasOptim = this.hasAPNGOptimization;
+        let apngCriteria = this.apng_opt_criteria;
+        hasOptim = apngCriteria.apng_is_optimized || apngCriteria.apng_is_lossy || apngCriteria.apng_quantization_enabled || apngCriteria.apng_is_unoptimized;
+      }
+      else {
+        console.error(`Unknown format ${this.criteria.format.toLowerCase()}`);
+      }
+      /*
+      switch (this.criteria.format.toLowerCase().valueOf()) {
+        case 'gif':
+          hasOptim = this.hasGIFOptimization;
+          break;
+        case 'png':
+          hasOptim = this.hasAPNGOptimization;
+        default:
+          console.error(`Unknown format ${this.criteria.format.toLowerCase()}`)
+          break;
+      }
+      */
+      return hasOptim;
+    },
+    hasModification() {
+      console.debug(`hasModification: ${this.hasGeneralModification} ${this.hasFormatOptimization}`)
+      return this.orig_attribute.path !== "" && this.hasGeneralModification || this.hasFormatOptimization;
+    },
   },
   methods: {
     loadOrigMetadata(res) {
       let geninfo = res.general_info;
       let ainfo = res.animation_info;
       this.orig_attribute.name = geninfo.name.value;
-      this.save_fstem = stem(this.save_fstem || geninfo.name.value);
+      // this.save_fstem = stem(this.save_fstem || geninfo.name.value);
       this.orig_attribute.width = geninfo.width.value;
       this.orig_attribute.height = geninfo.height.value;
-      this.orig_attribute.fps = `${ainfo.fps.value} FPS`;
+      this.orig_attribute.fps = ainfo.fps.value;
+      this.orig_attribute.fps_info = `${ainfo.fps.value} FPS`;
       this.orig_attribute.frame_count= ainfo.frame_count.value;
-      this.orig_attribute.format = geninfo.format.value;
+      this.orig_attribute.format = geninfo.format.value.toLowerCase();
+      this.orig_attribute.format_info = geninfo.format.value.toUpperCase();
       let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
       if (ainfo.delays_are_even.value) {
         delay_info += ` (even)`;
@@ -689,11 +759,12 @@ export default {
       this.orig_attribute.delay = ainfo.average_delay.value;
       this.orig_attribute.delay_info = delay_info;
       this.orig_attribute.loop_duration = ainfo.loop_duration.value;
+      this.orig_attribute.loop_count = ainfo.loop_count.value;
       if (ainfo.loop_count.value == 0) {
-        this.orig_attribute.loop_count = "Infinite"
+        this.orig_attribute.loop_count_info = "Infinite"
       }
       else {
-        this.orig_attribute.loop_count = ainfo.loop_count.value;
+        this.orig_attribute.loop_count_info = ainfo.loop_count.value;
       }
       this.orig_attribute.path = geninfo.absolute_url.value;
       this.orig_attribute.file_size = geninfo.fsize.value;
@@ -709,22 +780,24 @@ export default {
       this.preview_attribute.height = geninfo.height.value;
       this.preview_attribute.fps = `${ainfo.fps.value} FPS`;
       this.preview_attribute.frame_count= ainfo.frame_count.value;
-      this.preview_attribute.format = geninfo.format.value;
+      this.preview_attribute.format = geninfo.format.value.toLowerCase();
+      this.preview_attribute.format_info = geninfo.format.value.toUpperCase();
       let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
       if (ainfo.delays_are_even.value) {
         delay_info += ` (even)`;
       }
       else {
-        delay_info += ` (not even)`;
+        delay_info += ` (uneven)`;
       }
       this.preview_attribute.delay = ainfo.average_delay.value;
       this.preview_attribute.delay_info = delay_info;
       this.preview_attribute.loop_duration = ainfo.loop_duration.value;
+      this.preview_attribute.loop_count = ainfo.loop_count.value;
       if (ainfo.loop_count.value == 0) {
-        this.preview_attribute.loop_count = "Infinite"
+        this.preview_attribute.loop_count_info = "Infinite"
       }
       else {
-        this.preview_attribute.loop_count = ainfo.loop_count.value;
+        this.preview_attribute.loop_count_info = ainfo.loop_count.value;
       }
       this.preview_attribute.path = geninfo.absolute_url.value;
       this.preview_attribute.file_size = geninfo.fsize.value;
@@ -774,7 +847,7 @@ export default {
         this.MOD_IS_LOADING = true;
         this._logProcessing("Loading image...");
         tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
-          if (error) {        
+          if (error) {
             try {
               this._logError(error);
               // this.modify_msgbox = error;
@@ -807,6 +880,7 @@ export default {
       this.orig_attribute.frame_count = "";
       this.orig_attribute.frame_count_ds = "";
       this.orig_attribute.fps = "";
+      this.orig_attribute.fps_info = "";
       this.orig_attribute.delay = "";
       this.orig_attribute.delay_info = "";
       this.orig_attribute.loop_duration = "";
@@ -865,8 +939,8 @@ export default {
       this.lock_aspect_ratio = false;
     },
     clearPreviewImage() {
-      this.preview_path = "";
-      this.preview_path_cb = "";
+      this.previewPath = "";
+      this.previewPathCB = "";
       this.preview_size = "";
       this.preview_size_hr = "";
       this.clearPreiewMetadata();
@@ -965,6 +1039,9 @@ export default {
       return proceed;
     },
     // chooseOutDir: chooseOutDir,
+    btnPreviewModImg() {
+      this.previewModImg();
+    },
     previewModImg() {
       if (this.orig_attribute.path == "") {
         this._logError("Please load an animated image first!");
@@ -991,12 +1068,12 @@ export default {
             this._logProcessing(res.msg);
           }
           if (res.preview_path) {
-            this.preview_path = res.preview_path;
+            this.previewPath = res.preview_path;
             this.previewPathCacheBreaker();
           }
         }
       },
-      () => tridentEngine(["inspect_one", this.preview_path, "animated"], (error, res) => {
+      () => tridentEngine(["inspect_one", this.previewPath, "animated"], (error, res) => {
         if (error) {
           console.error(error);
           this._logError(error);
@@ -1013,10 +1090,50 @@ export default {
         }})
       );
     },
+    btnPreviewSaveAIMG() {
+      (async () => {
+        if (!this.previewPath) {
+          this._logError("No image in the preview to be saved!");
+          return Promise.reject("No image in the preview to be saved!");
+        }
+        let targetDir = this.saveDir;
+        if (!targetDir) {
+          let options = { properties: dir_dialog_props };
+          const result = await ipcRenderer.invoke('open-dialog', options);
+          if (result.canceled)
+            return Promise.reject("Directory selection cancelled");
+          else{
+            let out_dirs = result.filePaths;
+            console.log(out_dirs);
+            if (out_dirs && out_dirs.length > 0) { 
+              targetDir = out_dirs[0];
+            }
+            else {
+              return Promise.reject("No directories are selected")
+            }
+          }
+        }
+        let targetFormat = this.previewPath.split('.').pop();
+        let targetName = `create_preview_${Date.now()}_${randString(7)}.${this.previewPath.split('.').pop().toLowerCase()}`;
+        // let targetName = basename(this.previewPath);
+        let targetFullPath = join(targetDir, targetName);
+        console.debug(targetFullPath);
+        let proceed = await this._checkFileOverwriteAsync(targetFullPath);
+        console.log(`proceed? ${proceed}`)
+        if (proceed){
+          await copyFile(this.previewPath, targetFullPath);
+          this._logSuccess(`Saved preview image to ${targetDir}`);
+        }
+        else {
+        }
+      })().catch((error) => {
+        console.error(error);
+      });
+    },
     previewPathCacheBreaker() {
-      let cb_url = `${this.preview_path}`;
+      let cb_url = `${this.previewPath}`;
       console.log("Cache breaker url", cb_url);
-      this.preview_path_cb = cb_url;
+      this.previewPathCB = cb_url;
     },
     modifyImage() {
       let proceed_modify = true;

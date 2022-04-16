@@ -145,6 +145,11 @@
             </span>
             <span>Preview</span>
           </a>
+          <a class="button is-neon-cyan" @click="btnPreviewSaveAIMG">
+            <span class="icon is-medium">
+              <font-awesome-icon icon="save" />
+            </span>
+          </a>
           <a
             class="button is-neon-white" :class="{'is-active': checkerBGIsActive}"
             @click="btnToggleCheckerBG"
@@ -153,7 +158,7 @@
               <font-awesome-icon icon="chess-board" />
             </span>
           </a>
-        </div>
+        </div>  
       </div>
 
       <div class="create-panel-controls">
@@ -498,7 +503,8 @@
 <script>
 import { ipcRenderer } from 'electron';
 import { dirname, basename, join } from "path";
-import { access, accessSync, constants, existsSync } from "fs";
+import { access, accessSync, constants as fsConstants, existsSync } from "fs";
+import { copyFile }  from 'fs/promises';
 const SUPPORTED_CREATE_EXTENSIONS = {
   'gif': 'GIF',
   'png': 'APNG',
@@ -543,7 +549,7 @@ export default {
   directives:{
     clickOutside: vClickOutside.directive,
   },
-  data: function () {
+  data() {
     return {
       criteria: {
         fps: "",
@@ -580,13 +586,14 @@ export default {
         apng_is_lossy: false,
         apng_lossy_value: "",
         apng_quantization_enabled: false,
-        apng_quantization_quality: 70,
+        apng_quantization_quality: "",
         apng_quantization_speed: 3,
         apng_is_unoptimized: false,
         apng_preconvert_rgba: false,
         apng_convert_color_mode: false,
         apng_new_color_mode: "RGBA",
       },
+
       fname: "",
       SUPPORTED_CREATE_EXTENSIONS: SUPPORTED_CREATE_EXTENSIONS,
       crtSubMenuSelection: 0,
@@ -876,6 +883,47 @@ export default {
     btnPreviewAIMG() {
       this.previewAIMG();
     },
+    btnPreviewSaveAIMG() {
+      (async () => {
+        if (!this.previewPath) {
+          this._logError("No image in the preview to be saved!");
+          return Promise.reject("No image in the preview to be saved!");
+        }
+        let targetDir = this.saveDir;
+        if (!targetDir) {
+          let options = { properties: dir_dialog_props };
+          const result = await ipcRenderer.invoke('open-dialog', options);
+          if (result.canceled)
+            return Promise.reject("Directory selection cancelled");
+          else{
+            let out_dirs = result.filePaths;
+            console.log(out_dirs);
+            if (out_dirs && out_dirs.length > 0) { 
+              targetDir = out_dirs[0];
+            }
+            else {
+              return Promise.reject("No directories are selected")
+            }
+          }
+        }
+        let targetFormat = this.previewPath.split('.').pop();
+        let targetName = `create_preview_${Date.now()}_${randString(7)}.${this.previewPath.split('.').pop().toLowerCase()}`;
+        // let targetName = basename(this.previewPath);
+        let targetFullPath = join(targetDir, targetName);
+        console.debug(targetFullPath);
+        let proceed = await this._checkFileOverwriteAsync(targetFullPath);
+        console.log(`proceed? ${proceed}`)
+        if (proceed){
+          await copyFile(this.previewPath, targetFullPath);
+          console.log(`Saved preview image as path ${targetFullPath}`);
+          this._logSuccess(`Saved preview image to ${targetDir}`);
+        }
+        else {
+        }
+      })().catch((error) => {
+        console.error(error);
+      });
+    },
     btnSetSavePath() {
       this.setSaveDirFromDialogAsync();
     },
@@ -914,10 +962,10 @@ export default {
             if (result.canceled)
               return Promise.reject("Directory selection cancelled");
             else
-              return this._checkFileOverwriteAsync();
+              return this._checkFileOverwriteAsync(this._getSavePath());
           }
           else 
-            return this._checkFileOverwriteAsync();
+            return this._checkFileOverwriteAsync(this._getSavePath());
         }
         else {
           let errMsg = "File name contains characters that are not allowed";
@@ -963,9 +1011,9 @@ export default {
         // });
       // }
     },
-    async _checkFileOverwriteAsync() {
+    async _checkFileOverwriteAsync(fullPath) {
       let proceed = true;
-      if (existsSync(this._getSavePath())) {
+      if (existsSync(fullPath)) {
         let options = {
           title: "TridentFrame",
           buttons: ["Yes", "No"],

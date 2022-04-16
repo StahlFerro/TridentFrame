@@ -17,7 +17,7 @@
         .modify-old-container {
             display: flex;
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             height: 44vh;
             overflow: auto;
             img {
@@ -33,7 +33,7 @@
         .modify-image-info {
             display: flex;
             flex-grow: inherit;
-            width: 34%;
+            width: 30%;
             height: 44vh;
             overflow: auto;
             
@@ -69,7 +69,7 @@
         .modify-new-container {
             display: flex;
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             height: 44vh;
             overflow: auto;
             img {
@@ -90,22 +90,27 @@
         flex-grow: 1;
         align-items: center;
         height: 57px;
-        a.button {
-            margin-left: 5px;
-            margin-right: 5px;
-        }
         .mpb-load-buttons {
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             text-align: center;
+            a.button {
+                margin-left: 4px;
+                margin-right: 4px;
+            }
         }
         .mpb-center-buttons {
-            width: 34%;
+            text-align: center;
+            width: 30%;
         }
         .mpb-preview-buttons {
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             text-align: center;
+            a.button {
+                margin-left: 4px;
+                margin-right: 4px;
+            }
         }
     }
     

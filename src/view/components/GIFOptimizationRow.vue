@@ -233,6 +233,13 @@ export default {
       dither_alpha_threshold: 50,
     };
   },
+  // computed: {
+  //   hasOptimizaton(){
+  //     let hasOptim = this.is_optimized || this.is_lossy || this.is_reduced_color || this.is_dither_alpha;
+  //     this.$emit('update:hasOptimization', hasOptim);
+  //     return hasOptim;
+  //   }
+  // },
   methods: {
     numConstrain: numConstrain,
   }

@@ -137,12 +137,13 @@ export default {
   // components: { Fragment },
   data: function() {
     return {
+      // hasOptimization: false,
       apng_is_optimized: false,
       apng_optimization_level: "1",
       apng_is_lossy: false,
       apng_lossy_value: "",
       apng_quantization_enabled: false,
-      apng_quantization_quality: 70,
+      apng_quantization_quality: "",
       apng_quantization_speed: 3,
       apng_speed_value: "",
       apng_convert_color_mode: false,
@@ -150,8 +151,28 @@ export default {
       // apng_is_unoptimized: false,
     };
   },
+  computed: {
+    // hasOptimizaton () {
+    //   let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_lossy;
+    //   console.debug(`APNGOpt component hasOptim: ${hasOptim}`);
+    //   this.$emit('update:hasOptimizaton', hasOptim);
+    //   return hasOptim;
+    // }
+  },
+  watch: {
+    // hasOptimizatonWatcher () {
+    //   let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_lossy;
+    //   console.debug(`APNGOpt component hasOptim: ${hasOptim}`);
+    //   this.$emit('update:hasOptimizaton', hasOptim);
+    //   // return hasOptim;
+    // }
+  },
   methods: {
     numConstrain: numConstrain,
-  }
+    getOptimStatus() {
+      let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_lossy;
+      return hasOptim
+    }
+  },
 };
 </script>
