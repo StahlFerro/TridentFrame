@@ -117,7 +117,6 @@
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",
-    "@vue/compat": "^3.2.33",
     "atomically": "^1.7.0",
     "concat-stream": "^2.0.0",
     "toml": "^3.0.0"
