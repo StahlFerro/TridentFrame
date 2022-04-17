@@ -190,6 +190,7 @@ export default {
       });
     },
     _inspectImage (image_path) {
+      this._logProcessing(`Loading image ${image_path}`);
       this.INS_IS_INSPECTING = true;
       console.log(image_path);
       tridentEngine(["inspect_one", image_path], (error, res) => {
@@ -207,6 +208,7 @@ export default {
         else {
           if (res.data) {
             this._logClear();
+            this._logSuccess("Image loaded.");
             this.imageInfo = res.data;
             // if (res_data.general_info || res_data.animation_info) {
             // data.imageFilePath = `${
@@ -216,7 +218,7 @@ export default {
             // To allow loading images with percent signs on their name.
             this.imageFilePath = localPath;
             // }
-            this._addExtraCtxOptions([{id: 'format', name: 'Format', callback: this.cmFormatShouter}])
+            this._addExtraCtxOptions([{id: 'format', name: 'Format', callback: this.cmFormatShouter}]);
           }
         }
         this.INS_IS_INSPECTING = false;
