@@ -18,11 +18,11 @@
       </div>
       <div class="settings-subpanels">
         <div
-          class="settings-subpanel-general"
           v-show="settings_tab_selection == 0"
+          class="settings-subpanel-general"
         >
-          <table class="table is-borderless" style="padding: 5px" width="100%">
-            <!-- <tr>
+          <!-- <table class="table is-borderless" style="padding: 5px" width="100%"> -->
+          <!-- <tr>
               <td>
                 <a
                   v-on:click="btnGetSettings"
@@ -47,27 +47,44 @@
               </td>
             </tr> -->
 
+          <!-- <tr>
+              <td class="">
+                <h1 class="title is-2 is-white-d">Startup</h1>
+              </td>
+            </tr>
             <tr>
               <td>
                 <label class="checkbox">
-                  <input v-model="USER_SETTINGS.fullscreen" type="checkbox" />
+                  <input v-model="APP_SETTINGS.display.fullscreen" type="checkbox" />
                   Start in fullscreen
                 </label>
               </td>
             </tr>
-          </table>
+          </table> -->
+          <h3 class="title is-3 settings-header">
+            On startup
+          </h3>
+          <hr />
+          <div class="field">
+            <input id="fullscreenCheckbox" v-model="APP_SETTINGS.startup.fullscreen" class="is-checkradio is-white" type="checkbox" />
+            <label for="fullscreenCheckbox">Start in fullscreen</label>
+          </div>
+          <div class="field">
+            <input id="openDebuggerCheckbox" v-model="APP_SETTINGS.startup.open_devtools" class="is-checkradio is-white" type="checkbox" />
+            <label for="openDebuggerCheckbox">Open developer tools</label>
+          </div>
         </div>
 
         <div
-          class="settings-subpanel-window"
           v-show="settings_tab_selection == 1"
+          class="settings-subpanel-window"
         >
           <table class="table is-borderless" style="padding: 5px" width="100%">
             <tr>
               <td>
                 <a
-                  v-on:click="refreshWindow"
                   class="button is-large is-neon-cyan"
+                  @click="refreshWindow"
                 >
                   <span class="icon is-large">
                     <font-awesome-icon icon="redo-alt" />
@@ -77,22 +94,22 @@
               </td>
               <td>
                 <a
-                  v-on:click="openInspector"
                   class="button is-large is-neon-white"
+                  @click="openInspector"
                 >
                   <span class="icon is-large">
                     <font-awesome-icon icon="bug" />
                     <!-- <i class="fas fa-bug"></i> -->
                   </span>
-                  <span>Open Inspector</span>
+                  <span>Open Developer Tools</span>
                 </a>
               </td>
             </tr>
             <tr>
               <td>
                 <a
-                  v-on:click="btnRelaunchApp"
                   class="button is-large is-neon-sunset"
+                  @click="btnRelaunchApp"
                 >
                   <span class="icon is-large">
                     <font-awesome-icon icon="power-off" />
@@ -100,25 +117,47 @@
                   <span>Relaunch App</span>
                 </a>
               </td>
+              <!-- <td>
+                <a
+                  class="button is-large is-neon-crimson"
+                  @click="testCInterface"
+                >
+                  <span class="icon is-large">
+                    <font-awesome-icon icon="flask" />
+                  </span>
+                  <span>Call CF</span>
+                </a>
+              </td> -->
             </tr>
           </table>
         </div>
 
         <div
-          class="settings-subpanel-about"
           v-show="settings_tab_selection == 2"
+          class="settings-subpanel-about"
         >
           <div class="about-content">
+            <div class="about-logo">
+              <img :src="logo" class="about-logo no-select-drag" />
+            </div>
             <div class="about-info">
-              <img v-bind:src="logo" class="about-logo no-select-drag" />
-              <h1 class="about-software-name">TridentFrame</h1>
-              <p class="about-software-version">v0.1.0-beta.10</p>
+              <h1 class="about-software-name">
+                TridentFrame
+              </h1>
+              <p class="about-software-version">
+                v0.1.0-beta.11
+              </p>
               <p class="about-software-copyright">
-                Copyright
-                <span class="icon">
+                Author: StahlFerro
+                <!-- <span class="icon">
                   <font-awesome-icon :icon="['far', 'copyright']" />
-                </span>
-                2021 StahlFerro
+                </span> -->
+              </p>
+              <p class="about-software-license">
+                TridentFrame is free software licensed under the GNU General Public License
+                <!-- <span class="icon">
+                  <font-awesome-icon :icon="['far', 'copyright']" />
+                </span> -->
               </p>
               <!-- <p class="about-software-author">Developed by StahlFerro</p> -->
             </div>
@@ -126,8 +165,8 @@
               <div class="field is-grouped is-grouped-centered">
                 <p class="control">
                   <a
-                    v-on:click="warpGithub"
                     class="button is-neon-cyan is-medium"
+                    @click="warpGithub"
                   >
                     <span class="icon">
                       <font-awesome-icon :icon="['fab', 'github']" />
@@ -136,14 +175,14 @@
                     <span>Github</span>
                   </a>
                 </p>
-                <!-- <p class="control">
-                  <a v-on:click="warpDonate" class="button is-neon-cyan is-medium">
+                <p class="control">
+                  <a class="button is-neon-cyan is-medium" @click="warpLicense">
                     <span class="icon">
-                      <i class="fas fa-heart"></i>
+                      <font-awesome-icon icon="globe" />
                     </span>
-                    <span>Donate</span>
+                    <span>License</span>
                   </a>
-                </p> -->
+                </p>
               </div>
             </div>
           </div>
@@ -163,9 +202,30 @@ export default {
     return {
       logo: logo,
       settings_tab_selection: 0,
-      USER_SETTINGS: {},
-      USER_SETTINGS_PREVIOUS: {},
+      APP_SETTINGS: {},
+      APP_SETTINGS_PREVIOUS: {},
     };
+  },
+  // watch: {
+  //   USER_SETTINGS: {
+  //     handler: function (val) {
+  //       // console.log("old:");
+  //       // console.log(this.USER_SETTINGS_PREVIOUS);
+  //       // console.log("new:");
+  //       // console.log(val);
+  //       // ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
+  //     },
+  //     deep: true,
+  //   },
+  // },
+  beforeMount: function () {
+    console.debug("SettingsPanel mounted");
+    // ipcRenderer.invoke('reload-window-once');
+    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    console.debug(SETTINGS);
+    this.APP_SETTINGS = { ...SETTINGS };
+    this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
+    this.applySettingsWatcher();
   },
   methods: {
     refreshWindow() {
@@ -176,12 +236,12 @@ export default {
     },
     btnGetSettings() {
       console.log("Settings in panel");
-      console.log(this.USER_SETTINGS);
+      console.log(this.APP_SETTINGS);
       console.log("Settings in store");
       console.log(ipcRenderer.sendSync("get-settings"));
     },
     btnSaveSettings() {
-      ipcRenderer.sendSync("set-user-settings", this.USER_SETTINGS);
+      ipcRenderer.sendSync("set-settings", this.APP_SETTINGS);
     },
     btnRelaunchApp() {
       ipcRenderer.invoke("relaunch-application");
@@ -189,13 +249,30 @@ export default {
     warpGithub() {
       shell.openExternal("https://github.com/StahlFerro/TridentFrame");
     },
+    warpLicense() {
+      shell.openExternal("https://www.gnu.org/licenses/gpl-3.0.en.html");
+    },
     warpDonate() {
       shell.openExternal("https://en.liberapay.com/StahlFerro");
     },
     applySettingsWatcher() {
-      this.$watch("USER_SETTINGS", function() {
-        ipcRenderer.sendSync("set-user-settings", this.USER_SETTINGS);
+      this.$watch("APP_SETTINGS", function() {
+        console.debug(this.APP_SETTINGS);
+        // Need to convert Vue proxy objects to plain object so that ipc can transmit the object
+        let new_settings = JSON.parse(JSON.stringify(this.APP_SETTINGS));
+        console.debug(new_settings);
+        ipcRenderer.sendSync("set-settings", new_settings);
       }, { deep: true});
+    },
+    testCInterface() {
+      tridentEngine(["ping_c_interface"], (error, res) => {
+        if (error) {
+          console.error(error);
+        }
+        else {
+          console.debug(res);
+        }
+      });
     },
     ipcWindow: function () {
       let extension_filters = [
@@ -218,25 +295,6 @@ export default {
       });
       console.log("after invoke here");
     },
-  },
-  // watch: {
-  //   USER_SETTINGS: {
-  //     handler: function (val) {
-  //       // console.log("old:");
-  //       // console.log(this.USER_SETTINGS_PREVIOUS);
-  //       // console.log("new:");
-  //       // console.log(val);
-  //       // ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
-  //     },
-  //     deep: true,
-  //   },
-  // },
-  mounted: function () {
-    // ipcRenderer.invoke('reload-window-once');
-    const SETTINGS = ipcRenderer.sendSync("get-settings");
-    this.USER_SETTINGS = { ...SETTINGS.user };
-    this.USER_SETTINGS_PREVIOUS = { ...SETTINGS.user };
-    this.applySettingsWatcher();
   },
   /** 
    * *TODO: Find the actual cause of this bug.

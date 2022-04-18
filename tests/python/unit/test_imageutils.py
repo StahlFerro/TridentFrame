@@ -17,25 +17,25 @@ def test_shout_indices(frame_count, percentage_mult, percentage_expected):
     assert shout_indices(frame_count, percentage_mult) == percentage_expected
 
 
-def test_png_is_animated(fx_checker_apng_path):
-    assert png_is_animated(fx_checker_apng_path)
+def test_png_is_animated(fx_samples_checker_apng_path):
+    assert png_is_animated(fx_samples_checker_apng_path)
 
 
-def test_get_image_delays(fx_checker_apng_path):
-    assert list(get_image_delays(fx_checker_apng_path, "PNG")) == [500 for r in range(0, 4)]
+def test_get_image_delays(fx_samples_checker_apng_path):
+    assert list(get_image_delays(fx_samples_checker_apng_path, "PNG")) == [500 for r in range(0, 4)]
 
 
 @pytest.mark.parametrize("shift_number, expected_list", [
     (2, ["checker_4x4_00002.png", "checker_4x4_00003.png", "checker_4x4_00000.png", "checker_4x4_00001.png"]),
     (-1, ["checker_4x4_00003.png", "checker_4x4_00000.png", "checker_4x4_00001.png", "checker_4x4_00002.png"])
 ])
-def test_shift_image_sequence(shift_number, expected_list, fx_sequence_dir_contents):
-    shifted_fnames = [sp.name for sp in shift_image_sequence(fx_sequence_dir_contents, shift_number)]
+def test_shift_image_sequence(shift_number, expected_list, fx_samples_sequence_dir_contents):
+    shifted_fnames = [sp.name for sp in shift_image_sequence(fx_samples_sequence_dir_contents, shift_number)]
     assert shifted_fnames == expected_list
 
 
-def test_actual_sequence_nameget(fx_sequence_dir_contents):
-    for fpath in fx_sequence_dir_contents:
+def test_actual_sequence_nameget(fx_samples_sequence_dir_contents):
+    for fpath in fx_samples_sequence_dir_contents:
         assert sequence_nameget(fpath.name) == "checker_4x4"
 
 

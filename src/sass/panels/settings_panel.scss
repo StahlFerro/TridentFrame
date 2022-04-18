@@ -1,18 +1,44 @@
 /* Settings Panel */
 @import "../components/_globalvars.scss";
 @import "../components/_colors.scss";
+@import "../../../node_modules/bulma/sass/components/tabs.sass";
 
 .settings-panel-root {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  .settings-tab {
-    height: 70px;
-    div.tabs a {
-      font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    .settings-tab {
+        height: 70px;
+        div.tabs {
+            & a {
+                // margin-top: #{$tabs-border-bottom-width};
+                font-size: 20px;
+                //         border-left: 2px solid transparent;
+                //         border-right: 2px solid transparent;
+                //         border-bottom: 2px solid transparent;
+            }
+            // & li.is-active a {
+            //     border-top: 2px solid $cyan;
+            //     border-left: 2px solid $cyan;
+            //     border-right: 2px solid $cyan;
+            //     // border-bottom: 2px solid $cyan;
+            // }
+        }
     }
-  }
-  .settings-subpanels {
-    height: calc(100vh - 70px - #{$root-height-offset});
-  }
+    .settings-subpanels {
+        height: calc(100vh - 70px - #{$root-height-offset});
+        padding: 10px;
+    }
+    hr {
+        margin-top: 12px;
+        margin-bottom: 12px;
+        background-color: $white-d;
+        height: 1px;
+        width: 40% !important;
+    }
+}
+
+.settings-header {
+    color: $white-d !important;
+    margin-bottom: 0% !important;
 }

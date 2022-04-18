@@ -6,14 +6,13 @@ import os
 PyInstaller.config.CONF['distpath'] = "./engine/"
 block_cipher = None
 
-_bin_dirpath = 'bin/win64'
+_bin_dirpath = 'bin/win'
 imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
 added_files = [
     ('temp/cache/.include', 'temp/cache/'),
     ('temp/previews/.include', 'temp/previews/'),
-    ('config/imagers.json', 'config/'),
-    ('config/settings.json', 'config/'),
-    ('config/settings.toml', 'config/'),
+    ('config/app.toml', 'config/'),
+    ('config/engine.toml', 'config/'),
 ]
 added_files.extend(imaging_engines)
 a = Analysis(['main.py'],

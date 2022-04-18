@@ -1,0 +1,25 @@
+###########################################################
+# TridentFrame's Python Imaging Engine Configuration File #
+###########################################################
+
+# This configuration file dictates TridentFrame's imaging engine's fundamental behaviour.
+# Do not alter the configurations below unless you know well what you are doing.
+
+temp_dir = "temp"
+cache_dir = "temp/cache"
+previews_dir = "temp/previews"
+imagers_dir = "bin"
+
+[imagers.win]
+apngdis = "apngdis-2.9-bin-win64/apngdis.exe"
+apngopt = "apngopt-1.4-bin-win32/apngopt.exe"
+gifsicle = "gifsicle-1.92-win64/gifsicle.exe"
+imagemagick = "ImageMagick-7.0.11-14-win/convert.exe"
+pngquant = "pngquant-2.17.0/pngquant.exe"
+
+[imagers.linux]
+apngdis = "apngdis-2.9-bin-linux/apngdis"
+apngopt = "apngopt-1.4-bin-linux/apngopt"
+gifsicle = "gifsicle-1.92-2+b1_amd64/gifsicle"
+imagemagick = "ImageMagick-7.1.0-2-unix/magick"
+pngquant = "pngquant-2.17.0/pngquant"

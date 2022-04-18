@@ -1,0 +1,6 @@
+.is-checkradio[type=checkbox] + label::before {
+    box-sizing: unset;
+}
+.is-checkradio[type=checkbox] + label::after {
+    border-width: 2px;
+}

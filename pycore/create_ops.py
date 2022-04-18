@@ -19,7 +19,8 @@ from pycore.models.criterion import (
     CriteriaBundle,
 )
 from pycore.utility import filehandler, imageutils
-from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI, InternalImageAPI
+from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI, PNGQuantAPI, InternalImageAPI
+from pycore.imaging.gif import create_animated_gif
 
 
 def _create_gifragments(image_paths: List[Path], criteria: CreationCriteria, gif_opt_criteria: GIFOptimizationCriteria):
@@ -215,8 +216,8 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
                 im = im.convert(aopt_criteria.new_color_mode)
             # logger.debug(f"SAVE PATH IS: {save_path}")
             im.save(save_path, "PNG")
-            # if aopt_criteria.is_lossy:
-            #     save_path = PNGQuantAPI.quantize_png_image(aopt_criteria, save_path)
+            if aopt_criteria.quantization_enabled:
+                save_path = PNGQuantAPI.quantize_png_image(aopt_criteria, save_path)
             preprocessed_paths.append(save_path)
             # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
     stdio.message("Saving APNG....")
@@ -261,8 +262,9 @@ def create_aimg(image_paths: List[Path], out_path: Path, crbundle: CriteriaBundl
     if img_format.casefold() == "gif":
         # out_full_path = out_dir.joinpath(f"{filename}.gif")
         # filename = f"{filename}.gif"
-        return _build_gif(img_paths, out_path, crbundle)
-        # return _build_gif(img_paths, out_full_path, crbundle)
+        out_full_path = create_animated_gif(img_paths, out_path, crbundle)
+        return out_full_path
+        # return _build_gif(img_paths, out_path, crbundle)
 
     elif img_format.casefold() == "png":
         # out_full_path = out_dir.joinpath(f"{filename}.png")

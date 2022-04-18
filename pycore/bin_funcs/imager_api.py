@@ -74,17 +74,21 @@ class InternalImageAPI:
                 png.save(img_buf)
                 with Image.open(img_buf) as im:
                     stdio.debug({"index": index, "control": control, "mode": im.mode, "info": im.info})
+                    # If frame extraction doesn't require proper unoptimization (composition over other frames to yield the full visual frame), just return back the frame
                     if index == 0 or not unoptimize:
                         canvas = im.copy()
                         yield canvas.copy(), control
                     else:
                         prev_canvas = canvas.copy()
                         offsets = control.x_offset, control.y_offset
+                        # 0: APNG_BLEND_OP_SOURCE - Pixels of the frame (including alpha) completely overwrites the pixels on the canvas
                         if control.blend_op == 0:
                             canvas.paste(im, box=offsets)
+                        # 1: APNG_BLEND_OP_OVER - Frame pixels are alpha-composited over the canvas
                         elif control.blend_op == 1:
                             canvas.alpha_composite(im, dest=offsets)
                         yield canvas.copy(), control
+                        # 1: APNG_DISPOSE_OP_BACKGROUND - After yielding the extracted frame, convert the area where the frame was pasted on the canvas to transparent black
                         if control.depose_op == 1:
                             tp_mask: Image.Image
                             if im.mode == "P":
@@ -100,6 +104,7 @@ class InternalImageAPI:
                             elif im.mode == "RGBA":
                                 tp_mask = Image.new("RGBA", size=im.size)
                             canvas.paste(tp_mask, box=offsets)
+                        # 2: APNG_DISPOSE_OP_PREVIOUS - After yielding the extracted frame, revertthe area where the frame was pasted on the canvas to the original canvas
                         elif control.depose_op == 2:
                             canvas = prev_canvas.copy()
 
@@ -729,103 +734,104 @@ class APNGDisAPI:
         return fragment_paths
         # Remove generated text file and copied APNG file
 
-# class PNGQuantAPI:
 
-#     pngquant_path = config.imager_exec_path("pngquant")
+class PNGQuantAPI:
 
-#     @classmethod
-#     def _pngquant_args_builder(cls, apngopt_criteria: APNGOptimizationCriteria) -> List[str]:
-#         """Get a list of pngquant arguments from an APNGOptimizationCriteria
+    pngquant_path = config.imager_exec_path("pngquant")
 
-#         Args:
-#             apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
+    @classmethod
+    def _pngquant_args_builder(cls, apngopt_criteria: APNGOptimizationCriteria) -> List[str]:
+        """Get a list of pngquant arguments from an APNGOptimizationCriteria
 
-#         Returns:
-#             List[Tuple[str, str]]: List of two valued tuples containing pngquant argument on the first value, and a status string to echo out on the second value
-#         """
-#         args = []
-#         if apngopt_criteria.is_lossy:
-#             lossyval = apngopt_criteria.lossy_value
-#             speedval = apngopt_criteria.speed_value
-#             if lossyval:
-#                 args.append(f"--quality={lossyval}")
-#             if speedval:
-#                 args.append(f"--speed={speedval}")
-#         logger.debug(f"aopt_criteria ------> {apngopt_criteria}")
-#         logger.debug(f"internal args ------> {args}")
-#         # if criteria.apng_is_lossy:
-#         # args.append(())
-#         return args
+        Args:
+            apngopt_criteria (APNGOptimizationCriteria): APNG Optimization criteria
 
-#     @classmethod
-#     def quantize_png_image(
-#         cls,
-#         apngopt_criteria: APNGOptimizationCriteria,
-#         image_path: Path,
-#         out_dir: Path = "",
-#     ) -> Path:
-#         """Use pngquant to perform an array of modifications on a sequence of PNG images.
+        Returns:
+            List[Tuple[str, str]]: List of two valued tuples containing pngquant argument on the first value, and a status string to echo out on the second value
+        """
+        args = []
+        if apngopt_criteria.quantization_enabled:
+            quality = apngopt_criteria.quantization_quality
+            speed = apngopt_criteria.quantization_speed
+            if quality:
+                args.append(f"--quality={quality}")
+            if speed:
+                args.append(f"--speed={speed}")
+        stdio.debug(f"aopt_criteria ------> {apngopt_criteria}")
+        stdio.debug(f"internal args ------> {args}")
+        # if criteria.apng_is_lossy:
+        # args.append(())
+        return args
 
-#         Args:
-#             pq_args (List): pngquant arguments.
-#             image_paths (List[Path]): Path to each image
-#             optional_out_path (Path, optional): Optional path to save the quantized PNGs to. Defaults to "".
+    @classmethod
+    def quantize_png_image(
+        cls,
+        apngopt_criteria: APNGOptimizationCriteria,
+        image_path: Path,
+        out_dir: Path = "",
+    ) -> Path:
+        """Use pngquant to perform an array of modifications on a sequence of PNG images.
 
-#         Returns:
-#             List[Path]: [description]
-#         """
-#         # if not out_dir:
-#         #     out_dir = filehandler.mk_cache_dir(prefix_name="quant_temp")
-#         pq_args = cls._pngquant_args_builder(apngopt_criteria)
-#         quantized_frames = []
-#         # quantization_args = " ".join([arg[0] for arg in pq_args])
-#         # descriptions = " ".join([arg[1] for arg in pq_args])
-#         # quant_dir = mk_cache_dir(prefix_name="quant_dir")
-#         # target_path = out_dir.joinpath(image_path.name)
-#         args = [
-#             str(cls.pngquant_path),
-#             *pq_args,
-#             str(image_path),
-#             "--force",
-#             "--output",
-#             str(image_path),
-#         ]
-#         cmd = " ".join(args)
-#         logger.debug(f"PNQUANT ARGSdddddddddddd ---------> {cmd}")
-#         result = subprocess.check_output(args)
-#         # Convert back to RGBA image
-#         with Image.open(image_path).convert("RGBA") as rgba_im:
-#             rgba_im.save(image_path)
-#         # yield {"ssdsdsssdsd": quantized_frames}
-#         return image_path
+        Args:
+            pq_args (List): pngquant arguments.
+            image_paths (List[Path]): Path to each image
+            optional_out_path (Path, optional): Optional path to save the quantized PNGs to. Defaults to "".
+
+        Returns:
+            List[Path]: [description]
+        """
+        # if not out_dir:
+        #     out_dir = filehandler.mk_cache_dir(prefix_name="quant_temp")
+        pq_args = cls._pngquant_args_builder(apngopt_criteria)
+        quantized_frames = []
+        # quantization_args = " ".join([arg[0] for arg in pq_args])
+        # descriptions = " ".join([arg[1] for arg in pq_args])
+        # quant_dir = mk_cache_dir(prefix_name="quant_dir")
+        # target_path = out_dir.joinpath(image_path.name)
+        args = [
+            str(cls.pngquant_path),
+            *pq_args,
+            str(image_path),
+            "--force",
+            "--output",
+            str(image_path),
+        ]
+        cmd = " ".join(args)
+        stdio.debug(f"PNGQUANT ARGS ---------> {cmd}")
+        result = subprocess.check_output(args)
+        # Convert back to RGBA image
+        with Image.open(image_path).convert("RGBA") as rgba_im:
+            rgba_im.save(image_path)
+        # yield {"ssdsdsssdsd": quantized_frames}
+        return image_path
 
 
-#     @classmethod
-#     def quantize_png_images(
-#         cls,
-#         apngopt_criteria: APNGOptimizationCriteria,
-#         image_paths: List[Path],
-#         out_dir: Path = "",
-#     ) -> List[Path]:
-#         """Use pngquant to perform an array of modifications on a sequence of PNG images.
+    @classmethod
+    def quantize_png_images(
+        cls,
+        apngopt_criteria: APNGOptimizationCriteria,
+        image_paths: List[Path],
+        out_dir: Path = "",
+    ) -> List[Path]:
+        """Use pngquant to perform an array of modifications on a sequence of PNG images.
 
-#         Args:
-#             pq_args (List): pngquant arguments.
-#             image_paths (List[Path]): Path to each image
-#             optional_out_path (Path, optional): Optional path to save the quantized PNGs to. Defaults to "".
+        Args:
+            pq_args (List): pngquant arguments.
+            image_paths (List[Path]): Path to each image
+            optional_out_path (Path, optional): Optional path to save the quantized PNGs to. Defaults to "".
 
-#         Returns:
-#             List[Path]: [description]
-#         """
-#         if not out_dir:
-#             out_dir = filehandler.mk_cache_dir(prefix_name="quant_temp")
-#         pq_args = cls._pngquant_args_builder(apngopt_criteria)
-#         quantized_frames = []
-#         logger.debug("WILL QUANTIZE")
-#         # quantization_args = " ".join([arg[0] for arg in pq_args])
-#         # descriptions = " ".join([arg[1] for arg in pq_args])
-#         # quant_dir = mk_cache_dir(prefix_name="quant_dir")
-#         shout_nums = imageutils.shout_indices(len(image_paths), 1)
+        Returns:
+            List[Path]: [description]
+        """
+        if not out_dir:
+            out_dir = filehandler.mk_cache_dir(prefix_name="quant_temp")
+        pq_args = cls._pngquant_args_builder(apngopt_criteria)
+        quantized_frames = []
+        stdio.debug("WILL QUANTIZE")
+        # quantization_args = " ".join([arg[0] for arg in pq_args])
+        # descriptions = " ".join([arg[1] for arg in pq_args])
+        # quant_dir = mk_cache_dir(prefix_name="quant_dir")
+        shout_nums = imageutils.shout_indices(len(image_paths), 1)
 #         for index, ipath in enumerate(image_paths):
 #             target_path = out_dir.joinpath(ipath.name)
 #             if shout_nums.get(index):

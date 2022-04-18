@@ -1,4 +1,4 @@
-##### JETBRAINS IGNORES
+##### JETBRAINS IGNORES #####
 
 
 
@@ -6,7 +6,7 @@
 
 
 
-##### VSCODE IGNORES
+##### VSCODE IGNORES #####
 
 
 
@@ -19,7 +19,7 @@
 
 
 
-##### PYTHON IGNORES
+##### PYTHON IGNORES #####
 
 
 
@@ -149,7 +149,7 @@ dmypy.json
 
 
 
-##### NODEJS IGNORES
+##### NODEJS IGNORES #####
 
 
 
@@ -240,7 +240,7 @@ typings/
 
 
 
-##### Sass ignores
+##### Sass ignores #####
 
 
 
@@ -252,7 +252,7 @@ typings/
 
 
 
-##### Ignore everything inside cache/, previews/ and temp/ except .include files so that this folder will be commited to the VCS
+##### Ignore everything inside cache/, previews/, writer/markdown/, writer/checksums/ and temp/ except .include files so that this folder will be commited to the VCS
 
 
 cache/*
@@ -264,6 +264,7 @@ temp/*
 release/*
 engine/*
 writer/markdown/*
+writer/checksums/*
 jsconfig.json
 
 
@@ -277,7 +278,64 @@ jsconfig.json
 
 
 
-##### KDE and/or GNOME FreeDesktop specification files exclusion
+##### KDE and/or GNOME FreeDesktop specification files exclusion #####
 
 .directory
 .desktop
+
+
+
+##### C Ignores #####
+
+# Prerequisites
+*.d
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Linker output
+*.ilk
+*.map
+*.exp
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf

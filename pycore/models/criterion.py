@@ -170,6 +170,8 @@ class GIFOptimizationCriteria(CriteriaBase):
         self.is_reduced_color = vals["is_reduced_color"]
         self.color_space = int(vals["color_space"] or 0)
         self.is_unoptimized = vals["is_unoptimized"]
+        self.dither_method = (vals["dither_method"] or "FLOYD_STEINBERG").upper()
+        self.palletization_method = (vals["palletization_method"] or "ADAPTIVE").upper()
         self.is_dither_alpha = vals["is_dither_alpha"]
         self.dither_alpha_method = (vals.get("dither_alpha_method") or "SCREENDOOR").upper()
         self.dither_alpha_threshold = int(vals["dither_alpha_threshold"]) or 0
@@ -198,6 +200,9 @@ class APNGOptimizationCriteria(CriteriaBase):
         self.optimization_level = int(vals.get("apng_optimization_level") or 0)
         self.is_lossy = vals["apng_is_lossy"]
         self.lossy_value = int(vals.get("apng_lossy_value") or 0)
+        self.quantization_enabled = vals["apng_quantization_enabled"]
+        self.quantization_quality = int(vals.get("apng_quantization_quality") or 0)
+        self.quantization_speed = int(vals.get("apng_quantization_speed") or 0)
         self.speed_value = int(vals.get("apng_speed_value") or 0)
         self.is_unoptimized = vals["apng_is_unoptimized"]
         self.convert_color_mode = vals["apng_convert_color_mode"]

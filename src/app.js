@@ -1,10 +1,14 @@
-import Vue from 'vue';
+// import Vue from 'vue';
+import { createApp } from 'vue'
 import App from './App.vue';
 import VueSlider from 'vue-slider-component'
+// import mitt from 'mitt';
+import _emitter from './modules/events/emitter';
 import 'vue-slider-component/theme/default.css'
 // import './css/bulmamods.css';
 import "./sass/bulmamods.scss";
 import "./assets/imgs/Transparency500.png";
+import "./assets/imgs/Generated_Grey_Checker_nl_0.webp";
 import "./assets/icons/TridentFrame_logo_256x256.icns";
 import "./assets/icons/TridentFrame_logo_256x256.ico";
 import "./webfonts/ShareTech-Regular.ttf";
@@ -15,6 +19,7 @@ import 'regenerator-runtime/runtime';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faImage } from '@fortawesome/free-solid-svg-icons/faImage';
 import { faImages } from '@fortawesome/free-solid-svg-icons/faImages';
+import { faImage as farImage } from '@fortawesome/free-regular-svg-icons/faImage';
 import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons/faExchangeAlt';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
@@ -36,17 +41,29 @@ import { faPowerOff } from '@fortawesome/free-solid-svg-icons/faPowerOff';
 import { faEye as farEye } from '@fortawesome/free-regular-svg-icons/faEye';
 import { faCopyright as farCopyright } from '@fortawesome/free-regular-svg-icons/faCopyright';
 import { faGithub as fabGithub } from '@fortawesome/free-brands-svg-icons/faGithub';
+import { faFlask } from '@fortawesome/free-solid-svg-icons/faFlask';
+import { faGlobe } from '@fortawesome/free-solid-svg-icons/faGlobe';
+import { faSlidersH } from '@fortawesome/free-solid-svg-icons/faSlidersH';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
-library.add([faImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, faCheck, faSpinner,
-  faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub]);
+library.add([faImage, farImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, faCheck, 
+  faSpinner, faSave, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, fabGithub, faFlask, faGlobe, faSlidersH]);
 
-Vue.component('font-awesome-icon', FontAwesomeIcon);
+const app = createApp(App);
+// const emitter = mitt();
+app.config.globalProperties.emitter = _emitter;
 
-Vue.config.devtools = true;
-Vue.component('VueSlider', VueSlider);
+app.component('font-awesome-icon', FontAwesomeIcon);
+app.component('VueSlider', VueSlider);
+// app.config.dev
+// Vue.component('VueSlider', VueSlider);
+// Vue.component('font-awesome-icon', FontAwesomeIcon);
 
-new Vue({
-  el: '#app',
-  render: h => h(App),
-});
+// Vue.config.devtools = true;
+
+// new Vue({
+//   el: '#app',
+//   render: h => h(App),
+// });
+
+app.mount("#app");

@@ -5,56 +5,26 @@ import shlex
 from typing import List
 from itertools import chain
 from pathlib import Path
+from typing import Dict
 
 
-def test_create_gif_prod(fx_prod_exec_path: Path, fx_sequence_dir_contents: List[Path], scaffold_spaced_dir: Path):
+def test_create_gif_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_contents: List[Path], fx_samples_crbundle_001_create_optimized_gif_json: Dict,
+                         scaffold_spaced_dir: Path):
     fname = "good gif.gif"
     tmp_out_path = scaffold_spaced_dir.joinpath(fname)
+    crpack = fx_samples_crbundle_001_create_optimized_gif_json
+    crbundle = {
+        "criteria": crpack["criteria"],
+        "gif_opt_criteria": crpack["gif_opt_criteria"],
+        "apng_opt_criteria": crpack["apng_opt_criteria"],
+    }
+    print(json.dumps(crbundle))
     json_command = {
         "command": "combine_image",
         "args": [
-            [str(sq) for sq in fx_sequence_dir_contents],
+            [str(sq) for sq in fx_samples_sequence_dir_contents],
             str(tmp_out_path),
-            {
-                "criteria": {
-                    "fps": "2",
-                    "delay": 0.5,
-                    "format": "GIF",
-                    "is_reversed": False,
-                    "preserve_alpha": True,
-                    "flip_x": False,
-                    "flip_y": False,
-                    "width": 320,
-                    "height": 320,
-                    "resize_method": "BICUBIC",
-                    "loop_count": "",
-                    "start_frame": "3",
-                    "rotation": 0,
-                    "name": ""
-                },
-                "gif_opt_criteria": {
-                    "is_optimized": True,
-                    "optimization_level": "1",
-                    "is_lossy": True,
-                    "lossy_value": "200",
-                    "is_reduced_color": True,
-                    "color_space": "50",
-                    "is_unoptimized": False,
-                    "is_dither_alpha": True,
-                    "dither_alpha_method": "SCREENDOOR",
-                    "dither_alpha_threshold": 50
-                },
-                "apng_opt_criteria": {
-                    "apng_is_optimized": False,
-                    "apng_optimization_level": "1",
-                    "apng_is_lossy": False,
-                    "apng_lossy_value": "",
-                    "apng_is_unoptimized": False,
-                    "apng_preconvert_rgba": False,
-                    "apng_convert_color_mode": False,
-                    "apng_new_color_mode": "RGBA"
-                }
-            }
+            crbundle
         ],
         "globalvar_overrides": {"debug": True}
     }
@@ -71,54 +41,22 @@ def test_create_gif_prod(fx_prod_exec_path: Path, fx_sequence_dir_contents: List
     assert Path(data) == tmp_out_path
 
 
-def test_create_apng_prod(fx_prod_exec_path: Path, fx_sequence_dir_contents: List[Path], scaffold_spaced_dir: Path):
+def test_create_apng_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_contents: List[Path], fx_samples_crbundle_002_create_optimized_apng_json: Dict,
+                          scaffold_spaced_dir: Path):
     fname = "$ome #apng.gif"
     tmp_out_path = scaffold_spaced_dir.joinpath(fname)
+    crpack = fx_samples_crbundle_002_create_optimized_apng_json
+    crbundle = {
+        "criteria": crpack["criteria"],
+        "gif_opt_criteria": crpack["gif_opt_criteria"],
+        "apng_opt_criteria": crpack["apng_opt_criteria"],
+    }
     json_command = {
         "command": "combine_image",
         "args": [
-            [str(sq) for sq in fx_sequence_dir_contents],
+            [str(sq) for sq in fx_samples_sequence_dir_contents],
             str(tmp_out_path),
-            {
-                "criteria": {
-                    "fps": "10",
-                    "delay": 0.1,
-                    "format": "PNG",
-                    "is_reversed": False,
-                    "preserve_alpha": True,
-                    "flip_x": True,
-                    "flip_y": False,
-                    "width": 239,
-                    "height": 239,
-                    "resize_method": "BICUBIC",
-                    "loop_count": "",
-                    "start_frame": "1",
-                    "rotation": 0,
-                    "name": ""
-                },
-                "gif_opt_criteria": {
-                    "is_optimized": False,
-                    "optimization_level": "1",
-                    "is_lossy": False,
-                    "lossy_value": "",
-                    "is_reduced_color": False,
-                    "color_space": "",
-                    "is_unoptimized": False,
-                    "is_dither_alpha": False,
-                    "dither_alpha_method": "SCREENDOOR",
-                    "dither_alpha_threshold": 50
-                },
-                "apng_opt_criteria": {
-                    "apng_is_optimized": True,
-                    "apng_optimization_level": "2",
-                    "apng_is_lossy": False,
-                    "apng_lossy_value": "",
-                    "apng_is_unoptimized": False,
-                    "apng_preconvert_rgba": False,
-                    "apng_convert_color_mode": False,
-                    "apng_new_color_mode": "RGBA"
-                }
-            }
+            crbundle,
         ],
         "globalvar_overrides": {"debug": True}
     }

@@ -1,38 +1,4 @@
 <template>
-  <!-- <table class="table root-table is-borderless" v-on:click="whatClicked($event)">
-    <thead> -->
-  <!-- <tr class="has-background-dark-2 frame-title-bar">
-        <td width="10%" class="is-paddingless" style="vertical-align: middle;">
-          <span style="padding-left: 10px;" class="is-white-d">TridentFrame</span>
-        </td>
-        <td width="90%" class="is-paddingless">
-          <nav class="level is-marginless">
-            <div class="level-left"></div>
-            <div class="level-right has-text-centered">
-              <div class="level-item">
-                <a v-on:click="minimizeWindow" class="minimize-button">
-                  <span class="icon is-medium">
-                    <i class="far fa-window-minimize fa-inverse"></i>
-                  </span>
-                </a>
-                <a v-on:click="maximizeWindow" class="exit-button">
-                  <span class="icon is-medium">
-                    <i class="fas fa-window-maximize fa-inverse"></i>
-                  </span>
-                </a>
-                <a v-on:click="exitApp" class="exit-button">
-                  <span class="icon is-medium">
-                    <i class="fas fa-times fa-inverse"></i>
-                  </span>
-                </a>
-              </div>
-            </div>
-          </nav>
-        </td>
-      </tr>
-    </thead> -->
-  <!-- <tbody>
-      <tr> -->
   <div class="root-container">
     <div class="root-sidebar">
       <div class="left-menu">
@@ -41,11 +7,11 @@
             <li
               id="create_box"
               class="menu-item"
-              v-bind:class="{ 'is-selected': menuselection == 'create_panel' }"
+              :class="{ 'is-selected': menuselection == 'create_panel' }"
             >
-              <a id="create_panel" v-on:click="menuselection = 'create_panel'">
+              <a id="create_panel" @click="menuselection = 'create_panel'">
                 <span class="icon is-large">
-                  <font-awesome-icon icon="image" size="2x" inverse/>
+                  <font-awesome-icon icon="image" size="2x" inverse />
                   <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Create AIMG</p>
@@ -54,11 +20,11 @@
             <li
               id="split_box"
               class="menu-item"
-              v-bind:class="{ 'is-selected': menuselection == 'split_panel' }"
+              :class="{ 'is-selected': menuselection == 'split_panel' }"
             >
-              <a id="split_panel" v-on:click="menuselection = 'split_panel'">
+              <a id="split_panel" @click="menuselection = 'split_panel'">
                 <span class="icon is-large">
-                  <font-awesome-icon icon="images" size="2x" inverse/>
+                  <font-awesome-icon icon="images" size="2x" inverse />
                   <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Split AIMG</p>
@@ -67,11 +33,11 @@
             <li
               id="modify_box"
               class="menu-item"
-              v-bind:class="{ 'is-selected': menuselection == 'modify_panel' }"
+              :class="{ 'is-selected': menuselection == 'modify_panel' }"
             >
-              <a id="modify_panel" v-on:click="menuselection = 'modify_panel'">
+              <a id="modify_panel" @click="menuselection = 'modify_panel'">
                 <span class="icon is-large">
-                  <font-awesome-icon icon="exchange-alt" size="2x" inverse/>
+                  <font-awesome-icon icon="exchange-alt" size="2x" inverse />
                   <!-- <i class="fas fa-exchange-alt fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Modify AIMG</p>
@@ -110,11 +76,11 @@
             <li
               id="inspect_box"
               class="menu-item"
-              v-bind:class="{ 'is-selected': menuselection == 'inspect_panel' }"
+              :class="{ 'is-selected': menuselection == 'inspect_panel' }"
             >
-              <a id="inspect_panel" v-on:click="menuselection = 'inspect_panel'">
+              <a id="inspect_panel" @click="menuselection = 'inspect_panel'">
                 <span class="icon is-large">
-                  <font-awesome-icon icon="search" size="2x" inverse/>
+                  <font-awesome-icon icon="search" size="2x" inverse />
                   <!-- <i class="fas fa-search fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Inspect Image</p>
@@ -135,11 +101,11 @@
             <li
               id="settings_box"
               class="menu-item"
-              v-bind:class="{ 'is-selected': menuselection == 'settings_panel' }"
+              :class="{ 'is-selected': menuselection == 'settings_panel' }"
             >
-              <a id="settings_panel" v-on:click="menuselection = 'settings_panel'">
+              <a id="settings_panel" @click="menuselection = 'settings_panel'">
                 <span class="icon is-large">
-                  <font-awesome-icon icon="cog" size="2x" inverse/>
+                  <font-awesome-icon icon="cog" size="2x" inverse />
                   <!-- <i class="fas fa-cog fa-2x fa-inverse"></i> -->
                 </span>
                 <p class="is-white-d">Settings</p>
@@ -163,22 +129,24 @@
     </div>
     <div class="root-panel">
       <!-- $refs.ctxmenu.open($event, 'Payload') -->
-        <CreatePanel v-show="menuselection == 'create_panel'" />
-        <SplitPanel v-show="menuselection == 'split_panel'" />
-        <ModifyPanel v-show="menuselection == 'modify_panel'" />
-        <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
-        <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
-        <InspectPanel v-show="menuselection == 'inspect_panel'" @open-root-ctxmenu="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu"/>
-        <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
-        <SettingsPanel v-show="menuselection == 'settings_panel'" />
-        <!-- <AboutPanel v-show="menuselection == 'about_panel'" /> -->
+      <CreatePanel v-show="menuselection == 'create_panel'" />
+      <SplitPanel v-show="menuselection == 'split_panel'" />
+      <ModifyPanel v-show="menuselection == 'modify_panel'" />
+      <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
+      <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
+      <InspectPanel v-show="menuselection == 'inspect_panel'" @open-root-ctxmenu="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" />
+      <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
+      <SettingsPanel v-show="menuselection == 'settings_panel'" />
+      <!-- <AboutPanel v-show="menuselection == 'about_panel'" /> -->
     </div>
     <div>
       <ContextMenu ref="ctxmenu">
-        <template slot-scope="{ contextData }">
-          <ContextMenuItem v-for="(ctxData, ctxIndex) in contextData" v-bind:key="ctxIndex" 
-            @click.native="$refs.ctxmenu.callOptionFunction(ctxData.callback);">
-              {{ ctxData.name }}
+        <template #default="{ contextData }">
+          <ContextMenuItem
+            v-for="(ctxData, ctxIndex) in contextData" :key="ctxIndex" 
+            @click="$refs.ctxmenu.callOptionFunction(ctxData.callback);"
+          >
+            {{ ctxData.name }}
           </ContextMenuItem>
         </template>
       </ContextMenu>
@@ -211,18 +179,7 @@ import SettingsPanel from "./view/SettingsPanel.vue";
 
 
 export default {
-  created() {
-    window.addEventListener("resize", this.closeRootContextMenu);
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.closeRootContextMenu);
-  },
-  name: "app",
-  data: function () {
-    return {
-      menuselection: "create_panel",
-    };
-  },
+  name: "App",
   components: {
     CreatePanel,
     SplitPanel,
@@ -235,6 +192,17 @@ export default {
     // AboutPanel,
     ContextMenu,
     ContextMenuItem,
+  },
+  data: function () {
+    return {
+      menuselection: "create_panel",
+    };
+  },
+  created() {
+    window.addEventListener("resize", this.closeRootContextMenu);
+  },
+  unmounted() {
+    window.removeEventListener("resize", this.closeRootContextMenu);
   },
   methods: {
     openRootContextMenu(event, payload) {

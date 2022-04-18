@@ -8,9 +8,8 @@ imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch
 added_files = [
     ('temp/cache/.include', 'temp/cache/.include'),
     ('temp/previews/.include', 'temp/previews/.include'),
-    ('config/imagers.json', 'config/'),
-    ('config/settings.json', 'config/'),
-    ('config/settings.toml', 'config/'),
+    ('config/app.toml', 'config/'),
+    ('config/engine.toml', 'config/'),
 ]
 added_files.extend(imaging_engines)
 print(imaging_engines)

@@ -2,50 +2,64 @@
   <div id="split_panel">
     <div class="split-panel-root">
       <div class="split-panel-display">
-        <div class="split-panel-image silver-bordered" 
-          v-bind:class="{'has-checkerboard-bg': checkerbg_active }">
-          <img v-bind:src="escapeLocalPath(preview_path_cb)" />
+        <div
+          class="split-panel-image silver-bordered" 
+          :class="{'has-checkerboard-bg': checkerbg_active }"
+        >
+          <img :src="escapeLocalPath(previewPathCB)" />
         </div>
         <div class="split-panel-info silver-bordered-no-left">
           <table class="table spl-info-table" width="100%">
             <thead>
               <tr>
                 <th colspan="2">
-                  <p class="is-white-d">{{ info_header }}</p>
+                  <p class="is-white-d">
+                    {{ info_header }}
+                  </p>
                 </th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="spl-info-label is-cyan">Name</td>
+                <td class="spl-info-label is-cyan">
+                  Name
+                </td>
                 <td class="spl-info-data">
                   <span v-if="name">{{ name }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Dimensions</td>
+                <td class="spl-info-label is-cyan">
+                  Dimensions
+                </td>
                 <td class="spl-info-data">
                   <span v-if="dimensions">{{ dimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">File Size</td>
+                <td class="spl-info-label is-cyan">
+                  File Size
+                </td>
                 <td class="spl-info-data">
                   <span v-if="file_size">{{ file_size_hr }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Has Transparency</td>
+                <td class="spl-info-label is-cyan">
+                  Has Transparency
+                </td>
                 <td class="spl-info-data">
                   <span v-if="has_transparency">{{ has_transparency? "Yes" : "No" }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Total frames</td>
+                <td class="spl-info-label is-cyan">
+                  Total frames
+                </td>
                 <td class="spl-info-data">
                   <span v-if="frame_count">{{ frame_count }}</span>
                   <!-- <span v-else>-</span> -->
@@ -59,48 +73,60 @@
                 </td>
               </tr> -->
               <tr>
-                <td class="spl-info-label is-cyan">Average delay (ms)</td>
+                <td class="spl-info-label is-cyan">
+                  Average delay (ms)
+                </td>
                 <td class="spl-info-data">                  
                   <span v-if="average_delay">{{ roundPrecise(average_delay, 3) }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Delays are even</td>
+                <td class="spl-info-label is-cyan">
+                  Delays are even
+                </td>
                 <td class="spl-info-data">                  
                   <span v-if="delays">{{ delays_are_even? "Yes" : "No" }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Delays</td>
+                <td class="spl-info-label is-cyan">
+                  Delays
+                </td>
                 <td class="spl-info-data">                  
                   <span v-if="delays">{{ delays }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Frame rate (FPS)</td>
+                <td class="spl-info-label is-cyan">
+                  Frame rate (FPS)
+                </td>
                 <td class="spl-info-data">
                   <span v-if="fps">{{ fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Loop duration</td>
+                <td class="spl-info-label is-cyan">
+                  Loop duration
+                </td>
                 <td class="spl-info-data">
                   <span v-if="loop_duration">{{ loop_duration }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Loop count</td>
+                <td class="spl-info-label is-cyan">
+                  Loop count
+                </td>
                 <td class="spl-info-data">
-                    <template v-if="preview_path">
-                      <span v-if="loop_count == 0">Infinite</span>
-                      <span v-else>{{ loop_count }}</span>
-                    </template>
-                    <!-- <template v-else>-</template> -->
+                  <template v-if="previewPath">
+                    <span v-if="loop_count == 0">Infinite</span>
+                    <span v-else>{{ loop_count }}</span>
+                  </template>
+                  <!-- <template v-else>-</template> -->
                 </td>
               </tr>
             </tbody>
@@ -109,27 +135,27 @@
       </div>
       <div class="split-panel-middlebar">
         <div class="spl-control-btn">
-          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': SPL_IS_LOADING, 'non-interactive': isButtonFrozen}">
+          <a class="button is-neon-emerald" :class="{'is-loading': SPL_IS_LOADING, 'non-interactive': isButtonFrozen}" @click="loadImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="plus"/>
+              <font-awesome-icon icon="plus" />
               <!-- <i class="fas fa-plus"></i> -->
             </span>
             <span>Load GIF/APNG</span>
           </a>
         </div>
         <div class="spl-control-btn">
-          <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': isButtonFrozen}">
+          <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="times"/>
+              <font-awesome-icon icon="times" />
               <!-- <i class="fas fa-times"></i> -->
             </span>
             <span>Clear</span>
           </a>
         </div>
         <div class="spl-control-btn">
-          <a v-on:click="toggleCheckerBG" class="button is-neon-white" v-bind:class="{'is-active': checkerbg_active}">
+          <a class="button is-neon-white" :class="{'is-active': checkerbg_active}" @click="toggleCheckerBG">
             <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board"/>
+              <font-awesome-icon icon="chess-board" />
               <!-- <i class="fas fa-chess-board"></i> -->
             </span>
           </a>
@@ -160,7 +186,7 @@
                       type="number"
                       min="0"
                       max="6"
-                      v-on:keydown="numConstrain($event, true, true)"
+                      @keydown="numConstrain($event, true, true)"
                     />
                   </div>
                 </div>
@@ -174,12 +200,12 @@
                   <input v-model="criteria.is_unoptimized" type="checkbox" />
                   Unoptimize
                 </label>
-                <br/>
+                <br />
                 <label class="checkbox" title="Convert each frame into a PNG with RGBA color mode">
                   <input v-model="criteria.convert_to_rgba" type="checkbox" />
                   Convert to RGBA
                 </label>
-                <br/>
+                <br />
                 <label class="checkbox" title="Generate a file containing the delay information of each frame">
                   <input v-model="criteria.extract_delay_info" type="checkbox" />
                   Extract frame delays
@@ -190,19 +216,19 @@
                 </label> -->
               </td>
               <td width="20%" style="vertical-align: middle;">
-                <br/>
+                <br />
               </td>
               <td width="20%" style="vertical-align: middle;">
-                <br/>
+                <br />
               </td>
             </tr>
             <tr>
               <td colspan="4">
                 <div class="field has-addons">
                   <div class="control">
-                    <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
+                    <a class="button is-neon-cyan" @click="btnSetSavePath">
                       <span class="icon is-small">
-                        <font-awesome-icon icon="save"/>
+                        <font-awesome-icon icon="save" />
                         <!-- <i class="fas fa-save"></i> -->
                       </span>
                       <span>Save to</span>
@@ -210,7 +236,7 @@
                   </div>
                   <div class="control is-expanded">
                     <input
-                      v-model="outdir"
+                      v-model="outDir"
                       class="input is-neon-white"
                       type="text"
                       placeholder="Output folder"
@@ -219,14 +245,14 @@
                 </div>
               </td>
               <td class="has-text-centered">
-                <a v-on:click="btnSplitImage" class="button is-neon-cyan" v-bind:class="{'is-loading': SPL_IS_SPLITTING, 'non-interactive': isButtonFrozen}">
+                <a class="button is-neon-cyan" :class="{'is-loading': SPL_IS_SPLITTING, 'non-interactive': isButtonFrozen}" @click="btnSplitImage">
                   Split to folder</a>
               </td>
             </tr>
           </table>
         </div>
         <div class="spc-bottom">
-          <StatusBar :bus="statusBarBus"></StatusBar>
+          <StatusBar :status-bar-id="statusBarId" />
         </div>
       </div>
     </div>
@@ -246,9 +272,11 @@ let extension_filters = [{ name: "Images", extensions: ["png", "gif"] }];
 let file_dialog_props = ["openfile"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
 
-import Vue from 'vue';
+// import Vue from 'vue';
 
 import StatusBar from "./components/StatusBar.vue";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
 
 var defaults = {
   info_header: "Information",
@@ -266,11 +294,14 @@ var defaults = {
   loop_duration: "",
   loop_count: "",
   has_transparency: "",
-  preview_path: "",
-  preview_path_cb: "",
+  previewPath: "",
+  previewPathCB: "",
 };
 
 export default {
+  components: {
+    StatusBar,
+  },
   data: function() {
     return {
       info_header: "Information",
@@ -296,18 +327,16 @@ export default {
       loop_duration: "",
       loop_count: "",
       has_transparency: "",
-      preview_path: "",
-      preview_path_cb: "",
+      previewPath: "",
+      previewPathCB: "",
       checkerbg_active: false,
       is_reduced_color: false,
-      outdir: "",
+      outDir: "",
       SPL_IS_LOADING: false,
       SPL_IS_SPLITTING: false,
-      statusBarBus: new Vue(),
+      // statusBarBus: new Vue(),
+      statusBarId: "splitPanelStatusBar",
     };
-  },
-  components: {
-    StatusBar,
   },
   computed: {
     isButtonFrozen() {
@@ -367,7 +396,7 @@ export default {
               this.delays = ainfo.delays.value;
               this.loop_duration = `${ainfo.loop_duration.value} seconds`;
               this.loop_count = ainfo.loop_count.value;
-              this.preview_path = geninfo.absolute_url.value;
+              this.previewPath = geninfo.absolute_url.value;
               this.criteria.pad_count = 3;
               if (this.is_reduced_color) {
                 this.criteria.color_space - 256;
@@ -404,28 +433,31 @@ export default {
       let out_dirs = result.filePaths;
       console.log(out_dirs);
       if (out_dirs && out_dirs.length > 0) { 
-        this.outdir = out_dirs[0];
-        dirPath = this.outdir;
+        this.outDir = out_dirs[0];
+        dirPath = this.outDir;
       }
       this._logClear();
       return {canceled: false, result: dirPath};
     },
     async validateFilenameAsync() {
-      if (validateFilename(this.new_name))
+      let nameToCheck = this.new_name? this.new_name : this.name;
+      if (validateFilename(nameToCheck))
         return true;
       else
         return false;
     },
     btnSplitImage() {
-      if (this.preview_path == "") {
-        this._logError("Please load the image first!");
+      if (this.previewPath == "") {
+        this._logError("Please load an image first!");
         return;
       }
-
-
+      // else if (this.outDir == "") {
+      //   this._logError("Please specifiy an output folder first!");
+      //   return;
+      // }
       this.validateFilenameAsync().then(async (isValid) => {
         if (isValid) {
-          if (!this.save_dir) {
+          if (!this.outDir) {
             const result = await this.setSaveDirFromDialogAsync();
             if(result.canceled)
               return Promise.reject("Directory selection cancelled");
@@ -437,7 +469,7 @@ export default {
         }
         else {
           let errMsg = "File name contains characters that are not allowed";
-          this._logError(errMsg);
+          this._logError(error);
           return Promise.reject(errMsg);
         }
       }).then((proceed_create) => {
@@ -449,22 +481,6 @@ export default {
       }).catch((error) => {
         console.error(error);
       });
-
-
-
-      // if (this.outdir) {
-      //   this.splitImage();
-      // }
-      // else {
-      //   this.setSaveDirFromDialogAsync().then((result) => {
-      //     if (result.canceled)
-      //       return Promise.reject("Directory selection cancelled.");
-      //     else
-      //       return this.splitImage();
-      //   }).catch((error) => {
-      //     console.error(error);
-      //   });
-      // }
 
     },
     splitImage() {
@@ -481,7 +497,7 @@ export default {
         color_space = 0;
       }
       console.log(this);
-      tridentEngine(["split_image", this.preview_path, this.outdir, this.criteria], (error, res) => {
+      tridentEngine(["split_image", this.previewPath, this.outDir, this.criteria], (error, res) => {
         if (error) {
           try {
             this._logError(error);
@@ -502,28 +518,28 @@ export default {
       });
     },
     previewPathCacheBreaker() {
-      let cb_url = this.preview_path;
-      // let cb_url = `${data.preview_path}?cachebreaker=${randString()}`;
+      let cb_url = this.previewPath;
+      // let cb_url = `${data.previewPath}?cachebreaker=${randString()}`;
       console.log("Cache breaker url", cb_url);
-      this.preview_path_cb = cb_url;
+      this.previewPathCB = cb_url;
     },
     _logClear() {
-      this.statusBarBus.$emit("logClear");
-    },
-    _logProcessing(message) {
-      this.statusBarBus.$emit("logProcessing", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
     _logMessage(message) {
-      this.statusBarBus.$emit("logMessage", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
+    },
+    _logProcessing(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.PROCESSING, message);
     },
     _logSuccess(message) {
-      this.statusBarBus.$emit("logSuccess", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.SUCCESS, message);
     },
     _logWarning(message) {
-      this.statusBarBus.$emit("logWarning", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.WARNING, message);
     },
     _logError(message) {
-      this.statusBarBus.$emit("logError", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.ERROR, message);
     },
     numConstrain: numConstrain,
     escapeLocalPath: escapeLocalPath,

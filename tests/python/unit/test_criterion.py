@@ -75,8 +75,8 @@ def test_split_criteria():
     assert split_criteria.pad_count == 3
 
 
-def test_criteria_bundle(fx_json_dir):
-    with open(fx_json_dir.joinpath("crbundle_002_create_optimized_apng.json"), "r") as f:
+def test_criteria_bundle(fx_samples_json_dir):
+    with open(fx_samples_json_dir.joinpath("crbundle_002_create_optimized_apng.json"), "r") as f:
         crpack = json.loads(f.read())
     crbundle = CriteriaBundle({
         "create_aimg_criteria": CreationCriteria(crpack["criteria"]),

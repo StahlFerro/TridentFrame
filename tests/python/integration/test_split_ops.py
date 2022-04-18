@@ -9,12 +9,12 @@ from pycore.models.criterion import SplitCriteria
 from pycore.split_ops import split_aimg
 
 
-def test_split_gif(tmpdir: Path, fx_spaced_dir_agif_checker: Path,
-                   fx_splitcriteria_001_split_gif_json: Dict):
+def test_split_gif(tmpdir: Path, fx_samples_spaced_dir_agif_checker: Path,
+                   fx_samples_splitcriteria_001_split_gif_json: Dict):
     temp_dir = Path(tmpdir).joinpath("Split gif")
     temp_dir.mkdir()
-    split_criteria = SplitCriteria(fx_splitcriteria_001_split_gif_json)
-    split_images = split_aimg(fx_spaced_dir_agif_checker, temp_dir, split_criteria)
+    split_criteria = SplitCriteria(fx_samples_splitcriteria_001_split_gif_json)
+    split_images = split_aimg(fx_samples_spaced_dir_agif_checker, temp_dir, split_criteria)
     out_dirs = set(s.parents[0] for s in split_images)
     assert len(out_dirs) == 1
     out_dir = next(iter(out_dirs))
@@ -25,12 +25,12 @@ def test_split_gif(tmpdir: Path, fx_spaced_dir_agif_checker: Path,
     assert len(split_images) == len(out_dir_contents)
 
 
-def test_split_gif_with_delay_file(tmpdir: Path, fx_spaced_dir_agif_checker: Path,
-                   fx_splitcriteria_002_split_gif_json: Dict):
+def test_split_gif_with_delay_file(tmpdir: Path, fx_samples_spaced_dir_agif_checker: Path,
+                   fx_samples_splitcriteria_002_split_gif_json: Dict):
     temp_dir = Path(tmpdir).joinpath("Split gif with delay files")
     temp_dir.mkdir()
-    split_criteria = SplitCriteria(fx_splitcriteria_002_split_gif_json)
-    split_images = split_aimg(fx_spaced_dir_agif_checker, temp_dir, split_criteria)
+    split_criteria = SplitCriteria(fx_samples_splitcriteria_002_split_gif_json)
+    split_images = split_aimg(fx_samples_spaced_dir_agif_checker, temp_dir, split_criteria)
     out_dirs = set(s.parents[0] for s in split_images)
     assert len(out_dirs) == 1
     out_dir = next(iter(out_dirs))

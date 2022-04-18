@@ -19,6 +19,7 @@ TridentFrame consists of two main parts. The python backend handling image proce
 * [pyAPNG](https://github.com/eight04/pyAPNG) : APNG creation & splitting.
 * [apngdis](http://apngdis.sourceforge.net/) : APNG disassembler.
 * [apngopt](https://sourceforge.net/projects/apng/files/APNG_Optimizer/) : APNG modification.
+* [pngquant](https://pngquant.org/) : PNG lossy compression.
 * [Bulma](https://bulma.io/) : For the clean UI.
 * [Sass](https://sass-lang.com/) : Modifying bulma's styles.
 * [Font Awesome](https://fontawesome.com/) : Icons.
@@ -59,13 +60,13 @@ Make sure to have the following installed:
 
 Perform each of these commands in separate terminal windows:
 
-1. Then start up webpack dev server:
+1. Start up webpack dev server:
 
     ```
     $ npm run wpserve
     ```
 
-2. Finally start Electron:
+2. Then start Electron:
 
     ```
     $ npm run dev

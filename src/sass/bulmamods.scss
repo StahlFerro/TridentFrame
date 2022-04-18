@@ -1,10 +1,13 @@
 @import "../../node_modules/bulma/sass/utilities/_all.sass";
 @import "../../node_modules/bulma/sass/elements/button.sass";
+@import "../../node_modules/@creativebulma/bulma-divider";
+@import "../../node_modules/bulma-checkradio/src/sass/index.sass";
 
 @import "components/_globalvars.scss";
 @import "components/_colors.scss";
 @import "components/_behaviors.scss";
 @import "components/button.scss";
+@import "components/checkradio.scss";
 @import "components/contextmenu.scss";
 @import "components/rtable.scss";
 @import "components/text.scss";
@@ -259,7 +262,7 @@ div.mod-left-menu::-webkit-scrollbar { width: 0px; }
 
 /* Checkerboard background image */
 .has-checkerboard-bg {
-    background-image: url("../assets/imgs/Transparency500.png");
+    background-image: url("../assets/imgs/Generated_Grey_Checker_nl_0.webp");
 }
 
 

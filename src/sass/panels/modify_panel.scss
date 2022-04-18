@@ -17,7 +17,7 @@
         .modify-old-container {
             display: flex;
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             height: 44vh;
             overflow: auto;
             img {
@@ -33,7 +33,7 @@
         .modify-image-info {
             display: flex;
             flex-grow: inherit;
-            width: 34%;
+            width: 30%;
             height: 44vh;
             overflow: auto;
             
@@ -69,7 +69,7 @@
         .modify-new-container {
             display: flex;
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             height: 44vh;
             overflow: auto;
             img {
@@ -92,16 +92,25 @@
         height: 57px;
         .mpb-load-buttons {
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             text-align: center;
+            a.button {
+                margin-left: 4px;
+                margin-right: 4px;
+            }
         }
         .mpb-center-buttons {
-            width: 34%;
+            text-align: center;
+            width: 30%;
         }
         .mpb-preview-buttons {
             flex-grow: inherit;
-            width: 33%;
+            width: 35%;
             text-align: center;
+            a.button {
+                margin-left: 4px;
+                margin-right: 4px;
+            }
         }
     }
     
@@ -115,14 +124,16 @@
             min-width: 7%;
             overflow: auto;
             &::-webkit-scrollbar { width: 0px; height: 0px; }
+            p { font-size: $subtab-font-size; }
         }
         .mpc-right-panel {
             
             .mpc-right-top-panel {
-                height: 90%;
+                height: calc(100% - #{$status-bar-height});
+                overflow-y: auto;
             }
             .mpc-right-bottom-panel {
-                height: 10%;
+                height: $status-bar-height;
                 border-top: 1.5px solid $white-d;
                 display: flex;
             }
@@ -131,6 +142,7 @@
             border-left: 0;
             min-width: 93%;
             
+
             table {
                 width: 100%;
                 padding: 0;

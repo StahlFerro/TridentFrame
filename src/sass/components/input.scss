@@ -81,7 +81,7 @@ div.status-bar {
     height: 100%;
     .status-icon {
         display: flex;
-        width: 5%;
+        width: 42px;
         border-right: 1.5px solid $white-d;
         align-items: center;
         justify-content: center;
@@ -89,7 +89,7 @@ div.status-bar {
     }
     .status-textbox {
         display: flex;
-        width: 95%;
+        width: calc(100% - 42px);
         padding-left: 5px;
         height: 100%;
         input {

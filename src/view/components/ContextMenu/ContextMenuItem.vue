@@ -1,6 +1,6 @@
 <template>
   <li class="context-menu-option">
-    <slot/>
+    <slot />
   </li>
 </template>
 

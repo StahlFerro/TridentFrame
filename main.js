@@ -34,7 +34,7 @@ const createWindow = () => {
 		darkTheme: true,
 		fullscreen: false,
 		// resizable: false,
-		icon: path.join(__dirname, 'assets/icons/TridentFrame_logo_256x256.ico'),
+		icon: path.join(__dirname, 'src/assets/icons/TridentFrame_logo_256x256.ico'),
 		webPreferences: {
 			webSecurity: false,
 			nodeIntegration: true,
@@ -45,13 +45,10 @@ const createWindow = () => {
 	mainWindow.setMenu(null);
 	if (deploy_env && deploy_env == 'DEV') {
 		// Development environment
-		console.log('------ DEVELOPMENT VERSION ------');
+		console.debug('------ DEVELOPMENT VERSION ------');
 		mainWindow.loadURL('http://localhost:8080/');
-		mainWindow.webContents.openDevTools({
-			mode: 'detach'
-		});
 	} else {
-		console.log('------ PRODUCTION VERSION ------');
+		console.debug('------ PRODUCTION VERSION ------');
 		// Production environment
 		mainWindow.loadURL(
 			require('url').format({
@@ -61,9 +58,13 @@ const createWindow = () => {
 			})
 		);
 	}
+	if ((deploy_env && deploy_env == 'DEV') || SETTINGS.startup.open_devtools)
+		mainWindow.webContents.openDevTools({
+			mode: 'detach'
+		});
 	mainWindow.focus();
-	console.log(SETTINGS);
-	if (SETTINGS.user.fullscreen) {
+	console.log(JSON.stringify(SETTINGS, null, 4));
+	if (SETTINGS.startup.fullscreen) {
 		mainWindow.maximize();
 	}
 	mainWindow.on('closed', () => {
@@ -73,9 +74,9 @@ const createWindow = () => {
 
 app.on('ready', () => {
 	// createPyProc();
-	console.log("calling SettingStore.initialize()");
+	console.log("[Ready] Initialize settings");
 	SETTINGS = SettingStore.initialize();
-	console.log("calling createWindow()");
+	console.log("[Ready] Creating window...");
 	createWindow();
 	mainWindow.reload();
 });

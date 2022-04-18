@@ -1,11 +1,12 @@
 <template>
   <div id="modify_panel">
     <div class="modify-panel-root">
-
       <div class="modify-panel-displays">
-        <div class="modify-old-container silver-bordered-no-right"
-          v-bind:class="{'has-checkerboard-bg': orig_checkerbg_active }">
-          <img v-bind:src="escapeLocalPath(orig_attribute.path)" />
+        <div
+          class="modify-old-container silver-bordered-no-right"
+          :class="{'has-checkerboard-bg': orig_checkerbg_active }"
+        >
+          <img :src="escapeLocalPath(orig_attribute.path)" />
         </div>
         <div class="modify-image-info silver-bordered">
           <table class="mod-info-table is-hpaddingless" style="width: 100%;">
@@ -30,7 +31,9 @@
                   <span v-if="orig_attribute">{{ origDimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Dimensions</td>
+                <td class="mod-info-label is-cyan">
+                  Dimensions
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ previewDimensions }}</span>
                 </td>
@@ -43,7 +46,7 @@
                 <td class="mod-info-label is-cyan">
                   File size
                   <template v-if="preview_attribute">
-                    <br/>
+                    <br />
                     {{ previewSizePercentage }}
                   </template>
                 </td>
@@ -53,12 +56,14 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.format }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.format_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Format</td>
+                <td class="mod-info-label is-cyan">
+                  Format
+                </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.format }}</span>
+                  <span v-if="preview_attribute">{{ preview_attribute.format_info }}</span>
                 </td>
               </tr>
               <tr>
@@ -66,17 +71,21 @@
                   <span v-if="orig_attribute">{{ orig_attribute.frame_count }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Total frames</td>
+                <td class="mod-info-label is-cyan">
+                  Total frames
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_info">{{ preview_attribute.frame_count }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.fps }}</span>
+                  <span v-if="orig_attribute">{{ orig_attribute.fps_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Frame rate</td>
+                <td class="mod-info-label is-cyan">
+                  Frame rate
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_info">{{ preview_attribute.fps }}</span>
                 </td>
@@ -86,7 +95,9 @@
                   <span v-if="orig_attribute">{{ orig_attribute.delay_info }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
-                <td class="mod-info-label is-cyan">Avg. Delay</td>
+                <td class="mod-info-label is-cyan">
+                  Avg. Delay
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ preview_attribute.delay_info }}</span>
                 </td>
@@ -95,7 +106,9 @@
                 <td class="mod-info-data">
                   <span v-if="orig_attribute && orig_attribute.loop_duration">{{ roundPrecise(orig_attribute.loop_duration, 3) }} seconds</span>
                 </td>
-                <td class="mod-info-label is-cyan">Loop duration</td>
+                <td class="mod-info-label is-cyan">
+                  Loop duration
+                </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute && preview_attribute.loop_duration">{{ roundPrecise(preview_attribute.loop_duration, 3) }} seconds</span>
                 </td>
@@ -103,16 +116,18 @@
               <tr>
                 <td class="mod-info-data">
                   <template v-if="orig_attribute">
-                    {{ orig_attribute.loop_count }}
+                    {{ orig_attribute.loop_count_info }}
                     <!-- <span v-if="orig_attribute.loop_count == 0">Infinite</span>
                     <span v-else>{{ orig_attribute.loop_count }}</span> -->
                   </template>
                   <!-- <template v-else>-</template> -->
                 </td>
-                <td class="mod-info-label is-cyan">Loop count</td>
+                <td class="mod-info-label is-cyan">
+                  Loop count
+                </td>
                 <td class="mod-info-data">
                   <template v-if="preview_attribute">
-                    {{ preview_attribute.loop_count }}
+                    {{ preview_attribute.loop_count_info }}
                     <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
                     <span v-else>{{ preview_attribute.loop_count }}</span> -->
                   </template>
@@ -120,58 +135,72 @@
               </tr>
             </tbody>
           </table>
-
         </div>
-        <div class="modify-new-container silver-bordered-no-left" 
-          v-bind:title="preview_info?
+        <div
+          class="modify-new-container silver-bordered-no-left" 
+          :title="preview_info?
             `Dimensions: ${preview_info.general_info.width.value} x ${preview_info.general_info.height.value}\n` +
             `File size: ${preview_info.general_info.fsize_hr.value}\n` +
             `Loop count: ${preview_info.animation_info.loop_count.value || 'Infinite'}\n` +
             `Format: ${preview_info.general_info.format.value}` : ''
           "
-          v-bind:class="{'has-checkerboard-bg': new_checkerbg_active }">
-          <img v-bind:src="escapeLocalPath(preview_path_cb)" />
+          :class="{'has-checkerboard-bg': new_checkerbg_active }"
+        >
+          <img :src="escapeLocalPath(previewPathCB)" />
         </div>
       </div>
       <div class="modify-panel-middlebar">
         <div class="mpb-load-buttons">
-          <a v-on:click="loadImage" class="button is-neon-emerald" v-bind:class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}" @click="loadImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="plus"/>
+              <font-awesome-icon icon="plus" />
             </span>
             <span>Load Image</span>
           </a>
-          <a v-on:click="clearImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="times"/>
+              <font-awesome-icon icon="times" />
             </span>
             <span>Clear</span>
           </a>
-          <a v-on:click="toggleOrigCheckerBG" class="button is-neon-white"
-            v-bind:class="{'is-active': orig_checkerbg_active}">
+          <a
+            class="button is-neon-white" :class="{'is-active': orig_checkerbg_active}"
+            @click="toggleOrigCheckerBG"
+          >
             <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board"/>
+              <font-awesome-icon icon="chess-board" />
             </span>
           </a>
         </div>
-        <div class="mpb-center-buttons"></div>
+        <div class="mpb-center-buttons">
+          <p class="is-white-d">
+            {{ hasModification }}
+          </p>
+        </div>
         <div class="mpb-preview-buttons">
-          <a v-on:click="previewModImg" class="button is-neon-cyan" v-bind:class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}" @click="btnPreviewModImg">
             <span class="icon is-small">
-              <font-awesome-icon :icon="['far', 'eye']"/>
+              <font-awesome-icon :icon="['far', 'eye']" />
             </span>
             <span>Preview</span>
           </a>
-          <a v-on:click="clearPreviewImage" class="button is-neon-crimson" v-bind:class="{'non-interactive': buttonIsFrozen}">
+          <a class="button is-neon-cyan" @click="btnPreviewSaveAIMG">
+            <span class="icon is-medium">
+              <font-awesome-icon icon="save" />
+            </span>
+          </a>
+          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearPreviewImage">
             <span class="icon is-small">
-              <font-awesome-icon icon="times"/>
+              <font-awesome-icon icon="times" />
             </span>
             <span>Clear</span>
           </a>
-          <a v-on:click="toggleNewCheckerBG" class="button is-neon-white"
-            v-bind:class="{'is-active': new_checkerbg_active}">
+          <a
+            class="button is-neon-white" :class="{'is-active': new_checkerbg_active}"
+            @click="toggleNewCheckerBG"
+          >
             <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board"/>
+              <font-awesome-icon icon="chess-board" />
             </span>
           </a>
         </div>
@@ -180,36 +209,28 @@
         <div class="mpc-left-panel">
           <aside class="menu has-text-centered" style="margin: 0;">
             <ul class="menu-list">
-              <li id="MOD_box_general" class="subtab-menu-item"
-                v-bind:class="{'is-selected': mod_menuselection == 0}">
-                <a id="MOD_menu_general" v-on:click="mod_menuselection = 0">
+              <li
+                id="MOD_box_general" class="subtab-menu-item"
+                :class="{'is-selected': modSubMenuSelection == 0}"
+              >
+                <a id="MOD_menu_general" @click="modSubMenuSelection = 0">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="image" size="2x" inverse/>
+                    <font-awesome-icon :icon="['far', 'image']" size="2x" inverse />
                     <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
                   </span>
                   <p class="is-white-d">General</p>
                 </a>
               </li>
-              <li id="MOD_box_gif" class="subtab-menu-item is-cyan"
-                v-bind:class="{'is-selected': mod_menuselection == 1}">
-                <a id="MOD_menu_gif" v-on:click="mod_menuselection = 1"
-                  v-bind:class="{'is-disabled': criteria.format != 'gif'}">
+              <li
+                id="MOD_box_gif" class="subtab-menu-item is-cyan"
+                :class="{'is-selected': modSubMenuSelection == 1}"
+              >
+                <a id="MOD_menu_gif" @click="modSubMenuSelection = 1">
                   <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse/>
+                    <font-awesome-icon icon="sliders" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
                   </span>
-                  <p class="is-white-d is-large">GIF</p>
-                </a>
-              </li>
-              <li id="MOD_box_apng" class="subtab-menu-item"
-                v-bind:class="{'is-selected': mod_menuselection == 2}">
-                <a id="MOD_menu_apng" v-on:click="mod_menuselection = 2"
-                  v-bind:class="{'is-disabled': criteria.format != 'png'}">
-                  <span class="icon is-large">
-                    <font-awesome-icon icon="images" size="2x" inverse/>
-                    <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
-                  </span>
-                  <p class="is-white-d is-large">APNG</p>
+                  <p class="is-white-d">Advanced</p>
                 </a>
               </li>
             </ul>
@@ -217,7 +238,7 @@
         </div>
         <div class="mpc-right-panel">
           <div class="mpc-right-top-panel">
-            <div v-show="mod_menuselection == 0">
+            <div v-show="modSubMenuSelection == 0">
               <table class="" width="100%">
                 <tr>
                   <td width="16.7%">
@@ -232,8 +253,10 @@
                     <div class="field">
                       <label class="label">Width</label>
                       <div class="control">
-                        <input v-bind:value="criteria.width" v-on:keydown="numConstrain($event, true, true)" v-on:input="widthHandler(criteria.width, $event)" 
-                          class="input is-neon-white" type="number" min="1" step="1"/>
+                        <input
+                          :value="criteria.width" class="input is-neon-white" type="number" 
+                          min="1" step="1" @keydown="numConstrain($event, true, true)" @input="widthHandler(criteria.width, $event)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -241,8 +264,10 @@
                     <div class="field">
                       <label class="label">Height</label>
                       <div class="control">
-                        <input v-bind:value="criteria.height" v-on:keydown="numConstrain($event, true, true)" v-on:input="heightHandler(criteria.height, $event)"
-                        class="input is-neon-white" type="number" min="1" step="1"/>
+                        <input
+                          :value="criteria.height" class="input is-neon-white" type="number"
+                          min="1" step="1" @keydown="numConstrain($event, true, true)" @input="heightHandler(criteria.height, $event)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -251,8 +276,7 @@
                       <label
                         class="label"
                         title="Which algorithm to use when resizing the image. Default is Bicubic"
-                        >Resize Method</label
-                      >
+                      >Resize Method</label>
                       <div class="control">
                         <div class="select is-neon-cyan">
                           <select v-model="criteria.resize_method">
@@ -274,9 +298,15 @@
                             >
                               Bilinear
                             </option>
-                            <option value="BOX">Box</option>
-                            <option value="HAMMING">Hamming</option>
-                            <option value="LANCZOS">Lanczos</option>
+                            <option value="BOX">
+                              Box
+                            </option>
+                            <option value="HAMMING">
+                              Hamming
+                            </option>
+                            <option value="LANCZOS">
+                              Lanczos
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -287,7 +317,7 @@
                       <input v-model="criteria.flip_x" type="checkbox" />
                       Flip X
                     </label>
-                    <br/>
+                    <br />
                     <label class="checkbox" title="Flip the image vertically">
                       <input v-model="criteria.flip_y" type="checkbox" />
                       Flip Y
@@ -298,13 +328,13 @@
                       <input v-model="criteria.is_reversed" type="checkbox" />
                       Reversed
                     </label>
-                    <br/>
+                    <br />
                     <!-- <label class="checkbox" title="Preserve transparent pixels">
                       <input v-model="preserve_alpha" type="checkbox" />
                       Preserve Alpha
                     </label> -->
                     <label class="checkbox">
-                      <input v-model="lock_aspect_ratio" type="checkbox"/>
+                      <input v-model="lock_aspect_ratio" type="checkbox" />
                       Lock aspect ratio
                     </label>
                   </td>
@@ -314,7 +344,10 @@
                     <div class="field">
                       <label class="label">Frame rate</label>
                       <div class="control">
-                        <input v-model="criteria.fps" v-on:input="fpsConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                        <input
+                          v-model="criteria.fps" class="input is-neon-white" type="number" min="0"
+                          @input="fpsConstrain" @keydown="numConstrain($event, true, false)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -322,7 +355,10 @@
                     <div class="field">
                       <label class="label">Delay (seconds)</label>
                       <div class="control">
-                        <input v-model="criteria.delay" v-on:input="delayConstrain" v-on:keydown="numConstrain($event, true, false)" class="input is-neon-white" type="number" min="0"/>
+                        <input
+                          v-model="criteria.delay" class="input is-neon-white" type="number" min="0"
+                          @input="delayConstrain" @keydown="numConstrain($event, true, false)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -330,7 +366,10 @@
                     <div class="field">
                       <label class="label">Loop count</label>
                       <div class="control">
-                        <input v-model="criteria.loop_count" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" min="0"/>
+                        <input
+                          v-model="criteria.loop_count" class="input is-neon-white" type="number" min="0"
+                          @keydown="numConstrain($event, true, true)"
+                        />
                       </div>
                     </div>
                   </td>
@@ -350,36 +389,37 @@
                       </div>
                     </div>
                   </td> -->
-                  <td width="16.7%">
-                  </td>
+                  <td width="16.7%" />
                   <td width="16.7%" class="force-vcenter">
                     <!-- <label class="checkbox">
                       <input v-model="lock_aspect_ratio" type="checkbox"/>
                       Lock aspect ratio
                     </label> -->
-                    <br/>
+                    <br />
                     <template v-if="aspect_ratio && aspect_ratio.text">
-                      <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly"/>
+                      <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
                     </template>
-                    <template v-else>&nbsp;</template>
+                    <template v-else>
+                      &nbsp;
+                    </template>
                   </td>
                 </tr>
-                <tr>
-                </tr>
+                <tr />
                 <tr>
                   <td colspan="4">
                     <div class="field has-addons">
                       <div class="control">
-                        <a v-on:click="btnSetSavePath" class="button is-neon-cyan">
+                        <a class="button is-neon-cyan" @click="btnSetSavePath">
                           <span class="icon is-small">
-                            <font-awesome-icon icon="save"/>
+                            <font-awesome-icon icon="save" />
                             <!-- <i class="fas fa-save"></i> -->
                           </span>
                           <span>Save to</span>
                         </a>
                       </div>
                       <div class="control is-expanded">
-                        <input v-model="save_dir"
+                        <input
+                          v-model="save_dir"
                           class="input is-neon-white"
                           type="text"
                           placeholder="Output folder"
@@ -390,7 +430,7 @@
                   <td colspan="1">
                     <div class="field">
                       <div class="control">
-                        <div class="select is-neon-cyan" v-bind:class="{'non-interactive': buttonIsFrozen}">
+                        <div class="select is-neon-cyan" :class="{'non-interactive': buttonIsFrozen}">
                           <select v-model="criteria.format">
                             <option v-for="(item, name, index) in SUPPORTED_MODIFY_EXTENSIONS" :key="index" :value="name">
                               {{ item }}
@@ -401,7 +441,7 @@
                     </div>
                   </td>
                   <td colspan="1">
-                    <a v-on:click="btnModifyImage" class="button is-neon-cyan"  v-bind:class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}">
+                    <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}" @click="btnModifyImage">
                       MODIFY</a>
                   </td>
                 </tr>
@@ -417,49 +457,58 @@
                 </tr>
               </table>
             </div>
-            <div v-show="mod_menuselection == 1">
+            <div v-show="modSubMenuSelection == 1 && criteria.format == 'gif'">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
                 <GIFOptimizationRow
-                  :is_optimized.sync="gif_opt_criteria.is_optimized"
-                  :optimization_level.sync="gif_opt_criteria.optimization_level"
-                  :is_lossy.sync="gif_opt_criteria.is_lossy"
-                  :lossy_value.sync="gif_opt_criteria.lossy_value"
-                  :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
-                  :color_space.sync="gif_opt_criteria.color_space"
-                  :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
-                  :is_dither_alpha.sync="gif_opt_criteria.is_dither_alpha"
-                  :dither_alpha_method.sync="gif_opt_criteria.dither_alpha_method"
-                  :dither_alpha_threshold.sync="gif_opt_criteria.dither_alpha_threshold"
+                  v-model:hasOptimization="hasGIFOptimization"
+                  v-model:is_optimized="gif_opt_criteria.is_optimized"
+                  v-model:optimization_level="gif_opt_criteria.optimization_level"
+                  v-model:is_lossy="gif_opt_criteria.is_lossy"
+                  v-model:lossy_value="gif_opt_criteria.lossy_value"
+                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
+                  v-model:color_space="gif_opt_criteria.color_space"
+                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
+                  v-model:dither_method="gif_opt_criteria.dither_method"
+                  v-model:palletization_method="gif_opt_criteria.palletization_method"
+                  v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
+                  v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
+                  v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
                 />
                 <GIFUnoptimizationRow
-                :is_optimized.sync="gif_opt_criteria.is_optimized"
-                :is_lossy.sync="gif_opt_criteria.is_lossy"
-                :is_reduced_color.sync="gif_opt_criteria.is_reduced_color"
-                :is_unoptimized.sync="gif_opt_criteria.is_unoptimized"
+                  v-model:is_optimized="gif_opt_criteria.is_optimized"
+                  v-model:is_lossy="gif_opt_criteria.is_lossy"
+                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
+                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
                 />
               </table>
             </div>
-            <div v-show="mod_menuselection == 2">
+            <div v-show="modSubMenuSelection == 1 && criteria.format == 'png'">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
-                <APNGOptimizationRow
-                  :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
-                  :apng_optimization_level.sync="apng_opt_criteria.apng_optimization_level"
-                  :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
-                  :apng_lossy_value.sync="apng_opt_criteria.apng_lossy_value"
-                  :apng_convert_color_mode.sync="apng_opt_criteria.apng_convert_color_mode"
-                  :apng_new_color_mode.sync="apng_opt_criteria.apng_new_color_mode"
-                  :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+                <APNGOptimizationRow 
+                  ref="apngOptimRow"
+                  v-model:hasOptimizaton="hasAPNGOptimization"
+                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
+                  v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
+                  v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
+                  v-model:apng_lossy_value="apng_opt_criteria.apng_lossy_value"
+                  v-model:apng_quantization_enabled="apng_opt_criteria.apng_quantization_enabled"
+                  v-model:apng_quantization_quality="apng_opt_criteria.apng_quantization_quality"
+                  v-model:apng_quantization_speed="apng_opt_criteria.apng_quantization_speed"
+                  v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
+                  v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
+                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
                 />
                 <APNGUnoptimizationRow
-                  :apng_is_optimized.sync="apng_opt_criteria.apng_is_optimized"
-                  :apng_is_lossy.sync="apng_opt_criteria.apng_is_lossy"
-                  :apng_is_unoptimized.sync="apng_opt_criteria.apng_is_unoptimized"
+                  ref="apngUnoptimRow"
+                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
+                  v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
+                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
                 />
               </table>
             </div>
           </div>
           <div class="mpc-right-bottom-panel">
-            <StatusBar :bus="statusBarBus"></StatusBar>
+            <StatusBar :status-bar-id="statusBarId" />
           </div>
         </div>
       </div>
@@ -486,14 +535,16 @@ import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import { existsSync } from 'fs';
-import Vue from 'vue';
+
+import StatusBar from "./components/StatusBar.vue";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
+// import Vue from 'vue';
 
 const SUPPORTED_MODIFY_EXTENSIONS = {
   'gif': 'GIF',
   'png': 'APNG',
 }
-
-import StatusBar from "./components/StatusBar.vue";
 
 let common_metadata = {
   fname: "",
@@ -502,162 +553,20 @@ let common_metadata = {
   frame_count: "",
   frame_count_ds: "",
   fps: "",
+  fps_info: "",
   delay: "",
   delay_info: "",
   loop_duration: "",
   loop_count: "",
+  loop_count_info: "",
   file_size: "",
   file_size_hr: "",
   format: "",
+  format_info: "",
   path: "",
   hash_sha1: "",
   last_modified_dt: "",
 };
-
-// var data = {
-//   orig_attribute: lodashClonedeep(common_metadata),
-//   preview_attribute: lodashClonedeep(common_metadata),
-//   // orig_attribute: {
-//   //   name: "",
-//   //   width: "",
-//   //   height: "",
-//   //   frame_count: "",
-//   //   frame_count_ds: "",
-//   //   fps: "",
-//   //   delay: "",
-//   //   delay_info: "",
-//   //   loop_duration: "",
-//   //   loop_count: "",
-//   //   file_size: "",
-//   //   file_size_hr: "",
-//   //   format: "",
-//   //   path: "",
-//   //   hash_sha1: "",
-//   //   last_modified_dt: "",
-//   // },
-//   criteria: {
-//     width: "",
-//     height: "",
-//     resize_method: "BICUBIC",
-//     rotation: "",
-//     fps: "",
-//     delay: "",
-//     loop_count: "",
-//     format: "GIF",
-//     skip_frame: "",
-//     flip_x: false,
-//     flip_y: false,
-//     is_reversed: false,
-//     preserve_alpha: false,
-//     start_frame: 0,
-//   },
-//   gif_opt_criteria: {
-//     is_optimized: false,
-//     optimization_level: "1",
-//     is_lossy: false,
-//     lossy_value: "",
-//     is_reduced_color: false,
-//     color_space: "",
-//     is_unoptimized: false,
-//     is_dither_alpha: false,
-//     dither_alpha_method: "SCREENDOOR",
-//     dither_alpha_threshold: 50,
-//   },
-//   apng_opt_criteria: {
-//     apng_is_optimized: false,
-//     apng_optimization_level: "1",
-//     apng_is_lossy: false,
-//     apng_lossy_value: "",
-//     apng_is_unoptimized: false,
-//     apng_convert_color_mode: false,
-//     apng_new_color_mode: "RGBA",
-//   },
-//   preview_path: "",
-//   preview_path_cb: "",
-//   preview_info: "",
-//   save_fstem: "",
-//   save_dir: "",
-//   preview_size: "",
-//   preview_size_hr: "",
-//   aspect_ratio: "",
-//   lock_aspect_ratio: false,
-//   mod_menuselection: 0,
-//   orig_checkerbg_active: false,
-//   new_checkerbg_active: false,
-//   MOD_IS_LOADING: false,
-//   MOD_IS_MODIFYING: false,
-//   MOD_IS_PREVIEWING: false,
-//   modify_msgbox: "",
-// };
-
-// function clearOrigMetadata() {
-//   data.orig_attribute.name = "";
-//   data.orig_attribute.width = "";
-//   data.orig_attribute.height = "";
-//   data.orig_attribute.frame_count = "";
-//   data.orig_attribute.frame_count_ds = "";
-//   data.orig_attribute.fps = "";
-//   data.orig_attribute.delay = "";
-//   data.orig_attribute.delay_info = "";
-//   data.orig_attribute.loop_duration = "";
-//   data.orig_attribute.loop_count = "";
-//   data.orig_attribute.file_size = "";
-//   data.orig_attribute.file_size_hr = "";
-//   data.orig_attribute.format = "";
-//   data.orig_attribute.path = "";
-//   data.orig_attribute.hash_sha1 = "";
-//   data.orig_attribute.last_modified_dt = "";
-//   data.modify_msgbox = "";
-// }
-
-// function clearPreiewMetadata() {
-//   data.preview_attribute.name = "";
-//   data.preview_attribute.width = "";
-//   data.preview_attribute.height = "";
-//   data.preview_attribute.frame_count = "";
-//   data.preview_attribute.frame_count_ds = "";
-//   data.preview_attribute.fps = "";
-//   data.preview_attribute.delay = "";
-//   data.preview_attribute.delay_info = "";
-//   data.preview_attribute.loop_duration = "";
-//   data.preview_attribute.loop_count = "";
-//   data.preview_attribute.file_size = "";
-//   data.preview_attribute.file_size_hr = "";
-//   data.preview_attribute.format = "";
-//   data.preview_attribute.path = "";
-//   data.preview_attribute.hash_sha1 = "";
-//   data.preview_attribute.last_modified_dt = "";
-//   data.modify_msgbox = "";
-// }
-
-// function clearCriteriaFields() {
-//   data.criteria.old_width = "";
-//   data.criteria.width = "";
-//   data.criteria.old_height = "";
-//   data.criteria.height = "";
-//   data.criteria.rotation = "";
-//   data.criteria.fps = "";
-//   data.criteria.delay = "";
-//   data.criteria.loop_count = "";
-//   data.criteria.skip_frame = "";
-//   data.criteria.modify_msgbox = "";
-//   let ARData = {
-//     "w_ratio": "",
-//     "h_ratio": "",
-//     "text": "",
-//   };
-//   data.aspect_ratio = ARData;
-// }
-
-// function toggleOrigCheckerBG() {
-//   data.orig_checkerbg_active = !data.orig_checkerbg_active;
-//   console.log("orig checkerbg is", data.orig_checkerbg_active);
-// }
-
-// function toggleNewCheckerBG() {
-//   data.new_checkerbg_active = !data.new_checkerbg_active;
-//   console.log("new checkerbg is", data.new_checkerbg_active);
-// }
 
 let extension_filters = [
     { name: 'Images', extensions: Object.keys(SUPPORTED_MODIFY_EXTENSIONS) },
@@ -665,393 +574,16 @@ let extension_filters = [
 let file_dialog_props = ['openfile'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
 
-// function loadImage() {
-//   console.log("mod load image called");
-//   var options = {
-//     filters: extension_filters,
-//     properties: file_dialog_props
-//   };
-//   ipcRenderer.invoke('open-dialog', options).then((result) => {
-//     let chosen_path = result.filePaths;
-//     console.log(`chosen path: ${chosen_path}`);
-//     if (chosen_path === undefined || chosen_path.length == 0) {
-//       return;
-//     }
-//     data.MOD_IS_LOADING = true;
-//     tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
-//       if (error) {        
-//         try {
-//           data.modify_msgbox = error;
-//         }
-//         catch (e) {
-//           data.modify_msgbox = error;
-//         }
-//         // mboxError(split_msgbox, error);
-//         data.MOD_IS_LOADING = false;
-//       } else if (res) {
-//         if (res && res.msg) {
-//           data.modify_msgbox = res.msg;
-//         } else if (res && res.data) {
-//           loadOrigMetadata(res.data);
-//           populateForm(res.data);
-//           data.save_fname = res.data.general_info.name.value;
-//           data.modify_msgbox = "";
-//         }
-//         data.MOD_IS_LOADING = false;
-//         data.lock_aspect_ratio = true;
-//       }
-//     });
-//     console.log("registered!");
-//   });
-// }
-
-// function loadOrigMetadata(res) {
-//   let geninfo = res.general_info;
-//   let ainfo = res.animation_info;
-//   data.orig_attribute.name = geninfo.name.value;
-//   data.save_fstem = stem(data.save_fstem || geninfo.name.value);
-//   data.orig_attribute.width = geninfo.width.value;
-//   data.orig_attribute.height = geninfo.height.value;
-//   data.orig_attribute.fps = `${ainfo.fps.value} FPS`;
-//   data.orig_attribute.frame_count= ainfo.frame_count.value;
-//   data.orig_attribute.format = geninfo.format.value;
-//   let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
-//   if (ainfo.delays_are_even.value) {
-//     delay_info += ` (even)`;
-//   }
-//   else {
-//     delay_info += ` (uneven)`;
-//   }
-//   data.orig_attribute.delay = ainfo.average_delay.value;
-//   data.orig_attribute.delay_info = delay_info;
-//   data.orig_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
-//   if (ainfo.loop_count.value == 0) {
-//     data.orig_attribute.loop_count = "Infinite"
-//   }
-//   else {
-//     data.orig_attribute.loop_count = ainfo.loop_count.value;
-//   }
-//   data.orig_attribute.path = geninfo.absolute_url.value;
-//   data.orig_attribute.file_size = geninfo.fsize.value;
-//   data.orig_attribute.file_size_hr = geninfo.fsize_hr.value;
-//   data.orig_attribute.last_modified_dt = geninfo.modification_datetime.value;
-//   data.orig_attribute.hash_sha1 = geninfo.hash_sha1.value;
-// }
-
-// function loadPreviewMetadata(res) {
-//   let geninfo = res.general_info;
-//   let ainfo = res.animation_info;
-//   data.preview_attribute.name = geninfo.name.value;
-//   data.preview_attribute.width = geninfo.width.value;
-//   data.preview_attribute.height = geninfo.height.value;
-//   data.preview_attribute.fps = `${ainfo.fps.value} FPS`;
-//   data.preview_attribute.frame_count= ainfo.frame_count.value;
-//   data.preview_attribute.format = geninfo.format.value;
-//   let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
-//   if (ainfo.delays_are_even.value) {
-//     delay_info += ` (even)`;
-//   }
-//   else {
-//     delay_info += ` (not even)`;
-//   }
-//   data.preview_attribute.delay = ainfo.average_delay.value;
-//   data.preview_attribute.delay_info = delay_info;
-//   data.preview_attribute.loop_duration = `${ainfo.loop_duration.value} seconds`;
-//   if (ainfo.loop_count.value == 0) {
-//     data.preview_attribute.loop_count = "Infinite"
-//   }
-//   else {
-//     data.preview_attribute.loop_count = ainfo.loop_count.value;
-//   }
-//   data.preview_attribute.path = geninfo.absolute_url.value;
-//   data.preview_attribute.file_size = geninfo.fsize.value;
-//   data.preview_attribute.file_size_hr = geninfo.fsize_hr.value;
-//   data.preview_attribute.last_modified_dt = geninfo.modification_datetime.value;
-//   data.preview_attribute.hash_sha1 = geninfo.hash_sha1.value;
-// }
-
-// function populateForm(res) {
-//   var geninfo = res.general_info;
-//   var ainfo = res.animation_info;
-//   data.criteria.format = geninfo.format.value;
-//   data.criteria.width = geninfo.width.value;
-//   data.criteria.height = geninfo.height.value;
-//   data.criteria.delay = roundPrecise(ainfo.average_delay.value, 3) / 1000;
-//   data.criteria.fps = roundPrecise(ainfo.fps.value, 3);
-//   data.criteria.loop_count = ainfo.loop_count.value;
-//   updateAspectRatio(data.criteria.width, data.criteria.height);
-// }
-
-// function clearImage() {
-//   console.log(data);
-//   clearOrigMetadata();
-//   clearCriteriaFields();
-//   clearPreviewImage();
-//   data.lock_aspect_ratio = false;
-// }
-
-// function clearPreviewImage() {
-//   data.preview_path = "";
-//   data.preview_path_cb = "";
-//   data.preview_size = "";
-//   data.preview_size_hr = "";
-//   clearPreiewMetadata();
-// }
-
-// function singleSaveOption() {
-//   return {
-//     title: `Save As`,
-//     defaultPath: saveFileName(),
-//     filters: [{ name: data.criteria.format, extensions: [data.criteria.format.toLowerCase()] }],
-//     properties: ["createDirectory", "showOverwriteConfirmation", "dontAddToRecent"],
-//   }
-// }
-
-
-// function saveFileName() {
-//   return `${data.save_fstem}.${data.criteria.format.toLowerCase()}`;
-// }
-
-// function savePath() {
-//   if (data.save_dir && data.save_fstem)
-//     return join(data.save_dir, `${data.save_fstem}.${data.criteria.format.toLowerCase()}`);
-//   else
-//     return "";
-// }
-
-// function setSavePath(afterSaveCallback) {
-//   ipcRenderer.invoke('save-dialog', singleSaveOption()).then((result) => {
-//     if (result.canceled) return;
-//     let save_path = result.filePath;
-//     console.log(result);
-//     // data.save_path = save_path;
-//     data.save_dir = dirname(save_path);
-//     data.save_fstem = stem(basename(save_path));
-//     if (afterSaveCallback) {
-//       afterSaveCallback();
-//     }
-//   });
-// }
-
-// function setSaveDirFromDialog(afterSaveCallback) {
-//   let options = { properties: dir_dialog_props };
-//   ipcRenderer.invoke('open-dialog', options).then((result) => {
-//     let out_dirs = result.filePaths;
-//     console.log(out_dirs);
-//     if (out_dirs && out_dirs.length > 0) { 
-//       data.save_dir = out_dirs[0];
-//     }
-//     data.create_msgbox = "";
-//   });
-// }
-
-// function btnSetSavePath() {
-//   // setSavePath();
-//   setSaveDirFromDialog();
-// }
-
-// function widthHandler(width, event) {
-//   // data.orig_attribute.width = parseInt(width);
-//   console.log(event);
-//   let newWidth = event.target.value;
-//   data.criteria.width = newWidth;
-//   if (data.lock_aspect_ratio && data.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
-//     let raHeight = Math.round(newWidth / data.aspect_ratio.w_ratio * data.aspect_ratio.h_ratio);
-//     data.criteria.height = raHeight > 0? raHeight : "";
-//   }
-//   else {
-//     updateAspectRatio(data.criteria.width, data.criteria.height);
-//   }
-// }
-
-// function heightHandler(height, event) {
-//   // data.orig_attribute.height = parseInt(height);
-//   let newHeight = event.target.value;
-//   data.criteria.height = newHeight;
-//   if (data.lock_aspect_ratio && data.aspect_ratio.w_ratio > 0) {
-//     let raWidth = Math.round(newHeight / data.aspect_ratio.h_ratio * data.aspect_ratio.w_ratio);
-//     console.log(raWidth);
-//     data.criteria.width = raWidth > 0? raWidth : "";
-//   }
-//   else {
-//     updateAspectRatio(data.criteria.width, data.criteria.height);
-//   }
-// }
-
-
-// function btnModifyImage() {
-//   if (!data.orig_attribute.path) {
-//     data.modify_msgbox = "Please load the animated image to be modified!";
-//     return;
-//   }
-//   if (savePath())
-//     modifyImage();
-//   else
-//     setSavePath(modifyImage);
-// }
-
-
-// function modifyImage() {
-//   let proceed_modify = true;
-//   data.modify_msgbox = "";
-  
-//   if (proceed_modify) {
-//     data.MOD_IS_MODIFYING = true;
-//     let criteria_pack = cloneDeep({
-//       "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
-//       "gif_opt_criteria": data.gif_opt_criteria,
-//       "apng_opt_criteria": data.apng_opt_criteria,
-//     });
-//     // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-//     tridentEngine(["modify_image", data.orig_attribute.path, savePath(), criteria_pack], (error, res) => {
-//       if (error) {
-//         console.error(error);
-//         data.modify_msgbox = error;
-//         data.MOD_IS_MODIFYING = false;
-//       }
-//       else if (res) {
-//         console.log(res);
-//         if (res.msg) {
-//           data.modify_msgbox = res.msg;
-//         }
-//       }
-//     },
-//     () => {
-//       data.modify_msgbox = "Modified and saved!"
-//       data.MOD_IS_MODIFYING = false;
-//     });
-//   }
-// }
-
-// function previewModImg() {
-//   if (data.orig_attribute.path == "") {
-//     data.modify_msgbox = "Please load an animated image first!";
-//     return;
-//   }
-//   data.MOD_IS_PREVIEWING = true;
-//   let criteria_pack = lodashClonedeep({
-//     "criteria": { ...data.criteria, "hash_sha1": data.orig_attribute.hash_sha1, "last_modified_dt": data.orig_attribute.last_modified_dt },
-//     "gif_opt_criteria": data.gif_opt_criteria,
-//     "apng_opt_criteria": data.apng_opt_criteria,
-//   });
-//   let preview_filename = `${data.save_fstem}_preview_${Date.now()}_${randString(7)}.${data.criteria.format.toLowerCase()}`;
-//   let preview_savepath = join(PREVIEWS_PATH, preview_filename);
-//   // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-//   tridentEngine(["modify_image", data.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
-//     if (error) {
-//       console.error(error);
-//       data.modify_msgbox = error;
-//       data.MOD_IS_PREVIEWING = false;
-//     }
-//     else if (res) {
-//       if (res.msg) {
-//         data.modify_msgbox = res.msg;
-//       }
-//       if (res.preview_path) {
-//         data.preview_path = res.preview_path;
-//         previewPathCacheBreaker();
-//       }
-//     }
-//   },
-//   () => tridentEngine(["inspect_one", data.preview_path, "animated"], (error, res) => {
-//     if (error) {
-//       console.error(error);
-//       data.modify_msgbox = error;
-//     } else if (res && res.data) {
-//       let preview_data = res.data;
-//       console.log(`res -> ${res}`);
-//       console.log("preview inspect");
-//       loadPreviewMetadata(preview_data);
-//       data.preview_info = preview_data;
-//       data.preview_size = preview_data.general_info.fsize.value;
-//       data.preview_size_hr = preview_data.general_info.fsize_hr.value;
-//       data.modify_msgbox = "Previewed!"
-//       data.MOD_IS_PREVIEWING = false;
-//     }})
-//   );
-// }
-
-// function buttonIsFrozen() {
-//   if (data.MOD_IS_LOADING || data.MOD_IS_MODIFYING || data.MOD_IS_PREVIEWING) return true;
-//   else return false;
-// }
-
-// function delayConstrain(event) {
-//   console.log("delay event", event);
-//   let value = event.target.value;
-//   if (value && value.includes(".")) {
-//     let numdec = value.split(".");
-//     console.log("numdec", numdec);
-//     let precision = 2;
-//     if (data.criteria.format == "GIF") {
-//       precision = GIF_DELAY_DECIMAL_PRECISION;
-//     } else if (data.criteria.format == "PNG") {
-//       precision = APNG_DELAY_DECIMAL_PRECISION;
-//     }
-//     if (numdec[1].length > precision) {
-//       let decs = numdec[1].substring(0, precision);
-//       console.log("decs limit triggered", decs);
-//       data.criteria.delay = `${numdec[0]}.${decs}`;
-//     }
-//   }
-//   data.criteria.fps = Math.round(1000 / data.criteria.delay) / 1000;
-// }
-
-// function fpsConstrain(event) {
-//   console.log("fps event", event);
-//   let value = event.target.value;
-//   if (value) {
-//     let mult = 100;
-//     if (data.criteria.format == "GIF") {
-//       mult = 100;
-//     } else if (data.criteria.format == "PNG") {
-//       mult = 1000;
-//     }
-//     data.criteria.delay = Math.round(mult / data.criteria.fps) / mult;
-//   }
-// }
-
-
-// function origDimensions() {
-//   if (data.orig_attribute.width && data.orig_attribute.height) {
-//     return `${data.orig_attribute.width} x ${data.orig_attribute.height}`;
-//   }
-//   else {
-//     return "";
-//   }
-// }
-
-// function previewDimensions() {
-//   if (data.preview_attribute.width && data.preview_attribute.height) {
-//     return `${data.preview_attribute.width} x ${data.preview_attribute.height}`;
-//   }
-//   else {
-//     return "";
-//   }
-// }
-
-// function previewSizePercentage() {
-//   if (data.orig_attribute.path && data.preview_attribute.path) {
-//     let oldSize = data.orig_attribute.file_size
-//     let previewSize = data.preview_attribute.file_size;
-//     console.log(oldSize, previewSize);
-//     let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
-//     let text = `${newSizePercentage}%`;
-//     return text;
-//   }
-//   else return "";
-// }
-
-
-// function previewPathCacheBreaker() {
-//   let cb_url = `${data.preview_path}`;
-//   console.log("Cache breaker url", cb_url);
-//   data.preview_path_cb = cb_url;
-// }
-
 
 export default {
-  data: function() {
+  components: {
+    GIFOptimizationRow,
+    GIFUnoptimizationRow,
+    APNGOptimizationRow,
+    APNGUnoptimizationRow,
+    StatusBar,
+  },
+  data() {
     return {
       orig_attribute: structuredClone(common_metadata),
       preview_attribute: structuredClone(common_metadata),
@@ -1079,30 +611,38 @@ export default {
         is_reduced_color: false,
         color_space: "",
         is_unoptimized: false,
+        dither_method: "FLOYD_STEINBERG",
+        palletization_method: "ADAPTIVE",
         is_dither_alpha: false,
         dither_alpha_method: "SCREENDOOR",
         dither_alpha_threshold: 50,
       },
+      hasGIFOptimization: false,
       apng_opt_criteria: {
         apng_is_optimized: false,
         apng_optimization_level: "1",
         apng_is_lossy: false,
         apng_lossy_value: "",
+        apng_quantization_enabled: false,
+        apng_quantization_quality: "",
+        apng_quantization_speed: 3,
         apng_is_unoptimized: false,
         apng_convert_color_mode: false,
         apng_new_color_mode: "RGBA",
       },
+      hasAPNGOptimization: false,
+
       fname: "",
-      preview_path: "",
-      preview_path_cb: "",
+      previewPath: "",
+      previewPathCB: "",
       preview_info: "",
-      save_fstem: "",
+      // save_fstem: "",
       save_dir: "",
       preview_size: "",
       preview_size_hr: "",
       aspect_ratio: "",
       lock_aspect_ratio: false,
-      mod_menuselection: 0,
+      modSubMenuSelection: 0,
       orig_checkerbg_active: false,
       new_checkerbg_active: false,
       MOD_IS_LOADING: false,
@@ -1110,27 +650,105 @@ export default {
       MOD_IS_PREVIEWING: false,
       modify_msgbox: "",
       SUPPORTED_MODIFY_EXTENSIONS: SUPPORTED_MODIFY_EXTENSIONS,
-      statusBarBus: new Vue(),
+      statusBarId: "modifyPanelStatusBar",
+      // statusBarBus: new Vue(),
     };
   },
-  components: {
-    GIFOptimizationRow,
-    GIFUnoptimizationRow,
-    APNGOptimizationRow,
-    APNGUnoptimizationRow,
-    StatusBar,
+  computed: {
+    origDimensions() {
+      if (this.orig_attribute.width && this.orig_attribute.height) {
+        return `${this.orig_attribute.width} x ${this.orig_attribute.height}`;
+      }
+      else {
+        return "";
+      }
+    },
+    previewDimensions() {
+      if (this.preview_attribute.width && this.preview_attribute.height) {
+        return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
+      }
+      else {
+        return "";
+      }
+    },
+    buttonIsFrozen() {
+      if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
+      else return false;
+    },
+    previewSizePercentage() {
+      if (this.orig_attribute.path && this.preview_attribute.path) {
+        let oldSize = this.orig_attribute.file_size
+        let previewSize = this.preview_attribute.file_size;
+        console.log(oldSize, previewSize);
+        let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
+        let text = `${newSizePercentage}%`;
+        return text;
+      }
+      else return "";
+    },
+    hasGeneralModification() {
+      // console.debug(`${this.orig_attribute.width != this.criteria.width}`);
+      // console.debug(`${this.orig_attribute.width != this.criteria.height}`);
+      // console.debug(`${this.orig_attribute.delay} ${this.criteria.delay} ${this.orig_attribute.delay != this.criteria.delay}`);
+      // console.debug(`${this.orig_attribute.fps} ${this.criteria.fps} ${this.orig_attribute.fps != this.criteria.fps}`);
+      // console.debug(`${this.orig_attribute.loop_count} ${this.criteria.loop_count} ${this.orig_attribute.loop_count != this.criteria.loop_count}`);
+      // console.debug(`${this.orig_attribute.format} ${this.criteria.format} ${this.orig_attribute.format != this.criteria.format}`);
+      if (this.orig_attribute.width != this.criteria.width || 
+          this.orig_attribute.height != this.criteria.height || 
+          this.orig_attribute.fps != this.criteria.fps || 
+          this.orig_attribute.loop_count != this.criteria.loop_count || 
+          this.orig_attribute.format != this.criteria.format ||
+          this.criteria.flip_x || this.criteria.flip_y || this.criteria.is_reversed)
+          return true;
+      else return false;
+    },
+    hasFormatOptimization() {
+      let hasOptim = false;
+      let outFormat = this.criteria.format.toLowerCase();
+      if (outFormat == 'gif') {
+        let gifCriteria = this.gif_opt_criteria;
+        hasOptim = gifCriteria.is_optimized || gifCriteria.is_lossy || gifCriteria.is_reduced_color || gifCriteria.is_dither_alpha;
+      }
+      else if (outFormat == 'png') {
+        hasOptim = this.hasAPNGOptimization;
+        let apngCriteria = this.apng_opt_criteria;
+        hasOptim = apngCriteria.apng_is_optimized || apngCriteria.apng_is_lossy || apngCriteria.apng_quantization_enabled || apngCriteria.apng_is_unoptimized;
+      }
+      else {
+        console.error(`Unknown format ${this.criteria.format.toLowerCase()}`);
+      }
+      /*
+      switch (this.criteria.format.toLowerCase().valueOf()) {
+        case 'gif':
+          hasOptim = this.hasGIFOptimization;
+          break;
+        case 'png':
+          hasOptim = this.hasAPNGOptimization;
+        default:
+          console.error(`Unknown format ${this.criteria.format.toLowerCase()}`)
+          break;
+      }
+      */
+      return hasOptim;
+    },
+    hasModification() {
+      console.debug(`hasModification: ${this.hasGeneralModification} ${this.hasFormatOptimization}`)
+      return this.orig_attribute.path !== "" && this.hasGeneralModification || this.hasFormatOptimization;
+    },
   },
   methods: {
     loadOrigMetadata(res) {
       let geninfo = res.general_info;
       let ainfo = res.animation_info;
       this.orig_attribute.name = geninfo.name.value;
-      this.save_fstem = stem(this.save_fstem || geninfo.name.value);
+      // this.save_fstem = stem(this.save_fstem || geninfo.name.value);
       this.orig_attribute.width = geninfo.width.value;
       this.orig_attribute.height = geninfo.height.value;
-      this.orig_attribute.fps = `${ainfo.fps.value} FPS`;
+      this.orig_attribute.fps = ainfo.fps.value;
+      this.orig_attribute.fps_info = `${ainfo.fps.value} FPS`;
       this.orig_attribute.frame_count= ainfo.frame_count.value;
-      this.orig_attribute.format = geninfo.format.value;
+      this.orig_attribute.format = geninfo.format.value.toLowerCase();
+      this.orig_attribute.format_info = geninfo.format.value.toUpperCase();
       let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
       if (ainfo.delays_are_even.value) {
         delay_info += ` (even)`;
@@ -1141,11 +759,12 @@ export default {
       this.orig_attribute.delay = ainfo.average_delay.value;
       this.orig_attribute.delay_info = delay_info;
       this.orig_attribute.loop_duration = ainfo.loop_duration.value;
+      this.orig_attribute.loop_count = ainfo.loop_count.value;
       if (ainfo.loop_count.value == 0) {
-        this.orig_attribute.loop_count = "Infinite"
+        this.orig_attribute.loop_count_info = "Infinite"
       }
       else {
-        this.orig_attribute.loop_count = ainfo.loop_count.value;
+        this.orig_attribute.loop_count_info = ainfo.loop_count.value;
       }
       this.orig_attribute.path = geninfo.absolute_url.value;
       this.orig_attribute.file_size = geninfo.fsize.value;
@@ -1161,22 +780,24 @@ export default {
       this.preview_attribute.height = geninfo.height.value;
       this.preview_attribute.fps = `${ainfo.fps.value} FPS`;
       this.preview_attribute.frame_count= ainfo.frame_count.value;
-      this.preview_attribute.format = geninfo.format.value;
+      this.preview_attribute.format = geninfo.format.value.toLowerCase();
+      this.preview_attribute.format_info = geninfo.format.value.toUpperCase();
       let delay_info = `${roundPrecise(ainfo.average_delay.value, 3)} ms`;
       if (ainfo.delays_are_even.value) {
         delay_info += ` (even)`;
       }
       else {
-        delay_info += ` (not even)`;
+        delay_info += ` (uneven)`;
       }
       this.preview_attribute.delay = ainfo.average_delay.value;
       this.preview_attribute.delay_info = delay_info;
       this.preview_attribute.loop_duration = ainfo.loop_duration.value;
+      this.preview_attribute.loop_count = ainfo.loop_count.value;
       if (ainfo.loop_count.value == 0) {
-        this.preview_attribute.loop_count = "Infinite"
+        this.preview_attribute.loop_count_info = "Infinite"
       }
       else {
-        this.preview_attribute.loop_count = ainfo.loop_count.value;
+        this.preview_attribute.loop_count_info = ainfo.loop_count.value;
       }
       this.preview_attribute.path = geninfo.absolute_url.value;
       this.preview_attribute.file_size = geninfo.fsize.value;
@@ -1226,7 +847,7 @@ export default {
         this.MOD_IS_LOADING = true;
         this._logProcessing("Loading image...");
         tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
-          if (error) {        
+          if (error) {
             try {
               this._logError(error);
               // this.modify_msgbox = error;
@@ -1259,6 +880,7 @@ export default {
       this.orig_attribute.frame_count = "";
       this.orig_attribute.frame_count_ds = "";
       this.orig_attribute.fps = "";
+      this.orig_attribute.fps_info = "";
       this.orig_attribute.delay = "";
       this.orig_attribute.delay_info = "";
       this.orig_attribute.loop_duration = "";
@@ -1291,6 +913,7 @@ export default {
       this._logClear();
     },
     clearCriteriaFields() {
+      this.fname = "";
       this.criteria.old_width = "";
       this.criteria.width = "";
       this.criteria.old_height = "";
@@ -1316,8 +939,8 @@ export default {
       this.lock_aspect_ratio = false;
     },
     clearPreviewImage() {
-      this.preview_path = "";
-      this.preview_path_cb = "";
+      this.previewPath = "";
+      this.previewPathCB = "";
       this.preview_size = "";
       this.preview_size_hr = "";
       this.clearPreiewMetadata();
@@ -1348,7 +971,7 @@ export default {
     },
     btnModifyImage() {
       if (!this.orig_attribute.path) {
-        this._logError("Please load the animated image to be modified!");
+        this._logError("Please load an image first!");
         return;
       }
 
@@ -1416,6 +1039,9 @@ export default {
       return proceed;
     },
     // chooseOutDir: chooseOutDir,
+    btnPreviewModImg() {
+      this.previewModImg();
+    },
     previewModImg() {
       if (this.orig_attribute.path == "") {
         this._logError("Please load an animated image first!");
@@ -1442,12 +1068,12 @@ export default {
             this._logProcessing(res.msg);
           }
           if (res.preview_path) {
-            this.preview_path = res.preview_path;
+            this.previewPath = res.preview_path;
             this.previewPathCacheBreaker();
           }
         }
       },
-      () => tridentEngine(["inspect_one", this.preview_path, "animated"], (error, res) => {
+      () => tridentEngine(["inspect_one", this.previewPath, "animated"], (error, res) => {
         if (error) {
           console.error(error);
           this._logError(error);
@@ -1464,10 +1090,50 @@ export default {
         }})
       );
     },
+    btnPreviewSaveAIMG() {
+      (async () => {
+        if (!this.previewPath) {
+          this._logError("No image in the preview to be saved!");
+          return Promise.reject("No image in the preview to be saved!");
+        }
+        let targetDir = this.saveDir;
+        if (!targetDir) {
+          let options = { properties: dir_dialog_props };
+          const result = await ipcRenderer.invoke('open-dialog', options);
+          if (result.canceled)
+            return Promise.reject("Directory selection cancelled");
+          else{
+            let out_dirs = result.filePaths;
+            console.log(out_dirs);
+            if (out_dirs && out_dirs.length > 0) { 
+              targetDir = out_dirs[0];
+            }
+            else {
+              return Promise.reject("No directories are selected")
+            }
+          }
+        }
+        let targetFormat = this.previewPath.split('.').pop();
+        let targetName = `create_preview_${Date.now()}_${randString(7)}.${this.previewPath.split('.').pop().toLowerCase()}`;
+        // let targetName = basename(this.previewPath);
+        let targetFullPath = join(targetDir, targetName);
+        console.debug(targetFullPath);
+        let proceed = await this._checkFileOverwriteAsync(targetFullPath);
+        console.log(`proceed? ${proceed}`)
+        if (proceed){
+          await copyFile(this.previewPath, targetFullPath);
+          this._logSuccess(`Saved preview image to ${targetDir}`);
+        }
+        else {
+        }
+      })().catch((error) => {
+        console.error(error);
+      });
+    },
     previewPathCacheBreaker() {
-      let cb_url = `${this.preview_path}`;
+      let cb_url = `${this.previewPath}`;
       console.log("Cache breaker url", cb_url);
-      this.preview_path_cb = cb_url;
+      this.previewPathCB = cb_url;
     },
     modifyImage() {
       let proceed_modify = true;
@@ -1574,60 +1240,27 @@ export default {
       }
     },
     _logClear() {
-      this.statusBarBus.$emit("logClear");
-    },
-    _logProcessing(message) {
-      this.statusBarBus.$emit("logProcessing", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
     _logMessage(message) {
-      this.statusBarBus.$emit("logMessage", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
+    },
+    _logProcessing(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.PROCESSING, message);
     },
     _logSuccess(message) {
-      this.statusBarBus.$emit("logSuccess", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.SUCCESS, message);
     },
     _logWarning(message) {
-      this.statusBarBus.$emit("logWarning", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.WARNING, message);
     },
     _logError(message) {
-      this.statusBarBus.$emit("logError", message);
+      logStatus(this.statusBarId, EnumStatusLogLevel.ERROR, message);
     },
     floatConstrain: floatConstrain,
     numConstrain: numConstrain,
     roundPrecise: roundPrecise,
     escapeLocalPath: escapeLocalPath,
-  },
-  computed: {
-    origDimensions() {
-      if (this.orig_attribute.width && this.orig_attribute.height) {
-        return `${this.orig_attribute.width} x ${this.orig_attribute.height}`;
-      }
-      else {
-        return "";
-      }
-    },
-    previewDimensions() {
-      if (this.preview_attribute.width && this.preview_attribute.height) {
-        return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
-      }
-      else {
-        return "";
-      }
-    },
-    buttonIsFrozen() {
-      if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
-      else return false;
-    },
-    previewSizePercentage() {
-      if (this.orig_attribute.path && this.preview_attribute.path) {
-        let oldSize = this.orig_attribute.file_size
-        let previewSize = this.preview_attribute.file_size;
-        console.log(oldSize, previewSize);
-        let newSizePercentage = (previewSize / oldSize * 100).toFixed(2);
-        let text = `${newSizePercentage}%`;
-        return text;
-      }
-      else return "";
-    },
   }
 };
 </script>

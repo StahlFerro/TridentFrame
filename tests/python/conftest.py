@@ -26,89 +26,114 @@ def scaffold_spaced_dir(tmp_path_factory) -> Path:
 
 
 @pytest.fixture(scope="session")
-def fx_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_sequence_dir_contents: List[Path]) -> Path:
-    static_img_path = fx_sequence_dir_contents[0]
+def fx_samples_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_samples_sequence_dir_contents: List[Path]) -> Path:
+    static_img_path = fx_samples_sequence_dir_contents[0]
     copied_simg = scaffold_spaced_dir.joinpath(static_img_path.name)
     shutil.copy(static_img_path, copied_simg)
     return copied_simg
 
 
 @pytest.fixture(scope="session")
-def fx_spaced_dir_agif_checker(scaffold_spaced_dir: Path, fx_checker_agif_path: Path):
-    copied_aimg = scaffold_spaced_dir.joinpath(fx_checker_agif_path.name)
-    shutil.copy(fx_checker_agif_path, copied_aimg)
+def fx_samples_spaced_dir_agif_checker(scaffold_spaced_dir: Path, fx_samples_checker_agif_path: Path):
+    copied_aimg = scaffold_spaced_dir.joinpath(fx_samples_checker_agif_path.name)
+    shutil.copy(fx_samples_checker_agif_path, copied_aimg)
     return copied_aimg
 
 
 @pytest.fixture(scope="session")
-def fx_spaced_dir_apng_checker(scaffold_spaced_dir: Path, fx_checker_apng_path: Path):
-    copied_aimg = scaffold_spaced_dir.joinpath(fx_checker_apng_path.name)
-    shutil.copy(fx_checker_apng_path, copied_aimg)
+def fx_samples_spaced_dir_apng_checker(scaffold_spaced_dir: Path, fx_samples_checker_apng_path: Path):
+    copied_aimg = scaffold_spaced_dir.joinpath(fx_samples_checker_apng_path.name)
+    shutil.copy(fx_samples_checker_apng_path, copied_aimg)
     return copied_aimg
 
 
 @pytest.fixture(scope="session")
-def fx_path() -> Path:
-    return Path(__file__).resolve().parents[1].joinpath("_fixtures/")
+def fx_samples_path() -> Path:
+    return Path(__file__).resolve().parents[1].joinpath("_samples/")
 
 
 @pytest.fixture(scope="session")
-def fx_sequence_dir(fx_path) -> Path:
-    return fx_path.joinpath("sequence/")
+def fx_samples_sequence_dir(fx_samples_path) -> Path:
+    return fx_samples_path.joinpath("sequence/")
 
 
 @pytest.fixture(scope="session")
-def fx_sequence_dir_contents(fx_sequence_dir) -> List[Path]:
-    sequence = [p for p in fx_sequence_dir.iterdir() if p.stem.startswith("checker_4x4_")]
+def fx_samples_sequence_dir_contents(fx_samples_sequence_dir) -> List[Path]:
+    sequence = [p for p in fx_samples_sequence_dir.iterdir() if p.stem.startswith("checker_4x4_")]
     sequence.sort()
     return sequence
 
 
 @pytest.fixture(scope="session")
-def fx_checker_agif_path(fx_path: Path) -> Path:
-    return fx_path.joinpath("agif", "checker_371px.gif")
+def fx_samples_checker_agif_path(fx_samples_path: Path) -> Path:
+    return fx_samples_path.joinpath("agif", "checker_371px.gif")
 
 
 @pytest.fixture(scope="session")
-def fx_checker_apng_path(fx_path: Path) -> Path:
-    return fx_path.joinpath("apng", "checker_256px.png")
+def fx_samples_checker_apng_path(fx_samples_path: Path) -> Path:
+    return fx_samples_path.joinpath("apng", "checker_256px.png")
 
 
 @pytest.fixture(scope="session")
-def fx_json_dir(fx_path: Path) -> Path:
-    return fx_path.joinpath("json/")
+def fx_samples_json_dir(fx_samples_path: Path) -> Path:
+    return fx_samples_path.joinpath("json/")
 
 
 @pytest.fixture(scope="session")
-def fx_crbundle_001_create_optimized_gif_json(fx_json_dir: Path) -> Dict:
-    json_path = fx_json_dir.joinpath("crbundle_001_create_optimized_gif.json")
+def fx_samples_crbundle_001_create_optimized_gif_json(fx_samples_json_dir: Path) -> Dict:
+    json_path = fx_samples_json_dir.joinpath("crbundle_001_create_optimized_gif.json")
     with open(json_path, "r") as f:
         crpack = json.loads(f.read())
     return crpack
 
 
 @pytest.fixture(scope="session")
-def fx_crbundle_002_create_optimized_apng_json(fx_json_dir: Path) -> Dict:
-    json_path = fx_json_dir.joinpath("crbundle_002_create_optimized_apng.json")
+def fx_samples_crbundle_002_create_optimized_apng_json(fx_samples_json_dir: Path) -> Dict:
+    json_path = fx_samples_json_dir.joinpath("crbundle_002_create_optimized_apng.json")
     with open(json_path, "r") as f:
         crpack = json.loads(f.read())
     return crpack
 
 
 @pytest.fixture(scope="session")
-def fx_splitcriteria_001_split_gif_json(fx_json_dir: Path) -> Dict:
-    json_path = fx_json_dir.joinpath("splitcriteria_001_split_gif.json")
+def fx_samples_splitcriteria_001_split_gif_json(fx_samples_json_dir: Path) -> Dict:
+    json_path = fx_samples_json_dir.joinpath("splitcriteria_001_split_gif.json")
     with open(json_path, "r") as f:
         crpack = json.loads(f.read())
     return crpack
 
 
 @pytest.fixture(scope="session")
-def fx_splitcriteria_002_split_gif_json(fx_json_dir: Path) -> Dict:
-    json_path = fx_json_dir.joinpath("splitcriteria_002_split_gif.json")
+def fx_samples_splitcriteria_002_split_gif_json(fx_samples_json_dir: Path) -> Dict:
+    json_path = fx_samples_json_dir.joinpath("splitcriteria_002_split_gif.json")
     with open(json_path, "r") as f:
         crpack = json.loads(f.read())
     return crpack
+
+
+@pytest.fixture(scope="session")
+def fx_dev_root_dir():
+    return Path(__file__).resolve().parents[2]
+
+
+@pytest.fixture(scope="session")
+def fx_dev_config_dir(fx_dev_root_dir):
+    return fx_dev_root_dir.joinpath("config/")
+
+
+@pytest.fixture(scope="session")
+def fx_dev_config_engine_file(fx_dev_config_dir):
+    return fx_dev_config_dir.joinpath("engine.toml")
+
+
+@pytest.fixture(scope="session")
+def fx_dev_bin_dir(fx_dev_root_dir):
+    return fx_dev_root_dir.joinpath("bin/")
+
+
+@pytest.fixture(scope="session")
+def fx_dev_temp_dir(fx_dev_root_dir):
+    return fx_dev_root_dir.joinpath("temp/")
 
 
 @pytest.fixture(scope="session")
@@ -133,12 +158,12 @@ def fx_prod_app_dir(fx_prod_unpacked_dir):
 
 @pytest.fixture(scope="session")
 def fx_prod_engine_dir(fx_prod_app_dir):
-    engine_dirname: str = ""
+    engine_subdirname: str = ""
     if platform.startswith("win"):
-        engine_dirname = "windows"
+        engine_subdirname = "windows"
     elif platform.startswith("linux"):
-        engine_dirname = "linux"
-    return fx_prod_app_dir.joinpath("engine/", engine_dirname)
+        engine_subdirname = "linux"
+    return fx_prod_app_dir.joinpath("engine/", engine_subdirname)
 
 
 @pytest.fixture(scope="session")
@@ -156,14 +181,19 @@ def fx_prod_previews_dir(fx_prod_temp_dir):
     return fx_prod_temp_dir.joinpath("previews/")
 
 
-@pytest.fixture(scope="session")
-def fx_prod_imagers_jsonpath(fx_prod_engine_dir):
-    return fx_prod_engine_dir.joinpath("config", "imagers.json")
+# @pytest.fixture(scope="session")
+# def fx_prod_imagers_jsonpath(fx_prod_engine_dir):
+#     return fx_prod_engine_dir.joinpath("config", "imagers.json")
+#
+#
+# @pytest.fixture(scope="session")
+# def fx_prod_settings_jsonpath(fx_prod_engine_dir):
+#     return fx_prod_engine_dir.joinpath("config", "settings.json")
 
 
 @pytest.fixture(scope="session")
-def fx_prod_settings_jsonpath(fx_prod_engine_dir):
-    return fx_prod_engine_dir.joinpath("config", "settings.json")
+def fx_prod_config_engine_file(fx_prod_engine_dir):
+    return fx_prod_engine_dir.joinpath("config", "engine.toml")
 
 
 @pytest.fixture(scope="session")
