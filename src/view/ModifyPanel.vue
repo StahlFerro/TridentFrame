@@ -174,7 +174,7 @@
         </div>
         <div class="mpb-center-buttons">
           <p class="is-white-d">
-            {{ hasModification }}
+            <!-- {{ hasModification }} -->
           </p>
         </div>
         <div class="mpb-preview-buttons">
