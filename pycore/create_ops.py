@@ -208,10 +208,10 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
             #     im = im.rotate(criteria.rotation, expand=True)
             # logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
             quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
-            if aopt_criteria.is_lossy:
+            if aopt_criteria.is_reduced_color:
                 stdio.debug(f"Frame #{index}, has transparency: {has_transparency}, transparency: "
                              f"{im.info.get('transparency')}, quantization method: {quant_method}")
-                im = im.quantize(aopt_criteria.lossy_value, method=quant_method).convert("RGBA")
+                im = im.quantize(aopt_criteria.color_count, method=quant_method).convert("RGBA")
             if aopt_criteria.convert_color_mode:
                 im = im.convert(aopt_criteria.new_color_mode)
             # logger.debug(f"SAVE PATH IS: {save_path}")

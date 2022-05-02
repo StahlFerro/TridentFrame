@@ -134,7 +134,7 @@ export default {
       //   this.logLevel = EnumStatusLogLevel.INFO;
     },
     logProcessing(message) {
-      console.log(message);
+      console.debug(message);
       this.statusText = message;
       // if (this.logLevel != EnumStatusLogLevel.PROCESSING)
       //   this.logLevel = EnumStatusLogLevel.PROCESSING;
@@ -145,13 +145,13 @@ export default {
       // this.logLevel = EnumStatusLogLevel.SUCCESS;
     },
     logWarning(message) {
-      console.log(message);
+      console.warn(message);
       this.statusText = message;
       // this.logLevel = EnumStatusLogLevel.WARNING;
     },
     logError(message) {
       console.log("logError called");
-      console.log(message);
+      console.error(message);
       this.statusText = message;
       // this.logLevel = EnumStatusLogLevel.ERROR;
     },

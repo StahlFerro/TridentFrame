@@ -36,7 +36,8 @@
     <td class="force-vcenter">
       <label
         class="checkbox"
-        title="Performs significant file size reduction at the cost of quality (artifacts and noise)"
+        title="Performs significant file size reduction at the cost of quality (artifacts and noise). Ranging from 30 (lightest compression) to 200 (heaviest compression). 
+Beyond 200 there is no guarantee that the size will reduce greater than the quality"
       >
         <input
           v-model="is_lossy" type="checkbox" :disabled="isUnoptimized"
@@ -223,9 +224,9 @@ export default {
       is_optimized: false,
       optimization_level: "1",
       is_lossy: false,
-      lossy_value: "",
+      lossy_value: 30,
       is_reduced_color: false,
-      color_space: "",
+      color_space: 256,
       dither_method: "FLOYD_STEINBERG",
       palletization_method: "ADAPTIVE",
       is_dither_alpha: false,

@@ -51,7 +51,7 @@ def message(logmsg):
 
 def warn(logmsg: str):
     msg = {"warning": logmsg}
-    print(json.dumps(msg))
+    print(json.dumps(msg), file=sys.stderr)
 
 
 def error(logmsg: Any):
