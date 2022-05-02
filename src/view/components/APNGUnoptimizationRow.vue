@@ -27,8 +27,8 @@ export default {
     return {
       // apng_is_optimized: false,
       // apng_optimization_level: "1",
-      // apng_is_lossy: false,
-      // apng_lossy_value: "",
+      // apng_is_reduced_color: false,
+      // apng_color_count: "",
       apng_is_unoptimized: false,
     };
   }

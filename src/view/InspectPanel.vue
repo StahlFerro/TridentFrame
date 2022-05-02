@@ -193,16 +193,15 @@ export default {
       this._logProcessing(`Loading image ${image_path}`);
       this.INS_IS_INSPECTING = true;
       console.log(image_path);
-      tridentEngine(["inspect_one", image_path], (error, res) => {
-        if (error) {
-          try {
-            // this.load_has_error = true;
-            this._logError(error);
+      tridentEngine(["inspect_one", image_path], (err, res) => {
+        if (err) {
+          if (err.error) {
+            this._logError(err.error);
             this._clearImage(); 
             this._clearInfo();
           }
-          catch (e) {
-            // data.split_msgbox = error;
+          else if (err.warning) {
+            this._logWarning(err.warning);
           }
         }
         else {

@@ -46,23 +46,49 @@
       </label>
     </td>
     <td class="force-vcenter">
-      <div class="field">
-        <label
-          class="label"
-          title="Quality to preserve. Ranging from 0 (worst quality but strongest compression) to 100 (best quality, weakest compression)"
-        >Quality</label>
-        <div class="control">
-          <input
-            v-model="apng_quantization_quality"
-            class="input is-neon-white"
-            type="number"
-            min="0"
-            max="100"
-            placeholder="0 - 100"
-            :disabled="!apng_quantization_enabled"
-            @change="$emit('update:apng_quantization_quality', apng_quantization_quality)"
-            @keydown="numConstrain($event, true, true)"
-          />
+      <div class="field is-horizontal">
+        <!-- <div class="field-label is-normal is-padding-middle">
+          <label class="label">Quality</label>
+        </div> -->
+        <div class="field-body">
+          <div class="field">
+            <label
+              class="label"
+              title="Minimum quality. Ranging from 0 (worst quality but strongest compression) to 100 (best quality, weakest compression)"
+            >Min Quality</label>
+            <div class="control">
+              <input
+                v-model="apng_quantization_quality_min"
+                class="input is-neon-white"
+                type="number"
+                min="0"
+                max="100"
+                placeholder="0 - 100"
+                :disabled="!apng_quantization_enabled"
+                @change="$emit('update:apng_quantization_quality_min', apng_quantization_quality_min)"
+                @keydown="numConstrain($event, true, true)"
+              />
+            </div>
+          </div>
+          <div class="field">
+            <label
+              class="label"
+              title="Maximum quality. Ranging from 0 (worst quality but strongest compression) to 100 (best quality, weakest compression)"
+            >Max Quality</label>
+            <div class="control">
+              <input
+                v-model="apng_quantization_quality_max"
+                class="input is-neon-white"
+                type="number"
+                min="0"
+                max="100"
+                placeholder="0 - 100"
+                :disabled="!apng_quantization_enabled"
+                @change="$emit('update:apng_quantization_quality_max', apng_quantization_quality_max)"
+                @keydown="numConstrain($event, true, true)"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </td>
@@ -93,11 +119,11 @@
     <td class="force-vcenter">
       <label
         class="checkbox"
-        title="Use pngquant to lossy-compress each PNG images before combining them into a single APNG"
+        title="When checked, reduce the amount of colors on each PNG image. Ranging from 2 colors (monochrome) to 256."
       >
         <input
-          v-model="apng_is_lossy" type="checkbox" :disabled="apng_is_unoptimized"
-          @change="$emit('update:apng_is_lossy', apng_is_lossy)"
+          v-model="apng_is_reduced_color" type="checkbox" :disabled="apng_is_unoptimized"
+          @change="$emit('update:apng_is_reduced_color', apng_is_reduced_color)"
         />
         Color space
       </label>
@@ -107,14 +133,14 @@
         <!-- <label class="label">Color space</label> -->
         <div class="control">
           <input
-            v-model="apng_lossy_value"
+            v-model="apng_color_count"
             class="input is-neon-white"
             type="number"
             min="2"
             max="256"
             placeholder="2 - 256"
-            :disabled="!apng_is_lossy"
-            @change="$emit('update:apng_lossy_value', apng_lossy_value)"
+            :disabled="!apng_is_reduced_color"
+            @change="$emit('update:apng_color_count', apng_color_count)"
             @keydown="numConstrain($event, true, true)"
           />
         </div>
@@ -132,20 +158,21 @@ import { numConstrain } from "../../modules/events/constraints";
 export default {
   name: "APNGOptimizationRow",
   props: ['apng_is_unoptimized'],
-  emits: ['update:apng_is_optimized', 'update:apng_optimization_level', 'update:apng_quantization_enabled', 'update:apng_quantization_quality', 
-  'update:apng_quantization_speed', 'update:apng_is_lossy', 'update:apng_lossy_value'],
+  emits: ['update:apng_is_optimized', 'update:apng_optimization_level', 'update:apng_quantization_enabled',
+  'update:apng_quantization_quality_min', 'update:apng_quantization_quality_max', 
+  'update:apng_quantization_speed', 'update:apng_is_reduced_color', 'update:apng_color_count'],
   // components: { Fragment },
   data: function() {
     return {
       // hasOptimization: false,
       apng_is_optimized: false,
       apng_optimization_level: "1",
-      apng_is_lossy: false,
-      apng_lossy_value: "",
+      apng_is_reduced_color: false,
+      apng_color_count: 256,
       apng_quantization_enabled: false,
-      apng_quantization_quality: "",
+      apng_quantization_quality_min: 65,
+      apng_quantization_quality_max: 80,
       apng_quantization_speed: 3,
-      apng_speed_value: "",
       apng_convert_color_mode: false,
       apng_new_color_mode: "RGBA",
       // apng_is_unoptimized: false,
@@ -153,7 +180,7 @@ export default {
   },
   computed: {
     // hasOptimizaton () {
-    //   let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_lossy;
+    //   let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_reduced_color;
     //   console.debug(`APNGOpt component hasOptim: ${hasOptim}`);
     //   this.$emit('update:hasOptimizaton', hasOptim);
     //   return hasOptim;
@@ -161,7 +188,7 @@ export default {
   },
   watch: {
     // hasOptimizatonWatcher () {
-    //   let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_lossy;
+    //   let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_reduced_color;
     //   console.debug(`APNGOpt component hasOptim: ${hasOptim}`);
     //   this.$emit('update:hasOptimizaton', hasOptim);
     //   // return hasOptim;
@@ -170,7 +197,7 @@ export default {
   methods: {
     numConstrain: numConstrain,
     getOptimStatus() {
-      let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_lossy;
+      let hasOptim = this.apng_is_optimized || this.apng_quantization_enabled || this.apng_is_reduced_color;
       return hasOptim
     }
   },

@@ -489,10 +489,11 @@
                   v-model:hasOptimizaton="hasAPNGOptimization"
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
                   v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
-                  v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
-                  v-model:apng_lossy_value="apng_opt_criteria.apng_lossy_value"
+                  v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
+                  v-model:apng_color_count="apng_opt_criteria.apng_color_count"
                   v-model:apng_quantization_enabled="apng_opt_criteria.apng_quantization_enabled"
-                  v-model:apng_quantization_quality="apng_opt_criteria.apng_quantization_quality"
+                  v-model:apng_quantization_quality_min="apng_opt_criteria.apng_quantization_quality_min"
+                  v-model:apng_quantization_quality_max="apng_opt_criteria.apng_quantization_quality_max"
                   v-model:apng_quantization_speed="apng_opt_criteria.apng_quantization_speed"
                   v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
                   v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
@@ -501,7 +502,7 @@
                 <APNGUnoptimizationRow
                   ref="apngUnoptimRow"
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
-                  v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
+                  v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
                   v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
                 />
               </table>
@@ -607,9 +608,9 @@ export default {
         is_optimized: false,
         optimization_level: "1",
         is_lossy: false,
-        lossy_value: "",
+        lossy_value: 30,
         is_reduced_color: false,
-        color_space: "",
+        color_space: 256,
         is_unoptimized: false,
         dither_method: "FLOYD_STEINBERG",
         palletization_method: "ADAPTIVE",
@@ -621,10 +622,11 @@ export default {
       apng_opt_criteria: {
         apng_is_optimized: false,
         apng_optimization_level: "1",
-        apng_is_lossy: false,
-        apng_lossy_value: "",
+        apng_is_reduced_color: false,
+        apng_color_count: 256,
         apng_quantization_enabled: false,
-        apng_quantization_quality: "",
+        apng_quantization_quality_min: 65,
+        apng_quantization_quality_max: 80,
         apng_quantization_speed: 3,
         apng_is_unoptimized: false,
         apng_convert_color_mode: false,
@@ -712,7 +714,7 @@ export default {
       else if (outFormat == 'png') {
         hasOptim = this.hasAPNGOptimization;
         let apngCriteria = this.apng_opt_criteria;
-        hasOptim = apngCriteria.apng_is_optimized || apngCriteria.apng_is_lossy || apngCriteria.apng_quantization_enabled || apngCriteria.apng_is_unoptimized;
+        hasOptim = apngCriteria.apng_is_optimized || apngCriteria.apng_is_reduced_color || apngCriteria.apng_quantization_enabled || apngCriteria.apng_is_unoptimized;
       }
       else {
         console.error(`Unknown format ${this.criteria.format.toLowerCase()}`);
@@ -846,18 +848,16 @@ export default {
         }
         this.MOD_IS_LOADING = true;
         this._logProcessing("Loading image...");
-        tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
-          if (error) {
-            try {
-              this._logError(error);
-              // this.modify_msgbox = error;
+        tridentEngine(["inspect_one", chosen_path[0], "animated"], (err, res) => {
+          if (err) {
+            if (err.error) {
+              this._logError(err.error);
+              this.MOD_IS_LOADING = false;
             }
-            catch (e) {
-              this._logError(e);
-              // this.modify_msgbox = error;
+            else if (err.warning) {
+              this._logWarning(err.warning);
             }
             // mboxError(split_msgbox, error);
-            this.MOD_IS_LOADING = false;
           } else if (res) {
             if (res && res.msg) {
               this._logProcessing(res.msg);
@@ -1056,12 +1056,15 @@ export default {
       let preview_filename = `modifyPanel_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
       let preview_savepath = join(PREVIEWS_PATH, preview_filename);
       // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-      tridentEngine(["modify_image", this.orig_attribute.path, preview_savepath, criteria_pack], (error, res) => {
-        if (error) {
-          console.error(error);
-          this._logError(error);
-          // this.modify_msgbox = error;
-          this.MOD_IS_PREVIEWING = false;
+      tridentEngine(["modify_image", this.orig_attribute.path, preview_savepath, criteria_pack], (err, res) => {
+        if (err) {
+          if (err.error) {
+            this._logError(err.error);
+            this.MOD_IS_PREVIEWING = false;
+          }
+          else if (err.warning) {
+            this._logWarning(err.warning);
+          }
         }
         else if (res) {
           if (res.msg) {
@@ -1073,10 +1076,14 @@ export default {
           }
         }
       },
-      () => tridentEngine(["inspect_one", this.previewPath, "animated"], (error, res) => {
-        if (error) {
-          console.error(error);
-          this._logError(error);
+      () => tridentEngine(["inspect_one", this.previewPath, "animated"], (err, res) => {
+        if (err) {
+          if (err.error) {
+            this._logError(err.error);
+          }
+          else if (err.warning) {
+            this._logWarning(err.warning);
+          }
         } else if (res && res.data) {
           let preview_data = res.data;
           console.log(`res -> ${res}`);
@@ -1147,11 +1154,15 @@ export default {
           "apng_opt_criteria": this.apng_opt_criteria,
         };
         // criteria_pack.criteria.name += `_preview_${Date.now()}_${randString(7)}`;
-        tridentEngine(["modify_image", this.orig_attribute.path, this._getSavePath(), criteria_pack], (error, res) => {
-          if (error) {
-            console.error(error);
-            this._logError(error);
-            this.MOD_IS_MODIFYING = false;
+        tridentEngine(["modify_image", this.orig_attribute.path, this._getSavePath(), criteria_pack], (err, res) => {
+          if (err) {
+            if (err.error) {
+              console.error(err.error);
+              this._logError(err.error);
+              this.MOD_IS_MODIFYING = false;
+            }
+            else if (err.warning)
+              this._logWarning(err.warning);
           }
           else if (res) {
             console.log(res);

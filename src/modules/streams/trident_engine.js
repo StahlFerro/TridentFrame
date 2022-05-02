@@ -33,7 +33,11 @@ function parseStdErrAndCall(errStream, callback) {
       console.error(err.traceback.join())
     if (err.error) {
       console.error(err.error);
-      callback(err.error, "");
+      callback(err, "");
+    }
+    else if (err.warning) {
+      console.warn(err.warning);
+      callback(err, "");
     }
   }
   catch (parseException) {

@@ -55,4 +55,4 @@ def test_create_apng(scaffold_spaced_dir: Path, fx_samples_crbundle_002_create_o
     assert metadata.average_delay['value'] == 200
     assert metadata.frame_count['value'] == 4
     assert metadata.has_transparency['value']
-    assert metadata.hash_sha1['value'] == "8f74b431b3e70a83d0a95910e70f482a14c0d0f0"
+    assert metadata.hash_sha1['value'] == "657b0c1b7231fc150337bad43a0db2bcea11ea8d"

@@ -474,10 +474,11 @@
                 <APNGOptimizationRow
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
                   v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
-                  v-model:apng_is_lossy="apng_opt_criteria.apng_is_lossy"
-                  v-model:apng_lossy_value="apng_opt_criteria.apng_lossy_value"
+                  v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
+                  v-model:apng_color_count="apng_opt_criteria.apng_color_count"
                   v-model:apng_quantization_enabled="apng_opt_criteria.apng_quantization_enabled"
-                  v-model:apng_quantization_quality="apng_opt_criteria.apng_quantization_quality"
+                  v-model:apng_quantization_quality_min="apng_opt_criteria.apng_quantization_quality_min"
+                  v-model:apng_quantization_quality_max="apng_opt_criteria.apng_quantization_quality_max"
                   v-model:apng_quantization_speed="apng_opt_criteria.apng_quantization_speed"
                   v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
                   v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
@@ -485,7 +486,7 @@
                 />
                 <!-- <APNGUnoptimizationRow
                         :apng_is_optimized.sync="apng_is_optimized"
-                        :apng_is_lossy.sync="apng_is_lossy"
+                        :apng_is_reduced_color.sync="apng_is_reduced_color"
                         :apng_is_unoptimized.sync="apng_is_unoptimized"
                       /> -->
               </table>
@@ -570,9 +571,9 @@ export default {
         is_optimized: false,
         optimization_level: "1",
         is_lossy: false,
-        lossy_value: "",
+        lossy_value: 30,
         is_reduced_color: false,
-        color_space: "",
+        color_space: 256,
         is_unoptimized: false,
         dither_method: "FLOYD_STEINBERG",
         palletization_method: "ADAPTIVE",
@@ -583,10 +584,11 @@ export default {
       apng_opt_criteria: {
         apng_is_optimized: false,
         apng_optimization_level: "1",
-        apng_is_lossy: false,
-        apng_lossy_value: "",
+        apng_is_reduced_color: false,
+        apng_color_count: 256,
         apng_quantization_enabled: false,
-        apng_quantization_quality: "",
+        apng_quantization_quality_min: 65,
+        apng_quantization_quality_max: 80,
         apng_quantization_speed: 3,
         apng_is_unoptimized: false,
         apng_preconvert_rgba: false,
@@ -711,16 +713,16 @@ export default {
 
         cmd_args.push(img_paths)
 
-        tridentEngine(cmd_args, (error, res) => {
-          if (error) {
-            try {
-              this._logError(error);
+        tridentEngine(cmd_args, (err, res) => {
+          if (err) {
+            if (err.error) {
+              this._logError(err.error);
+              this.toggleLoadButtonAnim(ops, false);
+              this.CRT_IS_LOADING = false;
             }
-            catch (e) {
-              this._logError(error);
+            else if (err.warning) {
+              this._logWarning(err.warning);
             }
-            this.CRT_IS_LOADING = false;
-            this.toggleLoadButtonAnim(ops, false);
           } else if (res) {
             if (res && res.msg) {
               this._logProcessing(res.msg);
@@ -802,10 +804,15 @@ export default {
       let preview_filename = `createPanel_preview_${Date.now()}_${randString(7)}.${this.criteria.format.toLowerCase()}`;
       let preview_savepath = join(PREVIEWS_PATH, preview_filename);
       console.log(preview_savepath);
-      tridentEngine(["combine_image", this.imagePaths, preview_savepath, criteria_pack], (error, res) => {
-        if (error) {
-          this._logError(error);
-          this.CRT_IS_PREVIEWING = false;
+      tridentEngine(["combine_image", this.imagePaths, preview_savepath, criteria_pack], (err, res) => {
+        if (err) {
+          if (err.error) {
+            this._logError(err.error);
+            this.CRT_IS_PREVIEWING = false;
+          }
+          else if (err.warning) {
+            this._logWarning(err.warning);
+          }
         } else if (res) {
           if (res.msg) {
             this._logProcessing(res.msg);
@@ -815,10 +822,15 @@ export default {
             this._previewPathCacheBreaker();
           }
         }},
-        () => tridentEngine(["inspect_one", this.previewPath], (error, info) => {
-          if (error) {
-            console.error(error);
-            this.CRT_IS_PREVIEWING = false;
+        () => tridentEngine(["inspect_one", this.previewPath], (err, info) => {
+          if (err) {
+            if (err.error) {
+              this._logError(err.error);
+              this.CRT_IS_PREVIEWING = false;
+            }
+            else if (err.warning) {
+              this._logWarning(err.warning);
+            }
           } else if (info) {
             let inspectionData = info.data;
             console.log("preview inspect");
@@ -1039,16 +1051,14 @@ export default {
         "gif_opt_criteria": this.gif_opt_criteria,
         "apng_opt_criteria": this.apng_opt_criteria,
       };
-      tridentEngine(["combine_image", this.imagePaths, this._getSavePath(), criteria_pack], (error, res) => {
-        if (error) {
-          try {
-            this._logError(error);
-            // this.create_msgbox = error;
+      tridentEngine(["combine_image", this.imagePaths, this._getSavePath(), criteria_pack], (err, res) => {
+        if (err) {
+          if (err.error) {
+            this._logError(err.error);
             this.CRT_IS_CREATING = false;
           }
-          catch (e) {
-            this._logError(e);
-            // this.create_msgbox = error;
+          else if (err.warning) {
+            this._logWarning(err.warning);
           }
         } else if (res) {
           console.log(`res -> ${res}`);

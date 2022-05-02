@@ -98,7 +98,7 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
     apng_im: APNG = APNG.open(apng_path)
     stdio.debug({"crbundle": crbundle})
     # Reiterate through the frames if matching certain conditions, or per-frame lossy compression is required
-    if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_lossy or aopt_criteria.is_unoptimized:
+    if mod_criteria.apng_must_reiterate(metadata) or aopt_criteria.is_reduced_color or aopt_criteria.is_unoptimized:
         stdio.debug(f"REITERATE APNG")
         new_apng: APNG = APNG()
         orig_width, orig_height = metadata.width["value"], metadata.height["value"]
@@ -113,7 +113,7 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             control.delay = delay_fraction.numerator
             control.delay_den = delay_fraction.denominator
             stdio.debug({"fr_control": control})
-            if mod_criteria.must_transform(metadata) or aopt_criteria.is_lossy or aopt_criteria.convert_color_mode\
+            if mod_criteria.must_transform(metadata) or aopt_criteria.is_reduced_color or aopt_criteria.convert_color_mode\
                     or aopt_criteria.is_unoptimized:
                 # with io.BytesIO() as img_buf:
                 #     png.save(img_buf)
@@ -130,9 +130,9 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
                     else:
                         im = im.convert("RGB")
                 quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
-                if aopt_criteria.is_lossy:
+                if aopt_criteria.is_reduced_color:
                     im = im.quantize(
-                        aopt_criteria.lossy_value, method=quant_method, dither=1).convert("RGBA")
+                        aopt_criteria.color_count, method=quant_method, dither=1).convert("RGBA")
                 if aopt_criteria.convert_color_mode:
                     im = im.convert(aopt_criteria.new_color_mode)
                 with io.BytesIO() as new_buf:

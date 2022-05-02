@@ -5,6 +5,7 @@ import uuid
 import shlex
 import shutil
 import subprocess
+from subprocess import CalledProcessError
 from pathlib import Path
 from sys import platform, stderr
 from enum import Enum, unique
@@ -751,15 +752,27 @@ class PNGQuantAPI:
         """
         args = []
         if apngopt_criteria.quantization_enabled:
-            quality = apngopt_criteria.quantization_quality
+            q_min = apngopt_criteria.quantization_quality_min
+            q_max = apngopt_criteria.quantization_quality_max
             speed = apngopt_criteria.quantization_speed
-            if quality:
-                args.append(f"--quality={quality}")
+            # Swap values if the min is larger than max
+            if q_min > q_max:
+                prev_min = q_min
+                q_min = q_max
+                q_max = prev_min
+            if q_min and q_max:
+                args.append(f"--quality={q_min}-{q_max}")
+            elif q_max and not q_min:
+                args.append(f"--quality={q_max}")
+            elif q_min and not q_max:
+                args.append(f"--quality={q_min}-100")
+            else:
+                raise Exception("Please specify at least a max quality value!")
             if speed:
                 args.append(f"--speed={speed}")
         stdio.debug(f"aopt_criteria ------> {apngopt_criteria}")
         stdio.debug(f"internal args ------> {args}")
-        # if criteria.apng_is_lossy:
+        # if criteria.is_reduced_color:
         # args.append(())
         return args
 
@@ -798,7 +811,11 @@ class PNGQuantAPI:
         ]
         cmd = " ".join(args)
         stdio.debug(f"PNGQUANT ARGS ---------> {cmd}")
-        result = subprocess.check_output(args)
+        try:
+            result = subprocess.check_output(args)
+        except CalledProcessError as err:
+            # raise err
+            stdio.warn(f'{err}')
         # Convert back to RGBA image
         with Image.open(image_path).convert("RGBA") as rgba_im:
             rgba_im.save(image_path)
