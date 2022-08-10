@@ -46,7 +46,7 @@ const createWindow = () => {
 	if (deploy_env && deploy_env == 'DEV') {
 		// Development environment
 		console.debug('------ DEVELOPMENT VERSION ------');
-		mainWindow.loadURL('http://localhost:8080/');
+		mainWindow.loadURL('http://localhost:8705/');
 	} else {
 		console.debug('------ PRODUCTION VERSION ------');
 		// Production environment

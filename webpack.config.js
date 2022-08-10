@@ -148,6 +148,7 @@ module.exports = env => {
     },
     devServer: {
       hot: true,
+      port: 8705,
       static: {
         directory: path.join(__dirname, "dist"),
       }
