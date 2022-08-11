@@ -28,19 +28,19 @@
               </tr> -->
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ origDimensions }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.dimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
                   Dimensions
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ previewDimensions }}</span>
+                  <span v-if="preview_attribute">{{ previewDimensionsText }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.file_size_hr }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.fileSize }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
@@ -56,7 +56,7 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.format_info }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.format }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
@@ -68,7 +68,7 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.frame_count }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.frameCount }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
@@ -80,7 +80,7 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.fps_info }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
@@ -92,7 +92,7 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.delay_info }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.averageDelay }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
@@ -104,7 +104,7 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute && orig_attribute.loop_duration">{{ roundPrecise(orig_attribute.loop_duration, 3) }} seconds</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.loopDuration }}</span>
                 </td>
                 <td class="mod-info-label is-cyan">
                   Loop duration
@@ -115,12 +115,7 @@
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <template v-if="orig_attribute">
-                    {{ orig_attribute.loop_count_info }}
-                    <!-- <span v-if="orig_attribute.loop_count == 0">Infinite</span>
-                    <span v-else>{{ orig_attribute.loop_count }}</span> -->
-                  </template>
-                  <!-- <template v-else>-</template> -->
+                  {{ origAttributesTable.loopCount }}
                 </td>
                 <td class="mod-info-label is-cyan">
                   Loop count
@@ -374,12 +369,36 @@
                     </div>
                   </td>
                   <td width="16.7%">
-                    <!-- <div class="field">
-                      <label class="label">Rotation</label>
+                    <div class="field">
+                      <label
+                        class="label"
+                        title="How to modify the delay"
+                      >Delay Handling</label>
                       <div class="control">
-                        <input v-model="criteria.rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
+                        <div class="select is-neon-cyan">
+                          <select v-model="criteria.delay_handling">
+                            <option
+                              value="EVEN_OUT"
+                              title="Change all frame delay to the specified Delay field"
+                            >
+                              Even out
+                            </option>
+                            <option
+                              value="MULTIPLY_AVERAGE"
+                              title="Multiply all frames based on the ratio between the current average and the value specified in the Delay field"
+                            >
+                              Multiply average
+                            </option>
+                            <option
+                              value="DO_NOTHING"
+                              title="Don't alter the current frames delays at all"
+                            >
+                              Do nothing
+                            </option>
+                          </select>
+                        </div>
                       </div>
-                    </div> -->
+                    </div>
                   </td>
                   <!-- <td width="20%">
                     <div class="field">
@@ -595,6 +614,7 @@ export default {
         rotation: "",
         fps: "",
         delay: "",
+        delay_handling: "EVEN_OUT",
         loop_count: "",
         format: "gif",
         skip_frame: "",
@@ -657,7 +677,7 @@ export default {
     };
   },
   computed: {
-    origDimensions() {
+    origDimensionsText() {
       if (this.orig_attribute.width && this.orig_attribute.height) {
         return `${this.orig_attribute.width} x ${this.orig_attribute.height}`;
       }
@@ -665,13 +685,27 @@ export default {
         return "";
       }
     },
-    previewDimensions() {
+    previewDimensionsText() {
       if (this.preview_attribute.width && this.preview_attribute.height) {
         return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
       }
       else {
         return "";
       }
+    },
+    origAttributesTable() {
+      let origAttributes = {
+        dimensions: this.origDimensionsText,
+        fileSize: this.orig_attribute.file_size_hr,
+        format: this.orig_attribute.format.toUpperCase(),
+        frameCount: this.orig_attribute.frame_count,
+        fps: this.orig_attribute.fps? `${this.orig_attribute.fps} FPS` : '',
+        averageDelay: this.orig_attribute.delay? `${roundPrecise(this.orig_attribute.delay, 3)} ms` : '',
+        loopDuration: this.orig_attribute && this.orig_attribute.loop_duration? `${roundPrecise(this.orig_attribute.loop_duration, 3) } seconds` : '',
+        loopCount: this.orig_attribute.loop_count && this.orig_attribute.loop_count == 0? "Infinite" : this.orig_attribute.loop_count,
+      }
+      console.table(origAttributes);
+      return origAttributes;
     },
     buttonIsFrozen() {
       if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
@@ -885,9 +919,11 @@ export default {
       this.orig_attribute.delay_info = "";
       this.orig_attribute.loop_duration = "";
       this.orig_attribute.loop_count = "";
+      this.orig_attribute.loop_count_info = "";
       this.orig_attribute.file_size = "";
       this.orig_attribute.file_size_hr = "";
       this.orig_attribute.format = "";
+      this.orig_attribute.format_info = "";
       this.orig_attribute.path = "";
       this.orig_attribute.hash_sha1 = "";
       this.orig_attribute.last_modified_dt = "";

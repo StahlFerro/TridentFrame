@@ -11,6 +11,7 @@ from apng import APNG
 from isort import file
 
 from pycore.core_funcs import stdio
+from pycore.models.image_formats import ImageFormat
 
 
 PNG_BLOCK_SIZE = 64
@@ -45,12 +46,13 @@ def get_image_delays(image_path: Path, extension: str) -> Iterator[float]:
     Yields:
         Iterator[float]: Image delays
     """
-    if extension == "GIF":
+    iformat = ImageFormat[extension.upper()]
+    if iformat == ImageFormat.GIF:
         with Image.open(image_path) as gif:
             for i in range(0, gif.n_frames):
                 gif.seek(i)
                 yield gif.info["duration"]
-    elif extension == "PNG":
+    elif iformat == ImageFormat.PNG:
         apng = APNG.open(image_path)
         for png, control in apng.frames:
             if control:

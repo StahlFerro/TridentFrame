@@ -29,13 +29,13 @@ def test_get_image_delays(fx_samples_checker_apng_path):
     (2, ["checker_4x4_00002.png", "checker_4x4_00003.png", "checker_4x4_00000.png", "checker_4x4_00001.png"]),
     (-1, ["checker_4x4_00003.png", "checker_4x4_00000.png", "checker_4x4_00001.png", "checker_4x4_00002.png"])
 ])
-def test_shift_image_sequence(shift_number, expected_list, fx_samples_checkers_sequence):
-    shifted_fnames = [sp.name for sp in shift_image_sequence(fx_samples_checkers_sequence, shift_number)]
+def test_shift_image_sequence(shift_number, expected_list, fx_samples_checkers_01_sequence):
+    shifted_fnames = [sp.name for sp in shift_image_sequence(fx_samples_checkers_01_sequence, shift_number)]
     assert shifted_fnames == expected_list
 
 
-def test_actual_sequence_nameget(fx_samples_checkers_sequence, fx_samples_disposaltest_sequence):
-    for fpath in fx_samples_checkers_sequence:
+def test_actual_sequence_nameget(fx_samples_checkers_01_sequence, fx_samples_disposaltest_sequence):
+    for fpath in fx_samples_checkers_01_sequence:
         assert sequence_nameget(fpath.name) == "checker_4x4_"
     for fpath in fx_samples_disposaltest_sequence:
         assert sequence_nameget(fpath) == "disposaltest"

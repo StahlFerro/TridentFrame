@@ -1,16 +1,20 @@
+from operator import mod
 import os
 import io
 import shutil
 import math
 from fractions import Fraction
 from pathlib import Path
+from typing import List
 
 from PIL import Image
 from apng import APNG, PNG
 
 from pycore.models.criterion import (
     CriteriaBundle,
+    DelayHandling,
 )
+from pycore.models.image_formats import ImageFormat
 from pycore.utility import filehandler
 from pycore.bin_funcs.imager_api import GifsicleAPI, ImageMagickAPI, APNGOptAPI, InternalImageAPI
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
@@ -103,16 +107,39 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
         new_apng: APNG = APNG()
         orig_width, orig_height = metadata.width["value"], metadata.height["value"]
         alpha_base = Image.new("RGBA", size=(orig_width, orig_height))
-        unoptimized_apng_frames = InternalImageAPI.get_apng_frames(apng_im, unoptimize=True)
+        unoptimized_apng_frames = list(InternalImageAPI.get_apng_frames(apng_im, unoptimize=True))
         if mod_criteria.reverse:
-            unoptimized_apng_frames = reversed(list(unoptimized_apng_frames))
+            unoptimized_apng_frames = reversed(unoptimized_apng_frames)
+            
+        orig_delays = [Fraction(f[1].delay, f[1].delay_den) if f[1] else 0 for f in unoptimized_apng_frames]
+        stdio.error({"orig_delays": orig_delays})
+        new_delays: List
+        if mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
+            new_delays = [Fraction(mod_criteria.delay).limit_denominator() for _ in orig_delays]
+        elif mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+            orig_avg_delay = sum(orig_delays) / len(orig_delays)
+            delay_ratio = Fraction(mod_criteria.delay).limit_denominator() / orig_avg_delay
+            stdio.error(f"delay ratio {delay_ratio}, {mod_criteria.delay}, {Fraction(mod_criteria.delay).limit_denominator()}, {orig_avg_delay}")
+            new_delays = [delay_ratio * od for od in orig_delays]
+        elif mod_criteria.delay_handling == DelayHandling.DO_NOTHING:
+            new_delays = orig_delays
+        else:
+            raise Exception(f"Unknown delay handling method: {mod_criteria.delay_handling}")
+        stdio.error({
+            "new_delays": new_delays,
+            "uaf": len(unoptimized_apng_frames)
+        })
         for index, (im, control) in enumerate(unoptimized_apng_frames):
             # logger.debug(png.chunks)
-            delay_fraction = Fraction(1/mod_criteria.fps).limit_denominator()
+            # delay_fraction = Fraction(1/mod_criteria.fps).limit_denominator()
             # delay = int(mod_criteria.delay * 1000)
-            control.delay = delay_fraction.numerator
-            control.delay_den = delay_fraction.denominator
-            stdio.debug({"fr_control": control})
+            new_delay = new_delays[index]
+            control.delay = new_delay.numerator
+            control.delay_den = new_delay.denominator
+            stdio.debug({
+                "fr_control": control,
+                "new_delay": new_delay,
+            })
             if mod_criteria.must_transform(metadata) or aopt_criteria.is_reduced_color or aopt_criteria.convert_color_mode\
                     or aopt_criteria.is_unoptimized:
                 # with io.BytesIO() as img_buf:
@@ -137,8 +164,8 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
                     im = im.convert(aopt_criteria.new_color_mode)
                 with io.BytesIO() as new_buf:
                     im.save(new_buf, "PNG")
-                    new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=delay_fraction.numerator,
-                                    delay_den=delay_fraction.denominator)
+                    new_apng.append(PNG.from_bytes(new_buf.getvalue()), delay=new_delay.numerator,
+                                    delay_den=new_delay.denominator)
         stdio.debug(f"NEW FRAMES COUNT: {len(new_apng.frames)}")
         if len(new_apng.frames) > 0:
             apng_im = new_apng
@@ -157,14 +184,14 @@ def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Pat
     criteria = crbundle.modify_aimg_criteria
     change_format = criteria.change_format(orig_attribute)
 
-    if change_format or criteria.gif_must_rebuild():
-        stdio.message("Rebuilding im...")
+    if change_format or criteria.must_transform(orig_attribute):
+        stdio.debug(f"Rebuilding {orig_attribute.format} image into {criteria.format}...")
         return rebuild_aimg(img_path, out_path, orig_attribute, crbundle)
     else:
-        stdio.message("Modifying im...")
-        if criteria.format == "GIF":
+        stdio.debug(f"Modifying {criteria.format} image...")
+        if criteria.format == ImageFormat.GIF:
             return _modify_gif(img_path, out_path, orig_attribute, crbundle)
-        elif criteria.format == "PNG":
+        elif criteria.format == ImageFormat.PNG:
             return _modify_apng(img_path, out_path, orig_attribute, crbundle)
 
     # sicle_args = gifsicle_mod_args(criteria, gifopt_criteria)

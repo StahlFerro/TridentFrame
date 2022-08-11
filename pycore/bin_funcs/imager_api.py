@@ -17,6 +17,7 @@ from apng import APNG, FrameControl
 
 from pycore.models.criterion import (
     CriteriaBundle,
+    DelayHandling,
     SplitCriteria,
     APNGOptimizationCriteria,
     ModificationCriteria,
@@ -186,8 +187,6 @@ class GifsicleAPI:
         options = []
         if criteria.must_resize(metadata):
             options.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
-        if criteria.must_redelay(metadata):
-            options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
         if gif_criteria.is_optimized and gif_criteria.optimization_level:
             options.append((f"--optimize={gif_criteria.optimization_level}",
                             f"Optimizing image with level {gif_criteria.optimization_level}..."))
@@ -197,6 +196,11 @@ class GifsicleAPI:
         if gif_criteria.is_reduced_color and gif_criteria.color_space:
             options.append((f"--colors={gif_criteria.color_space}",
                             f"Reducing colors to: {gif_criteria.color_space}..."))
+        if criteria.must_redelay(metadata):
+            if criteria.delay_handling == DelayHandling.EVEN_OUT:
+                options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
+            elif criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+                options.append((f"", f"Setting per-frame delay to {criteria.delay}"))
         # if criteria.flip_x:
         #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
         # if criteria.flip_y:

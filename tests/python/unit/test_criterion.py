@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 from pycore.models.criterion import TransformativeCriteria, CreationCriteria, SplitCriteria, CriteriaBundle,\
     GIFOptimizationCriteria, APNGOptimizationCriteria
+from pycore.models.image_formats import ImageFormat
 
 
 def test_transformative_criteria():
@@ -50,7 +51,7 @@ def test_creation_criteria():
     assert creation_criteria.fps == 4
     assert creation_criteria.delay == 0.25
     assert creation_criteria.fps == 1/creation_criteria.delay
-    assert creation_criteria.format == "GIF"
+    assert creation_criteria.format == ImageFormat.GIF
     assert creation_criteria.resize_method == "BICUBIC"
     assert creation_criteria.loop_count == 0
     assert creation_criteria.start_frame == 0

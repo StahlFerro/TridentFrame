@@ -5,6 +5,8 @@ import shlex
 from itertools import chain
 from pathlib import Path
 
+from pycore.models.image_formats import ImageFormat
+
 
 def test_inspect_static_image_prod(fx_prod_exec_path: Path, fx_samples_spaced_dir_static_image: Path):
     p = subprocess.Popen([str(fx_prod_exec_path)], stdin=subprocess.PIPE, stdout=subprocess.PIPE,
@@ -41,6 +43,7 @@ def test_inspect_agif_prod(fx_prod_exec_path: Path, fx_samples_spaced_dir_agif_c
     assert Path(info['absolute_url']['value']) == fx_samples_spaced_dir_agif_checker
     assert info['is_animated']['value']
     assert info['format']['value'] == "GIF"
+    assert ImageFormat[info['format']['value']] == ImageFormat.GIF
     assert ainfo['frame_count']['value'] == 4
     assert ainfo['loop_count']['value'] == 0
 

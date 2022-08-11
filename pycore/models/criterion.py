@@ -1,8 +1,20 @@
+from fractions import Fraction
 import math
+from pycore.core_funcs import stdio
+from pycore.models.image_formats import ImageFormat
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.models.enums import ALPHADITHER
 from typing import Dict, List, Tuple, Any, Optional
 
+
+from enum import Enum, unique
+
+
+@unique
+class DelayHandling(Enum):
+    DO_NOTHING = 0
+    EVEN_OUT = 1
+    MULTIPLY_AVERAGE = 2
 
 class CriteriaBase:
     pass
@@ -46,7 +58,7 @@ class CreationCriteria(TransformativeCriteria):
         # self.name: str = vals["name"]
         self.fps: float = float(vals["fps"] or 10) or 10
         self.delay: float = float(vals["delay"] or 0.1) or 0.1
-        self.format: str = vals["format"]
+        self.format: ImageFormat = ImageFormat[str.upper(vals["format"])]
         self.reverse: bool = vals["is_reversed"]
         self.preserve_alpha: bool = vals["preserve_alpha"]
         self.loop_count = int(vals["loop_count"] or 0)
@@ -61,29 +73,41 @@ class ModificationCriteria(CreationCriteria):
     def __init__(self, vals):
         self.hash_sha1 = vals["hash_sha1"]
         self.last_modified_dt = vals["last_modified_dt"]
+        self.delay_handling = DelayHandling[str.upper(vals["delay_handling"])]
 
         super(ModificationCriteria, self).__init__(vals)
 
     def change_format(self, metadata: ImageMetadata):
-        return metadata.format["value"] != self.format
+        stdio.error(f'{metadata.format["value"]} {self.format.name}')
+        return str.upper(metadata.format["value"]) != self.format.name
 
     def must_resize(self, metadata: Optional[AnimatedImageMetadata] = None, width: Optional[int] = 0,
                     height: Optional[int] = 0) -> bool:
+        """Checks whether or not the animated image needs to be resized
+
+        Args:
+            metadata (Optional[AnimatedImageMetadata], optional): _description_. Animated image metadata.
+            width (Optional[int], optional): _description_. Original width of the image.
+            height (Optional[int], optional): _description_. Original height of an image.
+
+        Returns:
+            bool: True if the animated image needs to be resized, else False.
+        """
         return super(ModificationCriteria, self).must_resize(metadata, width, height)
 
     def must_transform(self, metadata: AnimatedImageMetadata) -> bool:
+        """Check whether or not pixel transformation must be performed to the animated image 
+
+        Args:
+            metadata (AnimatedImageMetadata): The metadata of the animated image
+
+        Returns:
+            bool: True if the animated image must be pixel-transformed, else False.
+        """
         return self.must_resize(metadata) or self.must_flip()
 
     def apng_must_reiterate(self, metadata: AnimatedImageMetadata) -> bool:
         return self.must_resize(metadata) or self.must_flip() or self.must_redelay(metadata) or self.reverse
-    
-    def gif_must_rebuild(self) -> bool:
-        """Determine whether the modification needs the animated GIF to be split and rebuilt with the required modifications,
-
-        Returns:
-            bool: True or False
-        """
-        return self.format == "GIF" and (self.flip_x or self.flip_y or self.reverse)
 
     def must_redelay(self, metadata: Optional[AnimatedImageMetadata] = None, delays: Optional[List[float]] = None,
                      delay: Optional[float] = None):
@@ -93,6 +117,22 @@ class ModificationCriteria(CreationCriteria):
             return sum(delays) / len(delays) != self.delay
         elif delay:
             return delay != self.delay
+        
+    def calculate_new_delay(self, metadata: AnimatedImageMetadata):
+        orig_delays = metadata.delays["value"]
+        new_delays: List
+        if self.delay_handling == DelayHandling.EVEN_OUT:
+            new_delays = [Fraction(self.delay).limit_denominator() for _ in orig_delays]
+        elif self.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+            orig_avg_delay = sum(orig_delays) / len(metadata.delays)
+            delay_ratio = Fraction(self.delay).limit_denominator() / orig_avg_delay
+            stdio.error(f"delay ratio {delay_ratio}, {self.delay}, {Fraction(self.delay).limit_denominator()}, {orig_avg_delay}")
+            new_delays = [delay_ratio * od for od in orig_delays]
+        elif self.delay_handling == DelayHandling.DO_NOTHING:
+            new_delays = orig_delays
+        else:
+            raise Exception(f"Unknown delay handling method: {self.delay_handling}")
+        return new_delays
 
     def must_reloop(self, metadata: Optional[AnimatedImageMetadata] = None, loop_count: Optional[int] = 0):
         if metadata:
@@ -103,9 +143,9 @@ class ModificationCriteria(CreationCriteria):
     def project_modifications_list(self, image_obj: Any) -> List[Dict]:
         return [image_obj, self.start_frame]
 
-    def gif_must_split(self) -> bool:
-        altered = self.reverse or self.flip_x or self.flip_y or self.rotation
-        return altered
+    # def gif_must_split(self) -> bool:
+    #     altered = self.reverse or self.flip_x or self.flip_y or self.rotation
+    #     return altered
 
     def orig_dimensions(self) -> str:
         return f"{self.orig_width}x{self.orig_height}"

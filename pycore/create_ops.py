@@ -18,6 +18,7 @@ from pycore.models.criterion import (
     GIFOptimizationCriteria,
     CriteriaBundle,
 )
+from pycore.models.image_formats import ImageFormat
 from pycore.utility import filehandler, imageutils
 from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI, PNGQuantAPI, InternalImageAPI
 from pycore.imaging.gif import create_animated_gif
@@ -259,14 +260,14 @@ def create_aimg(image_paths: List[Path], out_path: Path, crbundle: CriteriaBundl
     # if not os.path.exists(out_dir):
     #     raise Exception(f"The specified absolute out_dir does not exist!\n{out_dir}")
 
-    if img_format.casefold() == "gif":
+    if img_format == ImageFormat.GIF:
         # out_full_path = out_dir.joinpath(f"{filename}.gif")
         # filename = f"{filename}.gif"
         out_full_path = create_animated_gif(img_paths, out_path, crbundle)
         return out_full_path
         # return _build_gif(img_paths, out_path, crbundle)
 
-    elif img_format.casefold() == "png":
+    elif img_format == ImageFormat.PNG:
         # out_full_path = out_dir.joinpath(f"{filename}.png")
         return _build_apng(img_paths, out_path, crbundle)
         # return _build_apng(img_paths, out_full_path, crbundle)
