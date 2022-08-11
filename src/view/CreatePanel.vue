@@ -28,15 +28,7 @@
         </div>
         <div
           class="create-panel-preview silver-bordered-no-left"
-          :title="previewInfo? 
-            `Dimensions: ${previewInfo.general_info.width.value} x ${previewInfo.general_info.height.value}\n` +
-            `File size: ${previewInfo.general_info.fsize_hr.value}\n` +
-            `Total frames: ${previewInfo.animation_info.frame_count.value}\n` +
-            `FPS: ${previewInfo.animation_info.fps.value}\n` +
-            `Duration: ${previewInfo.animation_info.loop_duration.value} seconds\n` +
-            `Loop count: ${previewInfo.animation_info.loop_count.value || 'Infinite'}\n` +
-            `Format: ${previewInfo.general_info.format.value}` : ''
-          "
+          :title="computePreviewImageSummary"
           :class="{'has-checkerboard-bg': checkerBGIsActive }"
         >
           <!-- <div v-if="previewInfo" class="crt-aimg-container"> -->
@@ -532,6 +524,7 @@ import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import emitter from "../modules/events/emitter";
+import PreviewImageSummary from "../models/previewImageSummary";
 
 let extension_filters = [{ name: "Images", extensions: Object.keys(SUPPORTED_CREATE_EXTENSIONS) }];
 let img_dialog_props = ["openfile"];
@@ -643,6 +636,25 @@ export default {
       console.log(this.imageSequenceInfo.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
       return formatBytes(this.imageSequenceInfo.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
     },
+    computePreviewImageSummary() {
+      if (this.previewInfo) {
+        let summary = new PreviewImageSummary(
+          this.previewInfo.general_info.width.value,
+          this.previewInfo.general_info.height.value,
+          this.previewInfo.general_info.fsize_hr.value,
+          this.previewInfo.animation_info != null,
+          this.previewInfo.animation_info? this.previewInfo.animation_info.frame_count.value : 1,
+          this.previewInfo.animation_info? this.previewInfo.animation_info.fps.value : null,
+          this.previewInfo.animation_info? this.previewInfo.animation_info.loop_duration.value : null,
+          this.previewInfo.animation_info? (this.previewInfo.animation_info.loop_count.value || 'Infinite') : null,
+          this.previewInfo.general_info.format.value
+        );
+        return summary.toSummaryText();
+      }
+      else {
+        return '';
+      }
+    }
   },
   created() {
     window.addEventListener("resize", this.closeLoadPopper);

@@ -26,8 +26,8 @@ def scaffold_spaced_dir(tmp_path_factory) -> Path:
 
 
 @pytest.fixture(scope="session")
-def fx_samples_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_samples_sequence_dir_contents: List[Path]) -> Path:
-    static_img_path = fx_samples_sequence_dir_contents[0]
+def fx_samples_spaced_dir_static_image(scaffold_spaced_dir: Path, fx_samples_checkers_sequence: List[Path]) -> Path:
+    static_img_path = fx_samples_checkers_sequence[0]
     copied_simg = scaffold_spaced_dir.joinpath(static_img_path.name)
     shutil.copy(static_img_path, copied_simg)
     return copied_simg
@@ -58,8 +58,25 @@ def fx_samples_sequence_dir(fx_samples_path) -> Path:
 
 
 @pytest.fixture(scope="session")
-def fx_samples_sequence_dir_contents(fx_samples_sequence_dir) -> List[Path]:
-    sequence = [p for p in fx_samples_sequence_dir.iterdir() if p.stem.startswith("checker_4x4_")]
+def fx_samples_checkers_dir(fx_samples_path) -> Path:
+    return fx_samples_path.joinpath("sequence/tiny_checkers/")
+
+
+@pytest.fixture(scope="session")
+def fx_samples_checkers_sequence(fx_samples_checkers_dir) -> List[Path]:
+    sequence = [p for p in fx_samples_checkers_dir.iterdir() if p.stem.startswith("checker_4x4_")]
+    sequence.sort()
+    return sequence
+
+
+@pytest.fixture(scope="session")
+def fx_samples_disposaltest_dir(fx_samples_path) -> Path:
+    return fx_samples_path.joinpath("sequence/disposal_test/")
+
+
+@pytest.fixture(scope="session")
+def fx_samples_disposaltest_sequence(fx_samples_disposaltest_dir) -> List[Path]:
+    sequence = [p for p in fx_samples_disposaltest_dir.iterdir() if p.stem.startswith("disposaltest")]
     sequence.sort()
     return sequence
 

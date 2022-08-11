@@ -1,18 +1,21 @@
+from fileinput import filename
 import json
 import re
 from collections import deque
 from collections import OrderedDict
 from pathlib import Path
-from typing import Iterator, List, Dict, Any
+from typing import Iterator, List, Dict, Union, Any, Tuple
 
 from PIL import Image
 from apng import APNG
+from isort import file
 
 from pycore.core_funcs import stdio
 
 
 PNG_BLOCK_SIZE = 64
 ACTL_CHUNK = b"\x61\x63\x54\x4C"
+FILENAME_GROUPING_REGEX = re.compile('^(?P<filestem>.*?)(?P<sequence>[0-9]+)(?P<extension>\..{1,4})?$')
 
 
 # def reshape_palette(palette_array) -> np.array:
@@ -97,24 +100,45 @@ def shift_image_sequence(image_paths: List[Path], start_frame: int) -> List[Path
     return image_paths
 
 
-def sequence_nameget(f: Any) -> str:
-    """Cuts of sequence number suffixes from a filename or path
+def get_filename_components(f: Union[Path, str]):
+    """Get the stem filename without sequence numbers
+    Example: sequence_nameget('dogs_0024.png') = 'dogs'
+    
     Args:
-        name: Filename without extensions.
+        f: File path or filename.
 
     Returns:
-        str: Filename wuthout sequence number.
+        Any: Tuple of all matched regex groups
 
     """
+    stdio.warn(f)
     if isinstance(f, Path):
-        f = f.stem
-    if "." in f:
-        f = f.split(".")[0]
-    name_split = f.split("_")
-    if str.isnumeric(name_split[-1]):
-        return "_".join(name_split[:-1])
+        f = f.name
+    # elif type(f) is str:
+        # f = f.split(".")[0]
+    # sqre = re.compile(FILENAME_GROUPING_REGEX)
+    root_fname = FILENAME_GROUPING_REGEX.match(f)
+    # root_fname = sqre.match(f)
+    return root_fname
+    
+
+def sequence_nameget(f: Union[Path, str]) -> str:
+    """Get the stem filename without sequence numbers
+    Example: sequence_nameget('dogs_0024.png') = 'dogs'
+    
+    Args:
+        f: File path or filename.
+
+    Returns:
+        str: Filename without sequence number and extension.
+
+    """
+    fname_parts = get_filename_components(f)
+    # stdio.error(fname_parts.groups())
+    if fname_parts:
+        return fname_parts.group('filestem')
     else:
-        return f
+        return ''
 
 
 def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:

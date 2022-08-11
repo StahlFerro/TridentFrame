@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Dict
 
 
-def test_create_gif_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_contents: List[Path], fx_samples_crbundle_001_create_optimized_gif_json: Dict,
+def test_create_gif_prod(fx_prod_exec_path: Path, fx_samples_checkers_sequence: List[Path], fx_samples_crbundle_001_create_optimized_gif_json: Dict,
                          scaffold_spaced_dir: Path):
     fname = "good gif.gif"
     tmp_out_path = scaffold_spaced_dir.joinpath(fname)
@@ -22,7 +22,7 @@ def test_create_gif_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_conten
     json_command = {
         "command": "combine_image",
         "args": [
-            [str(sq) for sq in fx_samples_sequence_dir_contents],
+            [str(sq) for sq in fx_samples_checkers_sequence],
             str(tmp_out_path),
             crbundle
         ],
@@ -41,7 +41,7 @@ def test_create_gif_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_conten
     assert Path(data) == tmp_out_path
 
 
-def test_create_apng_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_contents: List[Path], fx_samples_crbundle_002_create_optimized_apng_json: Dict,
+def test_create_apng_prod(fx_prod_exec_path: Path, fx_samples_checkers_sequence: List[Path], fx_samples_crbundle_002_create_optimized_apng_json: Dict,
                           scaffold_spaced_dir: Path):
     fname = "$ome #apng.gif"
     tmp_out_path = scaffold_spaced_dir.joinpath(fname)
@@ -54,7 +54,7 @@ def test_create_apng_prod(fx_prod_exec_path: Path, fx_samples_sequence_dir_conte
     json_command = {
         "command": "combine_image",
         "args": [
-            [str(sq) for sq in fx_samples_sequence_dir_contents],
+            [str(sq) for sq in fx_samples_checkers_sequence],
             str(tmp_out_path),
             crbundle,
         ],

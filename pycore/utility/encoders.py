@@ -1,5 +1,5 @@
 from json import JSONEncoder
-from pathlib import Path
+from pathlib import Path, WindowsPath
 from apng import APNG, FrameControl
 from PIL._imagingcms import CmsProfile
 from numpy import isin
@@ -12,6 +12,8 @@ class JSONEncoderTrident(JSONEncoder):
         if isinstance(obj, bytes):
             return f"0x{obj.hex()}"
         elif isinstance(obj, Path):
+            return str(obj)
+        elif isinstance(obj, WindowsPath):
             return str(obj)
         elif isinstance(obj, FrameControl):
             return obj.__dict__

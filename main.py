@@ -82,6 +82,7 @@ class TridentFrameImager:
         if info:
             stdio.data(info)
 
+    @enable_diagnostics
     def inspect_smart(self, image_path: str):
         """Inspect a sequence of images and then return their information"""
         if not image_path:

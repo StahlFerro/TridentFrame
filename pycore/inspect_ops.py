@@ -168,9 +168,9 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
             exif = {ExifTags.TAGS[k]: v for k, v in exif_raw.items() if k in ExifTags.TAGS}
     width, height = im.size
     filename = image_path.name
-    base_fname = image_path.stem
+    # base_fname = image_path.stem
     ext = image_path.suffix
-    base_fname = imageutils.sequence_nameget(base_fname)
+    base_fname = imageutils.sequence_nameget(filename)
     fsize = image_path.stat().st_size
     # fsize_hr = read_filesize(fsize)
     color_mode = COLOR_MODE_FULL_NAME.get(im.mode) or im.mode
@@ -235,7 +235,8 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
         Dict: Metadata of the animated GIF
     """
     filename = abspath.name
-    base_fname = imageutils.sequence_nameget(abspath.stem)
+    # base_fname = imageutils.sequence_nameget(filename)
+    base_fname = abspath.stem
     width, height = gif.size
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
@@ -322,7 +323,8 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
         Dict: Metadata of the animated PNG
     """
     filename = abspath.name
-    base_fname = imageutils.sequence_nameget(abspath.stem)
+    # base_fname = imageutils.sequence_nameget(filename)
+    base_fname = abspath.stem
     frames = apng.frames
     frame_count = len(frames)
     loop_count = apng.num_plays
@@ -431,10 +433,10 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
 def inspect_sequence_autodetect(image_path: Path) -> Dict:
     """Receives a single image, then finds similar images with the same name and then returns the information of those
     sequence"""
-    images_dir = image_path.parents[0]
-    filename = imageutils.sequence_nameget(image_path.stem)
+    current_dir = image_path.parents[0]
+    filename = imageutils.sequence_nameget(image_path)
     # logger.message(f"filename {filename}")
-    possible_sequence = [f for f in sorted(images_dir.glob("*")) if filename in f.stem and f.is_file()]
+    possible_sequence = [f for f in sorted(current_dir.glob("*")) if filename in f.name and f.is_file()]
     # raise Exception(str(possible_sequence))
     # raise Exception(possible_sequence)
     # paths_bufferio = io.StringIO(json.dumps(possible_sequence))
