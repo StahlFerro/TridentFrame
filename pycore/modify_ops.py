@@ -113,18 +113,18 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             
         orig_delays = [Fraction(f[1].delay, f[1].delay_den) if f[1] else 0 for f in unoptimized_apng_frames]
         stdio.error({"orig_delays": orig_delays})
-        new_delays: List
-        if mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
-            new_delays = [Fraction(mod_criteria.delay).limit_denominator() for _ in orig_delays]
-        elif mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
-            orig_avg_delay = sum(orig_delays) / len(orig_delays)
-            delay_ratio = Fraction(mod_criteria.delay).limit_denominator() / orig_avg_delay
-            stdio.error(f"delay ratio {delay_ratio}, {mod_criteria.delay}, {Fraction(mod_criteria.delay).limit_denominator()}, {orig_avg_delay}")
-            new_delays = [delay_ratio * od for od in orig_delays]
-        elif mod_criteria.delay_handling == DelayHandling.DO_NOTHING:
-            new_delays = orig_delays
-        else:
-            raise Exception(f"Unknown delay handling method: {mod_criteria.delay_handling}")
+        new_delays = mod_criteria.calculate_new_delay(metadata)
+        # if mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
+        #     new_delays = [Fraction(mod_criteria.delay).limit_denominator() for _ in orig_delays]
+        # elif mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+        #     orig_avg_delay = sum(orig_delays) / len(orig_delays)
+        #     delay_ratio = Fraction(mod_criteria.delay).limit_denominator() / orig_avg_delay
+        #     stdio.error(f"delay ratio {delay_ratio}, {mod_criteria.delay}, {Fraction(mod_criteria.delay).limit_denominator()}, {orig_avg_delay}")
+        #     new_delays = [delay_ratio * od for od in orig_delays]
+        # elif mod_criteria.delay_handling == DelayHandling.DO_NOTHING:
+        #     new_delays = orig_delays
+        # else:
+        #     raise Exception(f"Unknown delay handling method: {mod_criteria.delay_handling}")
         stdio.error({
             "new_delays": new_delays,
             "uaf": len(unoptimized_apng_frames)
