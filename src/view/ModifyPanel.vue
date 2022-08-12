@@ -35,7 +35,7 @@
                   Dimensions
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ previewDimensionsText }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.dimensions }}</span>
                 </td>
               </tr>
               <tr>
@@ -51,7 +51,7 @@
                   </template>
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.file_size_hr }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.fileSize }}</span>
                 </td>
               </tr>
               <tr>
@@ -63,7 +63,7 @@
                   Format
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.format_info }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.format }}</span>
                 </td>
               </tr>
               <tr>
@@ -75,7 +75,7 @@
                   Total frames
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_info">{{ preview_attribute.frame_count }}</span>
+                  <span v-if="preview_info">{{ previewAttributesTable.frameCount }}</span>
                 </td>
               </tr>
               <tr>
@@ -87,7 +87,7 @@
                   Frame rate
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_info">{{ preview_attribute.fps }}</span>
+                  <span v-if="preview_info">{{ previewAttributesTable.fps }}</span>
                 </td>
               </tr>
               <tr>
@@ -99,7 +99,7 @@
                   Avg. Delay
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.delay_info }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.averageDelay }}</span>
                 </td>
               </tr>
               <tr>
@@ -110,7 +110,7 @@
                   Loop duration
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute && preview_attribute.loop_duration">{{ roundPrecise(preview_attribute.loop_duration, 3) }} seconds</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.loopDuration }}</span>
                 </td>
               </tr>
               <tr>
@@ -121,11 +121,9 @@
                   Loop count
                 </td>
                 <td class="mod-info-data">
-                  <template v-if="preview_attribute">
-                    {{ preview_attribute.loop_count_info }}
-                    <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
-                    <span v-else>{{ preview_attribute.loop_count }}</span> -->
-                  </template>
+                  {{ previewAttributesTable.loopCount }}
+                  <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
+                  <span v-else>{{ preview_attribute.loop_count }}</span> -->
                 </td>
               </tr>
             </tbody>
@@ -707,6 +705,20 @@ export default {
       console.table(origAttributes);
       return origAttributes;
     },
+    previewAttributesTable() {
+      let previewAttributes = {
+        dimensions: this.previewDimensionsText,
+        fileSize: this.preview_attribute.file_size_hr,
+        format: this.preview_attribute.format.toUpperCase(),
+        frameCount: this.preview_attribute.frame_count,
+        fps: this.preview_attribute.fps? `${this.preview_attribute.fps} FPS` : '',
+        averageDelay: this.preview_attribute.delay? `${roundPrecise(this.preview_attribute.delay, 3)} ms` : '',
+        loopDuration: this.preview_attribute && this.preview_attribute.loop_duration? `${roundPrecise(this.preview_attribute.loop_duration, 3) } seconds` : '',
+        loopCount: this.preview_attribute.loop_count && this.preview_attribute.loop_count == 0? "Infinite" : this.preview_attribute.loop_count,
+      }
+      console.table(previewAttributes);
+      return previewAttributes;
+    },
     buttonIsFrozen() {
       if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
       else return false;
@@ -814,7 +826,7 @@ export default {
       this.preview_attribute.name = geninfo.name.value;
       this.preview_attribute.width = geninfo.width.value;
       this.preview_attribute.height = geninfo.height.value;
-      this.preview_attribute.fps = `${ainfo.fps.value} FPS`;
+      this.preview_attribute.fps = ainfo.fps.value;
       this.preview_attribute.frame_count= ainfo.frame_count.value;
       this.preview_attribute.format = geninfo.format.value.toLowerCase();
       this.preview_attribute.format_info = geninfo.format.value.toUpperCase();
@@ -1076,7 +1088,7 @@ export default {
     },
     // chooseOutDir: chooseOutDir,
     btnPreviewModImg() {
-      this.previewModImg();
+      this.previewModImg(); 
     },
     previewModImg() {
       if (this.orig_attribute.path == "") {

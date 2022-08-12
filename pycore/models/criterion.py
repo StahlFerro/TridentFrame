@@ -58,7 +58,14 @@ class CreationCriteria(TransformativeCriteria):
         # self.name: str = vals["name"]
         self.fps: float = float(vals["fps"] or 10) or 10
         self.delay: float = float(vals["delay"] or 0.1) or 0.1
-        self.format: ImageFormat = ImageFormat[str.upper(vals["format"])]
+        iformat: ImageFormat = False
+        if type(vals["format"]) is str:
+            iformat = ImageFormat[str.upper(vals["format"])]
+        elif type(vals["format"]) is ImageFormat:
+            iformat = vals["format"]
+        else:
+            raise Exception(f"Unknown Image format: {vals['format']}")
+        self.format: ImageFormat = iformat
         self.reverse: bool = vals["is_reversed"]
         self.preserve_alpha: bool = vals["preserve_alpha"]
         self.loop_count = int(vals["loop_count"] or 0)
