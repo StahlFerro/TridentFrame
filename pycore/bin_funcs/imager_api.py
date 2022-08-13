@@ -1,6 +1,8 @@
+from ctypes import Union
 import os
 import io
 import math
+from turtle import delay
 import uuid
 import shlex
 import shutil
@@ -23,7 +25,7 @@ from pycore.models.criterion import (
     ModificationCriteria,
     GIFOptimizationCriteria,
 )
-from pycore.models.enums import ALPHADITHER
+from pycore.models.dithers import ALPHADITHER
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.core_funcs import stdio
 from pycore.core_funcs import config
@@ -31,6 +33,7 @@ from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPl
     UnsupportedImageModeException
 from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
+from pycore.utility.vectorutils import group_list_by_values, group_list_by_values_sequentially
 
 
 class InternalImageAPI:
@@ -117,7 +120,7 @@ class GifsicleAPI:
     gifsicle_path = config.imager_exec_path("gifsicle")
 
     @classmethod
-    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, quotes=False) -> List[str]:
+    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, quotes=False, metadata: AnimatedImageMetadata=None) -> List[str]:
         """Generate a list containing gifsicle command and its arguments.
 
         Args:
@@ -157,18 +160,71 @@ class GifsicleAPI:
             if gif_opt_criteria.is_reduced_color and gif_opt_criteria.color_space:
                 colorspace_arg = f"--colors={gif_opt_criteria.color_space}"
                 args.append(colorspace_arg)
-
+        delay_option = f"--delay={delay}"
+        # stdio.error(f"delay check {criteria.delays_are_even} {len(criteria.delays_list)}")
+        # if not criteria.delays_are_even and len(criteria.delays_list) > 0:
+        #     grouped_delays = group_list_by_values(criteria.delays_list)
+        #     stdio.error({
+        #         "grouped_delays": grouped_delays
+        #     })
+        #     # delay_args = [f'-d{round(delay * 100)} {" ".join([f"\"#{i}\"" for i in indices])}' for delay, indices in grouped_delays.items()]
+        #     delay_args = []
+        #     for delay, indices in grouped_delays.items():
+        #         delay_marker = f'-d{round(delay * 100)}'
+        #         delay_indices = " ".join([f"\"#{i}\"" for i in indices])
+        #         delay_args.append(f'{delay_marker} {delay_indices}')
+            
+        #     stdio.error({
+        #         "delay_args": delay_args
+        #     })
+        #     delay_option = ' '.join(delay_args)
         args.extend([
-            f"--delay={delay}",
+            delay_option,
             f"--disposal={disposal}",
             loop_arg,
             globstar_path,
             "--output",
             shlex.quote(str(out_full_path)) if quotes else str(out_full_path),
         ])
+        stdio.error(' '.join(args))
         if ";" in " ".join(args):
             raise MalformedCommandException("gifsicle")
         return args
+    
+    @classmethod
+    def _delays_option_builder(cls, delays) -> List:
+        delay_args = []
+        gs_delays = group_list_by_values_sequentially(delays)
+        stdio.error({
+            "gs_delays": gs_delays
+        })
+        # grouped_delays = group_list_by_values(delays)
+        # stdio.error({
+        #     "grouped_delays": grouped_delays
+        # })
+        # # delay_args = [f'-d{round(delay * 100)} {" ".join([f"\"#{i}\"" for i in indices])}' for delay, indices in grouped_delays.items()]
+        # delay_args = []
+        # for delay, indices in grouped_delays.items():
+        #     delay_marker = f'-d{round(delay * 100)}'
+        #     delay_indices = " ".join([f"\"#{i}\"" for i in indices])
+        #     delay_args.append(f'{delay_marker} {delay_indices}')
+        
+        # stdio.error({
+        #     "delay_args": delay_args
+        # })
+        for delay, indices in gs_delays:
+            stdio.debug({
+                "delay": delay,
+                "indices": indices
+            })
+            delay_selector = str(indices[0]) if len(indices) == 1 else f'{indices[0]}-{indices[-1]}'
+            delay_args.extend([
+                '-d',
+                str(round(delay * 100)),
+                f'#{delay_selector}'
+            ])
+            # delay_args.append(f'-d{round(delay * 100)} #{delay_selector}')
+        return delay_args
 
     @classmethod
     def _mod_options_builder(
@@ -197,10 +253,13 @@ class GifsicleAPI:
             options.append((f"--colors={gif_criteria.color_space}",
                             f"Reducing colors to: {gif_criteria.color_space}..."))
         if criteria.must_redelay(metadata):
-            if criteria.delay_handling == DelayHandling.EVEN_OUT:
-                options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
-            elif criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+            if not metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+                grouped_new_delays = criteria.get_grouped_new_delays(metadata)
+                stdio.error(grouped_new_delays)
                 options.append((f"", f"Setting per-frame delay to {criteria.delay}"))
+            elif (metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE) or \
+                criteria.delay_handling == DelayHandling.EVEN_OUT:
+                options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
         # if criteria.flip_x:
         #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
         # if criteria.flip_y:
@@ -325,6 +384,45 @@ class GifsicleAPI:
             if target_path != out_full_path:
                 target_path = out_full_path
         return target_path
+    
+    @classmethod
+    def retempo_gif(cls, gif_path: Path, delays: List, out_full_path: Optional[Path] = None) -> List[Path]:
+        supressed_error_txts = ["warning: too many colors, using local colormaps",
+                                "You may want to try"]
+        delay_options = cls._delays_option_builder(delays)
+        args = [
+            shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
+            "-b" if not out_full_path else "",
+            shlex.quote(str(gif_path)) if os_platform() == OS.LINUX else str(gif_path),
+            *delay_options,
+        ]
+        if out_full_path:
+            args.extend([
+            "--output",
+            shlex.quote(str(out_full_path)) if os_platform() == OS.LINUX else str(out_full_path)
+        ])
+        # cmd = " ".join(cmdlist)
+        # yield {"msg": f"[{index}/{total_ops}] {description}"}
+        # yield {"cmd": cmd}
+        # cmd = " ".join(args)
+        if ";" in args:
+            raise MalformedCommandException("gifsicle")
+        stdio.debug({"retempo_gif args": args})
+        result = subprocess.Popen(args if os_platform() == OS.WINDOWS else cmd,
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    shell=os_platform() == OS.LINUX)
+        while result.poll() is None:
+            if result.stdout:
+                stdout_res = result.stdout.readline().decode("utf-8")
+                if stdout_res and not any(s in stdout_res for s in supressed_error_txts):
+                    stdio.message(stdout_res)
+            if result.stderr:
+                stderr_res = result.stderr.readline().decode("utf-8")
+                if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    stdio.error(stderr_res)
+        if out_full_path:
+            return out_full_path
+
 
     @classmethod
     def extract_gif_frames(cls, gif_path: Path, name: str, criteria: SplitCriteria,

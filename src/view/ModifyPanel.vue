@@ -376,16 +376,16 @@
                         <div class="select is-neon-cyan">
                           <select v-model="criteria.delay_handling">
                             <option
-                              value="EVEN_OUT"
-                              title="Change all frame delay to the specified Delay field"
-                            >
-                              Even out
-                            </option>
-                            <option
                               value="MULTIPLY_AVERAGE"
                               title="Multiply all frames based on the ratio between the current average and the value specified in the Delay field"
                             >
                               Multiply average
+                            </option>
+                            <option
+                              value="EVEN_OUT"
+                              title="Change all frame delay to the specified Delay field"
+                            >
+                              Even out
                             </option>
                             <option
                               value="DO_NOTHING"
@@ -612,7 +612,9 @@ export default {
         rotation: "",
         fps: "",
         delay: "",
-        delay_handling: "EVEN_OUT",
+        delays_are_even: true,
+        delays_list: [],
+        delay_handling: "MULTIPLY_AVERAGE",
         loop_count: "",
         format: "gif",
         skip_frame: "",

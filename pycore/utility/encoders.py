@@ -4,7 +4,7 @@ from apng import APNG, FrameControl
 from PIL._imagingcms import CmsProfile
 from numpy import isin
 import pycore.models.criterion as criterion
-from pycore.models.enums import ALPHADITHER
+from pycore.models.dithers import ALPHADITHER
 
 
 class JSONEncoderTrident(JSONEncoder):

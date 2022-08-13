@@ -548,6 +548,8 @@ export default {
       criteria: {
         fps: "",
         delay: "",
+        delays_are_even: true,
+        delays_list: [],
         format: "gif",
         is_reversed: false,
         preserve_alpha: false,

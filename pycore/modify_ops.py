@@ -12,6 +12,7 @@ from apng import APNG, PNG
 
 from pycore.models.criterion import (
     CriteriaBundle,
+    CriteriaUtils,
     DelayHandling,
 )
 from pycore.models.image_formats import ImageFormat
@@ -59,10 +60,16 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
     # ds_delay = mod_criteria.delay
     # ds_fps = mod_criteria.fps
     # yield {"NEW DELAY": ds_delay}
+    delays = []
+    if mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+        delays = CriteriaUtils.calculate_new_delays(mod_criteria, metadata)
+    stdio.error(delays)
     create_criteria = CreationCriteria({
         # "name": mod_criteria.name,
         "fps": mod_criteria.fps,
         "delay": mod_criteria.delay,
+        "delays_are_even": metadata.delays_are_even["value"],
+        "delays_list": delays,
         "format": mod_criteria.format,
         "preserve_alpha": True,
         "flip_x": mod_criteria.flip_x,
@@ -80,7 +87,10 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "gif_opt_criteria": crbundle.gif_opt_criteria,
         "apng_opt_criteria": crbundle.apng_opt_criteria,
     })
+    stdio.error("MOD CREATE")
     new_image_path = create_aimg(frame_paths, out_path, creation_crbundle)
+    stdio.error("MOD RETEMPO")
+    GifsicleAPI.retempo_gif(new_image_path, delays)
     shutil.rmtree(frames_dir)
     return new_image_path
 
@@ -113,7 +123,7 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             
         orig_delays = [Fraction(f[1].delay, f[1].delay_den) if f[1] else 0 for f in unoptimized_apng_frames]
         stdio.error({"orig_delays": orig_delays})
-        new_delays = mod_criteria.calculate_new_delay(metadata)
+        new_delays = CriteriaUtils.calculate_new_delays(mod_criteria, metadata)
         # if mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
         #     new_delays = [Fraction(mod_criteria.delay).limit_denominator() for _ in orig_delays]
         # elif mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:

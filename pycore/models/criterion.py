@@ -1,13 +1,17 @@
 from fractions import Fraction
 import math
+
+from numpy import average
 from pycore.core_funcs import stdio
 from pycore.models.image_formats import ImageFormat
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
-from pycore.models.enums import ALPHADITHER
-from typing import Dict, List, Tuple, Any, Optional
+from pycore.models.dithers import ALPHADITHER
+from typing import Dict, List, Tuple, Any, Optional, Union
 
 
 from enum import Enum, unique
+
+from pycore.utility.vectorutils import group_list_by_values
 
 
 @unique
@@ -58,6 +62,8 @@ class CreationCriteria(TransformativeCriteria):
         # self.name: str = vals["name"]
         self.fps: float = float(vals["fps"] or 10) or 10
         self.delay: float = float(vals["delay"] or 0.1) or 0.1
+        self.delays_are_even: bool = vals["delays_are_even"]
+        self.delays_list: List[Union[Fraction, float]] = vals["delays_list"]
         iformat: ImageFormat = False
         if type(vals["format"]) is str:
             iformat = ImageFormat[str.upper(vals["format"])]
@@ -118,28 +124,14 @@ class ModificationCriteria(CreationCriteria):
 
     def must_redelay(self, metadata: Optional[AnimatedImageMetadata] = None, delays: Optional[List[float]] = None,
                      delay: Optional[float] = None):
+        average_delay = 0
         if metadata:
-            return metadata.average_delay["value"] != self.delay
+            average_delay = metadata.average_delay["value"]
         elif delays:
-            return sum(delays) / len(delays) != self.delay
+            average_delay = sum(delays) / len(delays)
         elif delay:
-            return delay != self.delay
-        
-    def calculate_new_delay(self, metadata: AnimatedImageMetadata):
-        orig_delays = metadata.delays["value"]
-        new_delays: List
-        if self.delay_handling == DelayHandling.EVEN_OUT:
-            new_delays = [Fraction(self.delay).limit_denominator() for _ in orig_delays]
-        elif self.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
-            orig_avg_delay = sum(orig_delays) / len(metadata.delays)
-            delay_ratio = Fraction(self.delay).limit_denominator() / orig_avg_delay
-            stdio.error(f"delay ratio {delay_ratio}, {self.delay}, {Fraction(self.delay).limit_denominator()}, {orig_avg_delay}")
-            new_delays = [delay_ratio * od for od in orig_delays]
-        elif self.delay_handling == DelayHandling.DO_NOTHING:
-            new_delays = orig_delays
-        else:
-            raise Exception(f"Unknown delay handling method: {self.delay_handling}")
-        return new_delays
+            average_delay = self.delay
+        return (average_delay != self.delay or self.delay_handling == DelayHandling.EVEN_OUT) and not self.delay_handling == DelayHandling.DO_NOTHING
 
     def must_reloop(self, metadata: Optional[AnimatedImageMetadata] = None, loop_count: Optional[int] = 0):
         if metadata:
@@ -257,6 +249,36 @@ class APNGOptimizationCriteria(CriteriaBase):
 
     def must_opt(self) -> bool:
         return (self.is_optimized and self.optimization_level) or (self.is_reduced_color and self.color_count)
+
+
+class CriteriaUtils():
+    
+    @classmethod
+    def get_grouped_new_delays(cls, mod_criteria: ModificationCriteria, metadata: AnimatedImageMetadata) -> List[Dict]:
+        delays = cls.calculate_new_delays(mod_criteria=mod_criteria, metadata=metadata)
+        grouped_delays: Dict[int, List] = group_list_by_values(delays)
+        return grouped_delays
+        
+    @classmethod
+    def calculate_new_delays(cls, mod_criteria: ModificationCriteria, metadata: AnimatedImageMetadata) -> List[Fraction]:
+        orig_delays = metadata.delays["value"]
+        new_delays: List
+        if mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
+            new_delays = [Fraction(mod_criteria.delay).limit_denominator() for _ in orig_delays]
+        elif mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+            orig_avg_delay = sum(orig_delays) / len(orig_delays)
+            delay_ratio = mod_criteria.delay / orig_avg_delay
+            # stdio.error(f"delay ratio {delay_ratio}, {mod_criteria.delay}, {Fraction(mod_criteria.delay).limit_denominator()}, {orig_avg_delay}")
+            new_delays = [Fraction(delay_ratio * od).limit_denominator() for od in orig_delays]
+        elif mod_criteria.delay_handling == DelayHandling.DO_NOTHING:
+            new_delays = orig_delays
+        else:
+            raise Exception(f"Unknown delay handling method: {mod_criteria.delay_handling}")
+        stdio.error({
+            "orig_delays": orig_delays,
+            "new_delays": new_delays
+        })
+        return new_delays
 
 
 class CriteriaBundle(CriteriaBase):
