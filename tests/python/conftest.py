@@ -210,16 +210,6 @@ def fx_prod_previews_dir(fx_prod_temp_dir):
     return fx_prod_temp_dir.joinpath("previews/")
 
 
-# @pytest.fixture(scope="session")
-# def fx_prod_imagers_jsonpath(fx_prod_engine_dir):
-#     return fx_prod_engine_dir.joinpath("config", "imagers.json")
-#
-#
-# @pytest.fixture(scope="session")
-# def fx_prod_settings_jsonpath(fx_prod_engine_dir):
-#     return fx_prod_engine_dir.joinpath("config", "settings.json")
-
-
 @pytest.fixture(scope="session")
 def fx_prod_config_engine_file(fx_prod_engine_dir):
     return fx_prod_engine_dir.joinpath("config", "engine.toml")

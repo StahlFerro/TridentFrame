@@ -28,19 +28,11 @@ let engine_exec_path;
 let previews_path;
 let temp_path;
 let app_settings_path;
-let engine_settings_path;
-let settings_path;
-let settings; // console.log(appPath);
-// console.log(`current appPath: ${appPath}`);
-// console.log(`current dirname -> ${__dirname}`);
-// console.log(`current process.cwd() -> ${cwd()}`);
-// console.log(`current dot -> ${resolve(".")}`);
+let settings;
 
 if (_process.env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py";
-  // settings_path = join(appPath, "config", "settings.toml");
   app_settings_path = join(appPath, "config", "app.toml");
-  // settings = JSON.parse(readFileSync(join(appPath, "config", "settings.json")));
   temp_path = join(appPath, "temp");
   previews_path = join(temp_path, "previews");
 } else {
@@ -54,17 +46,11 @@ if (_process.env.DEPLOY_ENV == "DEV") {
     engine_exec_path = join(engine_dir, "tridentengine");
   }
   app_settings_path = join(appPath, "config", "app.toml");
-  // settings_path = join(engine_dir, "config", "settings.toml");
-  // settings = JSON.parse(readFileSync(join(engine_dir, "config", "settings.json")));
   temp_path = join(engine_dir, "temp");
   previews_path = join(temp_path, "previews");
 }
 
 console.log(settings);
-// const SETTINGS = settings;
-// exports.SETTINGS = SETTINGS;
-// const SETTINGS_PATH = settings_path;
-// exports.SETTINGS_PATH = SETTINGS_PATH;
 const APP_SETTINGS_PATH = app_settings_path;
 exports.APP_SETTINGS_PATH = APP_SETTINGS_PATH;
 const PREVIEWS_PATH = previews_path;

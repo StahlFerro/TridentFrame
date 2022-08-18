@@ -386,7 +386,20 @@ class GifsicleAPI:
         return target_path
     
     @classmethod
-    def retempo_gif(cls, gif_path: Path, delays: List, out_full_path: Optional[Path] = None) -> List[Path]:
+    def retempo_gif(cls, gif_path: Path, delays: List, out_full_path: Optional[Path] = None) -> Optional[Path]:
+        """Execute Gifsicle to change a GIF's frame delays
+
+        Args:
+            gif_path (Path): Path to the GIF on disk
+            delays (List): List of delays (in seconds)
+            out_full_path (Optional[Path], optional): The output path of the final GIF image. Defaults to None if intending to overwrite it.
+
+        Raises:
+            MalformedCommandException: Invalid command
+
+        Returns:
+            Optional[Path]: Output path of the GIF. None if the GIF is overwritten.
+        """
         supressed_error_txts = ["warning: too many colors, using local colormaps",
                                 "You may want to try"]
         delay_options = cls._delays_option_builder(delays)
