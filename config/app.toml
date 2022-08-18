@@ -3,6 +3,9 @@ fullscreen = false
 open_debugger = false
 open_devtools = false
 
+[preview_image]
+name_save_behaviour = "auto_generated"
+
 [[inspect_panel.image_attributes]]
 category = "general_info"
 label = "General Info"

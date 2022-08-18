@@ -27,14 +27,23 @@
     }
     .settings-subpanels {
         height: calc(100vh - 70px - #{$root-height-offset});
-        padding: 10px;
+        // padding: 10px;
     }
     hr {
         margin-top: 12px;
         margin-bottom: 12px;
         background-color: $white-d;
         height: 1px;
-        width: 40% !important;
+        width: 95% !important;
+    }
+    .settings-subpanel-general {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+        .settings-group {
+            flex: 0 0 33.33333333%
+        }
     }
 }
 

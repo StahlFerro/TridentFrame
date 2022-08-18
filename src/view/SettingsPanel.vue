@@ -21,57 +21,44 @@
           v-show="settings_tab_selection == 0"
           class="settings-subpanel-general"
         >
-          <!-- <table class="table is-borderless" style="padding: 5px" width="100%"> -->
-          <!-- <tr>
-              <td>
-                <a
-                  v-on:click="btnGetSettings"
-                  class="button is-large is-neon-cyan"
-                >
-                  <span class="icon is-large">
-                    <font-awesome-icon icon="bug" />
-                  </span>
-                  <span>Get Settings</span>
-                </a>
-              </td>
-              <td>
-                <a
-                  v-on:click="btnSaveSettings"
-                  class="button is-large is-neon-cyan"
-                >
-                  <span class="icon is-large">
-                    <font-awesome-icon icon="bug" />
-                  </span>
-                  <span>Set Settings</span>
-                </a>
-              </td>
-            </tr> -->
-
-          <!-- <tr>
-              <td class="">
-                <h1 class="title is-2 is-white-d">Startup</h1>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label class="checkbox">
-                  <input v-model="APP_SETTINGS.display.fullscreen" type="checkbox" />
-                  Start in fullscreen
-                </label>
-              </td>
-            </tr>
-          </table> -->
-          <h3 class="title is-3 settings-header">
-            On startup
-          </h3>
-          <hr />
-          <div class="field">
-            <input id="fullscreenCheckbox" v-model="APP_SETTINGS.startup.fullscreen" class="is-checkradio is-white" type="checkbox" />
-            <label for="fullscreenCheckbox">Start in fullscreen</label>
+          <div id="settings_startup" class="settings-group">
+            <h4 class="title is-4 settings-header">
+              On startup
+            </h4>
+            <hr />
+            <div class="field">
+              <input id="fullscreenCheckbox" v-model="APP_SETTINGS.startup.fullscreen" class="is-checkradio is-white" type="checkbox" />
+              <label for="fullscreenCheckbox">Start in fullscreen</label>
+            </div>
+            <div class="field">
+              <input id="openDebuggerCheckbox" v-model="APP_SETTINGS.startup.open_devtools" class="is-checkradio is-white" type="checkbox" />
+              <label for="openDebuggerCheckbox">Open developer tools</label>
+            </div>
           </div>
-          <div class="field">
-            <input id="openDebuggerCheckbox" v-model="APP_SETTINGS.startup.open_devtools" class="is-checkradio is-white" type="checkbox" />
-            <label for="openDebuggerCheckbox">Open developer tools</label>
+          
+          <div id="settings_image_preview" class="settings-group">
+            <h4 class="title is-4 settings-header">
+              Image previewing
+            </h4>
+            <hr />
+            <div class="field is-horizontal-midlined">
+              <!-- <div class="field-body"> -->
+              <label
+                title="How the name of the preview image will be saved as"
+              >Save name</label>
+              <div class="control">
+                <div class="select is-neon-cyan">
+                  <select id="nameSaveBehaviourSelection" v-model="APP_SETTINGS.preview_image.name_save_behaviour">
+                    <option v-for="(sb, index) in previewImageSaveNameBehaviour" :key="index" :value="sb.name" :title="sb.description">
+                      {{ sb.label }}
+                    </option>
+                    <!-- <option value="GIF">GIF</option>
+                    <option value="PNG">APNG</option> -->
+                  </select>
+                </div>
+              </div>
+              <!-- </div> -->
+            </div>
           </div>
         </div>
 
@@ -195,6 +182,7 @@
 <script>
 import { ipcRenderer, shell } from "electron";
 import { tridentEngine } from "../modules/streams/trident_engine.js";
+import { PreviewImageSaveNameBehaviour } from "../models/previewImage.js";
 import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
 
 export default {
@@ -202,6 +190,7 @@ export default {
     return {
       logo: logo,
       settings_tab_selection: 0,
+      previewImageSaveNameBehaviour: PreviewImageSaveNameBehaviour.getAll(),
       APP_SETTINGS: {},
       APP_SETTINGS_PREVIOUS: {},
     };
@@ -220,6 +209,8 @@ export default {
   // },
   beforeMount: function () {
     console.debug("SettingsPanel mounted");
+    console.log(PreviewImageSaveNameBehaviour.getAll())
+    Object.keys(PreviewImageSaveNameBehaviour).forEach(saveBehaviour => console.log("saveBehaviour:", saveBehaviour));
     // ipcRenderer.invoke('reload-window-once');
     const SETTINGS = ipcRenderer.sendSync("get-settings");
     console.debug(SETTINGS);

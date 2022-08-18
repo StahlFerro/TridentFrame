@@ -390,8 +390,8 @@ class GifsicleAPI:
         """Execute Gifsicle to change a GIF's frame delays
 
         Args:
-            gif_path (Path): Path to the GIF on disk
-            delays (List): List of delays (in seconds)
+            gif_path (Path): Path to the GIF on disk.
+            delays (List): List of delays (in seconds).
             out_full_path (Optional[Path], optional): The output path of the final GIF image. Defaults to None if intending to overwrite it.
 
         Raises:

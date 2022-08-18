@@ -1,0 +1,14 @@
+.field {
+  &.is-horizontal-midlined {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+    label {
+      flex: 0 0 40%;
+    }
+    div {
+      flex: 0 0 60%;
+    }
+  }
+}

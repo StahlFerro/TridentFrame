@@ -524,7 +524,7 @@ import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import emitter from "../modules/events/emitter";
-import PreviewImageSummary from "../models/previewImageSummary";
+import { PreviewImageSummary } from "../models/previewImage";
 
 let extension_filters = [{ name: "Images", extensions: Object.keys(SUPPORTED_CREATE_EXTENSIONS) }];
 let img_dialog_props = ["openfile"];
