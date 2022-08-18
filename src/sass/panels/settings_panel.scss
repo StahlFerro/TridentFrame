@@ -3,6 +3,10 @@
 @import "../components/_colors.scss";
 @import "../../../node_modules/bulma/sass/components/tabs.sass";
 
+$settings-col-gap: 20px;
+$settings-row-count: 3;
+$settings-group-width: calc(100% / #{$settings-row-count} - (#{$settings-col-gap} * (#{$settings-row-count} - 1)));
+
 .settings-panel-root {
     display: flex;
     flex-direction: column;
@@ -34,15 +38,19 @@
         margin-bottom: 12px;
         background-color: $white-d;
         height: 1px;
-        width: 95% !important;
+        width: 100% !important;
     }
     .settings-subpanel-general {
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 10px;
+        row-gap: 30px;
+        column-gap: $settings-col-gap;
         .settings-group {
-            flex: 0 0 33.33333333%
+            flex: 0 0 $settings-group-width;
+            &.is-2 {
+                flex: 0 0 calc(2 * #{$settings-group-width});
+            }
         }
     }
 }

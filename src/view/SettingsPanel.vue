@@ -41,12 +41,12 @@
               Image previewing
             </h4>
             <hr />
-            <div class="field is-horizontal-midlined">
+            <div class="field is-horizontal-midlined selection">
               <!-- <div class="field-body"> -->
               <label
                 title="How the name of the preview image will be saved as"
               >Save name</label>
-              <div class="control">
+              <div class="control main">
                 <div class="select is-neon-cyan">
                   <select id="nameSaveBehaviourSelection" v-model="APP_SETTINGS.preview_image.name_save_behaviour">
                     <option v-for="(sb, index) in previewImageSaveNameBehaviour" :key="index" :value="sb.name" :title="sb.description">
@@ -58,6 +58,77 @@
                 </div>
               </div>
               <!-- </div> -->
+            </div>
+          </div>
+          
+          <div id="settings_empty_001" class="settings-group" />
+
+
+          
+          <div id="settings_directories" class="settings-group is-2">
+            <h4 class="title is-4 settings-header">
+              Output folders
+            </h4>
+            <hr />
+            <div class="field is-horizontal-midlined textbox">
+              <label title="The time needed to move to the next frame">Create AIMG</label>
+              <div class="controls-container">
+                <div class="control">
+                  <a class="button square-button is-neon-cyan" @click="btnSetCreateSavePath">
+                    <span class="icon is-small">
+                      <font-awesome-icon icon="folder-open" />
+                    </span>
+                    <span>Choose</span>
+                  </a>
+                </div>
+                <div class="control main">
+                  <input
+                    v-model="APP_SETTINGS.directories.default_out_dir.create_panel"
+                    class="input is-neon-white"
+                    type="text"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal-midlined textbox">
+              <label title="The time needed to move to the next frame">Split AIMG</label>
+              <div class="controls-container">
+                <div class="control">
+                  <a class="button square-button is-neon-cyan" @click="btnSetModSavePath">
+                    <span class="icon is-small">
+                      <font-awesome-icon icon="folder-open" />
+                    </span>
+                    <span>Choose</span>
+                  </a>
+                </div>
+                <div class="control main">
+                  <input
+                    v-model="APP_SETTINGS.directories.default_out_dir.split_panel"
+                    class="input is-neon-white"
+                    type="text"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="field is-horizontal-midlined textbox">
+              <label title="The time needed to move to the next frame">Modify AIMG</label>
+              <div class="controls-container">
+                <div class="control">
+                  <a class="button square-button is-neon-cyan" @click="btnSetModSavePath">
+                    <span class="icon is-small">
+                      <font-awesome-icon icon="folder-open" />
+                    </span>
+                    <span>Choose</span>
+                  </a>
+                </div>
+                <div class="control main">
+                  <input
+                    v-model="APP_SETTINGS.directories.default_out_dir.modify_panel"
+                    class="input is-neon-white"
+                    type="text"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -247,8 +318,12 @@ export default {
       shell.openExternal("https://en.liberapay.com/StahlFerro");
     },
     applySettingsWatcher() {
-      this.$watch("APP_SETTINGS", function() {
+      this.$watch("APP_SETTINGS", function(newVal, oldVal) {
         console.debug(this.APP_SETTINGS);
+        console.debug("newVal");
+        console.debug(newVal);
+        console.debug("newVal");
+        console.debug(oldVal);
         // Need to convert Vue proxy objects to plain object so that ipc can transmit the object
         let new_settings = JSON.parse(JSON.stringify(this.APP_SETTINGS));
         console.debug(new_settings);
