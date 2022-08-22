@@ -236,7 +236,7 @@
                   </div>
                   <div class="control is-expanded">
                     <input
-                      v-model="outDir"
+                      v-model="saveDir"
                       class="input is-neon-white"
                       type="text"
                       placeholder="Output folder"
@@ -331,7 +331,7 @@ export default {
       previewPathCB: "",
       checkerbg_active: false,
       is_reduced_color: false,
-      outDir: "",
+      saveDir: "",
       SPL_IS_LOADING: false,
       SPL_IS_SPLITTING: false,
       // statusBarBus: new Vue(),
@@ -343,6 +343,17 @@ export default {
       if (this.SPL_IS_LOADING || this.SPL_IS_SPLITTING) return true;
       else return false;
     },
+  },
+  beforeMount: function () {
+    const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
+    try {
+      const defaultOutDir = SETTINGS.directories.default_out_dir.split_panel;
+      if (defaultOutDir) {
+        this.saveDir = defaultOutDir
+      }
+    } catch (error) {
+      console.error(error);
+    }
   },
   methods: {
     loadImage() {
@@ -433,8 +444,8 @@ export default {
       let out_dirs = result.filePaths;
       console.log(out_dirs);
       if (out_dirs && out_dirs.length > 0) { 
-        this.outDir = out_dirs[0];
-        dirPath = this.outDir;
+        this.saveDir = out_dirs[0];
+        dirPath = this.saveDir;
       }
       this._logClear();
       return {canceled: false, result: dirPath};
@@ -451,13 +462,13 @@ export default {
         this._logError("Please load an image first!");
         return;
       }
-      // else if (this.outDir == "") {
+      // else if (this.saveDir == "") {
       //   this._logError("Please specifiy an output folder first!");
       //   return;
       // }
       this.validateFilenameAsync().then(async (isValid) => {
         if (isValid) {
-          if (!this.outDir) {
+          if (!this.saveDir) {
             const result = await this.setSaveDirFromDialogAsync();
             if(result.canceled)
               return Promise.reject("Directory selection cancelled");
@@ -497,7 +508,7 @@ export default {
         color_space = 0;
       }
       console.log(this);
-      tridentEngine(["split_image", this.previewPath, this.outDir, this.criteria], (error, res) => {
+      tridentEngine(["split_image", this.previewPath, this.saveDir, this.criteria], (error, res) => {
         if (error) {
           try {
             this._logError(error);

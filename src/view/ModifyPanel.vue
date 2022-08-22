@@ -436,7 +436,7 @@
                       </div>
                       <div class="control is-expanded">
                         <input
-                          v-model="save_dir"
+                          v-model="saveDir"
                           class="input is-neon-white"
                           type="text"
                           placeholder="Output folder"
@@ -659,7 +659,7 @@ export default {
       previewPathCB: "",
       preview_info: "",
       // save_fstem: "",
-      save_dir: "",
+      saveDir: "",
       preview_size: "",
       preview_size_hr: "",
       aspect_ratio: "",
@@ -785,6 +785,17 @@ export default {
       console.debug(`hasModification: ${this.hasGeneralModification} ${this.hasFormatOptimization}`)
       return this.orig_attribute.path !== "" && this.hasGeneralModification || this.hasFormatOptimization;
     },
+  },
+  beforeMount: function () {
+    const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
+    try {
+      const defaultOutDir = SETTINGS.directories.default_out_dir.modify_panel;
+      if (defaultOutDir) {
+        this.saveDir = defaultOutDir
+      }
+    } catch (error) {
+      console.error(error);
+    }
   },
   methods: {
     loadOrigMetadata(res) {
@@ -1008,7 +1019,7 @@ export default {
       let out_dirs = result.filePaths;
       console.log(out_dirs);
       if (out_dirs && out_dirs.length > 0) { 
-        this.save_dir = out_dirs[0];
+        this.saveDir = out_dirs[0];
       }
       this._logClear();
       return {canceled: false, result: dirPath};
@@ -1029,7 +1040,7 @@ export default {
 
       this.validateFilenameAsync().then(async (isValid) => {
         if (isValid) {
-          if (!this.save_dir) {
+          if (!this.saveDir) {
             const result = await this.setSaveDirFromDialogAsync()
             if (result.canceled)
               return Promise.reject("Directory selection cancelled");
@@ -1056,7 +1067,7 @@ export default {
 
 
       
-    // if (this.save_dir)
+    // if (this.saveDir)
     //   this.modifyImage();
     // else
     //   this.setSaveDirFromDialogAsync().then((result) => {
@@ -1263,7 +1274,7 @@ export default {
     },
     _getSavePath() {
       let file_name = `${this.fname}.${this.criteria.format}`;
-      let save_path = join(this.save_dir, file_name);
+      let save_path = join(this.saveDir, file_name);
       console.log(`getSavePath ${save_path}`);
       return save_path;
     },

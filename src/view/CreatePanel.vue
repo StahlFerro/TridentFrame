@@ -661,6 +661,17 @@ export default {
   created() {
     window.addEventListener("resize", this.closeLoadPopper);
   },
+  beforeMount: function () {
+    const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
+    try {
+      const defaultOutDir = SETTINGS.directories.default_out_dir.create_panel;
+      if (defaultOutDir) {
+        this.saveDir = defaultOutDir
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  },
   unmounted() {
     window.removeEventListener("resize", this.closeLoadPopper);
   },
