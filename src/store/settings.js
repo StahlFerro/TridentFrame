@@ -68,15 +68,15 @@ const initStoreListener = () => {
 	if (!ipcMain || !app) {
 		throw new Error(`initStoreListener() must be called from the main process!`);
 	}
-  ipcMain.on("get-settings", function (event, args) {
+  ipcMain.on("IPC-GET-SETTINGS", function (event, args) {
     console.debug(SETTINGS);
     event.returnValue = SETTINGS;
   });
-  ipcMain.on("set-settings", function (event, args) {
-    console.debug("set-settings invoked with args:");
+  ipcMain.on("IPC-SET-SETTINGS", function (event, args) {
+    console.debug("IPC-SET-SETTINGS invoked with args:");
     console.debug(args);
     updateSettings(args);
-    console.debug("set-settings finished invoked!");
+    console.debug("IPC-SET-SETTINGS finished invoked!");
     writeSettings();
     console.debug("settings written to toml!");
     event.returnValue = null;

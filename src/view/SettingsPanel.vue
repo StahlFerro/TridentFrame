@@ -41,20 +41,22 @@
               Image previewing
             </h4>
             <hr />
-            <div class="field is-horizontal-midlined selection">
+            <div class="field is-enhanced selection">
               <!-- <div class="field-body"> -->
               <label
                 title="How the name of the preview image will be saved as"
               >Save name</label>
-              <div class="control main">
-                <div class="select is-neon-cyan">
-                  <select id="nameSaveBehaviourSelection" v-model="APP_SETTINGS.preview_image.name_save_behaviour">
-                    <option v-for="(sb, index) in previewImageSaveNameBehaviour" :key="index" :value="sb.name" :title="sb.description">
-                      {{ sb.label }}
-                    </option>
-                    <!-- <option value="GIF">GIF</option>
-                    <option value="PNG">APNG</option> -->
-                  </select>
+              <div class="controls-container">
+                <div class="control main">
+                  <div class="select is-neon-cyan">
+                    <select id="nameSaveBehaviourSelection" v-model="APP_SETTINGS.preview_image.name_save_behaviour">
+                      <option v-for="(sb, index) in previewImageSaveNameBehaviour" :key="index" :value="sb.name" :title="sb.description">
+                        {{ sb.label }}
+                      </option>
+                      <!-- <option value="GIF">GIF</option>
+                      <option value="PNG">APNG</option> -->
+                    </select>
+                  </div>
                 </div>
               </div>
               <!-- </div> -->
@@ -67,14 +69,14 @@
           
           <div id="settings_directories" class="settings-group is-2">
             <h4 class="title is-4 settings-header">
-              Output folders
+              Default output folders
             </h4>
             <hr />
-            <div class="field is-horizontal-midlined textbox">
+            <div class="field is-enhanced textbox">
               <label title="The time needed to move to the next frame">Create AIMG</label>
               <div class="controls-container">
                 <div class="control">
-                  <a class="button square-button is-neon-cyan" @click="btnSetCreateSavePath">
+                  <a class="button square-button is-neon-cyan" @click="btnSetOutDir('create_panel')">
                     <span class="icon is-small">
                       <font-awesome-icon icon="folder-open" />
                     </span>
@@ -83,18 +85,24 @@
                 </div>
                 <div class="control main">
                   <input
-                    v-model="APP_SETTINGS.directories.default_out_dir.create_panel"
+                    v-model="intermediate.directories.default_out_dir.create_panel"
                     class="input is-neon-white"
                     type="text"
+                    @blur="blurCommitDefaultOutDir($event, 'create_panel')"
                   />
                 </div>
               </div>
+              <div class="stat-icon">
+                <span v-if="errors.defaultOutDirCreate" class="icon is-crimson" title="The directory does not exist, and will not be used as a default">
+                  <font-awesome-icon icon="circle-exclamation" size="lg" />
+                </span>
+              </div>
             </div>
-            <div class="field is-horizontal-midlined textbox">
+            <div class="field is-enhanced textbox">
               <label title="The time needed to move to the next frame">Split AIMG</label>
               <div class="controls-container">
                 <div class="control">
-                  <a class="button square-button is-neon-cyan" @click="btnSetModSavePath">
+                  <a class="button square-button is-neon-cyan" @click="btnSetOutDir('split_panel')">
                     <span class="icon is-small">
                       <font-awesome-icon icon="folder-open" />
                     </span>
@@ -103,18 +111,24 @@
                 </div>
                 <div class="control main">
                   <input
-                    v-model="APP_SETTINGS.directories.default_out_dir.split_panel"
+                    v-model="intermediate.directories.default_out_dir.split_panel"
                     class="input is-neon-white"
                     type="text"
+                    @blur="blurCommitDefaultOutDir($event, 'split_panel')"
                   />
                 </div>
               </div>
+              <div class="stat-icon">
+                <span v-if="errors.defaultOutDirSplit" class="icon is-crimson" title="The directory does not exist, and will not be used as a default">
+                  <font-awesome-icon icon="circle-exclamation" size="lg" />
+                </span>
+              </div>
             </div>
-            <div class="field is-horizontal-midlined textbox">
+            <div class="field is-enhanced textbox">
               <label title="The time needed to move to the next frame">Modify AIMG</label>
               <div class="controls-container">
                 <div class="control">
-                  <a class="button square-button is-neon-cyan" @click="btnSetModSavePath">
+                  <a class="button square-button is-neon-cyan" @click="btnSetOutDir('modify_panel')">
                     <span class="icon is-small">
                       <font-awesome-icon icon="folder-open" />
                     </span>
@@ -123,11 +137,17 @@
                 </div>
                 <div class="control main">
                   <input
-                    v-model="APP_SETTINGS.directories.default_out_dir.modify_panel"
+                    v-model="intermediate.directories.default_out_dir.modify_panel"
                     class="input is-neon-white"
                     type="text"
+                    @blur="blurCommitDefaultOutDir($event, 'modify_panel')"
                   />
                 </div>
+              </div>
+              <div class="stat-icon">
+                <span v-if="errors.defaultOutDirModify" class="icon is-crimson" title="The directory does not exist, and will not be used as a default">
+                  <font-awesome-icon icon="circle-exclamation" size="lg" />
+                </span>
               </div>
             </div>
           </div>
@@ -252,9 +272,12 @@
 
 <script>
 import { ipcRenderer, shell } from "electron";
+import { access } from "fs";
 import { tridentEngine } from "../modules/streams/trident_engine.js";
 import { PreviewImageSaveNameBehaviour } from "../models/previewImage.js";
 import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
+
+const DIR_DIALOG_PROPS = ["openDirectory", "createDirectory"];
 
 export default {
   data: function () {
@@ -264,46 +287,150 @@ export default {
       previewImageSaveNameBehaviour: PreviewImageSaveNameBehaviour.getAll(),
       APP_SETTINGS: {},
       APP_SETTINGS_PREVIOUS: {},
+      errors: {
+        defaultOutDirCreate: false,
+        defaultOutDirSplit: false,
+        defaultOutDirModify: false,
+      },
+      intermediate: {
+        directories: {
+          default_out_dir: {
+            create_panel: "",
+            split_panel: "",
+            modify_panel: "",
+          }
+        }
+      }
     };
   },
-  // watch: {
-  //   USER_SETTINGS: {
-  //     handler: function (val) {
-  //       // console.log("old:");
-  //       // console.log(this.USER_SETTINGS_PREVIOUS);
-  //       // console.log("new:");
-  //       // console.log(val);
-  //       // ipcRenderer.sendSync("set-settings", this.USER_SETTINGS);
-  //     },
-  //     deep: true,
-  //   },
-  // },
+  computed: {
+    computedAppSettings: function() {
+      return Object.assign({}, this.APP_SETTINGS)
+    },
+    // defaultOutDirCreateValid: function() {
+    //   return this.APP_SETTINGS.directories.default_out_dir.create_panel
+    // },
+    // defaultOutDirSplitValid: function() {
+    //   return this.APP_SETTINGS.directories.default_out_dir.split_panel
+    // },
+    // defaultOutDirModifyValid: function() {
+    //   return this.APP_SETTINGS.directories.default_out_dir.modify_panel
+    // }
+  },
+  watch: {
+    'intermediate.directories.default_out_dir.create_panel': {
+      handler: function (val) {
+        console.log(val);
+      },
+    },
+  },
   beforeMount: function () {
-    console.debug("SettingsPanel mounted");
+    console.debug("SettingsPanel beforeMounting...");
     console.log(PreviewImageSaveNameBehaviour.getAll())
     Object.keys(PreviewImageSaveNameBehaviour).forEach(saveBehaviour => console.log("saveBehaviour:", saveBehaviour));
     // ipcRenderer.invoke('reload-window-once');
-    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
     console.debug(SETTINGS);
     this.APP_SETTINGS = { ...SETTINGS };
     this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
+  },
+  mounted: function() {
+    console.debug("SettingsPanel mounted");
+    this.mapIntermediateProperties();
     this.applySettingsWatcher();
   },
   methods: {
+    mapIntermediateProperties() {
+      console.log('mapIntermediateProperties');
+      this.intermediate.directories.default_out_dir.create_panel = this.APP_SETTINGS.directories.default_out_dir.create_panel
+      this.intermediate.directories.default_out_dir.split_panel = this.APP_SETTINGS.directories.default_out_dir.split_panel;
+      this.intermediate.directories.default_out_dir.modify_panel = this.APP_SETTINGS.directories.default_out_dir.modify_panel;
+    },
     refreshWindow() {
       ipcRenderer.invoke("reload-window");
     },
     openInspector() {
       ipcRenderer.invoke("open-inspector");
     },
+    btnSetOutDir(panel) {
+      this.setOutDirAsync(panel);
+    },
+    async setOutDirAsync(target) {
+      let options = { properties: DIR_DIALOG_PROPS };
+      let dirPath;
+      const result = await ipcRenderer.invoke('open-dialog', options);
+      if (result.canceled) {
+        return {canceled: true, result: dirPath};
+      }
+      let out_dirs = result.filePaths;
+      console.log(out_dirs);
+      if (out_dirs && out_dirs.length > 0) {
+        dirPath = out_dirs[0];
+      }
+      if (target == 'create_panel') {
+        this.intermediate.directories.default_out_dir.create_panel = dirPath;
+      }
+      else if (target == 'split_panel') {
+        this.intermediate.directories.default_out_dir.split_panel = dirPath;
+      }
+      else if (target == 'modify_panel') {
+        this.intermediate.directories.default_out_dir.modify_panel = dirPath;
+      }
+      this.commitDefaultOutDir(target);
+      return {canceled: false, result: dirPath};
+    },
+    blurCommitDefaultOutDir(e, target) {
+      console.log(`blurCommitDefaultOutDir for ${target}`);
+      console.log(target);
+      this.commitDefaultOutDir(target);
+    },
+    commitDefaultOutDir(target) {
+      if (target == 'create_panel') {
+        const dir = this.intermediate.directories.default_out_dir.create_panel;
+        access(dir, (error) => {
+          console.log(`error: ${error}`);
+          if (dir && error) {
+            this.errors.defaultOutDirCreate = true;
+          }
+          else {
+            this.errors.defaultOutDirCreate = false;
+            this.APP_SETTINGS.directories.default_out_dir.create_panel = this.intermediate.directories.default_out_dir.create_panel;
+          }
+        });
+      }
+      else if (target == 'split_panel') {
+        const dir = this.intermediate.directories.default_out_dir.split_panel;
+        access(dir, (error) => {
+          if (dir && error) {
+            this.errors.defaultOutDirSplit = true;
+          }
+          else {
+            this.errors.defaultOutDirSplit = false;
+            this.APP_SETTINGS.directories.default_out_dir.split_panel = this.intermediate.directories.default_out_dir.split_panel;
+          }
+        });
+      }
+      else if (target == 'modify_panel') {
+        const dir = this.intermediate.directories.default_out_dir.modify_panel;
+        access(dir, (error) => {
+          if (dir && error) {
+            this.errors.defaultOutDirModify = true;
+          }
+          else {
+            this.errors.defaultOutDirModify = false;
+            this.APP_SETTINGS.directories.default_out_dir.modify_panel = this.intermediate.directories.default_out_dir.modify_panel;
+          }
+        });
+      }
+    },
     btnGetSettings() {
       console.log("Settings in panel");
       console.log(this.APP_SETTINGS);
       console.log("Settings in store");
-      console.log(ipcRenderer.sendSync("get-settings"));
+      console.log(ipcRenderer.sendSync("IPC-GET-SETTINGS"));
     },
     btnSaveSettings() {
-      ipcRenderer.sendSync("set-settings", this.APP_SETTINGS);
+      ipcRenderer.sendSync("IPC-SET-SETTINGS", this.APP_SETTINGS);
     },
     btnRelaunchApp() {
       ipcRenderer.invoke("relaunch-application");
@@ -318,16 +445,16 @@ export default {
       shell.openExternal("https://en.liberapay.com/StahlFerro");
     },
     applySettingsWatcher() {
-      this.$watch("APP_SETTINGS", function(newVal, oldVal) {
+      this.$watch("computedAppSettings", (newVal, oldVal) => {
         console.debug(this.APP_SETTINGS);
         console.debug("newVal");
         console.debug(newVal);
-        console.debug("newVal");
+        console.debug("oldVal");
         console.debug(oldVal);
         // Need to convert Vue proxy objects to plain object so that ipc can transmit the object
         let new_settings = JSON.parse(JSON.stringify(this.APP_SETTINGS));
         console.debug(new_settings);
-        ipcRenderer.sendSync("set-settings", new_settings);
+        ipcRenderer.sendSync("IPC-SET-SETTINGS", new_settings);
       }, { deep: true});
     },
     testCInterface() {

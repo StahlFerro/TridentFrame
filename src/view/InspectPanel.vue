@@ -167,7 +167,7 @@ export default {
   },
   beforeMount: function () {
     // ipcRenderer.invoke('reload-window-once');
-    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
     this.INSPECT_PANEL_SETTINGS = { ...SETTINGS.inspect_panel };
     console.log(this);
   },

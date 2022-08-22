@@ -7,9 +7,9 @@ open_devtools = false
 name_save_behaviour = "auto_generated"
 
 [directories.default_out_dir]
-create_panel = ""
-split_panel = ""
-modify_panel = ""
+create_panel = "D:\\Media\\Pictures\\GIFs\\Florian de Looij"
+split_panel = "D:\\Media\\Pictures\\GIFs\\Florian de Looij"
+modify_panel = "D:\\Media\\Pictures"
 
 [[inspect_panel.image_attributes]]
 category = "general_info"

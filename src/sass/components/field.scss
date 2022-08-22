@@ -1,25 +1,34 @@
 .field {
-  &.is-horizontal-midlined {
+  &.is-enhanced {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
     gap: 2px;
-    flex-direction: row;
+    .stat-icon {
+      flex: 0 0 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .icon {
+        width: 100%;
+        height: 100%;
+      }
+    }
     &.selection {
-      .label {
+      label {
         flex: 0 0 40%
       }
       .controls-container {
-        flex: 0 0 60%;
+        flex: 1 1 auto;
       }
     }
     &.textbox {
-      .label {
+      label {
         flex: 0 0 20%
       }
       .controls-container {
-        flex: 0 0 80%;
+        flex: 1 1 auto;
         display: flex;
         flex-direction: row;
       }
