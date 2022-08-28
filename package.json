@@ -25,7 +25,7 @@
     "clean-engine": "rimraf engine/*",
     "clean-release": "rimraf release/*",
     "clean-mochawesome": "rimraf tests/javascript/mochawesome-report/*",
-    "clean-all": "npm run clean-build && npm run clean-dist && npm run clean-engine && npm run clean-engine && npm run clean-cache && npm run clean-previews",
+    "clean-all": "npm run clean-build && npm run clean-dist && npm run clean-engine && npm run clean-cache && npm run clean-previews",
     "css-build": "sass --no-source-map sass/bulmamods.scss css/bulmamods.css",
     "css-watch": "sass --no-source-map --watch sass/bulmamods.scss css/bulmamods.css",
     "dev": "cross-env DEPLOY_ENV=DEV electron .",
@@ -35,14 +35,14 @@
     "liverelease": "npm run clean-dist && webpack --watch",
     "wpserve": "webpack serve --mode development --env NODE_ENV=DEV",
     "wpbuild": "npm run clean-dist && webpack --mode production --env NODE_ENV=PROD",
-    "elbuild": "npm run clean-release && electron-builder",
-    "engine-clean": "rimraf ./engine/*",
-    "buildpy-windows": "npm run engine-clean && pyinstaller tripy_windows64.spec",
-    "buildpy-linux": "npm run engine-clean && pyinstaller tripy_linux.spec",
+    "elbuild-windows": "npm run clean-release && electron-builder --config ./shipping-configs/electron-builder-win.json",
+    "elbuild-linux": "npm run clean-release && electron-builder --config ./shipping-configs/electron-builder-linux.json",
+    "buildpy-windows": "npm run clean-engine && pyinstaller tripy_windows64.spec",
+    "buildpy-linux": "npm run clean-engine && pyinstaller tripy_linux.spec",
     "updatepy-windows": "npm run buildpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
     "updatepy-linux": "npm run buildpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
-    "release-windows": "npm run clean-build && npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-windows && npm run elbuild && npm run scribe-version",
-    "release-linux": "npm run clean-build && npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-linux && npm run elbuild && npm run scribe-version",
+    "release-windows": "npm run clean-build && npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-windows && npm run elbuild-windows && npm run scribe-version",
+    "release-linux": "npm run clean-build && npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-linux && npm run elbuild-linux && npm run scribe-version",
     "scribe-version": "python writer/info_scribe.py",
     "test-py": "python -m pytest tests/python/unit/ tests/python/integration/ --html=tests/python/pytest-report/report.html --self-contained-html",
     "test-py-prod": "python -m pytest tests/python/production/ --html=tests/python/pytest-report/report.html --self-contained-html",
@@ -51,86 +51,6 @@
     "test-js": "npm run clean-mochawesome && cross-env DEPLOY_ENV=DEV mocha './tests/javascript/**/*.js' --require @babel/polyfill --require @babel/register --exit",
     "test-js-prod": "npm run clean-mochawesome && mocha './tests/javascript/**/*.js' --require @babel/polyfill --require @babel/register --exit",
     "test-all": "npm run test-py && npm run test-js && npm run test-py-prod && npm run test-js-prod"
-  },
-  "build": {
-    "productName": "TridentFrame",
-    "appId": "io.stahlferro.tridentframe",
-    "directories": {
-      "output": "release/tridentframe"
-    },
-    "asar": false,
-    "win": {
-      "publisherName": "${author.name}",
-      "target": [
-        "7z",
-        "zip",
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        },
-        "msi"
-      ],
-      "icon": "release/tridentframe/win-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.ico"
-    },
-    "nsis": {
-      "artifactName": "${productName}-${version}-windows-installer.${ext}",
-  	  "oneClick": false,
-      "perMachine": true,
-      "allowToChangeInstallationDirectory": true
-    },
-    "msi": {
-      "artifactName": "${productName}-${version}.${ext}"
-    },
-    "linux": {
-      "target": [
-        "7z",
-        "deb",
-        "tar.gz",
-        "zip"
-      ],
-      "icon": "release/tridentframe/linux-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.png",
-      "category": "Graphics"
-    },
-    "files": [
-      "**/*",
-      "engine/**",
-      "dist/**",
-      "!dist/config/**",
-      "!src/**",
-      "src/common/paths.js",
-      "src/store/settings.js",
-      "!src/assets/**",
-      "!src/webfonts/**",
-      "!_DEVDOCS/**",
-      "!.github/**",
-      "!.sass-cache/**",
-      "!.vscode/**",
-      "!.venv/**",
-      "!.mocharc.json",
-      "!jsconfig.json",
-      "!bin/**",
-      "!pycore/**",
-      "!temp/**",
-      "!tests/**",
-      "!venv/**",
-      "!writer/**",
-      "!webpack.config.js",
-      "!*.py",
-      "!*.pylintrc",
-      "!*.spec",
-      "!*.vue",
-      "!*.txt",
-      "!*.code-workspace",
-      "!*.ps1",
-      "!*.sh",
-      "!*.md",
-      "!*.pytest_cache",
-      "LICENSE.md",
-      "!Pipfile",
-      "!Pipfile.lock"
-    ]
   },
   "dependencies": {
     "@iarna/toml": "^2.2.5",

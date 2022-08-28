@@ -1,0 +1,64 @@
+{
+  "productName": "TridentFrame",
+  "appId": "com.stahlferro.tridentframe",
+  "copyright": "Copyright 2021 StahlFerro",
+  "directories": {
+    "output": "release/tridentframe"
+  },
+  "asar": false,
+  "win": {
+    "artifactName": "${productName}-${version}-windows.${ext}",
+    "publisherName": "${author.name}",
+    "target": [
+      "7z",
+      "zip",
+      "nsis",
+      "msi"
+    ],
+    "icon": "release/tridentframe/win-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.ico"
+  },
+  "nsis": {
+    "artifactName": "${productName}-${version}-windows-installer-nsis.${ext}",
+    "oneClick": false,
+    "perMachine": true,
+    "allowToChangeInstallationDirectory": true
+  },
+  "files": [
+    "**/*",
+    "engine/**",
+    "dist/**",
+    "!dist/config/**",
+    "!src/**",
+    "src/common/paths.js",
+    "src/store/settings.js",
+    "!src/assets/**",
+    "!src/webfonts/**",
+    "!_DEVDOCS/**",
+    "!.github/**",
+    "!.sass-cache/**",
+    "!.vscode/**",
+    "!.venv/**",
+    "!.mocharc.json",
+    "!jsconfig.json",
+    "!bin/**",
+    "!pycore/**",
+    "!temp/**",
+    "!tests/**",
+    "!venv/**",
+    "!writer/**",
+    "!webpack.config.js",
+    "!*.py",
+    "!*.pylintrc",
+    "!*.spec",
+    "!*.vue",
+    "!*.txt",
+    "!*.code-workspace",
+    "!*.ps1",
+    "!*.sh",
+    "!*.md",
+    "!*.pytest_cache",
+    "LICENSE.md",
+    "!Pipfile",
+    "!Pipfile.lock"
+  ]
+}
