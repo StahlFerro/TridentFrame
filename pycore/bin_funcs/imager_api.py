@@ -186,7 +186,7 @@ class GifsicleAPI:
             "--output",
             shlex.quote(str(out_full_path)) if quotes else str(out_full_path),
         ])
-        stdio.error(' '.join(args))
+        # stdio.error(' '.join(args))
         if ";" in " ".join(args):
             raise MalformedCommandException("gifsicle")
         return args
@@ -195,9 +195,9 @@ class GifsicleAPI:
     def _delays_option_builder(cls, delays) -> List:
         delay_args = []
         gs_delays = group_list_by_values_sequentially(delays)
-        stdio.error({
-            "gs_delays": gs_delays
-        })
+        # stdio.error({
+        #     "gs_delays": gs_delays
+        # })
         # grouped_delays = group_list_by_values(delays)
         # stdio.error({
         #     "grouped_delays": grouped_delays

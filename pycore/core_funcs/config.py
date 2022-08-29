@@ -4,6 +4,8 @@ import json
 import toml
 from pathlib import Path
 
+from pycore.core_funcs import stdio
+
 
 IMG_EXTS = ["png", "jpg", "jpeg", "gif", "bmp", "tiff"]
 STATIC_IMG_EXTS = ["png", "jpg", "jpeg", "bmp", "gif"]
@@ -48,15 +50,15 @@ def _bin_platform_dir() -> Path:
 #         return json.load(jsonfile)
 
 
-def get_absolute_cache_path() -> Path:
+def get_absolute_cache_dir() -> Path:
     """Get the absolute path of the cache directory
 
     Returns:
         Path: Absolute path of the cache directory. Creates the directory if it doesn't exist
     """
-    cache_dir = Path(CACHE_DIR).resolve()
+    cache_dir = Path.cwd().joinpath(Path(CACHE_DIR).resolve())
     if not cache_dir.exists():
-        os.mkdir(cache_dir)
+        os.makedirs(cache_dir)
     empty_file = cache_dir.joinpath(".include")
     if not empty_file.exists():
         open(empty_file, "x")
@@ -69,16 +71,16 @@ def get_absolute_previews_dir() -> Path:
     Returns:
         Path: Absolute path of the cache directory. Creates the directory if it doesn't exist
     """
-    previews_dir = Path(PREVIEWS_DIR).resolve()
+    previews_dir = Path.cwd().joinpath(Path(PREVIEWS_DIR).resolve())
     if not previews_dir.exists():
-        os.mkdir(previews_dir)
+        os.makedirs(previews_dir)
     empty_file = previews_dir.joinpath(".include")
     if not empty_file.exists():
         open(empty_file, "x")
     return previews_dir
 
 
-def get_absolute_temp_path() -> Path:
+def get_absolute_temp_dir() -> Path:
     """Get the absolute path of the temp directory
 
     Returns:

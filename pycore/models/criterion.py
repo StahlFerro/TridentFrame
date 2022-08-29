@@ -91,7 +91,7 @@ class ModificationCriteria(CreationCriteria):
         super(ModificationCriteria, self).__init__(vals)
 
     def change_format(self, metadata: ImageMetadata):
-        stdio.error(f'{metadata.format["value"]} {self.format.name}')
+        # stdio.error(f'{metadata.format["value"]} {self.format.name}')
         return str.upper(metadata.format["value"]) != self.format.name
 
     def must_resize(self, metadata: Optional[AnimatedImageMetadata] = None, width: Optional[int] = 0,
@@ -274,10 +274,10 @@ class CriteriaUtils():
             new_delays = orig_delays
         else:
             raise Exception(f"Unknown delay handling method: {mod_criteria.delay_handling}")
-        stdio.error({
-            "orig_delays": orig_delays,
-            "new_delays": new_delays
-        })
+        # stdio.error({
+        #     "orig_delays": orig_delays,
+        #     "new_delays": new_delays
+        # })
         return new_delays
 
 

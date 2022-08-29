@@ -9,8 +9,6 @@ block_cipher = None
 _bin_dirpath = 'bin/win'
 imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
 added_files = [
-    ('temp/cache/.include', 'temp/cache/'),
-    ('temp/previews/.include', 'temp/previews/'),
     ('config/app.toml', 'config/'),
     ('config/engine.toml', 'config/'),
 ]

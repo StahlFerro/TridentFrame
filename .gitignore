@@ -252,29 +252,7 @@ typings/
 
 
 
-##### Ignore everything inside cache/, previews/, writer/markdown/, writer/checksums/ and temp/ except .include files so that this folder will be commited to the VCS
 
-
-cache/*
-!cache/.include
-previews/*
-!previews/.include
-temp/*
-!temp/.include
-release/*
-engine/*
-writer/markdown/*
-writer/checksums/*
-jsconfig.json
-
-
-### Mochawesome Reports
-
-**/mochawesome-report/**
-
-### Pytest-HTML Reports
-
-**/pytest-report/**
 
 
 
@@ -339,3 +317,25 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+##### Ignore everything inside cache/, previews/, writer/markdown/, writer/checksums/ and temp/ except .include files so that this folder will be commited to the VCS
+
+
+temp/*
+!temp/cache/.include
+!temp/previews/.include
+release/*
+engine/*
+writer/markdown/*
+writer/checksums/*
+jsconfig.json
+
+
+### Mochawesome Reports
+
+**/mochawesome-report/**
+
+### Pytest-HTML Reports
+
+**/pytest-report/**

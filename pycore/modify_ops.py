@@ -63,7 +63,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
     delays = []
     if mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
         delays = CriteriaUtils.calculate_new_delays(mod_criteria, metadata)
-    stdio.error(delays)
+    # stdio.error(delays)
     create_criteria = CreationCriteria({
         # "name": mod_criteria.name,
         "fps": mod_criteria.fps,
@@ -87,9 +87,9 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "gif_opt_criteria": crbundle.gif_opt_criteria,
         "apng_opt_criteria": crbundle.apng_opt_criteria,
     })
-    stdio.error("MOD CREATE")
+    # stdio.error("MOD CREATE")
     new_image_path = create_aimg(frame_paths, out_path, creation_crbundle)
-    stdio.error("MOD RETEMPO")
+    # stdio.error("MOD RETEMPO")
     GifsicleAPI.retempo_gif(new_image_path, delays)
     shutil.rmtree(frames_dir)
     return new_image_path
@@ -122,7 +122,7 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             unoptimized_apng_frames = reversed(unoptimized_apng_frames)
             
         orig_delays = [Fraction(f[1].delay, f[1].delay_den) if f[1] else 0 for f in unoptimized_apng_frames]
-        stdio.error({"orig_delays": orig_delays})
+        # stdio.error({"orig_delays": orig_delays})
         new_delays = CriteriaUtils.calculate_new_delays(mod_criteria, metadata)
         # if mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
         #     new_delays = [Fraction(mod_criteria.delay).limit_denominator() for _ in orig_delays]
@@ -135,10 +135,10 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
         #     new_delays = orig_delays
         # else:
         #     raise Exception(f"Unknown delay handling method: {mod_criteria.delay_handling}")
-        stdio.error({
-            "new_delays": new_delays,
-            "uaf": len(unoptimized_apng_frames)
-        })
+        # stdio.error({
+        #     "new_delays": new_delays,
+        #     "uaf": len(unoptimized_apng_frames)
+        # })
         for index, (im, control) in enumerate(unoptimized_apng_frames):
             # logger.debug(png.chunks)
             # delay_fraction = Fraction(1/mod_criteria.fps).limit_denominator()
