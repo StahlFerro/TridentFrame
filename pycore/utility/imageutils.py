@@ -113,7 +113,6 @@ def get_filename_components(f: Union[Path, str]):
         Any: Tuple of all matched regex groups
 
     """
-    stdio.warn(f)
     if isinstance(f, Path):
         f = f.name
     # elif type(f) is str:

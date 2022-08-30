@@ -319,9 +319,10 @@ Mkfile.old
 dkms.conf
 
 
-##### Ignore everything inside cache/, previews/, writer/markdown/, writer/checksums/ and temp/ except .include files so that this folder will be commited to the VCS
+##### TridentFrame project-specific ignores
 
 
+config/app.toml
 temp/*
 !temp/cache/.include
 !temp/previews/.include

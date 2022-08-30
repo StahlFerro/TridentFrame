@@ -13,8 +13,12 @@
         <font-awesome-icon icon="check" class="is-emerald" />
         <!-- <i class="fas fa-check is-emerald"></i> -->
       </span>
+      <span v-show="logLevel == EnumStatusLogLevel.WARNING" class="icon">
+        <font-awesome-icon icon="triangle-exclamation" class="is-tuscany" />
+        <!-- <i class="fas fa-times is-crimson"></i> -->
+      </span>
       <span v-show="logLevel == EnumStatusLogLevel.ERROR" class="icon">
-        <font-awesome-icon icon="times" class="is-crimson" />
+        <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
         <!-- <i class="fas fa-times is-crimson"></i> -->
       </span>
     </div>

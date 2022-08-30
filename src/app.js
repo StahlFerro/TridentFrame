@@ -28,6 +28,7 @@ import { faPlus } from '@fortawesome/free-solid-svg-icons/faPlus';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons/faPlusCircle';
 import { faTimes } from '@fortawesome/free-solid-svg-icons/faTimes';
 import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
+import { faTriangleExclamation } from "@fortawesome/free-solid-svg-icons/faTriangleExclamation";
 import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons/faCircleExclamation';
 import { faMinusCircle } from '@fortawesome/free-solid-svg-icons/faMinusCircle';
 import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
@@ -49,8 +50,8 @@ import { faSlidersH } from '@fortawesome/free-solid-svg-icons/faSlidersH';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add([faImage, farImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, 
-  faCircleExclamation, faCheck, faSpinner, faSave, faFolderOpen, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, farCopyright, faFileUpload, farEye, 
-  fabGithub, faFlask, faGlobe, faSlidersH]);
+  faTriangleExclamation, faCircleExclamation, faCheck, faSpinner, faSave, faFolderOpen, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, 
+  farCopyright, faFileUpload, farEye, fabGithub, faFlask, faGlobe, faSlidersH]);
 
 const app = createApp(App);
 // const emitter = mitt();
