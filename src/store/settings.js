@@ -1,10 +1,66 @@
 const { join } = require("path");
-const { createReadStream, readFileSync } = require("fs");
+const { createReadStream, readFileSync, existsSync } = require("fs");
 const { writeFileSync } = require("atomically");
 const { app, ipcMain, ipcRenderer } = require("electron");
 const { APP_SETTINGS_PATH } = require("../common/paths.js")
 const concat = require("concat-stream");
 const toml = require("@iarna/toml");
+
+const _DEFAULT_SETTINGS = {
+  "startup": {
+      "fullscreen": false,
+      "open_debugger": false,
+      "open_devtools": false
+  },
+  "preview_image": {
+      "name_save_behaviour": "auto_generated"
+  },
+  "directories": {
+      "default_out_dir": {
+          "create_panel": "",
+          "split_panel": "",
+          "modify_panel": ""
+      }
+  },
+  "inspect_panel": {
+      "image_attributes": [
+          {
+              "category": "general_info",
+              "label": "General Info",
+              "attributes": [
+                  "name",
+                  "width",
+                  "height",
+                  "format",
+                  "fsize_hr",
+                  "absolute_url",
+                  "creation_datetime",
+                  "modification_datetime",
+                  "comments",
+                  "has_transparency",
+                  "color_mode",
+                  "color_profile",
+                  "bit_depth",
+                  "exif",
+                  "is_animated"
+              ]
+          },
+          {
+              "category": "animation_info",
+              "label": "Animation Info",
+              "attributes": [
+                  "frame_count",
+                  "average_delay",
+                  "delays_are_even",
+                  "delays",
+                  "fps",
+                  "loop_duration",
+                  "loop_count"
+              ]
+          }
+      ]
+  }
+};
 
 let SETTINGS;
 // const SETTINGS_PATH = APP_SETTINGS_PATH;
@@ -14,32 +70,29 @@ let SETTINGS;
  */
 function loadSettingsFromFile() {
   console.debug("Start loading data from settings file...");
+  try {
+    // If app.toml file doesn't exist
+    if (!existsSync(APP_SETTINGS_PATH)) {
+      console.warn("WARNING: app.toml settings file doesn't exist, creating")
+      createSettingsFile();
+    }
+  } catch(err) {
+    console.error(err)
+  }
   const tomlStr = readFileSync(APP_SETTINGS_PATH, { encoding: "utf-8"});
   SETTINGS = toml.parse(tomlStr);
   console.debug("Finished reading and parsing TOML...");
 }
 
-// function loadSettingsFromFileStream() {
-//   console.log("Start loading data from settings file...");
-//   const readStream = createReadStream(SETTINGS_PATH, "utf-8");
-//   const concatStream = concat(readSettings);
-//   readStream.on("error", readSettingsError)
-//   readStream.pipe(concatStream)
-//   console.log("Piping data from settings file...");
-// }
-
-// function readSettings(settingsBuffer) {
-//   console.log("Reading TOML settings buffer...");
-//   console.log(settingsBuffer);
-//   SETTINGS = toml.parse(settingsBuffer);
-//   console.log(SETTINGS);
-//   console.log(`Finished reading and parsing settings TOML`);
-// }
-
-// function readSettingsError(err){
-//   console.error(err);
-//   process.exit(1);
-// }
+/**
+ * In the event that the settings file (app.toml) is missing, create the file with default settings
+ */
+function createSettingsFile() {
+  let tomlStr = toml.stringify(_DEFAULT_SETTINGS);
+  writeFileSync(APP_SETTINGS_PATH, tomlStr, {
+    tmpPurge: false,
+  });
+}
 
 /**
  * Update main SETTINGS based on
