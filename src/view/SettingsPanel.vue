@@ -50,7 +50,7 @@
                 <div class="control main">
                   <div class="select is-neon-cyan">
                     <select id="nameSaveBehaviourSelection" v-model="APP_SETTINGS.preview_image.name_save_behaviour">
-                      <option v-for="(sb, index) in previewImageSaveNameBehaviour" :key="index" :value="sb.name" :title="sb.description">
+                      <option v-for="(sb, index) in previewImageSaveNameBehaviours" :key="index" :value="sb.name" :title="sb.description">
                         {{ sb.label }}
                       </option>
                       <!-- <option value="GIF">GIF</option>
@@ -284,7 +284,7 @@ export default {
     return {
       logo: logo,
       settings_tab_selection: 0,
-      previewImageSaveNameBehaviour: PreviewImageSaveNameBehaviour.getAll(),
+      previewImageSaveNameBehaviours: PreviewImageSaveNameBehaviour.getAll(),
       APP_SETTINGS: {},
       APP_SETTINGS_PREVIOUS: {},
       errors: {

@@ -45,6 +45,9 @@ class PreviewImageSaveNameBehaviour {
   static getAll() {
     return Object.keys(this).map(k => this[k]);
   }
+  static fromName(name) {
+    return this.getAll().filter(snb => snb.name === name)[0];
+  }
 }
 
 export { 

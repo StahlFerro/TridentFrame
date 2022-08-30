@@ -107,7 +107,7 @@ ipcMain.handle('choose-dir-dialog', async (event, args) => {
 	return "";
 });
 
-ipcMain.handle('save-dialog', async (event, args) => {
+ipcMain.handle('IPC-SHOW-SAVE-DIALOG', async (event, args) => {
 	return dialog.showSaveDialog(mainWindow, args);
 });
 
