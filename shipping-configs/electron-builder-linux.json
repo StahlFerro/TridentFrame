@@ -15,7 +15,7 @@
       "tar.gz",
       "zip"
     ],
-    "icon": "release/tridentframe/linux-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.png",
+    "icon": "release/tridentframe/linux-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.icns",
     "category": "Graphics"
   },
   "files": [
