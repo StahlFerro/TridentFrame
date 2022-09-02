@@ -33,7 +33,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -324,12 +323,11 @@ dkms.conf
 
 config/app.toml
 temp/*
-!temp/cache/.include
-!temp/previews/.include
 release/*
 engine/*
-writer/markdown/*
-writer/checksums/*
+engine-prebuild/*
+tools/writer/markdown/*
+tools/writer/checksums/*
 jsconfig.json
 
 

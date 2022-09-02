@@ -7,8 +7,9 @@ from typing import List
 
 SCRIBE_PATH = Path(__file__).resolve()
 SCRIBE_DIR = Path(SCRIBE_PATH).parents[0]
+
 MD_DIR = SCRIBE_DIR.joinpath("markdown")
-PROJECT_DIR = SCRIBE_DIR.parents[0]
+PROJECT_DIR = SCRIBE_PATH.parents[2]
 RELEASES_DIR = PROJECT_DIR.joinpath("release/tridentframe/")
 PACKAGEJSON_FILE = PROJECT_DIR.joinpath("package.json")
 ELECTRON_BUILDER_CONF_FILE = ""

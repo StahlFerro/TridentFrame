@@ -9,11 +9,9 @@
   "linux": {
     "artifactName": "${productName}-${version}-linux.${ext}",
     "target": [
-      "7z",
       "deb",
       "rpm",
       "tar.gz",
-      "zip"
     ],
     "icon": "release/tridentframe/linux-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.icns",
     "category": "Graphics"

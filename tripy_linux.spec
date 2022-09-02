@@ -1,5 +1,8 @@
 # -*- mode: python ; coding: utf-8 -*-
+
+
 import PyInstaller.config
+PyInstaller.config.CONF['workpath'] = "./engine-prebuild/"
 PyInstaller.config.CONF['distpath'] = "./engine/"
 block_cipher = None
 
@@ -10,7 +13,6 @@ added_files = [
     ('config/engine.toml', 'config/'),
 ]
 added_files.extend(imaging_engines)
-print(imaging_engines)
 a = Analysis(['main.py'],
              pathex=['.'],
              binaries=[],

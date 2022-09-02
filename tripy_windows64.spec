@@ -2,7 +2,7 @@
 
 
 import PyInstaller.config
-import os
+PyInstaller.config.CONF['workpath'] = "./engine-prebuild/"
 PyInstaller.config.CONF['distpath'] = "./engine/"
 block_cipher = None
 
