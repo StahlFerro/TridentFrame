@@ -2,8 +2,10 @@
 
 
 import PyInstaller.config
-PyInstaller.config.CONF['workpath'] = "./engine-prebuild/"
+PyInstaller.config.CONF['workpath'] = "./engine-prebuild/tripy_linux"
 PyInstaller.config.CONF['distpath'] = "./engine/"
+PyInstaller.config.CONF['warnfile'] = "./engine-prebuild/tripy_linux/warn-tripy_linux"
+PyInstaller.config.CONF['xref-file'] = "./engine-prebuild/tripy_linux/xref-tripy_linux"
 block_cipher = None
 
 _bin_dirpath = 'bin/linux'

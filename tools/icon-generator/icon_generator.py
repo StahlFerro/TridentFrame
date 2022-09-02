@@ -1,6 +1,7 @@
 import json
 import platform
 import hashlib
+import os
 from pathlib import Path
 from typing import List
 from PIL import Image
@@ -11,6 +12,10 @@ __FILE__PATH__ = Path(__file__).resolve()
 PROJECT_DIR = __FILE__PATH__.parents[2]
 SOURCE_IMG = PROJECT_DIR.joinpath("src/assets/imgs/TridentFrame_logo_512x512.png")
 TARGET_ICONS_DIR = PROJECT_DIR.joinpath("build/icons")
+
+if not TARGET_ICONS_DIR.exists():
+    os.makedirs(TARGET_ICONS_DIR)
+    
 FORMAT_SIZES = {
     "png": [16, 32, 48, 64, 96, 128, 192, 256, 512, 720],
     "ico": [256],

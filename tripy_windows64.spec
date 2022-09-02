@@ -2,8 +2,10 @@
 
 
 import PyInstaller.config
-PyInstaller.config.CONF['workpath'] = "./engine-prebuild/"
+PyInstaller.config.CONF['workpath'] = "./engine-prebuild/tripy_windows64/"
 PyInstaller.config.CONF['distpath'] = "./engine/"
+PyInstaller.config.CONF['warnfile'] = "./engine-prebuild/tripy_windows64/warn-tripy_windows64"
+PyInstaller.config.CONF['xref-file'] = "./engine-prebuild/tripy_windows64/xref-tripy_windows64"
 block_cipher = None
 
 _bin_dirpath = 'bin/win'

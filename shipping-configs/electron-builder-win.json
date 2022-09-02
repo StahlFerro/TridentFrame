@@ -15,7 +15,7 @@
       "nsis",
       "msi"
     ],
-    "icon": "release/tridentframe/win-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.ico"
+    "icon": "./build/icons"
   },
   "nsis": {
     "artifactName": "${productName}-${version}-windows-installer-nsis.${ext}",
@@ -42,12 +42,13 @@
     "!jsconfig.json",
     "!bin/**",
     "!ccore/**",
+    "!engine-prebuild/**",
     "!pycore/**",
     "!temp/**",
     "!shipping-configs/**",
     "!tests/**",
+    "!tools/**",
     "!venv/**",
-    "!writer/**",
     "!webpack.config.js",
     "!*.py",
     "!*.pylintrc",

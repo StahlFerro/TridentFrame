@@ -11,9 +11,9 @@
     "target": [
       "deb",
       "rpm",
-      "tar.gz",
+      "tar.gz"
     ],
-    "icon": "release/tridentframe/linux-unpacked/resources/app/dist/assets/icons/TridentFrame_logo_256x256.icns",
+    "icon": "./build/icons",
     "category": "Graphics"
   },
   "files": [
@@ -35,12 +35,13 @@
     "!jsconfig.json",
     "!bin/**",
     "!ccore/**",
+    "!engine-prebuild/**",
     "!pycore/**",
     "!temp/**",
     "!shipping-configs/**",
     "!tests/**",
+    "!tools/**",
     "!venv/**",
-    "!writer/**",
     "!webpack.config.js",
     "!*.py",
     "!*.pylintrc",
