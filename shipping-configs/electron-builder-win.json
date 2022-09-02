@@ -2,6 +2,7 @@
   "productName": "TridentFrame",
   "appId": "com.stahlferro.tridentframe",
   "copyright": "Copyright 2021 StahlFerro",
+  "buildVersion": "0.1.0.2012",
   "directories": {
     "output": "release/tridentframe"
   },
@@ -10,10 +11,6 @@
     "artifactName": "${productName}-${version}-windows.${ext}",
     "publisherName": "${author.name}",
     "target": [
-      "7z",
-      "zip",
-      "nsis",
-      "msi"
     ],
     "icon": "./build/icons"
   },
@@ -28,6 +25,8 @@
     "engine/**",
     "dist/**",
     "!dist/config/**",
+    "!config/**",
+    "config/app.toml",
     "!src/**",
     "src/common/paths.js",
     "src/store/settings.js",

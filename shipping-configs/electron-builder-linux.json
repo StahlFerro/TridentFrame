@@ -2,6 +2,7 @@
   "productName": "TridentFrame",
   "appId": "com.stahlferro.tridentframe",
   "copyright": "Copyright 2021 StahlFerro",
+  "buildVersion": "${version}",
   "directories": {
     "output": "release/tridentframe"
   },
@@ -21,6 +22,8 @@
     "engine/**",
     "dist/**",
     "!dist/config/**",
+    "!config/**",
+    "config/app.toml",
     "!src/**",
     "src/common/paths.js",
     "src/store/settings.js",
