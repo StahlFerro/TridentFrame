@@ -144,13 +144,13 @@
       </div>
       <div class="modify-panel-middlebar">
         <div class="mpb-load-buttons">
-          <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}" @click="loadImage">
+          <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': isButtonFrozen}" @click="loadImage">
             <span class="icon is-small">
               <font-awesome-icon icon="plus" />
             </span>
             <span>Load Image</span>
           </a>
-          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearImage">
+          <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearImage">
             <span class="icon is-small">
               <font-awesome-icon icon="times" />
             </span>
@@ -171,18 +171,18 @@
           </p>
         </div>
         <div class="mpb-preview-buttons">
-          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}" @click="btnPreviewModImg">
+          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': isButtonFrozen}" @click="btnPreviewModImg">
             <span class="icon is-small">
               <font-awesome-icon :icon="['far', 'eye']" />
             </span>
             <span>Preview</span>
           </a>
-          <a class="button is-neon-cyan" @click="btnPreviewSaveAIMG">
+          <a class="button is-neon-cyan" :class="{'non-interactive': isButtonFrozen}" @click="btnPreviewSaveAIMG">
             <span class="icon is-medium">
               <font-awesome-icon icon="save" />
             </span>
           </a>
-          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearPreviewImage">
+          <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearPreviewImage">
             <span class="icon is-small">
               <font-awesome-icon icon="times" />
             </span>
@@ -447,7 +447,7 @@
                   <td colspan="1">
                     <div class="field">
                       <div class="control">
-                        <div class="select is-neon-cyan" :class="{'non-interactive': buttonIsFrozen}">
+                        <div class="select is-neon-cyan" :class="{'non-interactive': isButtonFrozen}">
                           <select v-model="criteria.format">
                             <option v-for="(item, name, index) in SUPPORTED_MODIFY_EXTENSIONS" :key="index" :value="name">
                               {{ item }}
@@ -458,7 +458,7 @@
                     </div>
                   </td>
                   <td colspan="1">
-                    <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}" @click="btnModifyImage">
+                    <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': isButtonFrozen}" @click="btnModifyImage">
                       MODIFY</a>
                   </td>
                 </tr>
@@ -553,10 +553,13 @@ import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import { existsSync } from 'fs';
+import { copyFile }  from 'fs/promises';
 
 import StatusBar from "./components/StatusBar.vue";
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
+
+import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
 // import Vue from 'vue';
 
 const SUPPORTED_MODIFY_EXTENSIONS = {
@@ -721,7 +724,7 @@ export default {
       console.table(previewAttributes);
       return previewAttributes;
     },
-    buttonIsFrozen() {
+    isButtonFrozen() {
       if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
       else return false;
     },
@@ -1036,8 +1039,6 @@ export default {
         return;
       }
 
-
-
       this.validateFilenameAsync().then(async (isValid) => {
         if (isValid) {
           if (!this.saveDir) {
@@ -1045,10 +1046,10 @@ export default {
             if (result.canceled)
               return Promise.reject("Directory selection cancelled");
             else
-              return this._checkFileOverwriteAsync();
+              return this._checkFileOverwriteAsync(this._getSavePath());
           }
           else 
-            return this._checkFileOverwriteAsync();
+            return this._checkFileOverwriteAsync(this._getSavePath());
         }
         else {
           let errMsg = "File name contains characters that are not allowed";
@@ -1083,9 +1084,9 @@ export default {
     //       return Promise.reject("Cancelled modification");
     //   });
     },
-    async _checkFileOverwriteAsync() {
+    async _checkFileOverwriteAsync(fullPath) {
       let proceed = true;
-      if (existsSync(this._getSavePath())) {
+      if (existsSync(fullPath)) {
         let options = {
           title: "TridentFrame",
           buttons: ["Yes", "No"],
@@ -1160,37 +1161,77 @@ export default {
     },
     btnPreviewSaveAIMG() {
       (async () => {
+        let skipManualExistingFileCheck = false;
+
         if (!this.previewPath) {
           this._logError("No image in the preview to be saved!");
           return Promise.reject("No image in the preview to be saved!");
         }
-        let targetDir = this.saveDir;
-        if (!targetDir) {
-          let options = { properties: dir_dialog_props };
-          const result = await ipcRenderer.invoke('open-dialog', options);
+        
+        const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
+        let behaviourName = SETTINGS.preview_image.name_save_behaviour;
+        const nameSaveBehaviour = PreviewImageSaveNameBehaviour.fromName(behaviourName);
+        // console.error(`name save behaviour`);
+        // console.error(nameSaveBehaviour);
+        // console.error(nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.AutoGenerated.name);
+        
+        if (!nameSaveBehaviour) {
+          throw new Error(`Unknown preview name save behaviour: ${behaviourName}`);
+        }
+
+        let saveAbsolutePath = "";
+        let previewFormat = this.previewPath.split('.').pop().toLowerCase();
+        
+        if (nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.OpenWindowDialog.name) {
+          let fName = `${this.fname}.${previewFormat}`;
+          console.log(fName);
+          const result = await ipcRenderer.invoke('IPC-SHOW-SAVE-DIALOG', { 
+            defaultPath: fName, 
+            filters: [{ name: SUPPORTED_MODIFY_EXTENSIONS[previewFormat], extensions: [previewFormat]}],
+            properties: ["createDirectory"]});
           if (result.canceled)
-            return Promise.reject("Directory selection cancelled");
-          else{
-            let out_dirs = result.filePaths;
-            console.log(out_dirs);
-            if (out_dirs && out_dirs.length > 0) { 
-              targetDir = out_dirs[0];
-            }
-            else {
-              return Promise.reject("No directories are selected")
-            }
+            return Promise.reject("Image saving cancelled");
+          else {
+            let finalPath = result.filePath;
+            console.log(finalPath);
+            saveAbsolutePath = finalPath;
+            skipManualExistingFileCheck = true;
           }
         }
-        let targetFormat = this.previewPath.split('.').pop();
-        let targetName = `create_preview_${Date.now()}_${randString(7)}.${this.previewPath.split('.').pop().toLowerCase()}`;
-        // let targetName = basename(this.previewPath);
-        let targetFullPath = join(targetDir, targetName);
-        console.debug(targetFullPath);
-        let proceed = await this._checkFileOverwriteAsync(targetFullPath);
+        else {
+          let targetDir = this.saveDir;
+          if (!targetDir) {
+            let options = { properties: dir_dialog_props };
+            const result = await ipcRenderer.invoke('open-dialog', options);
+            if (result.canceled)
+              return Promise.reject("Directory selection cancelled");
+            else{
+              let out_dirs = result.filePaths;
+              console.log(out_dirs);
+              if (out_dirs && out_dirs.length > 0) { 
+                targetDir = out_dirs[0];
+              }
+              else {
+                return Promise.reject("No directories are selected")
+              }
+            }
+          }
+          let saveName = "";
+          if (nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.AutoGenerated.name)
+            saveName = `modify_preview_${Date.now()}_${randString(7)}.${this.previewPath.split('.').pop().toLowerCase()}`;
+          else if (nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.FromNameField.name)
+            saveName = `${this.fname}.${previewFormat}`;
+          saveAbsolutePath = join(targetDir, saveName);
+        }
+        
+        console.debug(`Skip existing check: ${skipManualExistingFileCheck}\nObtained saveAbsolutePath: ${saveAbsolutePath}`);
+        let proceed = true;
+        if (!skipManualExistingFileCheck)
+          proceed = await this._checkFileOverwriteAsync(saveAbsolutePath);
         console.log(`proceed? ${proceed}`)
         if (proceed){
-          await copyFile(this.previewPath, targetFullPath);
-          this._logSuccess(`Saved preview image to ${targetDir}`);
+          await copyFile(this.previewPath, saveAbsolutePath);
+          this._logSuccess(`Saved preview image to ${saveAbsolutePath}`);
         }
         else {
         }
