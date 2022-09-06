@@ -26,10 +26,6 @@ export default {
   },
   data() {
     return {
-      preserve_alpha: false,
-    //   is_optimized: false,
-    //   is_lossy: false,
-    //   is_reduced_color: false,
       is_unoptimized: false,
     };
   }

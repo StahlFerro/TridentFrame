@@ -206,6 +206,7 @@ Beyond 200 there is no guarantee that the size will reduce greater than the qual
 // import Vue from 'vue';
 // import { Plugin } from 'vue'
 // import { Fragment }  from 'vue-fragment';
+import { GIFOptimizationCriteria } from "../../models/criterion";
 import { numConstrain } from "../../modules/events/constraints";
 // const bulmaSlider = require("../../node_modules/bulma-slider/dist/js/bulma-slider");
 // bulmaSlider.attach();
@@ -220,18 +221,18 @@ export default {
   'update:dither_method', 'update:palletization_method', 'update:is_dither_alpha', 'update:dither_alpha_method', 'update:dither_alpha_threshold',],
   data: function() {
     return {
-      preserve_alpha: false,
-      is_optimized: false,
-      optimization_level: "1",
-      is_lossy: false,
-      lossy_value: 30,
-      is_reduced_color: false,
-      color_space: 256,
-      dither_method: "FLOYD_STEINBERG",
-      palletization_method: "ADAPTIVE",
-      is_dither_alpha: false,
-      dither_alpha_method: "SCREENDOOR",
-      dither_alpha_threshold: 50,
+      ...new GIFOptimizationCriteria(),
+      // is_optimized: false,
+      // optimization_level: "1",
+      // is_lossy: false,
+      // lossy_value: 30,
+      // is_reduced_color: false,
+      // color_space: 256,
+      // dither_method: "FLOYD_STEINBERG",
+      // palletization_method: "ADAPTIVE",
+      // is_dither_alpha: false,
+      // dither_alpha_method: "SCREENDOOR",
+      // dither_alpha_threshold: 50,
     };
   },
   // computed: {

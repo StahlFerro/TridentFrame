@@ -152,6 +152,7 @@
 </template>
 
 <script>
+import { APNGOptimizationCriteria } from "../../models/criterion";
 import { numConstrain } from "../../modules/events/constraints";
 
 
@@ -164,17 +165,18 @@ export default {
   // components: { Fragment },
   data: function() {
     return {
+      ...new APNGOptimizationCriteria(),
       // hasOptimization: false,
-      apng_is_optimized: false,
-      apng_optimization_level: "1",
-      apng_is_reduced_color: false,
-      apng_color_count: 256,
-      apng_quantization_enabled: false,
-      apng_quantization_quality_min: 65,
-      apng_quantization_quality_max: 80,
-      apng_quantization_speed: 3,
-      apng_convert_color_mode: false,
-      apng_new_color_mode: "RGBA",
+      // apng_is_optimized: false,
+      // apng_optimization_level: "1",
+      // apng_is_reduced_color: false,
+      // apng_color_count: 256,
+      // apng_quantization_enabled: false,
+      // apng_quantization_quality_min: 65,
+      // apng_quantization_quality_max: 80,
+      // apng_quantization_speed: 3,
+      // apng_convert_color_mode: false,
+      // apng_new_color_mode: "RGBA",
       // apng_is_unoptimized: false,
     };
   },

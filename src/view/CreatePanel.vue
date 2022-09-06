@@ -508,13 +508,15 @@ import { numConstrain } from "../modules/events/constraints";
 import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { formatBytes, randString } from "../modules/utility/stringutils";
 import { gcd } from "../modules/utility/calculations";
-import { PREVIEWS_PATH } from "../common/paths";
 import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
+import { PREVIEWS_PATH } from "../common/paths";
 
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
 import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
+
+import { CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria } from "../models/criterion";
 
 import { createPopper } from '@popperjs/core';
 import vClickOutside from 'click-outside-vue3'
@@ -544,51 +546,54 @@ export default {
   },
   data() {
     return {
-      criteria: {
-        fps: "",
-        delay: "",
-        delays_are_even: true,
-        delays_list: [],
-        format: "gif",
-        is_reversed: false,
-        preserve_alpha: false,
-        flip_x: false,
-        flip_y: false,
-        width: "",
-        height: "",
-        resize_method: "BICUBIC",
-        loop_count: "",
-        start_frame: "",
-        rotation: 0,
-      },
-      gif_opt_criteria: {
-        is_optimized: false,
-        optimization_level: "1",
-        is_lossy: false,
-        lossy_value: 30,
-        is_reduced_color: false,
-        color_space: 256,
-        is_unoptimized: false,
-        dither_method: "FLOYD_STEINBERG",
-        palletization_method: "ADAPTIVE",
-        is_dither_alpha: false,
-        dither_alpha_method: "SCREENDOOR",
-        dither_alpha_threshold: 50,
-      },
-      apng_opt_criteria: {
-        apng_is_optimized: false,
-        apng_optimization_level: "1",
-        apng_is_reduced_color: false,
-        apng_color_count: 256,
-        apng_quantization_enabled: false,
-        apng_quantization_quality_min: 65,
-        apng_quantization_quality_max: 80,
-        apng_quantization_speed: 3,
-        apng_is_unoptimized: false,
-        apng_preconvert_rgba: false,
-        apng_convert_color_mode: false,
-        apng_new_color_mode: "RGBA",
-      },
+      // mx_criteria: new CreationCriteria(),
+      // criteria: {
+      //   fps: "",
+      //   delay: "",
+      //   delays_are_even: true,
+      //   delays_list: [],
+      //   format: "gif",
+      //   is_reversed: false,
+      //   preserve_alpha: false,
+      //   flip_x: false,
+      //   flip_y: false,
+      //   width: "",
+      //   height: "",
+      //   resize_method: "BICUBIC",
+      //   loop_count: "",
+      //   start_frame: "",
+      //   rotation: 0,
+      // },
+      criteria: new CreationCriteria(),
+      gif_opt_criteria: new GIFOptimizationCriteria(),
+      // gif_opt_criteria: {
+      //   is_optimized: false,
+      //   optimization_level: "1",
+      //   is_lossy: false,
+      //   lossy_value: 30,
+      //   is_reduced_color: false,
+      //   color_space: 256,
+      //   is_unoptimized: false,
+      //   dither_method: "FLOYD_STEINBERG",
+      //   palletization_method: "ADAPTIVE",
+      //   is_dither_alpha: false,
+      //   dither_alpha_method: "SCREENDOOR",
+      //   dither_alpha_threshold: 50,
+      // },
+      apng_opt_criteria: new APNGOptimizationCriteria(),
+      // apng_opt_criteria: {
+      //   apng_is_optimized: false,
+      //   apng_optimization_level: "1",
+      //   apng_is_reduced_color: false,
+      //   apng_color_count: 256,
+      //   apng_quantization_enabled: false,
+      //   apng_quantization_quality_min: 65,
+      //   apng_quantization_quality_max: 80,
+      //   apng_quantization_speed: 3,
+      //   apng_is_unoptimized: false,
+      //   apng_convert_color_mode: false,
+      //   apng_new_color_mode: "RGBA",
+      // },
 
       fname: "",
       SUPPORTED_CREATE_EXTENSIONS: SUPPORTED_CREATE_EXTENSIONS,
