@@ -189,7 +189,7 @@ export default {
         console.log(err);
       });
     },
-    _inspectImage (image_path) {
+    _inspectImage(image_path) {
       this._logProcessing(`Loading image ${image_path}`);
       this.INS_IS_INSPECTING = true;
       console.log(image_path);

@@ -356,31 +356,18 @@ export default {
     }
   },
   methods: {
-    loadImage() {
-      console.log("spl load iamge");
-      let options = {
-        filters: extension_filters,
-        properties: file_dialog_props
-      };
-      ipcRenderer.invoke('open-dialog', options).then((result) => {
-        let chosen_path = result.filePaths;
-        console.log(`chosen path: ${chosen_path}`);
-        if (chosen_path === undefined || chosen_path.length == 0) {
-          console.debug('chosen path undefined/null. returning...')
-          return;
-        }
-        this.SPL_IS_LOADING = true;
-        console.log(chosen_path);
-        tridentEngine(["inspect_one", chosen_path[0], "animated"], (error, res) => {
-          if (error) {        
-            try {
-              this._logError(error);
+    _inspectImage(imagePath) {
+      this._logProcessing(`Loading image ${imagePath}`);
+        tridentEngine(["inspect_one", imagePath, "animated"], (err, res) => {
+          if (err) {
+            if (err.error) {
+              this._logError(err.error);
+              this.SPL_IS_LOADING = false;
             }
-            catch (e) {
-              this._logError(e);
+            else if (err.warning) {
+              this._logWarning(err.warning);
             }
             // mboxError(split_msgbox, error);
-            this.SPL_IS_LOADING = false;
           } else if (res) {
             if (res && res.msg) {
               this._logProcessing(res.msg);
@@ -420,7 +407,24 @@ export default {
               // if (SPL_is_reduced_color.checked) { SPL_color_space.value = 256; }
             }
           }
-        });
+      });
+    },
+    loadImage() {
+      console.log("spl load iamge");
+      let options = {
+        filters: extension_filters,
+        properties: file_dialog_props
+      };
+      ipcRenderer.invoke('open-dialog', options).then((result) => {
+        let chosen_paths = result.filePaths;
+        console.log(`chosen path: ${chosen_paths}`);
+        if (chosen_paths === undefined || chosen_paths.length == 0) {
+          console.debug('chosen path undefined/null. returning...')
+          return;
+        }
+        this.SPL_IS_LOADING = true;
+        console.log(chosen_paths);
+        this._inspectImage(chosen_paths[0]);
       });
     },
     clearImage() {
@@ -508,15 +512,15 @@ export default {
         color_space = 0;
       }
       console.log(this);
-      tridentEngine(["split_image", this.previewPath, this.saveDir, this.criteria], (error, res) => {
-        if (error) {
-          try {
-            this._logError(error);
+      tridentEngine(["split_image", this.previewPath, this.saveDir, this.criteria], (err, res) => {
+        if (err) {
+          if (err.error) {
+            this._logError(err.error);
+            this.SPL_IS_SPLITTING = false;
           }
-          catch (e) {
-            this._logError(e);
+          else if (err.warning) {
+            this._logWarning(err.warning);
           }
-          this.SPL_IS_SPLITTING = false;
         } else if (res) {
           if (res.msg) {
             this._logProcessing(res.msg);
