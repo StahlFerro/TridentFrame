@@ -19,7 +19,7 @@ from pycore.models.criterion import (
     CriteriaBundle,
 )
 from pycore.models.image_formats import ImageFormat
-from pycore.utility import filehandler, imageutils
+from pycore.utility import filehandler, imageutils, vectorutils
 from pycore.bin_funcs.imager_api import GifsicleAPI, APNGOptAPI, PNGQuantAPI, InternalImageAPI
 from pycore.imaging.gif import create_animated_gif
 
@@ -174,6 +174,7 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     #         or aopt_criteria.convert_color_mode:
     out_dir = filehandler.mk_cache_dir(prefix_name="tmp_apngfrags")
     preprocessed_paths = []
+    delays_list = criteria.delays_list
     # logger.debug(crbundle.create_aimg_criteria.__dict__)
     for index, ipath in enumerate(image_paths):
         fragment_name = str(ipath.name)
@@ -224,8 +225,20 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
     stdio.message("Saving APNG....")
     if criteria.start_frame:
         preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, criteria.start_frame)
-    delay_fraction = Fraction(1/criteria.fps).limit_denominator()
-    apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)
+        delays_list = vectorutils.shift_items(delays_list, criteria.start_frame)
+        
+    if criteria.delays_are_even:
+        delay_fraction = Fraction(round(1/criteria.fps, 4)).limit_denominator()
+        stdio.warn({"frame_delay_unrounded": frame_delay, "frame_delay_raw": float(frame_delay)})
+        apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)
+    else:
+        for index, preproc_path in enumerate(preprocessed_paths):
+            frame_delay = delays_list[index]
+            stdio.warn({"frame_delay_unrounded": frame_delay, "frame_delay_raw": float(frame_delay)})
+            frame_delay = round(frame_delay, 4)
+            delay_fraction = Fraction(frame_delay).limit_denominator()
+            stdio.warn({"frame_delay": frame_delay, "df": delay_fraction, "delay": delay_fraction.numerator, "delay_den": delay_fraction.denominator})
+            apng.append(PNG.open_any(preproc_path), delay=int(delay_fraction.numerator), delay_den=int(delay_fraction.denominator))
     apng.num_plays = criteria.loop_count
     apng.save(out_full_path)
     # else:

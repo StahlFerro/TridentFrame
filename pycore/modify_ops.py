@@ -143,7 +143,7 @@ def _modify_apng(apng_path: Path, out_path: Path, metadata: AnimatedImageMetadat
             # logger.debug(png.chunks)
             # delay_fraction = Fraction(1/mod_criteria.fps).limit_denominator()
             # delay = int(mod_criteria.delay * 1000)
-            new_delay = new_delays[index]
+            new_delay = round(new_delays[index], 4)
             control.delay = new_delay.numerator
             control.delay_den = new_delay.denominator
             stdio.debug({

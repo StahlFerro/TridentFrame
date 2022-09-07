@@ -4,6 +4,7 @@ import re
 from collections import deque
 from collections import OrderedDict
 from pathlib import Path
+from tracemalloc import start
 from typing import Iterator, List, Dict, Union, Any, Tuple
 
 from PIL import Image
@@ -12,6 +13,7 @@ from isort import file
 
 from pycore.core_funcs import stdio
 from pycore.models.image_formats import ImageFormat
+from pycore.utility import vectorutils
 
 
 PNG_BLOCK_SIZE = 64
@@ -94,11 +96,12 @@ def shift_image_sequence(image_paths: List[Path], start_frame: int) -> List[Path
     Returns:
         List[Path]: List of image sequence which ordering has been shifted.
     """
-    shift_items = deque(image_paths)
-    shift = -start_frame
-    stdio.message(f"SHIFT {shift}")
-    shift_items.rotate(shift)
-    image_paths = list(shift_items)
+    image_paths = vectorutils.shift_items(image_paths, start_frame)
+    # shift_items = deque(image_paths)
+    # shift = -start_frame
+    # stdio.message(f"SHIFT {shift}")
+    # shift_items.rotate(shift)
+    # image_paths = list(shift_items)
     return image_paths
 
 
