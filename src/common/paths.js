@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TEMP_PATH = exports.SETTINGS = exports.PYTHON_PATH = exports.PREVIEWS_PATH = exports.ENGINE_EXEC_PATH = exports.ENGINE_DIR = void 0;
+exports.TEMP_PATH = exports.APP_SETTINGS_PATH = exports.PYTHON_PATH = exports.PREVIEWS_PATH = exports.ENGINE_EXEC_PATH = exports.PRESETS_DIR = exports.ENGINE_DIR = void 0;
 
 var { ipcMain, ipcRenderer, app } = require("electron");
 
@@ -28,11 +28,13 @@ let engine_exec_path;
 let previews_path;
 let temp_path;
 let app_settings_path;
+let criterion_presets_dir;
 let settings;
 
 if (_process.env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py";
   app_settings_path = join(appPath, "config", "app.toml");
+  criterion_presets_dir = join(appPath, "presets");
   temp_path = join(appPath, "temp");
   previews_path = join(temp_path, "previews");
 } else {
@@ -46,6 +48,7 @@ if (_process.env.DEPLOY_ENV == "DEV") {
     engine_exec_path = join(engine_dir, "tridentengine");
   }
   app_settings_path = join(appPath, "config", "app.toml");
+  criterion_presets_dir = join(appPath, "presets");
   temp_path = join(engine_dir, "temp");
   previews_path = join(temp_path, "previews");
 }
@@ -57,6 +60,8 @@ const PREVIEWS_PATH = previews_path;
 exports.PREVIEWS_PATH = PREVIEWS_PATH;
 const TEMP_PATH = temp_path;
 exports.TEMP_PATH = TEMP_PATH;
+const PRESETS_DIR = criterion_presets_dir;
+exports.PRESETS_DIR = PRESETS_DIR;
 const ENGINE_DIR = engine_dir;
 exports.ENGINE_DIR = ENGINE_DIR;
 const ENGINE_EXEC_PATH = engine_exec_path;

@@ -1,6 +1,7 @@
 import os
 import io
 from pathlib import Path
+from select import select
 from typing import List, Dict, Optional, Union
 
 from PIL import Image, ImageCms, ExifTags, UnidentifiedImageError
@@ -434,6 +435,9 @@ def inspect_sequence_autodetect(image_path: Path) -> Dict:
     """Receives a single image, then finds similar images with the same name and then returns the information of those
     sequence"""
     current_dir = image_path.parents[0]
+    selected_im_metadata = inspect_general(image_path, "static")
+    if selected_im_metadata.is_animated:
+        raise ImageNotStaticException(filename, selected_im_metadata.format.upper())
     filename = imageutils.sequence_nameget(image_path)
     # logger.message(f"filename {filename}")
     possible_sequence = [f for f in sorted(current_dir.glob("*")) if filename in f.name and f.is_file()]
