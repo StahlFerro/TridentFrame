@@ -229,15 +229,12 @@ def _build_apng(image_paths: List[Path], out_full_path: Path, crbundle: Criteria
         
     if criteria.delays_are_even:
         delay_fraction = Fraction(round(1/criteria.fps, 4)).limit_denominator()
-        stdio.warn({"frame_delay_unrounded": frame_delay, "frame_delay_raw": float(frame_delay)})
         apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)
     else:
         for index, preproc_path in enumerate(preprocessed_paths):
             frame_delay = delays_list[index]
-            stdio.warn({"frame_delay_unrounded": frame_delay, "frame_delay_raw": float(frame_delay)})
             frame_delay = round(frame_delay, 4)
             delay_fraction = Fraction(frame_delay).limit_denominator()
-            stdio.warn({"frame_delay": frame_delay, "df": delay_fraction, "delay": delay_fraction.numerator, "delay_den": delay_fraction.denominator})
             apng.append(PNG.open_any(preproc_path), delay=int(delay_fraction.numerator), delay_den=int(delay_fraction.denominator))
     apng.num_plays = criteria.loop_count
     apng.save(out_full_path)
