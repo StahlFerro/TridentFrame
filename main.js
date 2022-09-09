@@ -7,8 +7,11 @@ const ipcMain = electron.ipcMain;
 const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
 
-const SettingStore = require("./src/store/settings.js");
+const SettingsStore = require("./src/store/settingsStore.js");
+const PresetsStore = require("./src/store/presetsStore.js");
+
 let SETTINGS;
+// let PRESETS;
 
 console.log('DIRNAME', __dirname);
 console.log('APP PATH', app.getAppPath());
@@ -75,7 +78,8 @@ const createWindow = () => {
 app.on('ready', () => {
 	// createPyProc();
 	console.log("[Ready] Initialize settings");
-	SETTINGS = SettingStore.initialize();
+	SETTINGS = SettingsStore.initialize();
+	PRESETS = PresetsStore.initialize();
 	console.log("[Ready] Creating window...");
 	createWindow();
 	mainWindow.reload();

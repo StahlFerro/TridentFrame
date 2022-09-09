@@ -1,9 +1,9 @@
-const { join } = require("path");
+// const { join } = require("path");
 const { createReadStream, readFileSync, existsSync } = require("fs");
 const { writeFileSync } = require("atomically");
 const { app, ipcMain, ipcRenderer } = require("electron");
 const { APP_SETTINGS_PATH } = require("../common/paths.js")
-const concat = require("concat-stream");
+// const concat = require("concat-stream");
 const toml = require("@iarna/toml");
 
 const _DEFAULT_SETTINGS = {
@@ -140,7 +140,7 @@ const initStoreListener = () => {
 /**
  * Utility class for bootstrapping the app settings functionalities
  */
-class SettingStore {
+class SettingsStore {
   static initialize() {
     loadSettingsFromFile();
     initStoreListener();
@@ -148,6 +148,6 @@ class SettingStore {
   }
 }
 
-console.debug("----------- ./store/settings.js initialized!!! -----------");
+console.debug("----------- ./store/settingsStore.js initialized!!! -----------");
 
-module.exports = SettingStore;
+module.exports = SettingsStore;

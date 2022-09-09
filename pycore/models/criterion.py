@@ -25,6 +25,11 @@ class CriteriaBase:
 
 
 class TransformativeCriteria(CriteriaBase):
+    """Base criteria that describes the editable properties of any images
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
     def __init__(self, vals: Dict):
         self.width: int = int(vals.get("width", 1))
         self.height: int = int(vals.get("height"))
@@ -52,26 +57,22 @@ class TransformativeCriteria(CriteriaBase):
 
     # def must_rotate(self) -> bool:
     #     return self.rotation != 0
+    
 
+class AnimationCriteria(TransformativeCriteria):
+    """Contains the basic criteria that describes an animated image
 
-class CreationCriteria(TransformativeCriteria):
-    """ Contains all of the criterias for Creating an animated image """
+    Args:
+        TransformativeCriteria (Dict): Dictionary values
+    """
 
-    def __init__(self, vals):
-        super(CreationCriteria, self).__init__(vals)
+    def __init__(self, vals: Dict):
+        super(AnimationCriteria, self).__init__(vals)
         # self.name: str = vals["name"]
         self.fps: float = float(vals["fps"] or 10) or 10
         self.delay: float = float(vals["delay"] or 0.1) or 0.1
         self.delays_are_even: bool = vals["delays_are_even"]
         self.delays_list: List[Union[Fraction, float]] = vals["delays_list"]
-        iformat: ImageFormat = False
-        if type(vals["format"]) is str:
-            iformat = ImageFormat[str.upper(vals["format"])]
-        elif type(vals["format"]) is ImageFormat:
-            iformat = vals["format"]
-        else:
-            raise Exception(f"Unknown Image format: {vals['format']}")
-        self.format: ImageFormat = iformat
         self.reverse: bool = vals["is_reversed"]
         self.preserve_alpha: bool = vals["preserve_alpha"]
         self.loop_count = int(vals["loop_count"] or 0)
@@ -80,10 +81,33 @@ class CreationCriteria(TransformativeCriteria):
         self.skip_frame = vals.get("skip_frame") or 0
 
 
-class ModificationCriteria(CreationCriteria):
-    """ Contains all of the criterias for Modifying the specifications of an animated image """
+class CreationCriteria(AnimationCriteria):
+    """Contains all of the criterias for Creating an animated image of a certain format
 
-    def __init__(self, vals):
+    Args:
+        AnimationCriteria (Dictionary): Dictionary values
+    """
+
+    def __init__(self, vals: Dict):
+        super(CreationCriteria, self).__init__(vals)
+        iformat: ImageFormat = False
+        if type(vals["format"]) is str:
+            iformat = ImageFormat[str.upper(vals["format"])]
+        elif type(vals["format"]) is ImageFormat:
+            iformat = vals["format"]
+        else:
+            raise Exception(f"Unknown Image format: {vals['format']}")
+        self.format: ImageFormat = iformat
+
+
+class ModificationCriteria(CreationCriteria):
+    """Contains all of the criterias for Modifying the specifications of an animated image
+
+    Args:
+        CreationCriteria (Dict): Dictionary values
+    """
+
+    def __init__(self, vals: Dict):
         self.hash_sha1 = vals["hash_sha1"]
         self.last_modified_dt = vals["last_modified_dt"]
         self.delay_handling = DelayHandling[str.upper(vals["delay_handling"])]
@@ -154,7 +178,11 @@ class ModificationCriteria(CreationCriteria):
 
 
 class SplitCriteria(CriteriaBase):
-    """ Contains all of the criterias for Splitting an animated image """
+    """Contains all of the criterias for Splitting an animated image
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
 
     def __init__(self, vals):
         self.new_name: str = vals["new_name"].strip()
@@ -199,7 +227,11 @@ class SpritesheetSliceCriteria(CriteriaBase):
 
 
 class GIFOptimizationCriteria(CriteriaBase):
-    """ Criteria for GIF-related optimization/unoptimization """
+    """Criteria for GIF-related optimization/unoptimization
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
 
     def __init__(self, vals):
         self.is_optimized = vals["is_optimized"]
@@ -232,7 +264,11 @@ class GIFOptimizationCriteria(CriteriaBase):
 
 
 class APNGOptimizationCriteria(CriteriaBase):
-    """ Criteria for APNG-related optimization/unoptimization """
+    """Criteria for APNG-related optimization/unoptimization
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
 
     def __init__(self, vals):
         self.is_optimized = vals["apng_is_optimized"]
@@ -252,6 +288,8 @@ class APNGOptimizationCriteria(CriteriaBase):
 
 
 class CriteriaUtils():
+    """Contains various utility methods for properties relating to image criteria
+    """
     
     @classmethod
     def get_grouped_new_delays(cls, mod_criteria: ModificationCriteria, metadata: AnimatedImageMetadata) -> List[Dict]:
@@ -282,7 +320,11 @@ class CriteriaUtils():
 
 
 class CriteriaBundle(CriteriaBase):
-    """ Packs multiple criterias into one"""
+    """Container class that carries multiple criterias into one
+
+    Args:
+        CriteriaBase (Dict): Dictionary values of each criteria
+    """
 
     def __init__(self, vals):
         self.create_aimg_criteria: CreationCriteria = vals.get("create_aimg_criteria")

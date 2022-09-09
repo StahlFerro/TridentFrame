@@ -56,13 +56,15 @@
     "@iarna/toml": "^2.2.5",
     "atomically": "^1.7.0",
     "concat-stream": "^2.0.0",
-    "toml": "^3.0.0"
+    "toml": "^3.0.0",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.18.13",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "^7.18.10",
     "@babel/register": "^7.18.9",
+    "@creativebulma/bulma-collapsible": "^1.0.4",
     "@creativebulma/bulma-divider": "^1.1.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.2",
     "@fortawesome/free-brands-svg-icons": "^6.1.2",

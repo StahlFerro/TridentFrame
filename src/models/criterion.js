@@ -9,14 +9,14 @@ class TransformativeCriteria {
   }
 }
 
-class CreationCriteria extends TransformativeCriteria {
+
+class AnimationCriteria extends TransformativeCriteria {
   constructor() {
     super();
     this.fps = "";
     this.delay = "";
     this.delays_are_even = true;
     this.delays_list = [];
-    this.format = "gif";
     this.is_reversed = false;
     this.preserve_alpha = false;
     this.loop_count = "";
@@ -24,6 +24,15 @@ class CreationCriteria extends TransformativeCriteria {
     this.skip_frame = 0;
   }
 }
+
+
+class CreationCriteria extends AnimationCriteria {
+  constructor() {
+    super();
+    this.format = "gif";
+  }
+}
+
 
 class ModificationCriteria extends CreationCriteria {
   constructor() {
