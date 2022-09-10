@@ -8,10 +8,13 @@
               <a @click="settings_tab_selection = 0">General</a>
             </li>
             <li :class="{ 'is-active': settings_tab_selection == 1 }">
-              <a @click="settings_tab_selection = 1">Window</a>
+              <a @click="settings_tab_selection = 1">Presets</a>
             </li>
             <li :class="{ 'is-active': settings_tab_selection == 2 }">
-              <a @click="settings_tab_selection = 2">About</a>
+              <a @click="settings_tab_selection = 2">Window</a>
+            </li>
+            <li :class="{ 'is-active': settings_tab_selection == 3 }">
+              <a @click="settings_tab_selection = 3">About</a>
             </li>
           </ul>
         </div>
@@ -155,42 +158,16 @@
 
         <div
           v-show="settings_tab_selection == 1"
-          class="settings-subpanel-window">
-          <div class="card">
-            <header class="card-header">
-              <p class="card-header-title">
-                Card title
-              </p>
-              <a href="#collapsible-card" data-action="collapse" class="card-header-icon is-hidden-fullscreen" aria-label="more options">
-                <span class="icon">
-                  <i class="fas fa-angle-down" aria-hidden="true"></i>
-                </span>
-              </a>
-            </header>
-            <div id="collapsible-card" class="is-collapsible is-active">
-              <div class="card-content">
-                <p class="title is-4">
-                  “There are two hard things in computer science: cache invalidation, naming things, and off-by-one
-                  errors.”
-                </p>
-                <p class="subtitle is-5">
-                  Jeff Atwood
-                </p>
-              </div>
-              <footer class="card-footer">
-                <p class="card-footer-item">
-                  <span>
-                    View on <a href="https://twitter.com/codinghorror/status/506010907021828096">Twitter</a>
-                  </span>
-                </p>
-                <p class="card-footer-item">
-                  <span>
-                    Share on <a href="#">Facebook</a>
-                  </span>
-                </p>
-              </footer>
+          class="settings-subpanel-presets">
+            <div class="settings-preset-selector">
+
             </div>
-          </div>
+            <div class="settings-preset-key-values">
+
+            </div>
+            <div class="settings-preset-controls">
+              
+            </div>
         </div>
 
         <div
@@ -340,7 +317,10 @@ export default {
             modify_panel: "",
           }
         }
-      }
+      },
+      PRESET_COLLECTION: {
+        presets: [],
+      },
     };
   },
   computed: {
@@ -373,6 +353,9 @@ export default {
     console.debug(SETTINGS);
     this.APP_SETTINGS = { ...SETTINGS };
     this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
+    const PRESETS = ipcRenderer.sendSync("IPC-GET-PRESETS");
+    console.debug(PRESETS);
+    this.PRESET_COLLECTION = { ...PRESETS };
   },
   mounted: function() {
     console.debug("SettingsPanel mounted");

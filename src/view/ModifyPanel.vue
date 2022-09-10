@@ -1095,7 +1095,7 @@ export default {
           title: "TridentFrame",
           buttons: ["Yes", "No"],
           message:
-            "A file with the same name already exists in the output folder and it will get overwritten. Do you want to proceed?",
+            `A file with the same name (${this.fname}.${this.criteria.format}) already exists in the output folder and it will get overwritten. Do you want to proceed?`,
         };
         const promptResult = await ipcRenderer.invoke("show-msg-box", options);
         console.log(`msgbox promptResult:`);

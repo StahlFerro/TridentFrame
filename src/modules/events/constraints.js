@@ -1,3 +1,10 @@
+/**
+ * Constrain number input fields to obey certain criteria
+ * @param {Event} event keydown event
+ * @param {Boolean} must_unsigned Enforce unsigned numbers only
+ * @param {Boolean} must_whole Enforce whole numbers only
+ * @returns {Boolean} True or false
+ */
 export function numConstrain(event, must_unsigned = false, must_whole = false) {
   console.log(event);
   console.log("num constrain args", must_unsigned, must_whole);
@@ -9,6 +16,7 @@ export function numConstrain(event, must_unsigned = false, must_whole = false) {
   let is_violating = false;
   if ((current_value.includes(".") && key == ".") || key == 'e') {
     event.preventDefault();
+    return false;
   } else {
     if (must_unsigned) {
       is_violating = event.key == '-' ? true : is_violating;
@@ -20,6 +28,7 @@ export function numConstrain(event, must_unsigned = false, must_whole = false) {
     }
     if (is_violating) {
       event.preventDefault();
+      return false;
     } else {
       return true;
     }

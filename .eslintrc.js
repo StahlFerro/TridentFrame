@@ -29,6 +29,10 @@ module.exports = {
     }],
     "vue/no-unused-components": ["warn", {
       "ignoreWhenBindingPresent": true
+    }],
+    "vue/first-attribute-linebreak": ["warn", {
+      "singleline": "ignore",
+      "multiline": "ignore"
     }]
   },
   overrides: [

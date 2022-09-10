@@ -187,15 +187,20 @@
               <table class="" width="100%">
                 <tr>
                   <td width="16.7%">
-                    <div class="field">
+                    <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
+                    <!-- <div class="field">
                       <label class="label" title="The name of the GIF/APNG">Name</label>
                       <div class="control">
                         <input v-model="fname" class="input is-neon-white" type="text" />
                       </div>
-                    </div>
+                    </div> -->
                   </td>
                   <td width="16.7%">
-                    <div class="field">
+                    <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
+                                :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
+                                @field-input="widthHandler"
+                    />
+                    <!-- <div class="field">
                       <label class="label" title="The width of the GIF/APNG">Width</label>
                       <div class="control">
                         <input 
@@ -207,10 +212,15 @@
                           @input="widthHandler(criteria.width, $event)"
                         />
                       </div>
-                    </div>
+                    </div> -->
                   </td>
                   <td width="16.7%">
-                    <div class="field">
+                    <InputField v-model="criteria.height" label="Height" type="number" 
+                                hint="The height of the animated image"
+                                :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                                @field-input="heightHandler"
+                    />
+                    <!-- <div class="field">
                       <label class="label" title="The height of the GIF/APNG">Height</label>
                       <div class="control">
                         <input
@@ -219,12 +229,15 @@
                           type="number"
                           min="1"
                           @keydown="numConstrain($event, true, true)"
-                          @input="heightHandler(criteria.height, $event)"
                         />
                       </div>
-                    </div>
+                    </div> -->
+                      <!-- 
+                          @input="heightHandler($event)" -->
                   </td>
                   <td width="16.7%">
+                    <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
+<!--                     
                     <div class="field">
                       <label
                         class="label"
@@ -263,7 +276,7 @@
                           </select>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                   </td>
                   <td width="16.7%">
                     <label class="checkbox">
@@ -287,7 +300,12 @@
                 </tr>
                 <tr>
                   <td>
-                    <div class="field">
+                    <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
+                                :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                                @field-input="delayHandler" 
+                    />
+
+                    <!-- <div class="field">
                       <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
                       <div class="control">
                         <input
@@ -296,13 +314,17 @@
                           type="number"
                           min="0"
                           @keydown="numConstrain($event, true, false)"
-                          @input="delayConstrain"
+                          @input="delayHandler"
                         />
                       </div>
-                    </div>
+                    </div> -->
                   </td>
                   <td>
-                    <div class="field">
+                    <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
+                                :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                                @field-input="fpsHandler" 
+                    />
+                    <!-- <div class="field">
                       <label
                         class="label"
                         title="How many frames will be consecutively displayed per second."
@@ -316,13 +338,16 @@
                           max="50"
                           step="0.01"
                           @keydown="numConstrain($event, true, false)"
-                          @input="fpsConstrain"
+                          @input="fpsHandler"
                         />
                       </div>
-                    </div>
+                    </div> -->
                   </td>
                   <td>
-                    <div class="field">
+                    <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
+                                :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                    />
+                    <!-- <div class="field">
                       <label
                         class="label"
                         title="How many times the GIF/APNG will loop. Zero/blank for infinite loop"
@@ -338,10 +363,14 @@
                           @keydown="numConstrain($event, true, true)"
                         />
                       </div>
-                    </div>
+                    </div> -->
                   </td>
                   <td>
-                    <div class="field">
+                    <InputField v-model="criteria.start_frame" label="Start at frame" type="number" 
+                                hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
+                                :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                    />
+                    <!-- <div class="field">
                       <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
                       <div class="control">
                         <input
@@ -349,30 +378,42 @@
                           min="0" step="1" @keydown="numConstrain($event, true, true)"
                         />
                       </div>
-                    </div>
+                    </div> -->
                   </td>
                   <td style="vertical-align: bottom">
-                    <label class="checkbox" title="Flip the image horizontally">
+                    <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
+                    <!-- <label class="checkbox" title="Flip the image horizontally">
                       <input v-model="criteria.flip_x" type="checkbox" />
                       Flip X
-                    </label>
+                    </label> -->
                     <br />
-                    <label class="checkbox" title="Flip the image vertically">
+                    
+                    <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
+                    <!-- <label class="checkbox" title="Flip the image vertically">
                       <input v-model="criteria.flip_y" type="checkbox" />
                       Flip Y
-                    </label>
+                    </label> -->
                   </td>
                   <td style="vertical-align: bottom">
-                    <label class="checkbox" title="Preserve transparent pixels">
+                    <CheckboxField v-model="criteria.preserve_alpha" label="Preserve Alpha" hint="(For GIFs) Preserve transparent pixels" />
+                    <!-- <label class="checkbox" title="Preserve transparent pixels">
                       <input v-model="criteria.preserve_alpha" type="checkbox" />
                       Preserve Alpha
-                    </label>
+                    </label> -->
                     <br />
-                    <label class="checkbox" title="Reverse the animation">
+                    <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
+                    <!-- <label class="checkbox" title="Reverse the animation">
                       <input v-model="criteria.is_reversed" type="checkbox" />
                       Reversed
-                    </label>
+                    </label> -->
                   </td>
+                </tr>
+                <tr>
+                  <!-- <td>
+                    <InputField v-model="zipName" label="Zip Name" type="number" hint="Yes"
+                                :constraint-option="new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: true})" 
+                    />
+                  </td> -->
                 </tr>
                 <tr>
                   <td colspan="4" style="padding-top: 15px">
@@ -396,20 +437,7 @@
                     </div>
                   </td>
                   <td colspan="1" style="padding-top: 15px">
-                    <div class="field">
-                      <!-- <label class="label">Format</label> -->
-                      <div class="control">
-                        <div class="select is-neon-cyan" :class="{'non-interactive': isButtonFrozen}">
-                          <select v-model="criteria.format">
-                            <option v-for="(item, name, index) in SUPPORTED_CREATE_EXTENSIONS" :key="index" :value="name">
-                              {{ item }}
-                            </option>
-                            <!-- <option value="GIF">GIF</option>
-                            <option value="PNG">APNG</option> -->
-                          </select>
-                        </div>
-                      </div>
-                    </div>
+                    <DropdownField v-model="criteria.format" :options-list="SUPPORTED_CREATE_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
                   </td>
                   <td colspan="1" style="padding-top: 15px">
                     <div class="field">
@@ -498,10 +526,50 @@ import { ipcRenderer } from 'electron';
 import { dirname, basename, join } from "path";
 import { access, accessSync, constants as fsConstants, existsSync } from "fs";
 import { copyFile }  from 'fs/promises';
-const SUPPORTED_CREATE_EXTENSIONS = {
-  'gif': 'GIF',
-  'png': 'APNG',
-}
+const SUPPORTED_CREATE_EXTENSIONS = [
+  {
+    name: "gif",
+    label: "GIF",
+    description: "", 
+  },
+  {
+    name: "png",
+    label: "APNG",
+    description: "", 
+  }
+]
+const RESIZE_METHODS = [
+  {
+    name: "BICUBIC",
+    label: "Bicubic",
+    description: "General-use resizing algorithm for most images"
+  },
+  {
+    name: "NEAREST",
+    label: "Nearest",
+    description: "Preserve sharp edges. Ideal for pixel art"
+  },
+  {
+    name: "BILINEAR",
+    label: "Bilinear",
+    description: "Similar to Bicubic, but not as smooth"
+  },
+  {
+    name: "BOX",
+    label: "Box",
+    description: ""
+  },
+  {
+    name: "HAMMING",
+    label: "Hamming",
+    description: ""
+  },
+  {
+    name: "LANCZOS",
+    label: "Lanczos",
+    description: ""
+  },
+];
 
 import { tridentEngine } from "../modules/streams/trident_engine";
 import { numConstrain } from "../modules/events/constraints";
@@ -511,10 +579,12 @@ import { gcd } from "../modules/utility/calculations";
 import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
 import { PREVIEWS_PATH } from "../common/paths";
 
+import { ConstraintOption } from "../models/componentProps.js";
+
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
-import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
+// import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
-import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
+// import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 
 import { CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria } from "../models/criterion";
 
@@ -522,12 +592,16 @@ import { createPopper } from '@popperjs/core';
 import vClickOutside from 'click-outside-vue3'
 
 import StatusBar from "./components/StatusBar.vue";
+import InputField from "./components/Form/InputField.vue";
+import CheckboxField from './components/Form/CheckboxField.vue';
+import DropdownField from './components/Form/DropdownField.vue';
+
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
 
-let extension_filters = [{ name: "Images", extensions: Object.keys(SUPPORTED_CREATE_EXTENSIONS) }];
+let extension_filters = [{ name: "Images", extensions: SUPPORTED_CREATE_EXTENSIONS.map(ext => ext.name) }];
 let img_dialog_props = ["openfile"];
 let imgs_dialog_props = ["openfile", "multiSelections", "createDirectory"];
 let dir_dialog_props = ["openDirectory", "createDirectory"];
@@ -540,63 +614,22 @@ export default {
     APNGOptimizationRow,
     // APNGUnoptimizationRow,
     StatusBar,
+    InputField,
+    CheckboxField,
+    DropdownField,
   },
   directives:{
     clickOutside: vClickOutside.directive,
   },
   data() {
     return {
-      // mx_criteria: new CreationCriteria(),
-      // criteria: {
-      //   fps: "",
-      //   delay: "",
-      //   delays_are_even: true,
-      //   delays_list: [],
-      //   format: "gif",
-      //   is_reversed: false,
-      //   preserve_alpha: false,
-      //   flip_x: false,
-      //   flip_y: false,
-      //   width: "",
-      //   height: "",
-      //   resize_method: "BICUBIC",
-      //   loop_count: "",
-      //   start_frame: "",
-      //   rotation: 0,
-      // },
       criteria: new CreationCriteria(),
       gif_opt_criteria: new GIFOptimizationCriteria(),
-      // gif_opt_criteria: {
-      //   is_optimized: false,
-      //   optimization_level: "1",
-      //   is_lossy: false,
-      //   lossy_value: 30,
-      //   is_reduced_color: false,
-      //   color_space: 256,
-      //   is_unoptimized: false,
-      //   dither_method: "FLOYD_STEINBERG",
-      //   palletization_method: "ADAPTIVE",
-      //   is_dither_alpha: false,
-      //   dither_alpha_method: "SCREENDOOR",
-      //   dither_alpha_threshold: 50,
-      // },
       apng_opt_criteria: new APNGOptimizationCriteria(),
-      // apng_opt_criteria: {
-      //   apng_is_optimized: false,
-      //   apng_optimization_level: "1",
-      //   apng_is_reduced_color: false,
-      //   apng_color_count: 256,
-      //   apng_quantization_enabled: false,
-      //   apng_quantization_quality_min: 65,
-      //   apng_quantization_quality_max: 80,
-      //   apng_quantization_speed: 3,
-      //   apng_is_unoptimized: false,
-      //   apng_convert_color_mode: false,
-      //   apng_new_color_mode: "RGBA",
-      // },
-
       fname: "",
+      zipName: "",
       SUPPORTED_CREATE_EXTENSIONS: SUPPORTED_CREATE_EXTENSIONS,
+      RESIZE_METHODS: RESIZE_METHODS,
       crtSubMenuSelection: 0,
       imagePaths: [],
       imageSequenceInfo: [],
@@ -605,10 +638,10 @@ export default {
       saveDir: "",
       insertIndex: "",
       totalSize: "",
-      orig_width: "",
-      old_width: "",
-      orig_height: "",
-      old_height: "",
+      // orig_width: "",
+      // old_width: "",
+      // orig_height: "",
+      // old_height: "",
       previewPath: "",
       previewPathCB: "",
       previewInfo: "",
@@ -625,6 +658,7 @@ export default {
 
       popperIsVisible: false,
       statusBarId: "createPanelStatusBar",
+      ConstraintOption: ConstraintOption,
     };
   },
   computed: {
@@ -661,6 +695,44 @@ export default {
         return '';
       }
     }
+  },
+  watch: {
+    // 'criteria.width': {
+    //   handler(newValue, oldValue) {
+    //     console.log(`width new ${newValue} old ${oldValue}`);
+    //     this.criteria.height = oldValue;
+
+        
+    //     this.old_width = parseInt(oldValue);
+    //     let newWidth = newValue;
+    //     this.criteria.width = parseInt(newWidth);
+    //     if (this.lockAspectRatio && this.aspectRatio.h_ratio > 0) {
+    //       // Change height if lockAspectRatio is true and height is not 0
+    //       let raHeight = Math.round(
+    //         (newWidth / this.aspectRatio.w_ratio) * this.aspectRatio.h_ratio
+    //       );
+    //       this.criteria.height = raHeight > 0 ? parseInt(raHeight) : "";
+    //     } else {
+    //       this._updateAspectRatio(this.criteria.width, this.criteria.height);
+    //     }
+    //   },
+    // },
+    // 'criteria.height': {
+    //   handler(newValue, oldValue) {
+    //     this.old_height = parseInt(oldValue);
+    //     let newHeight = newValue;
+    //     this.criteria.height = parseInt(newHeight);
+    //     if (this.lockAspectRatio && this.aspectRatio.w_ratio > 0) {
+    //       let raWidth = Math.round(
+    //         (newHeight / this.aspectRatio.h_ratio) * this.aspectRatio.w_ratio
+    //       );
+    //       console.log(raWidth);
+    //       this.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
+    //     } else {
+    //       this._updateAspectRatio(this.criteria.width, this.criteria.height);
+    //     }
+    //   }
+    // }
   },
   created() {
     window.addEventListener("resize", this.closeLoadPopper);
@@ -725,6 +797,7 @@ export default {
           cmd_args.push("inspect_many"); break;
       }
       console.log("obtained props", props);
+      console.log("obtained extension_filters", extension_filters);
       var options = {
         filters: extension_filters,
         properties: props,
@@ -899,10 +972,10 @@ export default {
     },
     clearAuxInfo() {
       this.totalSize = "";
-      this.orig_width = "";
-      this.old_width = "";
-      this.orig_height = "";
-      this.old_height = "";
+      // this.orig_width = "";
+      // this.old_width = "";
+      // this.orig_height = "";
+      // this.old_height = "";
       this._logClear();
       let emptyAspectRatio = {
         w_ratio: "",
@@ -950,7 +1023,7 @@ export default {
           let fName = `${this.fname}.${previewFormat}`;
           const result = await ipcRenderer.invoke('IPC-SHOW-SAVE-DIALOG', { 
             defaultPath: fName, 
-            filters: [{ name: SUPPORTED_CREATE_EXTENSIONS[previewFormat], extensions: [previewFormat]}],
+            filters: [{ name: SUPPORTED_CREATE_EXTENSIONS.find(ext => ext.name == previewFormat).label, extensions: [previewFormat]}],
             properties: ["createDirectory"]});
           if (result.canceled)
             return Promise.reject("Image saving cancelled");
@@ -1097,7 +1170,7 @@ export default {
           title: "TridentFrame",
           buttons: ["Yes", "No"],
           message:
-            "A file with the same name already exists in the output folder and it will get overwritten. Do you want to proceed?",
+            `A file with the same name (${this.fname}.${this.criteria.format}) already exists in the output folder and it will get overwritten. Do you want to proceed?`,
         };
         const promptResult = await ipcRenderer.invoke("show-msg-box", options);
         console.log(`msgbox promptResult:`);
@@ -1158,8 +1231,8 @@ export default {
       return save_path;
     },
     numConstrain: numConstrain,
-    widthHandler(width, event) {
-      this.old_width = parseInt(width);
+    widthHandler(event) {
+      console.log(event.target.value);
       let newWidth = event.target.value;
       this.criteria.width = parseInt(newWidth);
       if (this.lockAspectRatio && this.aspectRatio.h_ratio > 0) {
@@ -1172,8 +1245,8 @@ export default {
         this._updateAspectRatio(this.criteria.width, this.criteria.height);
       }
     },
-    heightHandler(height, event) {
-      this.old_height = parseInt(height);
+    heightHandler(event) {
+      // this.old_height = parseInt(height);
       let newHeight = event.target.value;
       this.criteria.height = parseInt(newHeight);
       if (this.lockAspectRatio && this.aspectRatio.w_ratio > 0) {
@@ -1201,13 +1274,14 @@ export default {
         this.aspectRatio = ARData;
       }
     },
-    delayConstrain(event) {
+    delayHandler(event) {
       console.log("delay event", event);
       let value = event.target.value;
+      console.log("delay", value);
       if (value && value.includes(".")) {
         let numdec = value.split(".");
         console.log("numdec", numdec);
-        let precision = 2;
+        let precision = GIF_DELAY_DECIMAL_PRECISION;
         if (this.criteria.format.toUpperCase() == "GIF") {
           precision = GIF_DELAY_DECIMAL_PRECISION;
         } else if (this.criteria.format.toUpperCase() == "PNG") {
@@ -1216,14 +1290,16 @@ export default {
         if (numdec[1].length > precision) {
           let decs = numdec[1].substring(0, precision);
           console.log("decs limit triggered", decs);
-          this.criteria.delay = `${numdec[0]}.${decs}`;
+          value = `${numdec[0]}.${decs}`;
+          this.criteria.delay = value;
         }
       }
-      this.criteria.fps = Math.round(1000 / this.criteria.delay) / 1000;
+      this.criteria.fps = Math.round(1000 / value) / 1000;
     },
-    fpsConstrain(event) {
+    fpsHandler(event) {
       console.log("fps event", event);
       let value = event.target.value;
+      console.log("fps", value);
       if (value) {
         let mult = 100;
         if (this.criteria.format.toUpperCase() == "GIF") {
@@ -1231,7 +1307,9 @@ export default {
         } else if (this.criteria.format.toUpperCase() == "PNG") {
           mult = 1000;
         }
-        this.criteria.delay = Math.round(mult / this.criteria.fps) / mult;
+        console.log("this.criteria.delay before", this.criteria.delay);
+        this.criteria.delay = Math.round(mult / value) / mult;
+        console.log("this.criteria.delay after", this.criteria.delay);
       }
     },
     _logClear() {
