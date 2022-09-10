@@ -112,17 +112,6 @@
           <div class="cpb-sequence-btn">
             <span v-if="imageSequenceInfo.length &gt; 0" class="is-white-d">Total: {{ computeTotalSequenceSize }} </span>
           </div>
-          <!-- <a
-            v-on:click="loadImages('replace')"
-            class="button is-neon-emerald"
-            v-bind:class="{ 'is-loading': CRT_REPLACE_LOAD, 'non-interactive': isButtonFrozen }"
-            title="Loads multiple static images to create an animated image. This replaces the current sequence above"
-          >
-            <span class="icon is-small">
-              <i class="fas fa-plus-square"></i>
-            </span>
-            <span>Load</span>
-          </a> -->
         </div>
         <div class="cpb-preview-buttons">
           <a
@@ -188,31 +177,12 @@
                 <tr>
                   <td width="16.7%">
                     <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
-                    <!-- <div class="field">
-                      <label class="label" title="The name of the GIF/APNG">Name</label>
-                      <div class="control">
-                        <input v-model="fname" class="input is-neon-white" type="text" />
-                      </div>
-                    </div> -->
                   </td>
                   <td width="16.7%">
                     <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
                                 :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
                                 @field-input="widthHandler"
                     />
-                    <!-- <div class="field">
-                      <label class="label" title="The width of the GIF/APNG">Width</label>
-                      <div class="control">
-                        <input 
-                          :value="criteria.width" 
-                          class="input is-neon-white"
-                          type="number" 
-                          min="1"
-                          @keydown="numConstrain($event, true, true)" 
-                          @input="widthHandler(criteria.width, $event)"
-                        />
-                      </div>
-                    </div> -->
                   </td>
                   <td width="16.7%">
                     <InputField v-model="criteria.height" label="Height" type="number" 
@@ -220,63 +190,9 @@
                                 :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
                                 @field-input="heightHandler"
                     />
-                    <!-- <div class="field">
-                      <label class="label" title="The height of the GIF/APNG">Height</label>
-                      <div class="control">
-                        <input
-                          :value="criteria.height"
-                          class="input is-neon-white"
-                          type="number"
-                          min="1"
-                          @keydown="numConstrain($event, true, true)"
-                        />
-                      </div>
-                    </div> -->
-                      <!-- 
-                          @input="heightHandler($event)" -->
                   </td>
                   <td width="16.7%">
                     <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
-<!--                     
-                    <div class="field">
-                      <label
-                        class="label"
-                        title="Which algorithm to use when resizing the image. Default is Bicubic"
-                      >Resize Method</label>
-                      <div class="control">
-                        <div class="select is-neon-cyan">
-                          <select v-model="criteria.resize_method">
-                            <option
-                              value="BICUBIC"
-                              title="General-use resizing algorithm for most images"
-                            >
-                              Bicubic
-                            </option>
-                            <option
-                              value="NEAREST"
-                              title="Preserve sharp edges. Ideal for pixel art"
-                            >
-                              Nearest
-                            </option>
-                            <option
-                              value="BILINEAR"
-                              title="Similar to Bicubic, but not as smooth"
-                            >
-                              Bilinear
-                            </option>
-                            <option value="BOX">
-                              Box
-                            </option>
-                            <option value="HAMMING">
-                              Hamming
-                            </option>
-                            <option value="LANCZOS">
-                              Lanczos
-                            </option>
-                          </select>
-                        </div>
-                      </div>
-                    </div> -->
                   </td>
                   <td width="16.7%">
                     <label class="checkbox">
@@ -304,108 +220,33 @@
                                 :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
                                 @field-input="delayHandler" 
                     />
-
-                    <!-- <div class="field">
-                      <label class="label" title="The time needed to move to the next frame">Delay (seconds)</label>
-                      <div class="control">
-                        <input
-                          v-model="criteria.delay"
-                          class="input is-neon-white"
-                          type="number"
-                          min="0"
-                          @keydown="numConstrain($event, true, false)"
-                          @input="delayHandler"
-                        />
-                      </div>
-                    </div> -->
                   </td>
                   <td>
                     <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
                                 :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
                                 @field-input="fpsHandler" 
                     />
-                    <!-- <div class="field">
-                      <label
-                        class="label"
-                        title="How many frames will be consecutively displayed per second."
-                      >Frame rate</label>
-                      <div class="control">
-                        <input
-                          v-model="criteria.fps"
-                          class="input is-neon-white"
-                          type="number"
-                          min="0"
-                          max="50"
-                          step="0.01"
-                          @keydown="numConstrain($event, true, false)"
-                          @input="fpsHandler"
-                        />
-                      </div>
-                    </div> -->
                   </td>
                   <td>
                     <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
                                 :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
                     />
-                    <!-- <div class="field">
-                      <label
-                        class="label"
-                        title="How many times the GIF/APNG will loop. Zero/blank for infinite loop"
-                      >Loop count</label>
-                      <div class="control">
-                        <input
-                          v-model="criteria.loop_count"
-                          class="input is-neon-white"
-                          type="number"
-                          min="0"
-                          max="999"
-                          step="1"
-                          @keydown="numConstrain($event, true, true)"
-                        />
-                      </div>
-                    </div> -->
                   </td>
                   <td>
                     <InputField v-model="criteria.start_frame" label="Start at frame" type="number" 
                                 hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
                                 :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
                     />
-                    <!-- <div class="field">
-                      <label class="label" title="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)">Start at frame</label>
-                      <div class="control">
-                        <input
-                          v-model="criteria.start_frame" class="input is-neon-white" type="number" 
-                          min="0" step="1" @keydown="numConstrain($event, true, true)"
-                        />
-                      </div>
-                    </div> -->
                   </td>
                   <td style="vertical-align: bottom">
                     <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
-                    <!-- <label class="checkbox" title="Flip the image horizontally">
-                      <input v-model="criteria.flip_x" type="checkbox" />
-                      Flip X
-                    </label> -->
                     <br />
-                    
                     <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
-                    <!-- <label class="checkbox" title="Flip the image vertically">
-                      <input v-model="criteria.flip_y" type="checkbox" />
-                      Flip Y
-                    </label> -->
                   </td>
                   <td style="vertical-align: bottom">
                     <CheckboxField v-model="criteria.preserve_alpha" label="Preserve Alpha" hint="(For GIFs) Preserve transparent pixels" />
-                    <!-- <label class="checkbox" title="Preserve transparent pixels">
-                      <input v-model="criteria.preserve_alpha" type="checkbox" />
-                      Preserve Alpha
-                    </label> -->
                     <br />
                     <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
-                    <!-- <label class="checkbox" title="Reverse the animation">
-                      <input v-model="criteria.is_reversed" type="checkbox" />
-                      Reversed
-                    </label> -->
                   </td>
                 </tr>
                 <tr>
