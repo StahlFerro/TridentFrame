@@ -173,44 +173,137 @@
         <div class="cpc-right-panel">
           <div class="cpc-right-top-panel">
             <div v-show="crtSubMenuSelection == 0">
+              <div class="general-form row-6">
+                <div class="field-cell">
+                  <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
+                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
+                              @field-input="widthHandler"
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.height" label="Height" type="number" 
+                              hint="The height of the animated image"
+                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                              @field-input="heightHandler"
+                  />
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
+                </div>
+                <div class="field-cell">
+                  <label class="checkbox">
+                    <input v-model="lockAspectRatio" type="checkbox" />
+                    Lock aspect ratio
+                  </label>
+                  <br />
+                  <template v-if="aspectRatio && aspectRatio.text">
+                    <input
+                      v-model="aspectRatio.text"
+                      class="input is-border-colorless is-paddingless"
+                      style="height: 1.5em"
+                      readonly="readonly"
+                    />
+                  </template>
+                  <template v-else>
+                    &nbsp;
+                  </template>
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
+                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              @field-input="delayHandler" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
+                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              @field-input="fpsHandler" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
+                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.start_frame" label="Start at frame" type="number" 
+                              hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
+                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
+                  <br />
+                  <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.preserve_alpha" label="Preserve Alpha" hint="(For GIFs) Preserve transparent pixels" />
+                  <br />
+                  <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
+                </div>
+                <div class="separator">
+                  <div class="separator-space" />
+                </div>
+                <div class="field-cell span-4">
+                  <ExtendedTextField v-model="saveDir" button-label="Save to" :use-icons="false" 
+                                     @control-button-click="btnSetSavePath" />
+
+                  <!-- <div class="field has-addons">
+                    <div class="control">
+                      <a class="button is-neon-cyan" @click="btnSetSavePath">
+                        <span class="icon is-small">
+                          <font-awesome-icon icon="save" />
+                        </span>
+                        <span>Save to</span>
+                      </a>
+                    </div>
+                    <div class="control">
+                      <input
+                        v-model="saveDir"
+                        class="input is-neon-white"
+                        type="text"
+                        placeholder="Output folder"
+                        style="width: 100%;"
+                      />
+                    </div>
+                  </div> -->
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.format" :options-list="SUPPORTED_CREATE_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
+                </div>
+                <div class="field-cell">
+                  <div class="field">
+                    <div class="control">
+                      <a
+                        class="button is-neon-cyan"
+                        :class="{
+                          'is-loading': CRT_IS_CREATING == true,
+                          'non-interactive': isButtonFrozen,
+                        }"
+                        @click="btnCreateAIMG"
+                      >CREATE</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+             
+<!--    
               <table class="" width="100%">
                 <tr>
                   <td width="16.7%">
-                    <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
                   </td>
                   <td width="16.7%">
-                    <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
-                                :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
-                                @field-input="widthHandler"
-                    />
                   </td>
                   <td width="16.7%">
-                    <InputField v-model="criteria.height" label="Height" type="number" 
-                                hint="The height of the animated image"
-                                :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
-                                @field-input="heightHandler"
-                    />
                   </td>
                   <td width="16.7%">
-                    <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
                   </td>
                   <td width="16.7%">
-                    <label class="checkbox">
-                      <input v-model="lockAspectRatio" type="checkbox" />
-                      Lock aspect ratio
-                    </label>
-                    <br />
-                    <template v-if="aspectRatio && aspectRatio.text">
-                      <input
-                        v-model="aspectRatio.text"
-                        class="input is-border-colorless is-paddingless"
-                        style="height: 1.5em"
-                        readonly="readonly"
-                      />
-                    </template>
-                    <template v-else>
-                      &nbsp;
-                    </template>
                   </td>
                   <td width="16.7%" style="vertical-align: bottom" />
                 </tr>
@@ -250,11 +343,6 @@
                   </td>
                 </tr>
                 <tr>
-                  <!-- <td>
-                    <InputField v-model="zipName" label="Zip Name" type="number" hint="Yes"
-                                :constraint-option="new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: true})" 
-                    />
-                  </td> -->
                 </tr>
                 <tr>
                   <td colspan="4" style="padding-top: 15px">
@@ -298,7 +386,7 @@
                 <tr>
                   <td colspan="6" />
                 </tr>
-              </table>
+              </table> -->
             </div>
             <div v-show="crtSubMenuSelection == 1 && criteria.format == 'gif'">
               <table
@@ -436,6 +524,7 @@ import StatusBar from "./components/StatusBar.vue";
 import InputField from "./components/Form/InputField.vue";
 import CheckboxField from './components/Form/CheckboxField.vue';
 import DropdownField from './components/Form/DropdownField.vue';
+import ExtendedTextField from './components/Form/ExtendedTextField.vue';
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
@@ -458,6 +547,7 @@ export default {
     InputField,
     CheckboxField,
     DropdownField,
+    ExtendedTextField,
   },
   directives:{
     clickOutside: vClickOutside.directive,

@@ -75,6 +75,13 @@
               Default output folders
             </h4>
             <hr />
+            <ExtendedTextField v-model="intermediate.directories.default_out_dir.create_panel"
+                               label="Create AIMG" button-label="Choose" hint="The time needed to move to the next frame"
+                               error-message="The directory does not exist, and will not be used as a default"
+                               :use-icons="true" :has-error="errors.defaultOutDirCreate"
+                               @field-blur="blurCommitDefaultOutDir($event, 'create_panel')"
+            />
+            <!-- 
             <div class="field is-enhanced textbox">
               <label title="The time needed to move to the next frame">Create AIMG</label>
               <div class="controls-container">
@@ -99,8 +106,10 @@
                 <span v-if="errors.defaultOutDirCreate" class="icon is-crimson" title="The directory does not exist, and will not be used as a default">
                   <font-awesome-icon icon="circle-exclamation" size="lg" />
                 </span>
-              </div>
+              </div> 
             </div>
+          -->
+
             <div class="field is-enhanced textbox">
               <label title="The time needed to move to the next frame">Split AIMG</label>
               <div class="controls-container">
@@ -294,9 +303,14 @@ import { tridentEngine } from "../modules/streams/trident_engine.js";
 import { PreviewImageSaveNameBehaviour } from "../models/previewImage.js";
 import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
 
+import ExtendedTextField from "./components/Form/ExtendedTextField.vue";
+
 const DIR_DIALOG_PROPS = ["openDirectory", "createDirectory"];
 
 export default {
+  components: {
+    ExtendedTextField
+  },
   data: function () {
     return {
       logo: logo,
