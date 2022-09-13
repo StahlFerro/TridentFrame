@@ -134,14 +134,17 @@
       <ModifyPanel v-show="menuselection == 'modify_panel'" />
       <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
       <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
-      <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" />
+      <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" />
       <!-- <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" /> -->
       <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
       <SettingsPanel v-show="menuselection == 'settings_panel'" />
       <!-- <AboutPanel v-show="menuselection == 'about_panel'" /> -->
     </div>
     <div>
-      <ContextMenu ref="ctxmenu" ctx-menu-id="generalRClickMenu" @ctx-menu-click-outside="closeRootContextMenu">
+      <ContextMenu ref="rootCtxMenu" ctx-menu-id="generalRClickMenu" 
+                   @ctx-menu-click-outside="closeRootContextMenu"
+                   @ctx-option-click="emitGlobalCtxOptionClick" 
+      >
         <template #contextMenuItem="ctxItemData">
           <ContextMenuItem>
             <template #contextMenuOptionIcon>
@@ -216,10 +219,13 @@ export default {
       console.log("openContextMenu");
       console.log(event);
       console.log(payload);
-      this.$refs.ctxmenu.openPopper(event, payload);
+      this.$refs.rootCtxMenu.openPopper(event, payload);
     },
     closeRootContextMenu(event){
-      this.$refs.ctxmenu.closePopper();
+      this.$refs.rootCtxMenu.closePopper();
+    },
+    emitGlobalCtxOptionClick(event, optionId) {
+      this.emitter.emit(`global-ctx-option-click-[${optionId}]`);
     },
     whatClicked(event, args) {
       console.log(`CLICK!!!`);

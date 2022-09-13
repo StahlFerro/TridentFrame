@@ -139,7 +139,7 @@ export default {
   components: {
     StatusBar
   },
-  emits: ['right-click'],
+  emits: ['right-click', 'close-root-ctxmenu'],
   data: function () {
     return {
       imageFilePath: "",
@@ -170,6 +170,27 @@ export default {
     const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
     this.INSPECT_PANEL_SETTINGS = { ...SETTINGS.inspect_panel };
     console.log(this);
+  },
+  mounted() {
+    this.emitter.on('global-ctx-option-click-[copy_image]', args => {
+      console.log('global-ctx-option-click-[copy_image] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
+    
+    this.emitter.on('global-ctx-option-click-[share_image]', args => {
+      console.log('global-ctx-option-click-[share_image] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
+
+    this.emitter.on('global-ctx-option-click-[send_to]', args => {
+      console.log('global-ctx-option-click-[send_to] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
+
+    this.emitter.on('global-ctx-option-click-[copy_info]', args => {
+      console.log('global-ctx-option-click-[copy_info] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
   },
   methods: {
     loadImage() {
