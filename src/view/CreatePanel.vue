@@ -194,10 +194,11 @@
                   <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
                 </div>
                 <div class="field-cell">
-                  <label class="checkbox">
+                  <CheckboxField v-model="lockAspectRatio" label="Lock aspect ratio" hint="Lock the width and height ratio" />
+                  <!-- <label class="checkbox">
                     <input v-model="lockAspectRatio" type="checkbox" />
                     Lock aspect ratio
-                  </label>
+                  </label> -->
                   <br />
                   <template v-if="aspectRatio && aspectRatio.text">
                     <input
@@ -759,6 +760,7 @@ export default {
               this._updateAspectRatio(this.criteria.width, this.criteria.height);
               this.CRT_IS_LOADING = false;
               this.toggleLoadButtonAnim(ops, false);
+              console.log(`Set aspect ratio to true`);
               this.lockAspectRatio = true;
             }
           }

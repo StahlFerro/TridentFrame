@@ -21,7 +21,6 @@
 <script>
   
 import { DropdownOptions } from "../../../models/componentProps.js";
-import { numConstrain } from "../../../modules/events/constraints.js";
   
 export default {
   name: "DropdownField",

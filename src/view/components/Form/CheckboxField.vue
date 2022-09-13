@@ -1,7 +1,7 @@
 <template>
   <label class="checkbox" :title="hint">
     <input 
-      :value="modelValue" 
+      :checked="modelValue" 
       type="checkbox"
       @change="$emit('update:modelValue', $event.target.checked)"
     />
@@ -10,10 +10,6 @@
 </template>
 
 <script>
-
-import { ConstraintOption } from "../../../models/componentProps.js";
-import { numConstrain } from "../../../modules/events/constraints.js";
-  
 export default {
   name: "CheckboxField",
   props: {
