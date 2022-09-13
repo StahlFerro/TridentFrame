@@ -250,7 +250,7 @@
                   />
                 </div>
                 <div class="field-cell">
-                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
+                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" :is-fullwidth="true" />
                 </div>
                 <div class="field-cell">
                   <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
@@ -280,7 +280,9 @@
                   />
                 </div>
                 <div class="field-cell">
-                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" label="Delay handling" hint="How to modify the delay" />
+                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" label="Delay handling" hint="How to modify the delay"
+                                 :is-fullwidth="true" 
+                  />
                 </div>
                 <div class="field-cell" />
                 <div class="field-cell">

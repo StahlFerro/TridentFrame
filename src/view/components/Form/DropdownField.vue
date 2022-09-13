@@ -2,7 +2,7 @@
   <div class="field">
     <label v-if="label" class="label">{{ label }}</label>
     <div class="control">
-      <div class="select is-neon-cyan" :class="{'non-interactive': isNonInteractive}">
+      <div class="select is-neon-cyan" :class="{'non-interactive': isNonInteractive, 'is-fullwidth': isFullwidth}">
         <select 
           :value="modelValue"
           @change="$emit('update:modelValue', $event.target.value)"
@@ -45,7 +45,11 @@ export default {
     isNonInteractive: {
       type: Boolean,
       default: false
-    }
+    },
+    isFullwidth: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['update:modelValue']
 };

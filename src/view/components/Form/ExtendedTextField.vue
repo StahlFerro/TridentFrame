@@ -3,7 +3,7 @@
     <label v-if="label" :title="hint">{{ label }}</label>
     <div class="controls-container">
       <div class="control">
-        <a class="button square-button is-neon-cyan" @click="$emit('control-button-click', $event)">
+        <a class="button square-button is-neon-cobalt" @click="$emit('control-button-click', $event)">
           <span class="icon is-small">
             <font-awesome-icon icon="folder-open" />
           </span>

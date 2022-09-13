@@ -134,19 +134,24 @@
       <ModifyPanel v-show="menuselection == 'modify_panel'" />
       <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
       <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
-      <InspectPanel v-show="menuselection == 'inspect_panel'" @open-root-ctxmenu="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" />
+      <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" />
+      <!-- <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" /> -->
       <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
       <SettingsPanel v-show="menuselection == 'settings_panel'" />
       <!-- <AboutPanel v-show="menuselection == 'about_panel'" /> -->
     </div>
     <div>
-      <ContextMenu ref="ctxmenu">
-        <template #default="{ contextData }">
-          <ContextMenuItem
-            v-for="(ctxData, ctxIndex) in contextData" :key="ctxIndex" 
-            @click="$refs.ctxmenu.callOptionFunction(ctxData.callback);"
-          >
-            {{ ctxData.name }}
+      <ContextMenu ref="ctxmenu" ctx-menu-id="generalRClickMenu" @ctx-menu-click-outside="closeRootContextMenu">
+        <template #contextMenuItem="ctxItemData">
+          <ContextMenuItem>
+            <template #contextMenuOptionIcon>
+              <ContextMenuItemIcon v-if="ctxItemData.icon">
+                <fontawesome :icon="ctxItemData.icon" />
+              </ContextMenuItemIcon>
+            </template>
+            <template #contextMenuOptionLabel>
+              {{ ctxItemData.name }}
+            </template>
           </ContextMenuItem>
         </template>
       </ContextMenu>
@@ -166,6 +171,7 @@
 // const { tridentEngine } = require("./src/modules/streams/trident_engine")
 import ContextMenu from './view/components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './view/components/ContextMenu/ContextMenuItem.vue';
+import ContextMenuItemIcon from './view/components/ContextMenu/ContextMenuItemIcon.vue';
 
 import CreatePanel from "./view/CreatePanel.vue";
 import SplitPanel from "./view/SplitPanel.vue";
@@ -192,6 +198,7 @@ export default {
     // AboutPanel,
     ContextMenu,
     ContextMenuItem,
+    ContextMenuItemIcon,
   },
   data: function () {
     return {
@@ -214,9 +221,10 @@ export default {
     closeRootContextMenu(event){
       this.$refs.ctxmenu.closePopper();
     },
-    whatClicked(event) {
+    whatClicked(event, args) {
       console.log(`CLICK!!!`);
       console.log(event);
+      console.log(args);
     },
   },
 };

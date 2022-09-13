@@ -5,7 +5,7 @@
         <div
           v-cloak class="inspect-panel-viewbox silver-bordered" 
           :class="{'has-checkerboard-bg': checkerBGIsActive }"
-          @contextmenu="$emit('open-root-ctxmenu', $event, imageContextMenuOptions)" 
+          @contextmenu="$emit('right-click', $event, imageContextMenuOptions)" 
           @drop.prevent="helidropFile" @dragenter.prevent @dragover.prevent
         >
           <div v-if="imageFilePath === ''" class="inspect-panel-hint">
@@ -139,7 +139,7 @@ export default {
   components: {
     StatusBar
   },
-  emits: ['open-root-ctxmenu'],
+  emits: ['right-click'],
   data: function () {
     return {
       imageFilePath: "",
@@ -149,9 +149,9 @@ export default {
       imageInfo: {},
       // inspect_msgbox: "",
       imageContextMenuOptions: [
-        {id: 'copy_image', name: "Copy Image", callback: this.cmCopyImage},
-        {id: 'share_image', name: "Share Image", callback: this.cmShareImage},
-        {id: 'send_to', name: 'Send To', callback: this.cmSendTo},
+        {id: 'copy_image', name: "Copy Image"},
+        {id: 'share_image', name: "Share Image"},
+        {id: 'send_to', name: 'Send To'},
       ],
       infoContextMenuOptions: [
         {id: 'copy_info', name: "Copy Info", callback: this.cmCopyInfo}

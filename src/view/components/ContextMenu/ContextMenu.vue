@@ -1,10 +1,17 @@
 <template>
   <div
-    v-show="isVisible" id="generalRClickMenu" ref="popper" v-click-outside="closePopper" class="context-menu"
+    v-show="isVisible" :id="ctxMenuId" ref="popper" v-click-outside="emitOutsideClick" class="context-menu"
     tabindex="-1" style="display: block;" @contextmenu.capture.prevent
   >
     <ul class="context-menu-options">
-      <slot :contextData="contextData" />
+      <!-- <li v-for="(ctxItemData, ctxItemIndex) in contextData" :key="ctxItemIndex" 
+          @click="callOptionFunction(ctxItemData.callback);"
+      > -->
+      <li v-for="(ctxItemData, ctxItemIndex) in contextData" :key="ctxItemIndex" 
+          @click="$emit('ctx-option-click', $event, ctxItemData.id)"
+      >
+        <slot name="contextMenuItem" v-bind="ctxItemData" />
+      </li>
     </ul>
   </div>
 </template>
@@ -16,44 +23,6 @@ import vClickOutside from 'click-outside-vue3'
 console.log(`POPPER`);
 console.log(`CLICKOUTSIDE`);
 console.log(vClickOutside);
-// @vue/component
-
-
-// function openPopper(evt, contextData) {
-//   data.isVisible = true;
-//   data.contextData = contextData;
-//   data.originalEvent = evt;
-//   if (data.rcmPopper) {
-//     data.rcmPopper.destroy();
-//   }
-
-//   data.rcmPopper = createPopper(
-//     this.referenceObject(evt),
-//     document.querySelector("#generalRClickMenu"),
-//     {
-//       placement: "right-start",
-//       modifiers: {},
-//     }
-//   );
-//   // Recalculate position
-//   this.$nextTick(() => {
-//     // this.popper.scheduleUpdate();
-//   });
-// }
-
-// function callOptionFunction(callback) {
-//   callback(data.originalEvent);
-//   closePopper();
-// }
-
-// function closePopper() {
-//   data.isVisible = false;
-//   data.contextData = null;
-//   data.originalEvent = null;
-//   console.log("Closed Context Menu");
-// }
-
-// window.onresize = closePopper;
 
 export default {
   directives: {
@@ -61,15 +30,30 @@ export default {
     clickOutside: vClickOutside.directive
   },
   props: {
+    ctxMenuId: {
+      type: String,
+      required: true,
+    },
     boundariesElement: {
       type: String,
       default: "body",
     },
+    anchorElementId: {
+      type: String,
+      default: "",
+      required: false,
+    },
+    placement: {
+      type: String,
+      default: "right-start",
+      required: false,
+    }
   },
+  emits: ['ctx-menu-click-outside', 'ctx-option-click'],
   // components: {
   //   popper,
   // },
-  data: function() {
+  data() {
     return {
       isVisible: false,
       contextData: {},
@@ -83,18 +67,21 @@ export default {
     }
   },
   methods: {
-    openPopper(evt, contextData) {
+    openPopper(event, contextData) {
+      console.log(event);
+      console.log(contextData);
       this.isVisible = true;
       this.contextData = contextData;
-      this.originalEvent = evt;
+      this.originalEvent = event;
       if (this.rcmPopper) {
         this.rcmPopper.destroy();
       }
 
-      this.rcmPopper = createPopper(
-        this.referenceObject(evt),
-        document.querySelector("#generalRClickMenu"), {
-          placement: "right-start",
+      const anchorPointElement = this.anchorElementId? document.querySelector(`#${this.anchorElementId}`) : this.referenceObject(event);
+      const contextMenuElement = document.querySelector(`#${this.ctxMenuId}`)
+
+      this.rcmPopper = createPopper(anchorPointElement, contextMenuElement, {
+          placement: this.placement,
         }
       );
       // Recalculate position
@@ -106,11 +93,15 @@ export default {
       callback(this.originalEvent);
       this.closePopper();
     },
-    closePopper() {
+    emitOutsideClick(event) {
+      this.$emit('ctx-menu-click-outside', event, this.ctxMenuId);
+    },  
+    closePopper(event) {
+      console.log(`Closed Context Menu`);
       this.isVisible = false;
       this.contextData = null;
       this.originalEvent = null;
-      console.log("Closed Context Menu");
+      console.log(this.$parent);
     },
     referenceObject(evt) {
       const left = evt.clientX;

@@ -38,6 +38,25 @@
       </div>
 
       <div class="create-panel-middlebar">
+        <ContextMenu ref="crtLoadImagesContextMenu" ctx-menu-id="createPanelLoadImagesContextMenu" 
+                     anchor-element-id="addPopperBtn" placement="top-start"
+                     @ctx-menu-click-outside="outsideClickDebug"
+                     @ctx-option-click="handleCrtLoadCtxMenuOptionClick"
+        >
+          <template #contextMenuItem="ctxItemData">
+            <ContextMenuItem>
+              <template #contextMenuOptionIcon>
+                <ContextMenuItemIcon v-if="ctxItemData.icon">
+                  <font-awesome-icon :icon="ctxItemData.icon" />
+                </ContextMenuItemIcon>
+              </template>
+              <template #contextMenuOptionLabel>
+                {{ ctxItemData.name }}
+              </template>
+            </ContextMenuItem>
+          </template>
+        </ContextMenu>
+
         <div
           v-show="popperIsVisible" id="crtLoadPopper" ref="popper" class="context-menu"
           tabindex="-1" style="display: block;"
@@ -47,7 +66,7 @@
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small">
-                    <font-awesome-icon icon="plus" />
+                    <font-awesome-icon :icon="['fas', 'plus']" />
                   </span>
                 </div>
                 <div class="ctxmenu-text">
@@ -69,7 +88,7 @@
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small">
-                    <font-awesome-icon icon="plus-circle" />
+                    <font-awesome-icon :icon="['fas', 'plus-circle']" />
                   </span>
                 </div>
                 <div class="ctxmenu-text">
@@ -102,12 +121,17 @@
             />
           </div>
           <div class="cpb-sequence-btn">
-            <a class="button is-neon-crimson" :class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence" @click="btnClearAll">
+            <ButtonField label="Clear" color="red" hint="Clears the entire sequence"
+                         :icon-array="['fas', 'times']"
+                         :is-non-interactive="isButtonFrozen"
+                         @button-click="btnClearAll"
+            />
+            <!-- <a class="button is-neon-crimson" :class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence" @click="btnClearAll">
               <span class="icon is-small">
                 <font-awesome-icon icon="times" />
               </span>
               <span>Clear</span>
-            </a>
+            </a> -->
           </div>
           <div class="cpb-sequence-btn">
             <span v-if="imageSequenceInfo.length &gt; 0" class="is-white-d">Total: {{ computeTotalSequenceSize }} </span>
@@ -191,7 +215,7 @@
                   />
                 </div>
                 <div class="field-cell">
-                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
+                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" :is-fullwidth="true" />
                 </div>
                 <div class="field-cell">
                   <CheckboxField v-model="lockAspectRatio" label="Lock aspect ratio" hint="Lock the width and height ratio" />
@@ -250,6 +274,9 @@
                 <div class="separator">
                   <div class="separator-space" />
                 </div>
+                <div class="field-cell full-width">
+                  <!-- <PresetSelector /> -->
+                </div>
                 <div class="field-cell span-4">
                   <ExtendedTextField v-model="saveDir" button-label="Save to" :use-icons="false" 
                                      @control-button-click="btnSetSavePath" 
@@ -259,18 +286,10 @@
                   <DropdownField v-model="criteria.format" :options-list="SUPPORTED_CREATE_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
                 </div>
                 <div class="field-cell">
-                  <div class="field">
-                    <div class="control">
-                      <a
-                        class="button is-neon-cyan"
-                        :class="{
-                          'is-loading': CRT_IS_CREATING == true,
-                          'non-interactive': isButtonFrozen,
-                        }"
-                        @click="btnCreateAIMG"
-                      >CREATE</a>
-                    </div>
-                  </div>
+                  <ButtonField label="CREATE" color="cyan"
+                               :is-loading="CRT_IS_CREATING == true" :is-non-interactive="isButtonFrozen"
+                               @button-click="btnCreateAIMG"
+                  />
                 </div>
               </div>
              
@@ -506,7 +525,12 @@ import StatusBar from "./components/StatusBar.vue";
 import InputField from "./components/Form/InputField.vue";
 import CheckboxField from './components/Form/CheckboxField.vue';
 import DropdownField from './components/Form/DropdownField.vue';
+import ButtonField from './components/Form/ButtonField.vue';
 import ExtendedTextField from './components/Form/ExtendedTextField.vue';
+import PresetSelector from './components/Presets/PresetSelector.vue';
+import ContextMenu from './components/ContextMenu/ContextMenu.vue';
+import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
+import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
@@ -529,11 +553,17 @@ export default {
     InputField,
     CheckboxField,
     DropdownField,
+    ButtonField,
     ExtendedTextField,
+    PresetSelector,
+    ContextMenu,
+    ContextMenuItem,
+    ContextMenuItemIcon,
   },
   directives:{
     clickOutside: vClickOutside.directive,
   },
+  emits: ['ctx-menu-click-outside'],
   data() {
     return {
       criteria: new CreationCriteria(),
@@ -571,6 +601,10 @@ export default {
       popperIsVisible: false,
       statusBarId: "createPanelStatusBar",
       ConstraintOption: ConstraintOption,
+      loadImagesCtxMenuOptions: [
+        {id: 'load_images', name: "Images", icon: ['fas', 'plus']},
+        {id: 'load_images_autodetect', name: "Autodetect sequence", icon: ['fas', 'plus-circle']},
+      ],
     };
   },
   computed: {
@@ -609,42 +643,6 @@ export default {
     }
   },
   watch: {
-    // 'criteria.width': {
-    //   handler(newValue, oldValue) {
-    //     console.log(`width new ${newValue} old ${oldValue}`);
-    //     this.criteria.height = oldValue;
-
-        
-    //     this.old_width = parseInt(oldValue);
-    //     let newWidth = newValue;
-    //     this.criteria.width = parseInt(newWidth);
-    //     if (this.lockAspectRatio && this.aspectRatio.h_ratio > 0) {
-    //       // Change height if lockAspectRatio is true and height is not 0
-    //       let raHeight = Math.round(
-    //         (newWidth / this.aspectRatio.w_ratio) * this.aspectRatio.h_ratio
-    //       );
-    //       this.criteria.height = raHeight > 0 ? parseInt(raHeight) : "";
-    //     } else {
-    //       this._updateAspectRatio(this.criteria.width, this.criteria.height);
-    //     }
-    //   },
-    // },
-    // 'criteria.height': {
-    //   handler(newValue, oldValue) {
-    //     this.old_height = parseInt(oldValue);
-    //     let newHeight = newValue;
-    //     this.criteria.height = parseInt(newHeight);
-    //     if (this.lockAspectRatio && this.aspectRatio.w_ratio > 0) {
-    //       let raWidth = Math.round(
-    //         (newHeight / this.aspectRatio.h_ratio) * this.aspectRatio.w_ratio
-    //       );
-    //       console.log(raWidth);
-    //       this.criteria.width = raWidth > 0 ? parseInt(raWidth) : "";
-    //     } else {
-    //       this._updateAspectRatio(this.criteria.width, this.criteria.height);
-    //     }
-    //   }
-    // }
   },
   created() {
     window.addEventListener("resize", this.closeLoadPopper);
@@ -664,6 +662,22 @@ export default {
     window.removeEventListener("resize", this.closeLoadPopper);
   },
   methods: {
+    handleCrtLoadCtxMenuOptionClick(event, optionId) {
+      console.log('=== handleCrtLoadCtxMenuOptionClick START ===');
+      console.log(event);
+      console.log(optionId);
+      if (optionId == 'load_images')
+        this.btnLoadImages('insert');
+      else if (optionId == 'load_images_autodetect');
+        this.btnLoadImages('smart_insert');
+      console.log('=== handleCrtLoadCtxMenuOptionClick END ===');
+    },
+    outsideClickDebug(event, args) {
+      console.log('=== outsideClickDebug START ===');
+      console.log(event);
+      console.log(args);
+      console.log('=== outsideClickDebug END ===');
+    },
     toggleLoadButtonAnim(ops, state = false) {
       if (ops == "insert") {
         this.CRT_INSERT_LOAD = state;
@@ -673,26 +687,29 @@ export default {
         this.CRT_REPLACE_LOAD = state;
       }
     },
-    btnToggleLoadPopper() {
-      if (!this.popperIsVisible) {
-      let popper = document.querySelector("#crtLoadPopper");
-      let button = document.querySelector("#addPopperBtn");
-      this.popper = createPopper(button, popper, {
-        placement: 'top-start',
-      });
-      console.log("btnToggleLoadPopper");
-      this.popperIsVisible = true;
-      }
-      else {
-        this.popperIsVisible = false;
-      }
+    btnToggleLoadPopper(event) {
+      // if (!this.popperIsVisible) {
+      // let popper = document.querySelector("#crtLoadPopper");
+      // let button = document.querySelector("#addPopperBtn");
+      // this.popper = createPopper(button, popper, {
+      //   placement: 'top-start',
+      // });
+      // console.log("btnToggleLoadPopper");
+      // this.popperIsVisible = true;
+      // }
+      // else {
+      //   this.popperIsVisible = false;
+      // }
+      
+      this.$refs.crtLoadImagesContextMenu.openPopper(event, this.loadImagesCtxMenuOptions);
     },
     closeLoadPopper(event) {
-      console.log(`closeLoadPopper ${this.popperIsVisible}, ${this.popper}`);
-      console.log(event);
-      if (this.popperIsVisible) {
-        this.popperIsVisible = false;
-      }
+      // console.log(`closeLoadPopper ${this.popperIsVisible}, ${this.popper}`);
+      // console.log(event);
+      // if (this.popperIsVisible) {
+      //   this.popperIsVisible = false;
+      // }
+      this.$refs.crtLoadImagesContextMenu.closePopper();
     },
     btnLoadImages(ops) {
       console.log("crt load image with ops:", ops);
