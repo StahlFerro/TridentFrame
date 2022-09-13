@@ -251,27 +251,8 @@
                 </div>
                 <div class="field-cell span-4">
                   <ExtendedTextField v-model="saveDir" button-label="Save to" :use-icons="false" 
-                                     @control-button-click="btnSetSavePath" />
-
-                  <!-- <div class="field has-addons">
-                    <div class="control">
-                      <a class="button is-neon-cyan" @click="btnSetSavePath">
-                        <span class="icon is-small">
-                          <font-awesome-icon icon="save" />
-                        </span>
-                        <span>Save to</span>
-                      </a>
-                    </div>
-                    <div class="control">
-                      <input
-                        v-model="saveDir"
-                        class="input is-neon-white"
-                        type="text"
-                        placeholder="Output folder"
-                        style="width: 100%;"
-                      />
-                    </div>
-                  </div> -->
+                                     @control-button-click="btnSetSavePath" 
+                  />
                 </div>
                 <div class="field-cell">
                   <DropdownField v-model="criteria.format" :options-list="SUPPORTED_CREATE_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
@@ -558,7 +539,6 @@ export default {
       gif_opt_criteria: new GIFOptimizationCriteria(),
       apng_opt_criteria: new APNGOptimizationCriteria(),
       fname: "",
-      zipName: "",
       SUPPORTED_CREATE_EXTENSIONS: SUPPORTED_CREATE_EXTENSIONS,
       RESIZE_METHODS: RESIZE_METHODS,
       crtSubMenuSelection: 0,

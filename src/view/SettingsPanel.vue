@@ -76,10 +76,25 @@
             </h4>
             <hr />
             <ExtendedTextField v-model="intermediate.directories.default_out_dir.create_panel"
-                               label="Create AIMG" button-label="Choose" hint="The time needed to move to the next frame"
+                               label="Create AIMG" button-label="Choose"
                                error-message="The directory does not exist, and will not be used as a default"
                                :use-icons="true" :has-error="errors.defaultOutDirCreate"
                                @field-blur="blurCommitDefaultOutDir($event, 'create_panel')"
+            />
+
+            
+            <ExtendedTextField v-model="intermediate.directories.default_out_dir.split_panel"
+                               label="Split AIMG" button-label="Choose"
+                               error-message="The directory does not exist, and will not be used as a default"
+                               :use-icons="true" :has-error="errors.defaultOutDirSplit"
+                               @field-blur="blurCommitDefaultOutDir($event, 'split_panel')"
+            />
+
+            <ExtendedTextField v-model="intermediate.directories.default_out_dir.modify_panel"
+                               label="Modify AIMG" button-label="Choose"
+                               error-message="The directory does not exist, and will not be used as a default"
+                               :use-icons="true" :has-error="errors.defaultOutDirModify"
+                               @field-blur="blurCommitDefaultOutDir($event, 'modify_panel')"
             />
             <!-- 
             <div class="field is-enhanced textbox">
@@ -108,7 +123,6 @@
                 </span>
               </div> 
             </div>
-          -->
 
             <div class="field is-enhanced textbox">
               <label title="The time needed to move to the next frame">Split AIMG</label>
@@ -162,6 +176,8 @@
                 </span>
               </div>
             </div>
+            
+            -->
           </div>
         </div>
 

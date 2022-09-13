@@ -3,7 +3,7 @@
     <input 
       :value="modelValue" 
       type="checkbox"
-      @change="$emit('update:modelValue', $event.target.value)"
+      @change="$emit('update:modelValue', $event.target.checked)"
     />
     {{ label }}
   </label>
@@ -28,8 +28,6 @@ export default {
     },
     modelValue: {
       type: Boolean,
-      default: null,
-      required: false,
     },
   },
   emits: ['update:modelValue']

@@ -232,6 +232,87 @@
         <div class="mpc-right-panel">
           <div class="mpc-right-top-panel">
             <div v-show="modSubMenuSelection == 0">
+              <div class="general-form row-6">
+                <div class="field-cell">
+                  <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
+                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
+                              @field-input="widthHandler"
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.height" label="Height" type="number" 
+                              hint="The height of the animated image"
+                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                              @field-input="heightHandler"
+                  />
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
+                  <br />
+                  <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
+                  <br />
+                  <CheckboxField v-model="lockAspectRatio" label="Lock aspect ratio" hint="Lock the width and height ratio" />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
+                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              @field-input="delayHandler" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
+                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              @field-input="fpsHandler" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
+                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" label="Delay handling" hint="How to modify the delay" />
+                </div>
+                <div class="field-cell" />
+                <div class="field-cell">
+                  <br />
+                  <template v-if="aspect_ratio && aspect_ratio.text">
+                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
+                  </template>
+                  <template v-else>
+                    &nbsp;
+                  </template>
+                </div>
+                <div class="separator">
+                  <div class="separator-space" />
+                </div>
+                <div class="field-cell span-4">
+                  <ExtendedTextField v-model="saveDir" button-label="Save to" :use-icons="false" 
+                                     @control-button-click="btnSetSavePath" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.format" :options-list="SUPPORTED_MODIFY_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
+                </div>
+                <div class="field-cell">
+                  <div class="field">
+                    <div class="control">
+                      <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': isButtonFrozen}" @click="btnModifyImage">
+                        MODIFY</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!--
               <table class="" width="100%">
                 <tr>
                   <td width="16.7%">
@@ -322,12 +403,8 @@
                       Reversed
                     </label>
                     <br />
-                    <!-- <label class="checkbox" title="Preserve transparent pixels">
-                      <input v-model="preserve_alpha" type="checkbox" />
-                      Preserve Alpha
-                    </label> -->
                     <label class="checkbox">
-                      <input v-model="lock_aspect_ratio" type="checkbox" />
+                      <input v-model="lockAspectRatio" type="checkbox" />
                       Lock aspect ratio
                     </label>
                   </td>
@@ -398,20 +475,8 @@
                       </div>
                     </div>
                   </td>
-                  <!-- <td width="20%">
-                    <div class="field">
-                      <label class="label">Skip Frames</label>
-                      <div class="control">
-                        <input v-model="skip_frame" class="input is-neon-white" type="number" min="0"/>
-                      </div>
-                    </div>
-                  </td> -->
                   <td width="16.7%" />
                   <td width="16.7%" class="force-vcenter">
-                    <!-- <label class="checkbox">
-                      <input v-model="lock_aspect_ratio" type="checkbox"/>
-                      Lock aspect ratio
-                    </label> -->
                     <br />
                     <template v-if="aspect_ratio && aspect_ratio.text">
                       <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
@@ -429,7 +494,6 @@
                         <a class="button is-neon-cyan" @click="btnSetSavePath">
                           <span class="icon is-small">
                             <font-awesome-icon icon="save" />
-                            <!-- <i class="fas fa-save"></i> -->
                           </span>
                           <span>Save to</span>
                         </a>
@@ -473,6 +537,8 @@
                   </td>
                 </tr>
               </table>
+              -->
+
             </div>
             <div v-show="modSubMenuSelection == 1 && criteria.format == 'gif'">
               <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
@@ -556,6 +622,11 @@ import { existsSync } from 'fs';
 import { copyFile }  from 'fs/promises';
 
 import StatusBar from "./components/StatusBar.vue";
+import InputField from "./components/Form/InputField.vue";
+import CheckboxField from './components/Form/CheckboxField.vue';
+import DropdownField from './components/Form/DropdownField.vue';
+import ExtendedTextField from './components/Form/ExtendedTextField.vue';
+
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
@@ -563,10 +634,69 @@ import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/pr
 import { APNGOptimizationCriteria, GIFOptimizationCriteria, ModificationCriteria } from '../models/criterion';
 // import Vue from 'vue';
 
-const SUPPORTED_MODIFY_EXTENSIONS = {
-  'gif': 'GIF',
-  'png': 'APNG',
-}
+const SUPPORTED_MODIFY_EXTENSIONS = [
+  {
+    name: "gif",
+    label: "GIF",
+    description: "", 
+  },
+  {
+    name: "png",
+    label: "APNG",
+    description: "", 
+  }
+];
+
+const RESIZE_METHODS = [
+  {
+    name: "BICUBIC",
+    label: "Bicubic",
+    description: "General-use resizing algorithm for most images"
+  },
+  {
+    name: "NEAREST",
+    label: "Nearest",
+    description: "Preserve sharp edges. Ideal for pixel art"
+  },
+  {
+    name: "BILINEAR",
+    label: "Bilinear",
+    description: "Similar to Bicubic, but not as smooth"
+  },
+  {
+    name: "BOX",
+    label: "Box",
+    description: ""
+  },
+  {
+    name: "HAMMING",
+    label: "Hamming",
+    description: ""
+  },
+  {
+    name: "LANCZOS",
+    label: "Lanczos",
+    description: ""
+  },
+];
+
+const DELAY_HANDLING_OPTIONS = [
+  {
+    name: "MULTIPLY_AVERAGE",
+    label: "Multiply average",
+    description: "Multiply all frames based on the ratio between the current average and the value specified in the Delay field"
+  },
+  {
+    name: "EVEN_OUT",
+    label: "Even-out",
+    description: "Change all frame delay to the specified Delay field"
+  },
+  {
+    name: "DO_NOTHING",
+    label: "Do nothing",
+    description: "Don't alter the current frames delays at all"
+  },
+]
 
 let common_metadata = {
   fname: "",
@@ -591,7 +721,7 @@ let common_metadata = {
 };
 
 let extension_filters = [
-    { name: 'Images', extensions: Object.keys(SUPPORTED_MODIFY_EXTENSIONS) },
+    { name: 'Images', extensions: SUPPORTED_MODIFY_EXTENSIONS.map(ext => ext.name) },
 ];
 let file_dialog_props = ['openfile'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
@@ -604,63 +734,20 @@ export default {
     APNGOptimizationRow,
     APNGUnoptimizationRow,
     StatusBar,
+    InputField,
+    CheckboxField,
+    DropdownField,
+    ExtendedTextField,
   },
   data() {
     return {
       orig_attribute: structuredClone(common_metadata),
       preview_attribute: structuredClone(common_metadata),
       criteria: new ModificationCriteria(),
-      // criteria: {
-      //   width: "",
-      //   height: "",
-      //   resize_method: "BICUBIC",
-      //   rotation: "",
-      //   fps: "",
-      //   delay: "",
-      //   delays_are_even: true,
-      //   delays_list: [],
-      //   delay_handling: "MULTIPLY_AVERAGE",
-      //   loop_count: "",
-      //   format: "gif",
-      //   skip_frame: "",
-      //   flip_x: false,
-      //   flip_y: false,
-      //   is_reversed: false,
-      //   preserve_alpha: false,
-      //   start_frame: 0,
-      // },
       gif_opt_criteria: new GIFOptimizationCriteria(),
-      // gif_opt_criteria: {
-      //   is_optimized: false,
-      //   optimization_level: "1",
-      //   is_lossy: false,
-      //   lossy_value: 30,
-      //   is_reduced_color: false,
-      //   color_space: 256,
-      //   is_unoptimized: false,
-      //   dither_method: "FLOYD_STEINBERG",
-      //   palletization_method: "ADAPTIVE",
-      //   is_dither_alpha: false,
-      //   dither_alpha_method: "SCREENDOOR",
-      //   dither_alpha_threshold: 50,
-      // },
       hasGIFOptimization: false,
       apng_opt_criteria: new APNGOptimizationCriteria(),
-      // apng_opt_criteria: {
-      //   apng_is_optimized: false,
-      //   apng_optimization_level: "1",
-      //   apng_is_reduced_color: false,
-      //   apng_color_count: 256,
-      //   apng_quantization_enabled: false,
-      //   apng_quantization_quality_min: 65,
-      //   apng_quantization_quality_max: 80,
-      //   apng_quantization_speed: 3,
-      //   apng_is_unoptimized: false,
-      //   apng_convert_color_mode: false,
-      //   apng_new_color_mode: "RGBA",
-      // },
       hasAPNGOptimization: false,
-
       fname: "",
       previewPath: "",
       previewPathCB: "",
@@ -670,7 +757,7 @@ export default {
       preview_size: "",
       preview_size_hr: "",
       aspect_ratio: "",
-      lock_aspect_ratio: false,
+      lockAspectRatio: false,
       modSubMenuSelection: 0,
       orig_checkerbg_active: false,
       new_checkerbg_active: false,
@@ -679,6 +766,8 @@ export default {
       MOD_IS_PREVIEWING: false,
       modify_msgbox: "",
       SUPPORTED_MODIFY_EXTENSIONS: SUPPORTED_MODIFY_EXTENSIONS,
+      RESIZE_METHODS: RESIZE_METHODS,
+      DELAY_HANDLING_OPTIONS: DELAY_HANDLING_OPTIONS,
       statusBarId: "modifyPanelStatusBar",
       // statusBarBus: new Vue(),
     };
@@ -933,7 +1022,7 @@ export default {
               this._logSuccess("Image loaded.");
             }
             this.MOD_IS_LOADING = false;
-            this.lock_aspect_ratio = true;
+            this.lockAspectRatio = true;
           }
         });
         console.log("registered!");
@@ -1004,7 +1093,7 @@ export default {
       this.clearOrigMetadata();
       this.clearCriteriaFields();
       this.clearPreviewImage();
-      this.lock_aspect_ratio = false;
+      this.lockAspectRatio = false;
     },
     clearPreviewImage() {
       this.previewPath = "";
@@ -1191,7 +1280,7 @@ export default {
           console.log(fName);
           const result = await ipcRenderer.invoke('IPC-SHOW-SAVE-DIALOG', { 
             defaultPath: fName, 
-            filters: [{ name: SUPPORTED_MODIFY_EXTENSIONS[previewFormat], extensions: [previewFormat]}],
+            filters: [{ name: SUPPORTED_MODIFY_EXTENSIONS.find(ext => ext.name == previewFormat).label, extensions: [previewFormat]}],
             properties: ["createDirectory"]});
           if (result.canceled)
             return Promise.reject("Image saving cancelled");
@@ -1283,12 +1372,12 @@ export default {
         });
       }
     },
-    widthHandler(width, event) {
+    widthHandler(event) {
       // data.orig_attribute.width = parseInt(width);
       console.log(event);
       let newWidth = event.target.value;
       this.criteria.width = newWidth;
-      if (this.lock_aspect_ratio && this.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
+      if (this.lockAspectRatio && this.aspect_ratio.h_ratio > 0) { // Change height if lockAspectRatio is true and height is not 0
         let raHeight = Math.round(newWidth / this.aspect_ratio.w_ratio * this.aspect_ratio.h_ratio);
         this.criteria.height = raHeight > 0? raHeight : "";
       }
@@ -1296,11 +1385,11 @@ export default {
         this.updateAspectRatio(this.criteria.width, this.criteria.height);
       }
     },
-    heightHandler(height, event) {
+    heightHandler(event) {
       // data.orig_attribute.height = parseInt(height);
       let newHeight = event.target.value;
       this.criteria.height = newHeight;
-      if (this.lock_aspect_ratio && this.aspect_ratio.w_ratio > 0) {
+      if (this.lockAspectRatio && this.aspect_ratio.w_ratio > 0) {
         let raWidth = Math.round(newHeight / this.aspect_ratio.h_ratio * this.aspect_ratio.w_ratio);
         console.log(raWidth);
         this.criteria.width = raWidth > 0? raWidth : "";

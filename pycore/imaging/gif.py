@@ -7,7 +7,8 @@ from typing import List, Tuple
 import hitherdither
 from pycore.core_funcs import stdio
 from pycore.models.criterion import CriteriaBundle, GIFOptimizationCriteria
-from pycore.bin_funcs.imager_api import InternalImageAPI, GifsicleAPI
+from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
+from pycore.bin_funcs.imager_api import InternalImageAPI, GifsicleAPI, ImageMagickAPI
 from pycore.imaging.generic import transform_image
 from pycore.utility import filehandler, imageutils
 
@@ -53,6 +54,16 @@ def create_animated_gif(image_paths: List, out_full_path: Path, crbundle: Criter
     shutil.rmtree(target_dir)
     # logger.control("CRT_FINISH")
     return out_full_path
+
+
+def modify_animated_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
+    if crbundle.gif_opt_criteria.is_unoptimized:
+        stdio.message("Unoptimizing GIF...")
+        # ImageMagick is used to unoptimized rather than Gifsicle's unoptimizer because Gifsicle doesn't support
+        # unoptimization of GIFs with local color table
+        gif_path = ImageMagickAPI.unoptimize_gif(gif_path, out_path)
+    final_path = GifsicleAPI.modify_gif_image(gif_path, out_path, metadata, crbundle)
+    return final_path
 
 
 def palletize_image(im: PIL.Image.Image, dither_method: str, palletization_method: str) -> PIL.Image.Image:
