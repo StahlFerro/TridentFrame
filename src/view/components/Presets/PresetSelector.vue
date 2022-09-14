@@ -1,59 +1,62 @@
 <template>
-  <div>
-    <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
-                 anchor-element-id="presetPopperBtn" placement="top-start"
-                 @ctx-menu-click-outside="outsideClickDebug"
-                 @ctx-option-click="handleCrtPresetCtxMenuOptionClick"
-    >
-      <template #contextMenuItem="ctxItemData">
-        <ContextMenuItem>
-          <template #contextMenuOptionIcon>
-            <ContextMenuItemIcon v-if="ctxItemData.icon">
-              <font-awesome-icon :icon="ctxItemData.icon" />
-            </ContextMenuItemIcon>
-          </template>
-          <template #contextMenuOptionLabel>
-            {{ ctxItemData.name }}
-          </template>
-        </ContextMenuItem>
-      </template>
-    </ContextMenu>
-
-    
-    <div class="preset-selector-bar">
-      <div class="preset-controls-left">
-        <a 
-          id="presetPopperBtn"
-          class="button is-neon-emerald"
-          title="Open image loading dialog" @click="btnToggleLoadPopper"
-        >
-          <span class="icon is-small">
-            <font-awesome-icon icon="plus" />
-          </span>
-          <span>Presets...</span>
-        </a>
-      </div>
-      <div class="preset-selection">
-        <DropdownField 
-          :model-value="presetSelectionValue" 
-          :options-list="presetOptionsList" 
-          :is-non-interactive="isNonInteractive" 
-          @update:model-value="$emit('update:presetSelectionValue', $event.target.value)"
-        />
-      </div>
-      <div class="preset-controls-right">
-        <a
-          class="button is-neon-emerald"
-          title="Open image loading dialog" @click="$emit('apply-preset')"
-        >
-          <span class="icon is-small">
-            <font-awesome-icon icon="plus" />
-          </span>
-          <span>Apply preset</span>
-        </a>
-      </div>
+  <div class="preset-selector-bar">
+    <div class="preset-contextmenu">
+      <slot name="presetContextMenu" />
+      <!-- <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
+                   anchor-element-id="presetPopperBtn" placement="top-start"
+                   @ctx-menu-open="$emit('ctx-menu-open')"
+                   @ctx-option-click="$emit('ctx-option-click')"
+                   @ctx-menu-click-outside="$emit('ctx-menu-click-outside')"
+      >
+        <template #contextMenuItem="ctxItemData">
+          <ContextMenuItem>
+            <template #contextMenuOptionIcon>
+              <ContextMenuItemIcon v-if="ctxItemData.icon">
+                <font-awesome-icon :icon="ctxItemData.icon" />
+              </ContextMenuItemIcon>
+            </template>
+            <template #contextMenuOptionLabel>
+              {{ ctxItemData.name }}
+            </template>
+          </ContextMenuItem>
+        </template>
+      </ContextMenu> -->
     </div>
-    
+    <div class="preset-controls-left">
+      <slot name="presetControlsLeft" />
+      <!-- <a 
+        id="presetPopperBtn"
+        class="button is-neon-emerald"
+        title="Open image loading dialog" @click="$emit('preset-button-click')"
+      >
+        <span class="icon is-small">
+          <font-awesome-icon icon="plus" />
+        </span>
+        <span>Presets...</span>
+      </a> -->
+    </div>
+    <div class="preset-selection">
+      <slot name="presetSelection" />
+      <!-- <DropdownField 
+        :model-value="presetSelectionValue" 
+        :options-list="presetOptionsList" 
+        :is-non-interactive="isNonInteractive" 
+        :is-fullwidth="true"
+        @update:model-value="$emit('update:presetSelectionValue', $event.target.value)"
+      /> -->
+    </div>
+    <div class="preset-controls-right">
+      <slot name="presetControlsRight" />
+      <!-- <a
+        class="button is-neon-emerald"
+        title="Open image loading dialog" @click="$emit('apply-preset')"
+      >
+        <span class="icon is-small">
+          <font-awesome-icon icon="plus" />
+        </span>
+        <span>Apply preset</span>
+      </a> -->
+    </div>
   </div>
 </template>
 
@@ -86,26 +89,21 @@ export default {
       default: false
     },
   },
-  emits: ['update:presetSelectionValue', 'add-preset', 'update-preset', 'delete-preset', 'apply-preset'],
+  emits: ['preset-button-click', 'ctx-menu-open', 'ctx-option-click', 'ctx-menu-click-outside',],
   data() {
     return {
-      presetCtxMenuOptions: [
-        {id: 'preset_new', name: "Create new preset", icon: ['fas', 'plus']},
-        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'plus-circle']},
-        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'plus-circle']},
-      ],
     }
   },
   methods: {
     handleCrtPresetCtxMenuOptionClick(event, optionId) {
 
     },
-    btnToggleLoadPopper(event) {
-      this.$refs.crtPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
-    },
-    closeLoadPopper(event) {
-      this.$refs.crtPresetContextMenu.closePopper();
-    },
+    // btnToggleLoadPopper(event) {
+    //   this.$refs.crtPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
+    // },
+    // closeLoadPopper(event) {
+    //   this.$refs.crtPresetContextMenu.closePopper();
+    // },
     outsideClickDebug(event) {
 
     },

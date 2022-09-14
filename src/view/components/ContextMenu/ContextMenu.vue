@@ -49,7 +49,7 @@ export default {
       required: false,
     }
   },
-  emits: ['ctx-menu-click-outside', 'ctx-option-click'],
+  emits: ['ctx-menu-open', 'ctx-option-click', 'ctx-menu-click-outside',],
   // components: {
   //   popper,
   // },
@@ -88,20 +88,34 @@ export default {
       this.$nextTick(() => {
         // this.popper.scheduleUpdate();
       });
+      this.$emit('ctx-menu-open', event);
     },
     callOptionFunction(callback) {
       callback(this.originalEvent);
       this.closePopper();
     },
     emitOutsideClick(event) {
+      console.debug(`=== emitOutsideClick START ${this.ctxMenuId} ===`);
+      console.debug(event);
+      console.debug(this.anchorElementId);
+      if (this.anchorElementId) {
+        const anchorElement = document.querySelector(`#${this.anchorElementId}`);
+        console.debug(anchorElement);
+        console.debug(event.path.includes(anchorElement));
+        if (event.path.includes(anchorElement)){
+          console.debug(`=== emitOutsideClick CANCEL ${this.ctxMenuId} ===`);
+          return;
+        }
+      }
       this.$emit('ctx-menu-click-outside', event, this.ctxMenuId);
-    },  
+      console.debug(`=== emitOutsideClick END ${this.ctxMenuId} ===`);
+    },
     closePopper(event) {
-      console.log(`Closed Context Menu`);
+      console.debug(`Closed Context Menu`);
       this.isVisible = false;
       this.contextData = null;
       this.originalEvent = null;
-      console.log(this.$parent);
+      console.debug(this.$parent);
     },
     referenceObject(evt) {
       const left = evt.clientX;

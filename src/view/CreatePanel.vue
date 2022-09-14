@@ -40,8 +40,9 @@
       <div class="create-panel-middlebar">
         <ContextMenu ref="crtLoadImagesContextMenu" ctx-menu-id="createPanelLoadImagesContextMenu" 
                      anchor-element-id="addPopperBtn" placement="top-start"
-                     @ctx-menu-click-outside="outsideClickDebug"
-                     @ctx-option-click="handleCrtLoadCtxMenuOptionClick"
+                     @ctx-menu-open="handleLoadImageCtxMenuOpen"
+                     @ctx-option-click="handleLoadImageCtxMenuOptionClick"
+                     @ctx-menu-click-outside="handleLoadImageCtxMenuClickOutside"
         >
           <template #contextMenuItem="ctxItemData">
             <ContextMenuItem>
@@ -57,12 +58,12 @@
           </template>
         </ContextMenu>
 
-        <div
+        <!-- <div
           v-show="popperIsVisible" id="crtLoadPopper" ref="popper" class="context-menu"
           tabindex="-1" style="display: block;"
         >
           <ul class="context-menu-options">
-            <li class="context-menu-option" @click="btnLoadImages('insert')">
+            <li class="context-menu-option" @click="loadImages('insert')">
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small">
@@ -74,17 +75,7 @@
                 </div>
               </div>
             </li>
-            <!-- <li class="context-menu-option" @click="btnLoadImages('replace')">
-              <div class="ctxmenu-content">
-                <div class="ctxmenu-icon">
-                  <span class="icon is-small">
-                    <i class="fas fa-plus-square"></i>
-                  </span>
-                </div>
-                <div class="ctxmenu-text">Multiple images</div>
-              </div>
-            </li> -->
-            <li class="context-menu-option" @click="btnLoadImages('smart_insert')">
+            <li class="context-menu-option" @click="loadImages('smart_insert')">
               <div class="ctxmenu-content">
                 <div class="ctxmenu-icon">
                   <span class="icon is-small">
@@ -97,10 +88,19 @@
               </div>
             </li>
           </ul>
-        </div>
+        </div> -->
+
         <div class="cpb-sequence-buttons">
           <div class="cpb-sequence-btn">
-            <a
+            <ButtonField id="addPopperBtn" label="Add..." hint="Open image loading dialog"
+                         color="green"
+                         :is-loading="CRT_IS_LOADING" :is-non-interactive="isButtonFrozen"
+                         :icons="['fas', 'plus']"
+                         :listen-to-outside-clicks="true"
+                         @button-click="btnToggleLoadPopper"
+                         @click-outside="closeLoadPopper"
+            />
+            <!-- <a
               id="addPopperBtn" v-click-outside="closeLoadPopper" class="button is-neon-emerald" :class="{'is-loading': CRT_IS_LOADING, 'non-interactive': isButtonFrozen }"
               title="Open image loading dialog" @click="btnToggleLoadPopper"
             >
@@ -108,7 +108,7 @@
                 <font-awesome-icon icon="plus" />
               </span>
               <span>Add...</span>
-            </a>
+            </a> -->
           </div>
           <div class="cpb-sequence-btn">
             <span class="is-white-d compact-line">Insert<br />after</span>
@@ -122,7 +122,7 @@
           </div>
           <div class="cpb-sequence-btn">
             <ButtonField label="Clear" color="red" hint="Clears the entire sequence"
-                         :icon-array="['fas', 'times']"
+                         :icons="['fas', 'times']"
                          :is-non-interactive="isButtonFrozen"
                          @button-click="btnClearAll"
             />
@@ -274,7 +274,52 @@
                   <div class="separator-space" />
                 </div>
                 <div class="field-cell full-width">
-                  <!-- <PresetSelector /> -->
+                  <PresetSelector>
+                    <template #presetContextMenu>
+                      <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
+                                   anchor-element-id="presetPopperBtn" placement="top-start"
+                                   @ctx-menu-open="handlePresetsCtxMenuOpen"
+                                   @ctx-option-click="handlePresetsCtxMenuOptionClick"
+                                   @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
+                      >
+                        <template #contextMenuItem="ctxItemData">
+                          <ContextMenuItem>
+                            <template #contextMenuOptionIcon>
+                              <ContextMenuItemIcon v-if="ctxItemData.icon">
+                                <font-awesome-icon :icon="ctxItemData.icon" />
+                              </ContextMenuItemIcon>
+                            </template>
+                            <template #contextMenuOptionLabel>
+                              {{ ctxItemData.name }}
+                            </template>
+                          </ContextMenuItem>
+                        </template>
+                      </ContextMenu>
+                    </template>
+                    <template #presetControlsLeft>
+                      <ButtonField id="presetPopperBtn" label="Preset..." color="blue"
+                                   :listen-to-outside-clicks="true"
+                                   @button-click="btnTogglePresetPopper"
+                                   @click-outside="debugHandler"
+                      />
+                    </template>
+                    <template #presetSelection>
+                      <DropdownField 
+                        :model-value="presetSelectionValue" 
+                        :options-list="presetOptionsList" 
+                        :is-non-interactive="isNonInteractive" 
+                        :is-fullwidth="true"
+                        @update:model-value="$emit('update:presetSelectionValue', $event.target.value)"
+                      />
+                    </template>
+                    <template #presetControlsRight>
+                      <ButtonField label="Apply preset" color="purple" />
+                    </template>
+                  </PresetSelector>
+                  />
+                </div>
+                <div class="separator">
+                  <div class="separator-space" />
                 </div>
                 <div class="field-cell span-4">
                   <ExtendedTextField v-model="saveDir" button-label="Save to" :use-icons="false" 
@@ -601,7 +646,8 @@ export default {
       CRT_IS_LOADING: false,
       CRT_IS_PREVIEWING: false,
       CRT_IS_CREATING: false,
-
+      loadImageCtxMenuVisible: false,
+      presetsCtxMenuVisible: false,
       popperIsVisible: false,
       statusBarId: "createPanelStatusBar",
       ENFORCE_UNSIGNED: ENFORCE_UNSIGNED,
@@ -609,6 +655,11 @@ export default {
       loadImagesCtxMenuOptions: [
         {id: 'load_images', name: "Images", icon: ['fas', 'plus']},
         {id: 'load_images_autodetect', name: "Autodetect sequence", icon: ['fas', 'plus-circle']},
+      ],
+      presetCtxMenuOptions: [
+        {id: 'preset_new', name: "Create new preset", icon: ['fas', 'plus']},
+        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'plus-circle']},
+        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'plus-circle']},
       ],
     };
   },
@@ -667,21 +718,71 @@ export default {
     window.removeEventListener("resize", this.closeLoadPopper);
   },
   methods: {
-    handleCrtLoadCtxMenuOptionClick(event, optionId) {
-      console.log('=== handleCrtLoadCtxMenuOptionClick START ===');
+    debugHandler(event) {
+      console.log('debugHandler');
+    },
+    handlePresetsCtxMenuOpen(event) {
+      this.presetsCtxMenuVisible = true;
+    },
+    handlePresetsCtxMenuOptionClick(event, optionId) {
+      console.log(`=== handlePresetsCtxMenuOptionClick START vis: ${this.presetsCtxMenuVisible} ===`);
       console.log(event);
       console.log(optionId);
-      if (optionId == 'load_images')
-        this.btnLoadImages('insert');
-      else if (optionId == 'load_images_autodetect');
-        this.btnLoadImages('smart_insert');
-      console.log('=== handleCrtLoadCtxMenuOptionClick END ===');
+      this.closePresetPopper(event);
+      this.presetsCtxMenuVisible = false;
+      console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
     },
-    outsideClickDebug(event, args) {
-      console.log('=== outsideClickDebug START ===');
+    handlePresetsCtxMenuClickOutside(event, args) {
+      console.log(`=== handlePresetsCtxMenuClickOutside START vis: ${this.presetsCtxMenuVisible} ===`);
       console.log(event);
       console.log(args);
-      console.log('=== outsideClickDebug END ===');
+      this.closePresetPopper(event);
+      this.presetsCtxMenuVisible = false;
+      console.log(`=== handlePresetsCtxMenuClickOutside END vis: ${this.presetsCtxMenuVisible}===`);
+    },
+    btnTogglePresetPopper(event) {
+      console.log(`=== btnTogglePresetPopper START vis: ${this.presetsCtxMenuVisible} ===`);
+      if (this.presetsCtxMenuVisible) {
+        this.closePresetPopper(event);
+        this.presetsCtxMenuVisible = false;
+      }
+      else {
+        this.openPresetPopper(event);
+      }
+      console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
+    },
+    openPresetPopper(event) {
+      console.log('check this one');
+      console.log(event);
+      this.$refs.crtPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
+    },
+    closePresetPopper(event) {
+      this.$refs.crtPresetContextMenu.closePopper();
+    },
+    handleLoadImageCtxMenuOpen(event) {
+      this.loadImageCtxMenuVisible = true;
+    },
+    handleLoadImageCtxMenuOptionClick(event, optionId) {
+      console.log(`=== handleLoadImageCtxMenuOptionClick START vis: ${this.loadImageCtxMenuVisible} ===`);
+      console.log(event);
+      console.log(optionId);
+      this.closeLoadPopper(event);
+      this.loadImageCtxMenuVisible = false;
+      if (optionId == 'load_images'){
+        this.loadImages('insert');
+      }
+      else if (optionId == 'load_images_autodetect'){
+        this.loadImages('smart_insert');
+      }
+      console.log(`=== handleLoadImageCtxMenuOptionClick END vis: ${this.loadImageCtxMenuVisible} ===`);
+    },
+    handleLoadImageCtxMenuClickOutside(event, args) {
+      console.log(`=== handleLoadImageCtxMenuClickOutside START vis: ${this.loadImageCtxMenuVisible} ===`);
+      console.log(event);
+      console.log(args);
+      this.closeLoadPopper(event);
+      this.loadImageCtxMenuVisible = false;
+      console.log(`=== handleLoadImageCtxMenuClickOutside END vis: ${this.loadImageCtxMenuVisible}===`);
     },
     toggleLoadButtonAnim(ops, state = false) {
       if (ops == "insert") {
@@ -693,12 +794,23 @@ export default {
       }
     },
     btnToggleLoadPopper(event) {
+      console.log(`=== btnToggleLoadPopper START vis: ${this.loadImageCtxMenuVisible} ===`);
+      if (this.loadImageCtxMenuVisible) {
+        this.closeLoadPopper(event);
+        this.loadImageCtxMenuVisible = false;
+      }
+      else {
+        this.openLoadPopper(event);
+      }
+      console.log(`=== btnToggleLoadPopper END vis: ${this.loadImageCtxMenuVisible} ===`);
+    },
+    openLoadPopper(event) {
       this.$refs.crtLoadImagesContextMenu.openPopper(event, this.loadImagesCtxMenuOptions);
     },
     closeLoadPopper(event) {
       this.$refs.crtLoadImagesContextMenu.closePopper();
     },
-    btnLoadImages(ops) {
+    loadImages(ops) {
       console.log("crt load image with ops:", ops);
       let props = ops == "insert" ? imgs_dialog_props : img_dialog_props;
       let cmd_args = [];

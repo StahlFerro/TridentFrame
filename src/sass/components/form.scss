@@ -72,21 +72,22 @@ $general-fields-col-gap: 5px;
         padding: 0 !important;
     }
     .field-cell.full-width {
-        flex: 0 0 100%;
+        flex: 1 0 100%;
         display: flex;
         flex-direction: row;
     }
 }
 
 .preset-selector-bar {
-    flex: 0 0 100%;
+    flex: 0 0 50%;
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
     .preset-controls-left {
-        flex: 0 1 30%;
+        flex: 0 1 10%;
     }
     .preset-selection {
-        flex: 1 0 auto;
+        flex: 1 1 auto;
     }
     .preset-controls-right {
         flex: 0 1 10%;

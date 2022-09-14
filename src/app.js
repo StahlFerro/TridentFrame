@@ -47,11 +47,12 @@ import { faGithub as fabGithub } from '@fortawesome/free-brands-svg-icons/faGith
 import { faFlask } from '@fortawesome/free-solid-svg-icons/faFlask';
 import { faGlobe } from '@fortawesome/free-solid-svg-icons/faGlobe';
 import { faSlidersH } from '@fortawesome/free-solid-svg-icons/faSlidersH';
+import { faPaintRoller } from '@fortawesome/free-solid-svg-icons/faPaintRoller';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add([faImage, farImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, 
   faTriangleExclamation, faCircleExclamation, faCheck, faSpinner, faSave, faFolderOpen, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, 
-  farCopyright, faFileUpload, farEye, fabGithub, faFlask, faGlobe, faSlidersH]);
+  farCopyright, faFileUpload, farEye, fabGithub, faFlask, faGlobe, faSlidersH, faPaintRoller]);
 
 const app = createApp(App);
 // const emitter = mitt();

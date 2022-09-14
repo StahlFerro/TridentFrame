@@ -1,18 +1,21 @@
 <template>
   <a
+    :id="id"
+    :v-click-outside="listenToOutsideClicks? emitClickOutside : null"
     class="button" :class="{
       'is-neon-white': color == 'white',
       'is-neon-emerald': color == 'green',
       'is-neon-cyan': color == 'cyan',
       'is-neon-crimson': color == 'red',
       'is-neon-cobalt': color == 'blue',
+      'is-neon-purple': color == 'purple',
       'is-loading': isLoading,
       'non-interactive': isNonInteractive
     }"
     :title="hint" @click="$emit('button-click')"
   >
-    <span v-if="iconArray.length >= 2" class="icon is-small">
-      <font-awesome-icon :icon="iconArray" />
+    <span v-if="icons.length >= 2" class="icon is-small">
+      <font-awesome-icon :icon="icons" />
     </span>
     <span>{{ label }}</span>
   </a>
@@ -24,7 +27,12 @@
   export default {
     name: "ButtonField",
     props: {
-      iconArray: {
+      id: {
+        type: String,
+        default: null,
+        required: false,
+      },
+      icons: {
         type: Array,
         default() {
           return []
@@ -53,7 +61,17 @@
         default: "",
         required: false,
       },
+      listenToOutsideClicks: {
+        type: Boolean,
+        default: false,
+      }
     },
-    emits: ['button-click']
+    emits: ['button-click', 'click-outside'],
+    methods: {
+      emitClickOutside(event) {
+        console.debug('emitClickOutside');
+        this.$emit('click-outside', event);
+      }
+    }
   };
   </script>
