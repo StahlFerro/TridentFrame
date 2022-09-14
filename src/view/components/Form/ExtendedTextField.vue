@@ -34,7 +34,8 @@
     props: {
       label: {
         type: String,
-        required: true,
+        default: null,
+        required: false,
       },
       buttonLabel: {
         type: String,
