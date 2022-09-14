@@ -12,5 +12,30 @@ $modal-background-background-color: rgba(0, 0, 00, 0.7);
 .neon-modal {
     padding: 20px;
     border: 2px solid $white-d;
-    background-color: rgba(0, 0, 0, 0.95);
+    background-color: $dark-2;
+    // width: 60vw !important;
+    width: 500px !important;
+}
+
+.flexible-modal {
+    width: 60vw !important;
+}
+
+.modal-form-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 20px;
+    .modal-form {
+        flex: 1;
+    }
+    .modal-controls {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        column-gap: 10px;
+        a.button, button.button {
+            flex: 0 1 auto;
+        }
+    }
 }

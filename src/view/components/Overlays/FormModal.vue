@@ -2,8 +2,14 @@
   <div class="modal" :class="{'is-active': isActive}">
     <div class="modal-background blur" @click="$emit('close-modal-background-clicked')"></div>
     <div class="modal-content neon-modal ">
-      <slot name="modalForm" />
-      <slot name="modalControls" />
+      <div class="modal-form-container">
+        <div class="modal-form">
+          <slot name="modalForm" />
+        </div>
+        <div class="modal-controls">
+          <slot name="modalControls" />
+        </div>
+      </div>
     </div>
     <button class="modal-close is-large" aria-label="close" @click="$emit('close-modal-button-clicked')"></button>
   </div>
