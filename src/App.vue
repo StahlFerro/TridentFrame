@@ -217,6 +217,11 @@ export default {
     console.debug(PRESETS);
     this.PRESET_COLLECTION = { ...PRESETS };
   },
+  mounted() {
+    this.emitter.on('add-preset', args => { this.addPreset(args); });
+    this.emitter.on('update-preset', args => { this.updatePreset(args); });
+    this.emitter.on('remove-preset', args => { this.removePreset(args); });
+  },
   created() {
     window.addEventListener("resize", this.closeRootContextMenu);
   },
@@ -241,6 +246,18 @@ export default {
       console.log(event);
       console.log(args);
     },
+    addPreset(preset) {
+
+    },
+    updatePreset(preset) {
+
+    },
+    removePreset(preset) {
+
+    },
+    updatePresetsToComponents() {
+      this.emitter.emit('global-presets-refresh', this.PRESET_COLLECTION)
+    }
   },
 };
 </script>

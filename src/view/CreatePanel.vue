@@ -279,7 +279,13 @@
                              @close-modal-background-clicked="closeModal"
                              @keydown.esc="modalIsActive = false"
                   >
-                    <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
+                    <template #modalForm>
+                      <InputField v-model="newPresetName" label="Preset name" type="text" hint="Name of the new preset" />
+                    </template>
+                    <template #modalControls>
+                      <ButtonField label="Create preset" color="blue" />
+                      <ButtonField label="Cancel" @click="closeModal" />
+                    </template>
                   </FormModal>
                   <PresetSelector>
                     <template #presetContextMenu>
@@ -621,7 +627,7 @@ export default {
     ContextMenuItemIcon,
     FormModal,
   },
-  directives:{
+  directives: {
     clickOutside: vClickOutside.directive,
   },
   props: {
@@ -667,6 +673,7 @@ export default {
       popperIsVisible: false,
       statusBarId: "createPanelStatusBar",
       modalIsActive: false,
+      newPresetName: "",
       ENFORCE_UNSIGNED: ENFORCE_UNSIGNED,
       ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
       loadImagesCtxMenuOptions: [
