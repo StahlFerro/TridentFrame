@@ -238,14 +238,13 @@
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
-                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @field-input="widthHandler"
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.height" label="Height" type="number" 
-                              hint="The height of the animated image"
-                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                  <InputField v-model="criteria.height" label="Height" type="number" hint="The height of the animated image"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @field-input="heightHandler"
                   />
                 </div>
@@ -264,19 +263,19 @@
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
-                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @field-input="delayHandler" 
                   />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
-                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @field-input="fpsHandler" 
                   />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
-                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
                 <div class="field-cell">
@@ -614,6 +613,7 @@ import { randString } from "../modules/utility/stringutils";
 import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { structuredClone } from "../modules/utility/objectutils";
 import { PREVIEWS_PATH } from "../common/paths";
+import { ConstraintOption } from '../models/componentProps';
 
 import { dirname, join, basename } from "path";
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -699,6 +699,9 @@ const DELAY_HANDLING_OPTIONS = [
     description: "Don't alter the current frames delays at all"
   },
 ]
+const ENFORCE_UNSIGNED = new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: false });
+const ENFORCE_UNSIGNED_WHOLE = new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: true });
+const ENFORCE_WHOLE = new ConstraintOption('numConstraint', {enforceUnsigned: false, enforceWhole: true });
 
 let common_metadata = {
   fname: "",
@@ -770,6 +773,8 @@ export default {
       SUPPORTED_MODIFY_EXTENSIONS: SUPPORTED_MODIFY_EXTENSIONS,
       RESIZE_METHODS: RESIZE_METHODS,
       DELAY_HANDLING_OPTIONS: DELAY_HANDLING_OPTIONS,
+      ENFORCE_UNSIGNED: ENFORCE_UNSIGNED,
+      ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
       statusBarId: "modifyPanelStatusBar",
       // statusBarBus: new Vue(),
     };
@@ -989,6 +994,44 @@ export default {
         };
         console.log(ARData);
         this.aspect_ratio = ARData;
+      }
+    },
+    delayHandler(event) {
+      console.log("delay event", event);
+      let value = event.target.value;
+      console.log("delay", value);
+      if (value && value.includes(".")) {
+        let numdec = value.split(".");
+        console.log("numdec", numdec);
+        let precision = GIF_DELAY_DECIMAL_PRECISION;
+        if (this.criteria.format.toUpperCase() == "GIF") {
+          precision = GIF_DELAY_DECIMAL_PRECISION;
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
+          precision = APNG_DELAY_DECIMAL_PRECISION;
+        }
+        if (numdec[1].length > precision) {
+          let decs = numdec[1].substring(0, precision);
+          console.log("decs limit triggered", decs);
+          value = `${numdec[0]}.${decs}`;
+          this.criteria.delay = value;
+        }
+      }
+      this.criteria.fps = Math.round(1000 / value) / 1000;
+    },
+    fpsHandler(event) {
+      console.log("fps event", event);
+      let value = event.target.value;
+      console.log("fps", value);
+      if (value) {
+        let mult = 100;
+        if (this.criteria.format.toUpperCase() == "GIF") {
+          mult = 100;
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
+          mult = 1000;
+        }
+        console.log("this.criteria.delay before", this.criteria.delay);
+        this.criteria.delay = Math.round(mult / value) / mult;
+        console.log("this.criteria.delay after", this.criteria.delay);
       }
     },
     loadImage() {

@@ -149,7 +149,7 @@
           <ContextMenuItem>
             <template #contextMenuOptionIcon>
               <ContextMenuItemIcon v-if="ctxItemData.icon">
-                <fontawesome :icon="ctxItemData.icon" />
+                <font-awesome-icon :icon="ctxItemData.icon" />
               </ContextMenuItemIcon>
             </template>
             <template #contextMenuOptionLabel>

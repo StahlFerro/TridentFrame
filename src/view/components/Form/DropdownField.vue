@@ -30,7 +30,7 @@ export default {
       required: true,
     },
     optionsList: {
-      type: DropdownOptions,
+      type: Array,
       required: true,
     },
     label: {

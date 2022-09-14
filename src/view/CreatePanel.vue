@@ -203,14 +203,13 @@
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
-                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @field-input="widthHandler"
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.height" label="Height" type="number" 
-                              hint="The height of the animated image"
-                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                  <InputField v-model="criteria.height" label="Height" type="number" hint="The height of the animated image" 
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @field-input="heightHandler"
                   />
                 </div>
@@ -240,25 +239,25 @@
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
-                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @field-input="delayHandler" 
                   />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
-                              :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
+                              :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @field-input="fpsHandler" 
                   />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
-                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.start_frame" label="Start at frame" type="number" 
                               hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
-                              :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
                 <div class="field-cell">
@@ -456,6 +455,43 @@ import { ipcRenderer } from 'electron';
 import { dirname, basename, join } from "path";
 import { access, accessSync, constants as fsConstants, existsSync } from "fs";
 import { copyFile }  from 'fs/promises';
+
+import { tridentEngine } from "../modules/streams/trident_engine";
+import { numConstrain } from "../modules/events/constraints";
+import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
+import { formatBytes, randString } from "../modules/utility/stringutils";
+import { gcd } from "../modules/utility/calculations";
+import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
+import { PREVIEWS_PATH } from "../common/paths";
+
+import { ConstraintOption } from "../models/componentProps.js";
+
+import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
+// import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
+import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
+// import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
+
+import { CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria } from "../models/criterion";
+
+import { createPopper } from '@popperjs/core';
+import vClickOutside from 'click-outside-vue3'
+
+import StatusBar from "./components/StatusBar.vue";
+import InputField from "./components/Form/InputField.vue";
+import CheckboxField from './components/Form/CheckboxField.vue';
+import DropdownField from './components/Form/DropdownField.vue';
+import ButtonField from './components/Form/ButtonField.vue';
+import ExtendedTextField from './components/Form/ExtendedTextField.vue';
+import PresetSelector from './components/Presets/PresetSelector.vue';
+import ContextMenu from './components/ContextMenu/ContextMenu.vue';
+import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
+import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
+
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
+
+import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
+
 const SUPPORTED_CREATE_EXTENSIONS = [
   {
     name: "gif",
@@ -501,41 +537,9 @@ const RESIZE_METHODS = [
   },
 ];
 
-import { tridentEngine } from "../modules/streams/trident_engine";
-import { numConstrain } from "../modules/events/constraints";
-import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
-import { formatBytes, randString } from "../modules/utility/stringutils";
-import { gcd } from "../modules/utility/calculations";
-import { GIF_DELAY_DECIMAL_PRECISION, APNG_DELAY_DECIMAL_PRECISION } from "../modules/constants/images";
-import { PREVIEWS_PATH } from "../common/paths";
-
-import { ConstraintOption } from "../models/componentProps.js";
-
-import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
-// import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
-import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
-// import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
-
-import { CreationCriteria, GIFOptimizationCriteria, APNGOptimizationCriteria } from "../models/criterion";
-
-import { createPopper } from '@popperjs/core';
-import vClickOutside from 'click-outside-vue3'
-
-import StatusBar from "./components/StatusBar.vue";
-import InputField from "./components/Form/InputField.vue";
-import CheckboxField from './components/Form/CheckboxField.vue';
-import DropdownField from './components/Form/DropdownField.vue';
-import ButtonField from './components/Form/ButtonField.vue';
-import ExtendedTextField from './components/Form/ExtendedTextField.vue';
-import PresetSelector from './components/Presets/PresetSelector.vue';
-import ContextMenu from './components/ContextMenu/ContextMenu.vue';
-import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
-import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
-
-import { EnumStatusLogLevel } from "../modules/constants/loglevels";
-import { logStatus } from "../modules/events/statusBarEmitter";
-
-import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
+const ENFORCE_UNSIGNED = new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: false });
+const ENFORCE_UNSIGNED_WHOLE = new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: true });
+const ENFORCE_WHOLE = new ConstraintOption('numConstraint', {enforceUnsigned: false, enforceWhole: true });
 
 let extension_filters = [{ name: "Images", extensions: SUPPORTED_CREATE_EXTENSIONS.map(ext => ext.name) }];
 let img_dialog_props = ["openfile"];
@@ -600,7 +604,8 @@ export default {
 
       popperIsVisible: false,
       statusBarId: "createPanelStatusBar",
-      ConstraintOption: ConstraintOption,
+      ENFORCE_UNSIGNED: ENFORCE_UNSIGNED,
+      ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
       loadImagesCtxMenuOptions: [
         {id: 'load_images', name: "Images", icon: ['fas', 'plus']},
         {id: 'load_images_autodetect', name: "Autodetect sequence", icon: ['fas', 'plus-circle']},
@@ -688,27 +693,9 @@ export default {
       }
     },
     btnToggleLoadPopper(event) {
-      // if (!this.popperIsVisible) {
-      // let popper = document.querySelector("#crtLoadPopper");
-      // let button = document.querySelector("#addPopperBtn");
-      // this.popper = createPopper(button, popper, {
-      //   placement: 'top-start',
-      // });
-      // console.log("btnToggleLoadPopper");
-      // this.popperIsVisible = true;
-      // }
-      // else {
-      //   this.popperIsVisible = false;
-      // }
-      
       this.$refs.crtLoadImagesContextMenu.openPopper(event, this.loadImagesCtxMenuOptions);
     },
     closeLoadPopper(event) {
-      // console.log(`closeLoadPopper ${this.popperIsVisible}, ${this.popper}`);
-      // console.log(event);
-      // if (this.popperIsVisible) {
-      //   this.popperIsVisible = false;
-      // }
       this.$refs.crtLoadImagesContextMenu.closePopper();
     },
     btnLoadImages(ops) {

@@ -6,6 +6,8 @@
         :value="modelValue" 
         class="input is-neon-white"
         :type="type"
+        :min="minNumber"
+        :max="maxNumber"
         @change="$emit('update:modelValue', $event.target.value)"
         @input="$emit('field-input', $event)"
         @keydown="handleKeyDown($event)" 
@@ -36,7 +38,7 @@ export default {
       required: false
     },
     modelValue: {
-      type: String,
+      type: [String, Number],
       default: null,
       required: false,
     },
@@ -44,6 +46,16 @@ export default {
       type: ConstraintOption,
       default: null,
       required: false
+    },
+    minNumber: {
+      type: Number,
+      default: null,
+      required: false,
+    },
+    maxNumber: {
+      type: Number,
+      default: null,
+      required: false,
     },
   },
   emits: ['update:modelValue', 'field-input'],
@@ -59,6 +71,8 @@ export default {
         if (this.constraintOption.handlerName == "numConstraint") {
           const enforceUnsigned = this.constraintOption.options.enforceUnsigned;
           const enforceWhole = this.constraintOption.options.enforceWhole;
+          console.log(enforceUnsigned);
+          console.log(enforceWhole);
           numConstrain(event, enforceUnsigned, enforceWhole);
         }
       }
