@@ -10,7 +10,8 @@
       'is-neon-cobalt': color == 'blue',
       'is-neon-purple': color == 'purple',
       'is-loading': isLoading,
-      'non-interactive': isNonInteractive
+      'square-button': isSquare,
+      'non-interactive': isNonInteractive,
     }"
     :title="hint" @click="$emit('button-click')"
   >
@@ -48,6 +49,10 @@
         default: "white",
         required: false
       },
+      isSquare: {
+        type: Boolean,
+        default: false,
+      },
       isLoading: {
         type: Boolean,
         default: false
@@ -74,4 +79,4 @@
       }
     }
   };
-  </script>
+</script>

@@ -129,7 +129,7 @@
     </div>
     <div class="root-panel">
       <!-- $refs.ctxmenu.open($event, 'Payload') -->
-      <CreatePanel v-show="menuselection == 'create_panel'" />
+      <CreatePanel v-show="menuselection == 'create_panel'" :presets="PRESET_COLLECTION.presets" />
       <SplitPanel v-show="menuselection == 'split_panel'" />
       <ModifyPanel v-show="menuselection == 'modify_panel'" />
       <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
@@ -169,6 +169,7 @@
 
 <script>
 
+import { ipcRenderer } from "electron";
 // import { client } from "./src/Client.vue";
 // import { client, ImageViewer } from "./src/Client.vue";
 // const { tridentEngine } = require("./src/modules/streams/trident_engine")
@@ -205,8 +206,16 @@ export default {
   },
   data: function () {
     return {
+      PRESET_COLLECTION: {
+        presets: [],
+      },
       menuselection: "create_panel",
     };
+  },
+  beforeMount: function () {
+    const PRESETS = ipcRenderer.sendSync("IPC-GET-PRESETS");
+    console.debug(PRESETS);
+    this.PRESET_COLLECTION = { ...PRESETS };
   },
   created() {
     window.addEventListener("resize", this.closeRootContextMenu);

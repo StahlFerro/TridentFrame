@@ -96,88 +96,6 @@
                                :use-icons="true" :has-error="errors.defaultOutDirModify"
                                @field-blur="blurCommitDefaultOutDir($event, 'modify_panel')"
             />
-            <!-- 
-            <div class="field is-enhanced textbox">
-              <label title="The time needed to move to the next frame">Create AIMG</label>
-              <div class="controls-container">
-                <div class="control">
-                  <a class="button square-button is-neon-cyan" @click="btnSetOutDir('create_panel')">
-                    <span class="icon is-small">
-                      <font-awesome-icon icon="folder-open" />
-                    </span>
-                    <span>Choose</span>
-                  </a>
-                </div>
-                <div class="control main">
-                  <input
-                    v-model="intermediate.directories.default_out_dir.create_panel"
-                    class="input is-neon-white"
-                    type="text"
-                    @blur="blurCommitDefaultOutDir($event, 'create_panel')"
-                  />
-                </div>
-              </div>
-              <div class="stat-icon">
-                <span v-if="errors.defaultOutDirCreate" class="icon is-crimson" title="The directory does not exist, and will not be used as a default">
-                  <font-awesome-icon icon="circle-exclamation" size="lg" />
-                </span>
-              </div> 
-            </div>
-
-            <div class="field is-enhanced textbox">
-              <label title="The time needed to move to the next frame">Split AIMG</label>
-              <div class="controls-container">
-                <div class="control">
-                  <a class="button square-button is-neon-cyan" @click="btnSetOutDir('split_panel')">
-                    <span class="icon is-small">
-                      <font-awesome-icon icon="folder-open" />
-                    </span>
-                    <span>Choose</span>
-                  </a>
-                </div>
-                <div class="control main">
-                  <input
-                    v-model="intermediate.directories.default_out_dir.split_panel"
-                    class="input is-neon-white"
-                    type="text"
-                    @blur="blurCommitDefaultOutDir($event, 'split_panel')"
-                  />
-                </div>
-              </div>
-              <div class="stat-icon">
-                <span v-if="errors.defaultOutDirSplit" class="icon is-crimson" title="The directory does not exist, and will not be used as a default">
-                  <font-awesome-icon icon="circle-exclamation" size="lg" />
-                </span>
-              </div>
-            </div>
-            <div class="field is-enhanced textbox">
-              <label title="The time needed to move to the next frame">Modify AIMG</label>
-              <div class="controls-container">
-                <div class="control">
-                  <a class="button square-button is-neon-cyan" @click="btnSetOutDir('modify_panel')">
-                    <span class="icon is-small">
-                      <font-awesome-icon icon="folder-open" />
-                    </span>
-                    <span>Choose</span>
-                  </a>
-                </div>
-                <div class="control main">
-                  <input
-                    v-model="intermediate.directories.default_out_dir.modify_panel"
-                    class="input is-neon-white"
-                    type="text"
-                    @blur="blurCommitDefaultOutDir($event, 'modify_panel')"
-                  />
-                </div>
-              </div>
-              <div class="stat-icon">
-                <span v-if="errors.defaultOutDirModify" class="icon is-crimson" title="The directory does not exist, and will not be used as a default">
-                  <font-awesome-icon icon="circle-exclamation" size="lg" />
-                </span>
-              </div>
-            </div>
-            
-            -->
           </div>
         </div>
 
@@ -383,9 +301,6 @@ export default {
     console.debug(SETTINGS);
     this.APP_SETTINGS = { ...SETTINGS };
     this.APP_SETTINGS_PREVIOUS = { ...SETTINGS };
-    const PRESETS = ipcRenderer.sendSync("IPC-GET-PRESETS");
-    console.debug(PRESETS);
-    this.PRESET_COLLECTION = { ...PRESETS };
   },
   mounted: function() {
     console.debug("SettingsPanel mounted");

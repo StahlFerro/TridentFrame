@@ -274,6 +274,13 @@
                   <div class="separator-space" />
                 </div>
                 <div class="field-cell full-width">
+                  <FormModal :is-active="modalIsActive"
+                             @close-modal-button-clicked="closeModal"
+                             @close-modal-background-clicked="closeModal"
+                             @keydown.esc="modalIsActive = false"
+                  >
+                    <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
+                  </FormModal>
                   <PresetSelector>
                     <template #presetContextMenu>
                       <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
@@ -297,8 +304,10 @@
                       </ContextMenu>
                     </template>
                     <template #presetControlsLeft>
-                      <ButtonField id="presetPopperBtn" label="Preset..." color="blue"
+                      <ButtonField id="presetPopperBtn" label="Presets..." color="blue"
                                    :listen-to-outside-clicks="true"
+                                   :icons="['fas', 'paint-roller']"
+                                   :is-square="true"
                                    @button-click="btnTogglePresetPopper"
                                    @click-outside="debugHandler"
                       />
@@ -313,10 +322,11 @@
                       />
                     </template>
                     <template #presetControlsRight>
-                      <ButtonField label="Apply preset" color="purple" />
+                      <ButtonField label="Apply preset" color="purple"
+                                   :is-square="true"
+                      />
                     </template>
                   </PresetSelector>
-                  />
                 </div>
                 <div class="separator">
                   <div class="separator-space" />
@@ -531,6 +541,7 @@ import PresetSelector from './components/Presets/PresetSelector.vue';
 import ContextMenu from './components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
 import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
+import FormModal from './components/Overlays/FormModal.vue';
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
@@ -608,9 +619,19 @@ export default {
     ContextMenu,
     ContextMenuItem,
     ContextMenuItemIcon,
+    FormModal,
   },
   directives:{
     clickOutside: vClickOutside.directive,
+  },
+  props: {
+    presets: {
+      type: Array,
+      default() {
+        return []
+      },
+      required: false,
+    }
   },
   emits: ['ctx-menu-click-outside'],
   data() {
@@ -625,14 +646,9 @@ export default {
       imagePaths: [],
       imageSequenceInfo: [],
       latestLoadCount: 0,
-      // save_fstem: "",
       saveDir: "",
       insertIndex: "",
       totalSize: "",
-      // orig_width: "",
-      // old_width: "",
-      // orig_height: "",
-      // old_height: "",
       previewPath: "",
       previewPathCB: "",
       previewInfo: "",
@@ -650,6 +666,7 @@ export default {
       presetsCtxMenuVisible: false,
       popperIsVisible: false,
       statusBarId: "createPanelStatusBar",
+      modalIsActive: false,
       ENFORCE_UNSIGNED: ENFORCE_UNSIGNED,
       ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
       loadImagesCtxMenuOptions: [
@@ -658,8 +675,8 @@ export default {
       ],
       presetCtxMenuOptions: [
         {id: 'preset_new', name: "Create new preset", icon: ['fas', 'plus']},
-        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'plus-circle']},
-        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'plus-circle']},
+        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'square-pen']},
+        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'trash-can']},
       ],
     };
   },
@@ -721,6 +738,9 @@ export default {
     debugHandler(event) {
       console.log('debugHandler');
     },
+    closeModal(event) {
+      this.modalIsActive = false;
+    },
     handlePresetsCtxMenuOpen(event) {
       this.presetsCtxMenuVisible = true;
     },
@@ -730,6 +750,9 @@ export default {
       console.log(optionId);
       this.closePresetPopper(event);
       this.presetsCtxMenuVisible = false;
+      if (optionId == 'preset_new') {
+        this.modalIsActive = true;
+      }
       console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
     },
     handlePresetsCtxMenuClickOutside(event, args) {
