@@ -169,7 +169,7 @@
             <div class="field-cell">
               <InputField v-model="criteria.pad_count" label="Pad count" type="number" hint="Amount of zero-padding applied to the sequence number. Example: Pad count 4 -> 0000, 0001, 0002"
                           :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true }}"
-                          @field-input="widthHandler"
+                          @input="widthHandler"
               />
             </div>
             <div class="field-cell">

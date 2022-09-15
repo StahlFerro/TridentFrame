@@ -204,13 +204,13 @@
                 <div class="field-cell">
                   <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
-                              @field-input="widthHandler"
+                              @input="widthHandler"
                   />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.height" label="Height" type="number" hint="The height of the animated image" 
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
-                              @field-input="heightHandler"
+                              @input="heightHandler"
                   />
                 </div>
                 <div class="field-cell">
@@ -240,13 +240,13 @@
                 <div class="field-cell">
                   <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
                               :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
-                              @field-input="delayHandler" 
+                              @input="delayHandler" 
                   />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
                               :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
-                              @field-input="fpsHandler" 
+                              @input="fpsHandler" 
                   />
                 </div>
                 <div class="field-cell">
@@ -283,7 +283,7 @@
                       <InputField v-model="newPresetName" label="Preset name" type="text" hint="Name of the new preset" />
                     </template>
                     <template #modalControls>
-                      <ButtonField label="Create preset" color="blue" />
+                      <ButtonField label="Create preset" color="blue" @click="createNewPreset" />
                       <ButtonField label="Cancel" @click="closeModal" />
                     </template>
                   </FormModal>
@@ -372,13 +372,13 @@
                   <td>
                     <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
                                 :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
-                                @field-input="delayHandler" 
+                                @input="delayHandler" 
                     />
                   </td>
                   <td>
                     <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
                                 :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
-                                @field-input="fpsHandler" 
+                                @input="fpsHandler" 
                     />
                   </td>
                   <td>
@@ -553,6 +553,7 @@ import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
+import { Preset } from '../models/presets';
 
 const SUPPORTED_CREATE_EXTENSIONS = [
   {
@@ -744,6 +745,10 @@ export default {
   methods: {
     debugHandler(event) {
       console.log('debugHandler');
+    },
+    createNewPreset(event) {
+      const preset = Preset.createFromCriteria("CreationCriteria", this.newPresetName, this.criteria);
+      console.log(preset);
     },
     closeModal(event) {
       this.modalIsActive = false;

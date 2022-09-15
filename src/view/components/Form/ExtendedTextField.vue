@@ -63,6 +63,6 @@
         required: false,
       }
     },
-    emits: ['update:modelValue', 'field-input', 'control-button-click', 'field-blur']
+    emits: ['update:modelValue', 'input', 'control-button-click', 'field-blur']
   }
 </script>

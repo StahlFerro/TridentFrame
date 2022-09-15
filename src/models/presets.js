@@ -1,4 +1,5 @@
-const { v5: uuidV5 } = require('uuid');
+const { v4: uuidV4 } = require('uuid');
+
 
 
 class PresetType {
@@ -38,10 +39,22 @@ class PresetCollection {
 
 class Preset {
   constructor() {
-    this.id = uuidV5();
+    this.id = uuidV4();
     this.createdDateTime = Date.now();
+    this.name = "";
     this.presetType = null;
     this.presetObject = null;
+  }
+  static createFromCriteria(criteriaType, presetName, criteria) {
+    let preset = new Preset();
+    preset.name = presetName;
+    if (criteriaType == "CreationCriteria")
+      preset.presetType = PresetType.CreationCriteria;
+    else if (criteriaType == "ModificationCriteria")
+      preset.presetType = PresetType.ModificationCriteria;
+    let criteriaJson = JSON.parse(JSON.stringify(criteria));
+    preset.presetObject = criteriaJson;
+    return preset;
   }
   // static createfromJson(json){
   //   let preset = new Preset();

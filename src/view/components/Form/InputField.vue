@@ -9,7 +9,7 @@
         :min="minNumber"
         :max="maxNumber"
         @change="$emit('update:modelValue', $event.target.value)"
-        @input="$emit('field-input', $event)"
+        @input="$emit('input', $event)"
         @keydown="handleKeyDown($event)" 
       />
     </div>
@@ -58,7 +58,7 @@ export default {
       required: false,
     },
   },
-  emits: ['update:modelValue', 'field-input'],
+  emits: ['update:modelValue', 'input'],
   data() {
     return {
     }
