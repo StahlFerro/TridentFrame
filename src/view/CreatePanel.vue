@@ -274,13 +274,49 @@
                   <div class="separator-space" />
                 </div>
                 <div class="field-cell full-width">
-                  <FormModal :is-active="modalIsActive"
+                  <FormModal :is-active="presetModal.modalIsActive"
                              @close-modal-button-clicked="closeModal"
                              @close-modal-background-clicked="closeModal"
-                             @keydown.esc="modalIsActive = false"
+                             @keydown.esc="presetModal.modalIsActive = false"
                   >
+                    <template #modalHeader>
+                      <p class="is-white-d">Create new preset</p>
+                    </template>
+                    <template #modalDisplay>
+                      <KeyValueTable :rows="presetModal.presetDraft.draftAttributes">
+                        <template #rowControlsLeftLabel>
+                          <th class="kvp-control-fit">
+                            Include
+                          </th>
+                        </template>
+                        <template #rowControlsLeft="rowData">
+                          <td class="center">
+                            <CheckboxField v-model="rowData.include" />
+                          </td>
+                          <!-- <KeyValueTableRowControl>
+                            <CheckboxField v-model="rowData.include" />
+                          </KeyValueTableRowControl> -->
+                        </template>
+                        <template #dataRow="rowData">
+                          <td>
+                            {{ rowData.pKey }}
+                          </td>
+                          <td>
+                            {{ rowData.pValue }}
+                          </td>
+                          <!-- <KeyValueTableDataRow>
+                            <template #dataKey>
+                              {{ rowData.pKey }}
+                            </template>
+                            <template #dataValue>
+                              {{ rowData.pValue }}
+                            </template>
+                          </KeyValueTableDataRow> -->
+                        </template>
+                      </KeyValueTable>
+                    </template>
                     <template #modalForm>
-                      <InputField v-model="newPresetName" label="Preset name" type="text" hint="Name of the new preset" />
+                      <InputField v-model="presetModal.newPresetName" label="Preset name" type="text" hint="Name of the new preset" />
                     </template>
                     <template #modalControls>
                       <ButtonField label="Create preset" color="blue" @click="createNewPreset" />
@@ -555,12 +591,15 @@ import ContextMenu from './components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
 import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
 import FormModal from './components/Overlays/FormModal.vue';
+import KeyValueTable from './components/Displays/KeyValueTable.vue';
+import KeyValueTableDataRow from './components/Displays/KeyValueTableDataRow.vue';
+import KeyValueTableRowControl from './components/Displays/KeyValueTableRowControl.vue';
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
-import { Preset } from '../models/presets';
+import { Preset, PresetDraft } from '../models/presets';
 
 const SUPPORTED_CREATE_EXTENSIONS = [
   {
@@ -634,6 +673,9 @@ export default {
     ContextMenuItem,
     ContextMenuItemIcon,
     FormModal,
+    KeyValueTable,
+    KeyValueTableDataRow,
+    KeyValueTableRowControl,
   },
   directives: {
     clickOutside: vClickOutside.directive,
@@ -680,10 +722,13 @@ export default {
       presetsCtxMenuVisible: false,
       popperIsVisible: false,
       statusBarId: "createPanelStatusBar",
-      modalIsActive: false,
-      newPresetName: "",
       ENFORCE_UNSIGNED: ENFORCE_UNSIGNED,
       ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
+      presetModal: {
+        modalIsActive: false,
+        newPresetName: "",
+        presetDraft: {},
+      },
       loadImagesCtxMenuOptions: [
         {id: 'load_images', name: "Images", icon: ['fas', 'plus']},
         {id: 'load_images_autodetect', name: "Autodetect sequence", icon: ['fas', 'plus-circle']},
@@ -754,11 +799,22 @@ export default {
       console.log('debugHandler');
     },
     createNewPreset(event) {
-      const preset = Preset.createFromCriteria("CreationCriteria", this.newPresetName, this.criteria);
+      const preset = Preset.createFromCriteria("CreationCriteria", this.presetModal.newPresetName, this.criteria);
       console.log(preset);
     },
+    populateModalPresetPreview() {
+      const presetObject = JSON.parse(JSON.stringify(this.criteria));
+      const presetDraft = PresetDraft.fromPresetObject(presetObject, true);
+      console.debug(`populateModalPresetPreview`);
+      console.log(presetDraft);
+      this.presetModal.presetDraft = presetDraft;
+    },
+    openModal(event) {
+      this.populateModalPresetPreview();
+      this.presetModal.modalIsActive = true;
+    },
     closeModal(event) {
-      this.modalIsActive = false;
+      this.presetModal.modalIsActive = false;
     },
     handlePresetsCtxMenuOpen(event) {
       this.presetsCtxMenuVisible = true;
@@ -770,7 +826,7 @@ export default {
       this.closePresetPopper(event);
       this.presetsCtxMenuVisible = false;
       if (optionId == 'preset_new') {
-        this.modalIsActive = true;
+        this.openModal(event);
       }
       console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
     },

@@ -10,9 +10,8 @@
 </template>
 
 <script>
-import ContextMenuItemIcon from './ContextMenuItemIcon.vue';
 export default {
-
+  name: "ContextMenuItem",
 }
 </script>
 

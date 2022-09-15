@@ -63,7 +63,30 @@ class Preset {
   // }
 }
 
+class PresetDraft {
+  constructor(draftAttributes) {
+    this.draftAttributes = draftAttributes
+  }
+  static fromPresetObject(presetObject, defaultInclude=false){
+    let draftAttributes = [];
+    for (const[k, v] of Object.entries(presetObject)){
+      const pdAttr = new PresetDraftAttribute(k, v, defaultInclude);
+      draftAttributes.push(pdAttr);
+    }
+    return new PresetDraft(draftAttributes);
+  }
+}
+
+class PresetDraftAttribute{
+  constructor(key, value, include){
+    this.pKey = key;
+    this.pValue = value;
+    this.include = include;
+  }
+}
+
 
 module.exports.PresetCollection = PresetCollection;
 module.exports.Preset = Preset;
 module.exports.PresetType = PresetType;
+module.exports.PresetDraft = PresetDraft;

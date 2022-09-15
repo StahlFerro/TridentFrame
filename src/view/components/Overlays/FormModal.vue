@@ -3,6 +3,12 @@
     <div class="modal-background blur" @click="$emit('close-modal-background-clicked')"></div>
     <div class="modal-content neon-modal ">
       <div class="modal-form-container">
+        <div class="modal-header">
+          <slot name="modalHeader" />
+        </div>
+        <div v-if="$slots.modalDisplay" class="modal-display">
+          <slot name="modalDisplay" />
+        </div>
         <div class="modal-form">
           <slot name="modalForm" />
         </div>

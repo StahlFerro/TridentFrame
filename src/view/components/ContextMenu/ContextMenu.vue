@@ -25,6 +25,7 @@ console.log(`CLICKOUTSIDE`);
 console.log(vClickOutside);
 
 export default {
+  name: "ContextMenu",
   directives: {
     // ClickOutside,
     clickOutside: vClickOutside.directive
