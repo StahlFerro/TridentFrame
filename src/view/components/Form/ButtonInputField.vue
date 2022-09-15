@@ -3,21 +3,23 @@
     <label v-if="label" :title="hint">{{ label }}</label>
     <div class="controls-container">
       <div class="control">
-        <a class="button square-button is-neon-cobalt" @click="$emit('control-button-click', $event)">
+        <slot name="buttonControl" />
+        <!-- <a class="button square-button is-neon-cobalt" @click="$emit('control-button-click', $event)">
           <span class="icon is-small">
             <font-awesome-icon icon="folder-open" />
           </span>
           <span>{{ buttonLabel }}</span>
-        </a>
+        </a> -->
       </div>
       <div class="control main">
-        <input
+        <slot name="inputControl" />
+        <!-- <input
           :value="modelValue" 
           class="input is-neon-white"
           type="text"
           @change="$emit('update:modelValue', $event.target.value)"
           @blur="$emit('field-blur', $event)"
-        />
+        /> -->
       </div>
     </div>
     <div v-if="useIcons" class="stat-icon">
@@ -30,7 +32,7 @@
 
 <script>
   export default {
-    name: "ExtendedTextField",
+    name: "ButtonInputField",
     props: {
       label: {
         type: String,

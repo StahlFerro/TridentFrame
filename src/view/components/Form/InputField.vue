@@ -1,6 +1,6 @@
 <template>
   <div class="field">
-    <label class="label" :title="hint">{{ label }}</label>
+    <label v-if="label" class="label" :title="hint">{{ label }}</label>
     <div class="control">
       <input 
         :value="modelValue" 
@@ -10,6 +10,7 @@
         :max="maxNumber"
         @change="$emit('update:modelValue', $event.target.value)"
         @input="$emit('input', $event)"
+        @blur="$emit('blur', $event)"
         @keydown="handleKeyDown($event)" 
       />
     </div>
@@ -26,7 +27,8 @@ export default {
   props: {
     label: {
       type: String,
-      required: true,
+      default: "",
+      required: false,
     },
     type: {
       type: String,
@@ -58,7 +60,7 @@ export default {
       required: false,
     },
   },
-  emits: ['update:modelValue', 'input'],
+  emits: ['update:modelValue', 'input', 'blur'],
   data() {
     return {
     }

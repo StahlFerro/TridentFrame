@@ -338,9 +338,16 @@
                   <div class="separator-space" />
                 </div>
                 <div class="field-cell span-4">
-                  <ExtendedTextField v-model="saveDir" button-label="Save to" :use-icons="false" 
-                                     @control-button-click="btnSetSavePath" 
-                  />
+                  <ButtonInputField>
+                    <template #buttonControl>
+                      <ButtonField label="Save to" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
+                                   @button-click="btnSetSavePath"
+                      />
+                    </template>
+                    <template #inputControl>
+                      <InputField v-model="saveDir" type="text" />
+                    </template>
+                  </ButtonInputField>
                 </div>
                 <div class="field-cell">
                   <DropdownField v-model="criteria.format" :options-list="SUPPORTED_CREATE_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
@@ -542,7 +549,7 @@ import InputField from "./components/Form/InputField.vue";
 import CheckboxField from './components/Form/CheckboxField.vue';
 import DropdownField from './components/Form/DropdownField.vue';
 import ButtonField from './components/Form/ButtonField.vue';
-import ExtendedTextField from './components/Form/ExtendedTextField.vue';
+import ButtonInputField from './components/Form/ButtonInputField.vue';
 import PresetSelector from './components/Presets/PresetSelector.vue';
 import ContextMenu from './components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
@@ -621,7 +628,7 @@ export default {
     CheckboxField,
     DropdownField,
     ButtonField,
-    ExtendedTextField,
+    ButtonInputField,
     PresetSelector,
     ContextMenu,
     ContextMenuItem,

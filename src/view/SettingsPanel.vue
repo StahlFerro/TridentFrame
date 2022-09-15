@@ -75,27 +75,54 @@
               Default output folders
             </h4>
             <hr />
-            <ExtendedTextField v-model="intermediate.directories.default_out_dir.create_panel"
-                               label="Create AIMG" button-label="Choose"
-                               error-message="The directory does not exist, and will not be used as a default"
-                               :use-icons="true" :has-error="errors.defaultOutDirCreate"
-                               @field-blur="blurCommitDefaultOutDir($event, 'create_panel')"
-            />
-
             
-            <ExtendedTextField v-model="intermediate.directories.default_out_dir.split_panel"
-                               label="Split AIMG" button-label="Choose"
-                               error-message="The directory does not exist, and will not be used as a default"
-                               :use-icons="true" :has-error="errors.defaultOutDirSplit"
-                               @field-blur="blurCommitDefaultOutDir($event, 'split_panel')"
-            />
+            <ButtonInputField label="Create AIMG" 
+                              error-message="The directory does not exist, and will not be used as a default"
+                              :use-icons="true" :has-error="errors.defaultOutDirCreate"
+            >
+              <template #buttonControl>
+                <ButtonField label="Choose" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
+                             @button-click="btnSetOutDir('create_panel')"
+                />
+              </template>
+              <template #inputControl>
+                <InputField v-model="intermediate.directories.default_out_dir.create_panel"
+                            type="text" @blur="blurCommitDefaultOutDir($event, 'create_panel')"
+                />
+              </template>
+            </ButtonInputField>
 
-            <ExtendedTextField v-model="intermediate.directories.default_out_dir.modify_panel"
-                               label="Modify AIMG" button-label="Choose"
-                               error-message="The directory does not exist, and will not be used as a default"
-                               :use-icons="true" :has-error="errors.defaultOutDirModify"
-                               @field-blur="blurCommitDefaultOutDir($event, 'modify_panel')"
-            />
+            <ButtonInputField label="Split AIMG" 
+                              error-message="The directory does not exist, and will not be used as a default"
+                              :use-icons="true" :has-error="errors.defaultOutDirSplit"
+            >
+              <template #buttonControl>
+                <ButtonField label="Choose" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
+                             @button-click="btnSetOutDir('split_panel')"
+                />
+              </template>
+              <template #inputControl>
+                <InputField v-model="intermediate.directories.default_out_dir.split_panel"
+                            type="text" @blur="blurCommitDefaultOutDir($event, 'split_panel')"
+                />
+              </template>
+            </ButtonInputField>
+
+            <ButtonInputField label="Modify AIMG" 
+                              error-message="The directory does not exist, and will not be used as a default"
+                              :use-icons="true" :has-error="errors.defaultOutDirModify"
+            >
+              <template #buttonControl>
+                <ButtonField label="Choose" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
+                             @button-click="btnSetOutDir('modify_panel')"
+                />
+              </template>
+              <template #inputControl>
+                <InputField v-model="intermediate.directories.default_out_dir.modify_panel"
+                            type="text" @blur="blurCommitDefaultOutDir($event, 'modify_panel')"
+                />
+              </template>
+            </ButtonInputField>
           </div>
         </div>
 
@@ -237,13 +264,17 @@ import { tridentEngine } from "../modules/streams/trident_engine.js";
 import { PreviewImageSaveNameBehaviour } from "../models/previewImage.js";
 import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
 
-import ExtendedTextField from "./components/Form/ExtendedTextField.vue";
+import InputField from "./components/Form/InputField.vue";
+import ButtonField from "./components/Form/ButtonField.vue";
+import ButtonInputField from "./components/Form/ButtonInputField.vue";
 
 const DIR_DIALOG_PROPS = ["openDirectory", "createDirectory"];
 
 export default {
   components: {
-    ExtendedTextField
+    InputField,
+    ButtonField,
+    ButtonInputField,
   },
   data: function () {
     return {

@@ -183,7 +183,7 @@
               <div class="separator-space" />
             </div>
             <div class="field-cell span-4">
-              <ExtendedTextField v-model="saveDir" button-label="Save to" :use-icons="false" 
+              <ButtonInputField v-model="saveDir" button-label="Save to" :use-icons="false" 
                                  @control-button-click="btnSetSavePath" 
               />
             </div>
@@ -329,7 +329,7 @@ import StatusBar from "./components/StatusBar.vue";
 import InputField from "./components/Form/InputField.vue";
 import CheckboxField from './components/Form/CheckboxField.vue';
 import DropdownField from './components/Form/DropdownField.vue';
-import ExtendedTextField from './components/Form/ExtendedTextField.vue';
+import ButtonInputField from './components/Form/ButtonInputField.vue';
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
@@ -360,7 +360,7 @@ export default {
     InputField,
     CheckboxField,
     DropdownField,
-    ExtendedTextField,
+    ButtonInputField,
   },
   data: function () {
     return {
