@@ -199,7 +199,7 @@
             <div v-show="crtSubMenuSelection == 0">
               <div class="general-form row-6">
                 <div class="field-cell">
-                  <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
+                  <InputField v-model="fname" :label="$t('general.fname')" type="text" hint="The name of the GIF/APNG" />
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
@@ -790,6 +790,11 @@ export default {
     } catch (error) {
       console.error(error);
     }
+  },
+  mounted() {
+    // console.log(this.$i18n.availableLocales);
+    // console.log(this.$i18n.messages);
+    // console.log(this.$t('general.fname'));
   },
   unmounted() {
     window.removeEventListener("resize", this.closeLoadPopper);

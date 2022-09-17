@@ -1,0 +1,28 @@
+{
+  "en": {
+    "general": {
+      "fname": "Name"
+    },
+    "criterion": {
+      "width": "Width",
+      "height": "Height",
+      "resize_method": "Resize method",
+      "flip_x": "Flip X",
+      "flip_y": "Flip Y",
+      "rotation": "Rotation",
+      "fps": "FPS",
+      "delay": "Delay",
+      "delays_are_even": "Delays are even",
+      "delays_list": "Delays list",
+      "is_reversed": "Is reversed",
+      "preserve_alpha": "Preserve alpha",
+      "loop_count": "Loop count",
+      "start_frame": "Start frame",
+      "skip_frame": "Skip frame",
+      "format": "Format"
+    },
+    "image_metadata": {
+
+    }
+  }
+}

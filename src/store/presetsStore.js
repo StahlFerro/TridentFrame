@@ -4,8 +4,6 @@ const { existsSync, readFileSync, writeFileSync } = require("fs");
 const { PresetCollection, Preset, PresetType } = require("../models/presets.js");
 const { app, ipcMain, ipcRenderer } = require("electron");
 const { StoreOperation } = require("../models/storeOperation.js");
-const { Exception } = require("sass");
-
 
 let PRESETS_COLLECTION = new PresetCollection();
 
@@ -98,21 +96,21 @@ const initStoreListener = () => {
     getPresetsByCriteriaType(criteriaType);
     console.debug(args);
   });
-  ipcMain.on("IPC-SET-PRESETS", function (event, store, args) {
+  ipcMain.on("IPC-SET-PRESETS", function (event, storeOp, args) {
     console.debug("IPC-SET-PRESETS invoked with args:");
     console.debug(args);
 
-    if (store.name == StoreOperation.Add.name) {
+    if (storeOp.name == StoreOperation.Add.name) {
       addPresetToCollection(args);
     }
-    else if (store.name == StoreOperation.Update.name) {
+    else if (storeOp.name == StoreOperation.Update.name) {
       updatePresetOnCollection(args);
     }
-    else if (store.name == StoreOperation.Delete.name) {
+    else if (storeOp.name == StoreOperation.Delete.name) {
       deletePresetFromCollection(args);
     }
     else{
-      throw new Exception(`Unknown StoreOperation ${StoreOperation}`);
+      throw new Error(`Unknown StoreOperation ${storeOp}`);
     }
     console.debug("IPC-SET-PRESETS finished invoked!");
     writePresetsToFile();

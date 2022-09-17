@@ -9,6 +9,7 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const DashboardPlugin = require('webpack-dashboard/plugin');
 const regeneratorRuntime = require("regenerator-runtime");
+const VueI18nPlugin = require('@intlify/unplugin-vue-i18n/webpack')
 
 
 module.exports = env => {
@@ -45,45 +46,26 @@ module.exports = env => {
       }),
       new VueLoaderPlugin(),
       ...dev_plugins,
+      VueI18nPlugin({
+        include: path.resolve(__dirname, './src/locales/**'),
+      })
     ],
+    resolve: {
+      alias: {
+        'vue-i18n': 'vue-i18n/dist/vue-i18n.esm-bundler.js'
+      }
+    },
     module: {
       rules: [{
           test: /\.js$/,
           use: 'babel-loader'
         },
-        // {
-        //   test: /\.vue$/,
-        //   use: {
-        //     loader: 'vue-loader',
-        //     options: {
-        //       compilerOptions: {
-        //         compatConfig: {
-        //           MODE: 2
-        //         }
-        //       }
-        //     } 
-        //   }
-        // },
         {
           test: /\.vue$/,
           use: 'vue-loader',
         },
-        // {
-        //   test: /\.css$/,
-        //   use: [
-        //     {
-        //       loader: MiniCssExtractPlugin.loader,
-        //       // options: {
-        //       //   name: 'style.css',
-        //       //   outputPath: 'css/',
-        //       //   hmr: env.NODE_ENV == 'DEV' 
-        //       // },
-        //     }, "css-loader"
-        //   ]
-        // },
         {
           test: /\.css$|\.s[ac]ss$/i,
-          // test: /\.css$/,
           use: [
             {
               loader: MiniCssExtractPlugin.loader,
@@ -139,6 +121,22 @@ module.exports = env => {
             },
           }]
         },
+        // {
+        //   test: /\.(json5?|ya?ml)$/, // target json, json5, yaml and yml files
+        //   type: 'javascript/auto',
+        //   loader: '@intlify/vue-i18n-loader',
+        //   include: [ // Use `Rule.include` to specify the files of locale messages to be pre-compiled
+        //     path.resolve(__dirname, './src/locales/**')
+        //   ]
+        // },
+        { 
+          test: /\.json$/, 
+          loader: 'json-loader', 
+          include: [
+            path.resolve(__dirname, "./node_modules/mime-db/db.json")
+          ]
+        },
+        // ... Rules for other loaders ... //
         {
           test: /\.node$/,
           loader: "node-loader",

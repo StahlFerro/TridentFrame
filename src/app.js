@@ -6,6 +6,8 @@ import VueSlider from 'vue-slider-component'
 import _emitter from './modules/events/emitter';
 import 'vue-slider-component/theme/default.css'
 // import './css/bulmamods.css';
+import { i18n } from './locales/i18n.js';
+
 import "./sass/bulmamods.scss";
 import "./assets/imgs/Transparency500.png";
 import "./assets/imgs/Generated_Grey_Checker_nl_0.webp";
@@ -60,8 +62,14 @@ const app = createApp(App);
 // const emitter = mitt();
 app.config.globalProperties.emitter = _emitter;
 
+
+// console.log(`unplugin-vue-i18n/messages on app.js`);
+// console.log(i18n);
+app.use(i18n);
+
 app.component('font-awesome-icon', FontAwesomeIcon);
 app.component('VueSlider', VueSlider);
+
 // app.config.dev
 // Vue.component('VueSlider', VueSlider);
 // Vue.component('font-awesome-icon', FontAwesomeIcon);
