@@ -275,8 +275,8 @@
                 </div>
                 <div class="field-cell full-width">
                   <FormModal :is-active="presetModal.modalIsActive"
-                             @close-modal-clicked="closeModal"
-                             @close-modal-background-clicked="closeModal"
+                             @close-modal-clicked="closePresetModal"
+                             @close-modal-background-clicked="closePresetModal"
                              @keydown.esc="presetModal.modalIsActive = false"
                   >
                     <template #modalHeader>
@@ -342,8 +342,8 @@
                       />
                     </template>
                     <template #modalControls>
-                      <ButtonField label="Create preset" color="blue" @click="createNewPreset" />
-                      <ButtonField label="Cancel" @click="closeModal" />
+                      <ButtonField :label="presetModal.presetOperation == 'preset_update'? 'Update preset' : 'Create preset'" color="blue" @click="createNewPreset" />
+                      <ButtonField label="Cancel" @click="closePresetModal" />
                       <p v-if="presetModal.noPresetName">
                         <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
                         Preset name is required!
@@ -865,7 +865,7 @@ export default {
       }
       return this.localPresetsSelection.length;
     },
-    openModal(event, presetOperation) {
+    openPresetModal(event, presetOperation) {
       this.presetModal.presetOperation = presetOperation;
       const activateModal = this.populatePresetDraftModal(presetOperation);
       this.presetModal.modalIsActive = activateModal;
@@ -930,7 +930,7 @@ export default {
       this.emitter.emit('add-preset', preset);
       console.log('after emit');
       console.log(this.presets);
-      this.closeModal(event);
+      this.closePresetModal(event);
       this._logInfo(`Created new preset ${preset.name}`);
     },
     deletePreset(event){
@@ -943,7 +943,7 @@ export default {
       }
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
-    closeModal(event) {
+    closePresetModal(event) {
       this.presetModal.noPresetName = false;
       this.presetModal.newPresetName = "";
       this.presetModal.modalIsActive = false;
@@ -958,10 +958,10 @@ export default {
       this.closePresetPopper(event);
       this.presetsCtxMenuVisible = false;
       if (optionId == 'preset_new') {
-        this.openModal(event, optionId);
+        this.openPresetModal(event, optionId);
       }
       else if (optionId == 'preset_update') {
-        this.openModal(event, optionId);
+        this.openPresetModal(event, optionId);
       }
       else if (optionId == 'preset_delete') {
         this.deletePreset(event);
