@@ -281,39 +281,58 @@
                   >
                     <template #modalHeader>
                       <p class="is-white-d">
-                        Create new preset
+                        <template v-if="presetModal.presetOperation == 'preset_new'">
+                          Create new preset
+                        </template>
+                        <template v-if="presetModal.presetOperation == 'preset_update'">
+                          Update preset
+                        </template>
                       </p>
                     </template>
                     <template #modalDisplay>
-                      <KeyValueTable :rows="presetModal.presetDraft.draftAttributes">
-                        <template #rowControlsLeftLabel>
-                          <th class="kvp-control-fit">
-                            Include
+                      <KeyValueTable :rows="presetModal.presetDraft.draftAttributes" 
+                                     keyHeader="Attribute" 
+                                     :valueHeader="presetModal.presetOperation == 'preset_update'? 'Current value' : 'Value'"
+                      >
+                        <template #rowControlsHeaderLeft>
+                          <th class="kvp-control-fit" hint="Include this attribute to the preset?">
+                            Include?
                           </th>
                         </template>
-                        <template #rowControlsLeft="rowData">
-                          <td class="center">
-                            <CheckboxField :modelValue="rowData.include" @update:modelValue="newVal => updatePresetDraft(rowData, newVal)" />
-                          </td>
-                          <!-- <KeyValueTableRowControl>
-                            <CheckboxField v-model="rowData.include" />
-                          </KeyValueTableRowControl> -->
+                        <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsHeaderRight>
+                          <th>
+                            New value
+                          </th>
+                          <th class="kvp-control-fit" hint="Update the current value of the preset with this new one?">
+                            Update?
+                          </th>
                         </template>
-                        <template #dataRow="rowData">
+                        <template #rowControlsLeft="draftAttr">
+                          <td class="center">
+                            <CheckboxField :modelValue="draftAttr.include" 
+                                           @update:modelValue="newVal => updatePresetDraftInclude(draftAttr, newVal)"
+                                           @mouse-over-down="updatePresetDraftInclude(draftAttr, !draftAttr.include)"
+                            />
+                          </td>
+                        </template>
+                        <template #dataRow="draftAttr">
                           <td>
-                            {{ rowData.pLabel }}
+                            {{ draftAttr.pLabel }}
                           </td>
                           <td>
-                            {{ rowData.pValue }}
+                            {{ draftAttr.pValue }}
                           </td>
-                          <!-- <KeyValueTableDataRow>
-                            <template #dataKey>
-                              {{ rowData.pKey }}
-                            </template>
-                            <template #dataValue>
-                              {{ rowData.pValue }}
-                            </template>
-                          </KeyValueTableDataRow> -->
+                        </template>
+                        <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsRight="draftAttr">
+                          <td>
+                            {{ draftAttr.pValueNew }}
+                          </td>
+                          <td class="center">
+                            <CheckboxField :modelValue="draftAttr.updateValue" 
+                                           @update:modelValue="newVal => updatePresetDraftUpdate(draftAttr, newVal)"
+                                           @mouse-over-down="updatePresetDraftUpdate(draftAttr, !draftAttr.updateValue)"
+                            />
+                          </td>
                         </template>
                       </KeyValueTable>
                     </template>
@@ -733,6 +752,7 @@ export default {
       ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
       presetModal: {
         modalIsActive: false,
+        presetOperation: "preset_create",
         newPresetName: "",
         presetDraft: {},
         noPresetName: false,
@@ -845,25 +865,56 @@ export default {
       }
       return this.localPresetsSelection.length;
     },
-    openModal(event) {
-      this.populateModalPresetPreview();
-      this.presetModal.modalIsActive = true;
+    openModal(event, presetOperation) {
+      this.presetModal.presetOperation = presetOperation;
+      const activateModal = this.populatePresetDraftModal(presetOperation);
+      this.presetModal.modalIsActive = activateModal;
     },
-    populateModalPresetPreview() {
-      const attrJson = JSON.parse(JSON.stringify(this.criteria));
-      const presetType = PresetType.CreationCriteria;
-      const presetDraft = PresetDraft.fromPresetObject(presetType, attrJson, true);
-      presetDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
-      console.debug(`populateModalPresetPreview`);
-      console.log(presetDraft);
-      this.presetModal.presetDraft = presetDraft;
+    populatePresetDraftModal(presetOperation) {
+      if (presetOperation == 'preset_new') {
+        const attrJson = JSON.parse(JSON.stringify(this.criteria));
+        const presetType = PresetType.CreationCriteria;
+        const presetNewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
+        presetNewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+        console.debug(`populatePresetDraftModal`);
+        console.log(presetNewDraft);
+        this.presetModal.presetDraft = presetNewDraft;
+        return true;
+      }
+      else if (presetOperation == 'preset_update') {
+        const id = this.presetSelectionValue;
+        console.log(id);
+        if (id) {
+          console.log(id);
+          const currPreset = this.presets[id];
+          const attrObj = JSON.parse(JSON.stringify(this.criteria));
+          const presetUpdateDraft = PresetDraft.buildUpdatePresetDraft(currPreset, attrObj);
+          presetUpdateDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+          console.log(presetUpdateDraft);
+          this.presetModal.presetDraft = presetUpdateDraft;
+          this.presetModal.newPresetName = currPreset.name;
+          return true;
+        } 
+        else {
+          this._logWarning(`Please select a preset from the dropdown to update!`);
+          return false;
+        }
+      }
     },
-    updatePresetDraft(rowData, checkValue) {
-      console.log(rowData);
+    updatePresetDraftInclude(draftAttr, checkValue) {
+      console.log(draftAttr);
       console.log(checkValue);
-      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == rowData.pKey);
+      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == draftAttr.pKey);
       if (attr) {
         attr.include = checkValue;
+      }
+    },
+    updatePresetDraftUpdate(draftAttr, checkValue) {
+      console.log(draftAttr);
+      console.log(checkValue);
+      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == draftAttr.pKey);
+      if (attr) {
+        attr.updateValue = checkValue;
       }
     },
     createNewPreset(event) {
@@ -879,7 +930,6 @@ export default {
       this.emitter.emit('add-preset', preset);
       console.log('after emit');
       console.log(this.presets);
-      this.presetModal.newPresetName = "";
       this.closeModal(event);
       this._logInfo(`Created new preset ${preset.name}`);
     },
@@ -894,6 +944,8 @@ export default {
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
     closeModal(event) {
+      this.presetModal.noPresetName = false;
+      this.presetModal.newPresetName = "";
       this.presetModal.modalIsActive = false;
     },
     handlePresetsCtxMenuOpen(event) {
@@ -906,9 +958,12 @@ export default {
       this.closePresetPopper(event);
       this.presetsCtxMenuVisible = false;
       if (optionId == 'preset_new') {
-        this.openModal(event);
+        this.openModal(event, optionId);
       }
-      else if (optionId == 'preset_delete'){
+      else if (optionId == 'preset_update') {
+        this.openModal(event, optionId);
+      }
+      else if (optionId == 'preset_delete') {
         this.deletePreset(event);
       }
       // console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);

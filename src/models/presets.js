@@ -105,13 +105,49 @@ class PresetDraft {
    * @param {Boolean} defaultInclude Set include property of all attributes
    * @returns 
    */
-  static fromPresetObject(presetType, presetObject, defaultInclude=false){
+  static createFromAttributesObject(presetType, presetObject, defaultInclude=false){
     let draftAttributes = [];
     for (const[k, v] of Object.entries(presetObject)){
       const pdAttr = new PresetDraftAttribute(k, v, defaultInclude);
       draftAttributes.push(pdAttr);
     }
     return new PresetDraft(presetType, draftAttributes);
+  }
+
+  /**
+   * Create PresetDraft object for the purpose of updating an existing Preset object
+   * @param {Preset} currentPreset Current Preset info to create draft attributes from
+   * @param {object} attributesObj POJO object of new attributes
+   */
+  static buildUpdatePresetDraft(currentPreset, attributesObj) {
+    console.log(currentPreset.presetObject);
+    let draft = PresetDraft.createFromAttributesObject(currentPreset.presetType, currentPreset.presetObject, true);
+    console.log(draft.draftAttributes);
+    draft.populateUpdateAttributes(attributesObj);
+    return draft;
+  }
+
+  /**
+   * Populate attributes needed for the Preset to be updated by the user
+   * newAttributeJson will always include the full set of attributes 
+   * @param {object} attributesObj New preset object to update from.
+   */
+  populateUpdateAttributes(attributesObj){
+    console.log(attributesObj);
+    for (const[k, v] of Object.entries(attributesObj)){
+      const currAttr = this.draftAttributes.find(attr => attr.pKey == k);
+      if (currAttr) {
+        currAttr.pValueNew = v;
+        currAttr.updateValue = true;
+      }
+      else {
+        // Initialize draft attribute that is null of value for a key that doesn't exist on the current preset
+        const pdAttr = new PresetDraftAttribute(k, null, false);
+        pdAttr.pValueNew = v;
+        pdAttr.updateValue = false;
+        this.draftAttributes.push(pdAttr);
+      }
+    }
   }
 
   /**
@@ -142,6 +178,8 @@ class PresetDraftAttribute{
   constructor(key, value, include){
     this.pKey = key;
     this.pValue = value;
+    this.pValueNew = null;
+    this.updateValue = false
     this.include = include;
     this.pLabel = "";
   }
