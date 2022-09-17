@@ -11,10 +11,13 @@
               <a @click="settings_tab_selection = 1">Presets</a>
             </li>
             <li :class="{ 'is-active': settings_tab_selection == 2 }">
-              <a @click="settings_tab_selection = 2">Window</a>
+              <a @click="settings_tab_selection = 2">Languages</a>
             </li>
             <li :class="{ 'is-active': settings_tab_selection == 3 }">
-              <a @click="settings_tab_selection = 3">About</a>
+              <a @click="settings_tab_selection = 3">Window</a>
+            </li>
+            <li :class="{ 'is-active': settings_tab_selection == 4 }">
+              <a @click="settings_tab_selection = 4">About</a>
             </li>
           </ul>
         </div>
@@ -82,7 +85,7 @@
             >
               <template #buttonControl>
                 <ButtonField label="Choose" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
-                             @button-click="btnSetOutDir('create_panel')"
+                             @click="btnSetOutDir('create_panel')"
                 />
               </template>
               <template #inputControl>
@@ -98,7 +101,7 @@
             >
               <template #buttonControl>
                 <ButtonField label="Choose" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
-                             @button-click="btnSetOutDir('split_panel')"
+                             @click="btnSetOutDir('split_panel')"
                 />
               </template>
               <template #inputControl>
@@ -114,7 +117,7 @@
             >
               <template #buttonControl>
                 <ButtonField label="Choose" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
-                             @button-click="btnSetOutDir('modify_panel')"
+                             @click="btnSetOutDir('modify_panel')"
                 />
               </template>
               <template #inputControl>
@@ -140,8 +143,14 @@
             </div>
         </div>
 
-        <div
+        <div 
           v-show="settings_tab_selection == 2"
+          class="settings-subpanel-window">
+          <DropdownField v-model="$i18n.locale" :options-list="LOCALES_LIST" />
+        </div>
+
+        <div
+          v-show="settings_tab_selection == 3"
           class="settings-subpanel-window"
         >
           <table class="table is-borderless" style="padding: 5px" width="100%">
@@ -198,7 +207,7 @@
         </div>
 
         <div
-          v-show="settings_tab_selection == 3"
+          v-show="settings_tab_selection == 4"
           class="settings-subpanel-about"
         >
           <div class="about-content">
@@ -267,14 +276,23 @@ import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
 import InputField from "./components/Form/InputField.vue";
 import ButtonField from "./components/Form/ButtonField.vue";
 import ButtonInputField from "./components/Form/ButtonInputField.vue";
+import DropdownField from "./components/Form/DropdownField.vue";
 
 const DIR_DIALOG_PROPS = ["openDirectory", "createDirectory"];
+const LOCALES_LIST = [
+  {
+    name: "en",
+    label: "English",
+    description: "",
+  }
+];
 
 export default {
   components: {
     InputField,
     ButtonField,
     ButtonInputField,
+    DropdownField,
   },
   data: function () {
     return {
@@ -297,6 +315,7 @@ export default {
           }
         }
       },
+      LOCALES_LIST: LOCALES_LIST,
       PRESET_COLLECTION: {
         presets: [],
       },
@@ -337,6 +356,8 @@ export default {
     console.debug("SettingsPanel mounted");
     this.mapIntermediateProperties();
     this.applySettingsWatcher();
+    console.log(this.$i18n.locale);
+    console.log(this.$i18n.availableLocales);
   },
   methods: {
     mapIntermediateProperties() {

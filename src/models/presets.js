@@ -1,4 +1,6 @@
 const { v4: uuidV4 } = require('uuid');
+const { VueI18n } = require('vue-i18n');
+// const { globalTranslate } = require('../locales/i18n.js');
 
 
 
@@ -19,16 +21,17 @@ class PresetType {
   }
 }
 
-
+/**
+ * Root object to contain all presets
+ */
 class PresetCollection {
   /**
-   * 
-   * @param {[Preset]} presets List of presets
+   * Represents the entire collection of presets
+   * @param {Object} presets Dictionary of presets, with key as each preset id and value being the preset.
    */
   constructor(presets){
-    this.presets = presets? presets : [];
+    this.presets = presets? presets : {};
   }
-
   static fromJson(json) {
     let presetCollection = new PresetCollection();
     Object.assign(presetCollection, json);
@@ -37,6 +40,9 @@ class PresetCollection {
 }
 
 
+/**
+ * Object that stores preselected attributes to apply to UI forms
+ */
 class Preset {
   constructor() {
     this.id = uuidV4();
@@ -56,6 +62,21 @@ class Preset {
     preset.presetObject = criteriaJson;
     return preset;
   }
+  
+  /**
+   * Create from PresetDraft object
+   * @param {string} name Name of the preset
+   * @param {PresetType} presetType Type of the preset
+   * @param {PresetDraft} draft PresetDraft object to be converted into Preset
+   */
+  static createFromDraft(name, presetType, draft) {
+    let preset = new Preset();
+    preset.name = name;
+    preset.presetType = presetType;
+    const obj = draft.draftAttributes.filter(attr => attr.include).reduce((aggr, attr) => (aggr[attr.pKey] = attr.pValue, aggr) ,{});
+    preset.presetObject = obj;
+    return preset;
+  }
   // static createfromJson(json){
   //   let preset = new Preset();
   //   Object.assign(preset, json);
@@ -63,25 +84,66 @@ class Preset {
   // }
 }
 
+/**
+ * Draft object for presets for users to evaluate before creating the actual Preset object.
+ */
 class PresetDraft {
-  constructor(draftAttributes) {
-    this.draftAttributes = draftAttributes
+  /**
+   * Create new PresetDraft object with attribute list
+   * @param {PresetType} presetType
+   * @param {PresetDraftAttribute[]} draftAttributes 
+   */
+  constructor(presetType, draftAttributes) {
+    this.presetType = presetType;
+    this.draftAttributes = draftAttributes;
   }
-  static fromPresetObject(presetObject, defaultInclude=false){
+  
+  /**
+   * Create preset draft from preset object
+   * @param {PresetType} presetType Type of preset
+   * @param {object} presetObject POJO object
+   * @param {Boolean} defaultInclude Set include property of all attributes
+   * @returns 
+   */
+  static fromPresetObject(presetType, presetObject, defaultInclude=false){
     let draftAttributes = [];
     for (const[k, v] of Object.entries(presetObject)){
       const pdAttr = new PresetDraftAttribute(k, v, defaultInclude);
       draftAttributes.push(pdAttr);
     }
-    return new PresetDraft(draftAttributes);
+    return new PresetDraft(presetType, draftAttributes);
+  }
+
+  /**
+   * Update each of preset draft attribute's pLabel value using an i18n translator 
+   * @param {VueI18n} translator
+   * @param {string} localeStem 
+   */
+  nameAttributesUsingTranslator(translator, localeStem){
+    for (const attr of this.draftAttributes){
+      const attrLocaleKey = `${localeStem}.${attr.pKey}`
+      const label = "";
+      label = translator(attrLocaleKey);
+      attr.pLabel = label;
+    }
   }
 }
 
+/**
+ * Intermediary object for users to modify a single preset's attribute before creating the preset
+ */
 class PresetDraftAttribute{
+  /**
+   * Create preset draft 
+   * @param {string} key Preset attribute key
+   * @param {string} value Value of the preset
+   * @param {Boolean} include To include into the preset
+   */
   constructor(key, value, include){
     this.pKey = key;
     this.pValue = value;
     this.include = include;
+    this.pLabel = "";
   }
 }
 

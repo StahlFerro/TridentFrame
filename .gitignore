@@ -322,6 +322,7 @@ dkms.conf
 
 
 config/app.toml
+data/*
 temp/*
 release/*
 engine/*

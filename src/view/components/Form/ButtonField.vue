@@ -13,7 +13,7 @@
       'square-button': isSquare,
       'non-interactive': isNonInteractive,
     }"
-    :title="hint" @click="$emit('button-click')"
+    :title="hint" @click="$emit('click')"
   >
     <span v-if="icons.length >= 2" class="icon is-small">
       <font-awesome-icon :icon="icons" />
@@ -71,7 +71,7 @@
         default: false,
       }
     },
-    emits: ['button-click', 'click-outside'],
+    emits: ['click', 'click-outside'],
     methods: {
       emitClickOutside(event) {
         console.debug('emitClickOutside');

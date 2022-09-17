@@ -17,7 +17,7 @@
         </div>
       </div>
     </div>
-    <button class="modal-close is-large" aria-label="close" @click="$emit('close-modal-button-clicked')"></button>
+    <button class="modal-close is-large" aria-label="close" @click="$emit('close-modal-clicked')"></button>
   </div>
 </template>
 
@@ -30,7 +30,7 @@
         default: false,
       }
     },
-    emits: ['close-modal-background-clicked', 'close-modal-button-clicked'],
+    emits: ['close-modal-background-clicked', 'close-modal-clicked'],
     data() {
       return {
         

@@ -300,7 +300,7 @@
                   <ButtonInputField>
                     <template #buttonControl>
                       <ButtonField label="Save to" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
-                                   @button-click="btnSetSavePath"
+                                   @click="btnSetSavePath"
                       />
                     </template>
                     <template #inputControl>
@@ -314,7 +314,7 @@
                 <div class="field-cell">
                   <ButtonField label="MODIFY" color="cyan"
                                :is-loading="MOD_IS_MODIFYING == true" :is-non-interactive="isButtonFrozen"
-                               @button-click="btnModifyImage"
+                               @click="btnModifyImage"
                   />
                 </div>
               </div>
@@ -1500,7 +1500,7 @@ export default {
     _logClear() {
       logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
-    _logMessage(message) {
+    _logInfo(message) {
       logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
     },
     _logProcessing(message) {

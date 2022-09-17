@@ -129,7 +129,7 @@
     </div>
     <div class="root-panel">
       <!-- $refs.ctxmenu.open($event, 'Payload') -->
-      <CreatePanel v-show="menuselection == 'create_panel'" :presets="PRESET_COLLECTION.presets" />
+      <CreatePanel v-show="menuselection == 'create_panel'" :presets="creationCriteriaPresets" />
       <SplitPanel v-show="menuselection == 'split_panel'" />
       <ModifyPanel v-show="menuselection == 'modify_panel'" />
       <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
@@ -185,6 +185,8 @@ import ModifyPanel from "./view/ModifyPanel.vue";
 import InspectPanel from "./view/InspectPanel.vue";
 // import TilesPanel from "./src/TilesPanel.vue";
 import SettingsPanel from "./view/SettingsPanel.vue";
+import { StoreOperation } from "./models/storeOperation";
+import { PresetType } from "./models/presets";
 // import AboutPanel from "./view/AboutPanel.vue";
 
 
@@ -206,21 +208,33 @@ export default {
   },
   data: function () {
     return {
-      PRESET_COLLECTION: {
-        presets: [],
+      PRESETS_COLLECTION: {
+        presets: {},
       },
       menuselection: "create_panel",
     };
   },
+  computed: {
+    creationCriteriaPresets(){
+      const filteredPresets = {};
+      for (const [id, preset] of Object.entries(this.PRESETS_COLLECTION.presets)){
+        if (preset.presetType.name == PresetType.CreationCriteria.name)
+          filteredPresets[id] = preset;
+      }
+      return filteredPresets;
+    },
+  },
   beforeMount: function () {
+    console.trace('beforeMount');
     const PRESETS = ipcRenderer.sendSync("IPC-GET-PRESETS");
     console.debug(PRESETS);
-    this.PRESET_COLLECTION = { ...PRESETS };
+    this.PRESETS_COLLECTION = { ...PRESETS };
+    console.debug(this.PRESETS_COLLECTION);
   },
   mounted() {
     this.emitter.on('add-preset', args => { this.addPreset(args); });
     this.emitter.on('update-preset', args => { this.updatePreset(args); });
-    this.emitter.on('remove-preset', args => { this.removePreset(args); });
+    this.emitter.on('delete-preset', args => { this.removePreset(args); });
   },
   created() {
     window.addEventListener("resize", this.closeRootContextMenu);
@@ -247,16 +261,23 @@ export default {
       console.log(args);
     },
     addPreset(preset) {
-
+      console.debug('App.vue addPreset');
+      this.PRESETS_COLLECTION.presets[preset.id] = preset;
+      console.log(this.PRESETS_COLLECTION);
+      const pojoPreset = JSON.parse(JSON.stringify(preset));
+      ipcRenderer.sendSync('IPC-SET-PRESETS', StoreOperation.Add, pojoPreset);
     },
     updatePreset(preset) {
-
+      this.PRESETS_COLLECTION.presets[preset.id] = preset;
+      const pojoPreset = JSON.parse(JSON.stringify(preset));
+      ipcRenderer.sendSync('IPC-SET-PRESETS', StoreOperation.Update, pojoPreset);
     },
-    removePreset(preset) {
-
+    removePreset(id) {
+      delete this.PRESETS_COLLECTION.presets[id];
+      ipcRenderer.sendSync('IPC-SET-PRESETS', StoreOperation.Delete, id);
     },
     updatePresetsToComponents() {
-      this.emitter.emit('global-presets-refresh', this.PRESET_COLLECTION)
+      this.emitter.emit('global-presets-refresh', this.PRESETS_COLLECTION)
     }
   },
 };

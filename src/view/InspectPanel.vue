@@ -326,7 +326,7 @@ export default {
     _logClear() {
       logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
-    _logMessage(message) {
+    _logInfo(message) {
       logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
     },
     _logProcessing(message) {

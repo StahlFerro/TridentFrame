@@ -97,7 +97,7 @@
                          :is-loading="CRT_IS_LOADING" :is-non-interactive="isButtonFrozen"
                          :icons="['fas', 'plus']"
                          :listen-to-outside-clicks="true"
-                         @button-click="btnToggleLoadPopper"
+                         @click="btnToggleLoadPopper"
                          @click-outside="closeLoadPopper"
             />
             <!-- <a
@@ -124,7 +124,7 @@
             <ButtonField label="Clear" color="red" hint="Clears the entire sequence"
                          :icons="['fas', 'times']"
                          :is-non-interactive="isButtonFrozen"
-                         @button-click="btnClearAll"
+                         @click="btnClearAll"
             />
             <!-- <a class="button is-neon-crimson" :class="{ 'non-interactive': isButtonFrozen }" title="Clears the entire sequence" @click="btnClearAll">
               <span class="icon is-small">
@@ -134,7 +134,7 @@
             </a> -->
           </div>
           <div class="cpb-sequence-btn">
-            <span v-if="imageSequenceInfo.length &gt; 0" class="is-white-d">Total: {{ computeTotalSequenceSize }} </span>
+            <span v-if="(imageSequenceInfo.length &gt; 0)" class="is-white-d">Total: {{ computeTotalSequenceSize }} </span>
           </div>
         </div>
         <div class="cpb-preview-buttons">
@@ -275,12 +275,14 @@
                 </div>
                 <div class="field-cell full-width">
                   <FormModal :is-active="presetModal.modalIsActive"
-                             @close-modal-button-clicked="closeModal"
+                             @close-modal-clicked="closeModal"
                              @close-modal-background-clicked="closeModal"
                              @keydown.esc="presetModal.modalIsActive = false"
                   >
                     <template #modalHeader>
-                      <p class="is-white-d">Create new preset</p>
+                      <p class="is-white-d">
+                        Create new preset
+                      </p>
                     </template>
                     <template #modalDisplay>
                       <KeyValueTable :rows="presetModal.presetDraft.draftAttributes">
@@ -291,7 +293,7 @@
                         </template>
                         <template #rowControlsLeft="rowData">
                           <td class="center">
-                            <CheckboxField v-model="rowData.include" />
+                            <CheckboxField :modelValue="rowData.include" @update:modelValue="newVal => updatePresetDraft(rowData, newVal)" />
                           </td>
                           <!-- <KeyValueTableRowControl>
                             <CheckboxField v-model="rowData.include" />
@@ -299,7 +301,7 @@
                         </template>
                         <template #dataRow="rowData">
                           <td>
-                            {{ rowData.pKey }}
+                            {{ rowData.pLabel }}
                           </td>
                           <td>
                             {{ rowData.pValue }}
@@ -316,11 +318,17 @@
                       </KeyValueTable>
                     </template>
                     <template #modalForm>
-                      <InputField v-model="presetModal.newPresetName" label="Preset name" type="text" hint="Name of the new preset" />
+                      <InputField v-model="presetModal.newPresetName" label="Preset name" type="text" hint="Name of the new preset"
+                                  @input="presetModal.noPresetName = false;"
+                      />
                     </template>
                     <template #modalControls>
                       <ButtonField label="Create preset" color="blue" @click="createNewPreset" />
                       <ButtonField label="Cancel" @click="closeModal" />
+                      <p v-if="presetModal.noPresetName">
+                        <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
+                        Preset name is required!
+                      </p>
                     </template>
                   </FormModal>
                   <PresetSelector>
@@ -350,17 +358,16 @@
                                    :listen-to-outside-clicks="true"
                                    :icons="['fas', 'paint-roller']"
                                    :is-square="true"
-                                   @button-click="btnTogglePresetPopper"
+                                   @click="btnTogglePresetPopper"
                                    @click-outside="debugHandler"
                       />
                     </template>
                     <template #presetSelection>
                       <DropdownField 
-                        :model-value="presetSelectionValue" 
-                        :options-list="presetOptionsList" 
-                        :is-non-interactive="isNonInteractive" 
+                        v-model="presetSelectionValue"
+                        :options-list="localPresetsSelection" 
+                        :is-non-interactive="false" 
                         :is-fullwidth="true"
-                        @update:model-value="$emit('update:presetSelectionValue', $event.target.value)"
                       />
                     </template>
                     <template #presetControlsRight>
@@ -377,7 +384,7 @@
                   <ButtonInputField>
                     <template #buttonControl>
                       <ButtonField label="Save to" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
-                                   @button-click="btnSetSavePath"
+                                   @click="btnSetSavePath"
                       />
                     </template>
                     <template #inputControl>
@@ -391,7 +398,7 @@
                 <div class="field-cell">
                   <ButtonField label="CREATE" color="cyan"
                                :is-loading="CRT_IS_CREATING == true" :is-non-interactive="isButtonFrozen"
-                               @button-click="btnCreateAIMG"
+                               @click="btnCreateAIMG"
                   />
                 </div>
               </div>
@@ -599,7 +606,7 @@ import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
-import { Preset, PresetDraft } from '../models/presets';
+import { Preset, PresetDraft, PresetType } from '../models/presets';
 
 const SUPPORTED_CREATE_EXTENSIONS = [
   {
@@ -682,9 +689,9 @@ export default {
   },
   props: {
     presets: {
-      type: Array,
+      type: Object,
       default() {
-        return []
+        return {}
       },
       required: false,
     }
@@ -728,7 +735,10 @@ export default {
         modalIsActive: false,
         newPresetName: "",
         presetDraft: {},
+        noPresetName: false,
       },
+      presetSelectionValue: "",
+      localPresetsSelection: [],
       loadImagesCtxMenuOptions: [
         {id: 'load_images', name: "Images", icon: ['fas', 'plus']},
         {id: 'load_images_autodetect', name: "Autodetect sequence", icon: ['fas', 'plus-circle']},
@@ -773,9 +783,23 @@ export default {
       else {
         return '';
       }
-    }
+    },
+    // Triggers everytime this.presets property is updated on App.vue
+    computeTotalPresets() {
+      return Object.keys(this.presets).length;
+    },
   },
   watch: {
+    'computeTotalPresets': {
+      // When this property is updated, refresh the preset selector values
+      handler: function(newVal, oldVal) {
+        console.debug(`Preset updated\nOld/New count: ${oldVal}/${newVal}`);
+        const presetCount = this.populatePresetsSelector();
+        if (presetCount == 0) {
+          this.presetSelectionValue = "";
+        }
+      },
+    }
   },
   created() {
     window.addEventListener("resize", this.closeLoadPopper);
@@ -795,6 +819,9 @@ export default {
     // console.log(this.$i18n.availableLocales);
     // console.log(this.$i18n.messages);
     // console.log(this.$t('general.fname'));
+    // Load all 
+    this.populatePresetsSelector();
+    // this.emitter.on('global-presets-refresh', presetCollection => { this.addPreset(args); }))
   },
   unmounted() {
     window.removeEventListener("resize", this.closeLoadPopper);
@@ -803,20 +830,68 @@ export default {
     debugHandler(event) {
       console.log('debugHandler');
     },
-    createNewPreset(event) {
-      const preset = Preset.createFromCriteria("CreationCriteria", this.presetModal.newPresetName, this.criteria);
-      console.log(preset);
-    },
-    populateModalPresetPreview() {
-      const presetObject = JSON.parse(JSON.stringify(this.criteria));
-      const presetDraft = PresetDraft.fromPresetObject(presetObject, true);
-      console.debug(`populateModalPresetPreview`);
-      console.log(presetDraft);
-      this.presetModal.presetDraft = presetDraft;
+    populatePresetsSelector() {
+      console.log('populatePresetsSelector');
+      console.log(this.presets);
+      const presets = JSON.parse(JSON.stringify(this.presets));
+      console.log(presets);
+      this.localPresetsSelection = [];
+      for (const [id, preset] of Object.entries(this.presets)) {
+        this.localPresetsSelection.push({
+          name: id,
+          label: preset.name,
+          description: "",
+        })
+      }
+      return this.localPresetsSelection.length;
     },
     openModal(event) {
       this.populateModalPresetPreview();
       this.presetModal.modalIsActive = true;
+    },
+    populateModalPresetPreview() {
+      const attrJson = JSON.parse(JSON.stringify(this.criteria));
+      const presetType = PresetType.CreationCriteria;
+      const presetDraft = PresetDraft.fromPresetObject(presetType, attrJson, true);
+      presetDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+      console.debug(`populateModalPresetPreview`);
+      console.log(presetDraft);
+      this.presetModal.presetDraft = presetDraft;
+    },
+    updatePresetDraft(rowData, checkValue) {
+      console.log(rowData);
+      console.log(checkValue);
+      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == rowData.pKey);
+      if (attr) {
+        attr.include = checkValue;
+      }
+    },
+    createNewPreset(event) {
+      console.log(this.presetModal.presetDraft);
+      const presetName = this.presetModal.newPresetName;
+      if (!presetName) {
+        this.presetModal.noPresetName = true;
+        return;
+      }
+      const presetType = this.presetModal.presetDraft.presetType;
+      const preset = Preset.createFromDraft(presetName, presetType, this.presetModal.presetDraft)
+      console.log(preset);
+      this.emitter.emit('add-preset', preset);
+      console.log('after emit');
+      console.log(this.presets);
+      this.presetModal.newPresetName = "";
+      this.closeModal(event);
+      this._logInfo(`Created new preset ${preset.name}`);
+    },
+    deletePreset(event){
+      const id = this.presetSelectionValue;
+      if (id) {
+        console.log(id);
+        const preset = this.presets[id];
+        this.emitter.emit('delete-preset', id);
+        this._logInfo(`Deleted preset ${preset.name}`);
+      }
+      else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
     closeModal(event) {
       this.presetModal.modalIsActive = false;
@@ -825,26 +900,29 @@ export default {
       this.presetsCtxMenuVisible = true;
     },
     handlePresetsCtxMenuOptionClick(event, optionId) {
-      console.log(`=== handlePresetsCtxMenuOptionClick START vis: ${this.presetsCtxMenuVisible} ===`);
-      console.log(event);
-      console.log(optionId);
+      // console.log(`=== handlePresetsCtxMenuOptionClick START vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(event);
+      // console.log(optionId);
       this.closePresetPopper(event);
       this.presetsCtxMenuVisible = false;
       if (optionId == 'preset_new') {
         this.openModal(event);
       }
-      console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
+      else if (optionId == 'preset_delete'){
+        this.deletePreset(event);
+      }
+      // console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
     },
     handlePresetsCtxMenuClickOutside(event, args) {
-      console.log(`=== handlePresetsCtxMenuClickOutside START vis: ${this.presetsCtxMenuVisible} ===`);
-      console.log(event);
-      console.log(args);
+      // console.log(`=== handlePresetsCtxMenuClickOutside START vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(event);
+      // console.log(args);
       this.closePresetPopper(event);
       this.presetsCtxMenuVisible = false;
-      console.log(`=== handlePresetsCtxMenuClickOutside END vis: ${this.presetsCtxMenuVisible}===`);
+      // console.log(`=== handlePresetsCtxMenuClickOutside END vis: ${this.presetsCtxMenuVisible}===`);
     },
     btnTogglePresetPopper(event) {
-      console.log(`=== btnTogglePresetPopper START vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(`=== btnTogglePresetPopper START vis: ${this.presetsCtxMenuVisible} ===`);
       if (this.presetsCtxMenuVisible) {
         this.closePresetPopper(event);
         this.presetsCtxMenuVisible = false;
@@ -852,11 +930,11 @@ export default {
       else {
         this.openPresetPopper(event);
       }
-      console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
     },
     openPresetPopper(event) {
-      console.log('check this one');
-      console.log(event);
+      // console.log('check this one');
+      // console.log(event);
       this.$refs.crtPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
     },
     closePresetPopper(event) {
@@ -866,7 +944,7 @@ export default {
       this.loadImageCtxMenuVisible = true;
     },
     handleLoadImageCtxMenuOptionClick(event, optionId) {
-      console.log(`=== handleLoadImageCtxMenuOptionClick START vis: ${this.loadImageCtxMenuVisible} ===`);
+      // console.log(`=== handleLoadImageCtxMenuOptionClick START vis: ${this.loadImageCtxMenuVisible} ===`);
       console.log(event);
       console.log(optionId);
       this.closeLoadPopper(event);
@@ -877,15 +955,15 @@ export default {
       else if (optionId == 'load_images_autodetect'){
         this.loadImages('smart_insert');
       }
-      console.log(`=== handleLoadImageCtxMenuOptionClick END vis: ${this.loadImageCtxMenuVisible} ===`);
+      // console.log(`=== handleLoadImageCtxMenuOptionClick END vis: ${this.loadImageCtxMenuVisible} ===`);
     },
     handleLoadImageCtxMenuClickOutside(event, args) {
-      console.log(`=== handleLoadImageCtxMenuClickOutside START vis: ${this.loadImageCtxMenuVisible} ===`);
-      console.log(event);
-      console.log(args);
+      // console.log(`=== handleLoadImageCtxMenuClickOutside START vis: ${this.loadImageCtxMenuVisible} ===`);
+      // console.log(event);
+      // console.log(args);
       this.closeLoadPopper(event);
       this.loadImageCtxMenuVisible = false;
-      console.log(`=== handleLoadImageCtxMenuClickOutside END vis: ${this.loadImageCtxMenuVisible}===`);
+      // console.log(`=== handleLoadImageCtxMenuClickOutside END vis: ${this.loadImageCtxMenuVisible}===`);
     },
     toggleLoadButtonAnim(ops, state = false) {
       if (ops == "insert") {
@@ -897,7 +975,7 @@ export default {
       }
     },
     btnToggleLoadPopper(event) {
-      console.log(`=== btnToggleLoadPopper START vis: ${this.loadImageCtxMenuVisible} ===`);
+      // console.log(`=== btnToggleLoadPopper START vis: ${this.loadImageCtxMenuVisible} ===`);
       if (this.loadImageCtxMenuVisible) {
         this.closeLoadPopper(event);
         this.loadImageCtxMenuVisible = false;
@@ -905,7 +983,7 @@ export default {
       else {
         this.openLoadPopper(event);
       }
-      console.log(`=== btnToggleLoadPopper END vis: ${this.loadImageCtxMenuVisible} ===`);
+      // console.log(`=== btnToggleLoadPopper END vis: ${this.loadImageCtxMenuVisible} ===`);
     },
     openLoadPopper(event) {
       this.$refs.crtLoadImagesContextMenu.openPopper(event, this.loadImagesCtxMenuOptions);
@@ -1447,7 +1525,7 @@ export default {
     _logClear() {
       logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
-    _logMessage(message) {
+    _logInfo(message) {
       logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
     },
     _logProcessing(message) {

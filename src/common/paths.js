@@ -34,7 +34,7 @@ let settings;
 if (_process.env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py";
   app_settings_path = join(appPath, "config", "app.toml");
-  presets_path = join(appPath, "presets", "preset.json");
+  presets_path = join(appPath, "data", "presets.json");
   temp_path = join(appPath, "temp");
   previews_path = join(temp_path, "previews");
 } else {
@@ -48,7 +48,7 @@ if (_process.env.DEPLOY_ENV == "DEV") {
     engine_exec_path = join(engine_dir, "tridentengine");
   }
   app_settings_path = join(appPath, "config", "app.toml");
-  presets_path = join(appPath, "presets", "preset.json");
+  presets_path = join(appPath, "data", "presets.json");
   temp_path = join(engine_dir, "temp");
   previews_path = join(temp_path, "previews");
 }

@@ -1,6 +1,7 @@
 
 const { APP_SETTINGS_PATH, PRESETS_PATH } = require("../common/paths.js");
-const { existsSync, readFileSync, writeFileSync } = require("fs");
+const { dirname } = require("path");
+const { existsSync, readFileSync, writeFileSync, mkdirSync, mkdir } = require("fs");
 const { PresetCollection, Preset, PresetType } = require("../models/presets.js");
 const { app, ipcMain, ipcRenderer } = require("electron");
 const { StoreOperation } = require("../models/storeOperation.js");
@@ -9,6 +10,9 @@ let PRESETS_COLLECTION = new PresetCollection();
 
 
 function createPresetsFIle(path) {
+  mkdirSync(dirname(path), { recursive: true }, (err) => {
+    if (err) throw err;
+  });
   let presetCollection = new PresetCollection();
   let presetCollStr = JSON.stringify(presetCollection);
   // let tomlStr = toml.stringify(_DEFAULT_SETTINGS);
@@ -23,8 +27,8 @@ function createPresetsFIle(path) {
  */
  function writePresetsToFile(){
   console.debug("writeSettings called")
-  let presetsCollStr = JSON.stringify(PRESETS_COLLECTION);
-  writeFileSync(PRESETS_COLLECTION, presetsCollStr, {
+  let presetsCollStr = JSON.stringify(PRESETS_COLLECTION, null, 2);
+  writeFileSync(PRESETS_PATH, presetsCollStr, {
     tmpPurge: false,
   });
 }
@@ -61,24 +65,29 @@ function getPresetsByCriteriaType(presetType) {
 }
 
 
+/**
+ * Add new preset to the collection in the main process
+ * @param {Preset} newPreset The new preset to be added
+ */
 function addPresetToCollection(newPreset) {
-  PRESETS_COLLECTION.presets.push(newPreset);
+  PRESETS_COLLECTION.presets[newPreset.id] = newPreset;
 }
 
 
 function updatePresetOnCollection(updatedPreset) {
-  let presetIndex = PRESETS_COLLECTION.presets.findIndex(p => p.id = newPreset.id);
-  if (presetIndex){
-    PRESETS_COLLECTION.presets[presetIndex] = updatedPreset;
+  // let presetIndex = PRESETS_COLLECTION.presets.(p => p.id = newPreset.id);
+  if (updatedPreset.id in PRESETS_COLLECTION.presets){
+    PRESETS_COLLECTION.presets[updatedPreset.id] = updatedPreset;
     return true;
   }
   else return false;
 }
 
 
-function deletePresetFromCollection(preset) {
-  let presetIndex = PRESETS_COLLECTION.presets.findIndex(p => p.id = newPreset.id);
-  PRESETS_COLLECTION.presets.splice(presetIndex, 1);
+function deletePresetFromCollection(id) {
+  delete PRESETS_COLLECTION.presets[id];
+  // let presetIndex = PRESETS_COLLECTION.presets.findIndex(p => p.id = newPreset.id);
+  // PRESETS_COLLECTION.presets.splice(presetIndex, 1);
 }
 
 
@@ -99,7 +108,6 @@ const initStoreListener = () => {
   ipcMain.on("IPC-SET-PRESETS", function (event, storeOp, args) {
     console.debug("IPC-SET-PRESETS invoked with args:");
     console.debug(args);
-
     if (storeOp.name == StoreOperation.Add.name) {
       addPresetToCollection(args);
     }

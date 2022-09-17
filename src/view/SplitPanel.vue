@@ -183,9 +183,16 @@
               <div class="separator-space" />
             </div>
             <div class="field-cell span-4">
-              <ButtonInputField v-model="saveDir" button-label="Save to" :use-icons="false" 
-                                 @control-button-click="btnSetSavePath" 
-              />
+              <ButtonInputField>
+                <template #buttonControl>
+                  <ButtonField label="Save to" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
+                               @click="btnSetSavePath"
+                  />
+                </template>
+                <template #inputControl>
+                  <InputField v-model="saveDir" type="text" />
+                </template>
+              </ButtonInputField>
             </div>
             <div class="field-cell center-h">
               <a class="button is-neon-cyan" :class="{
@@ -329,6 +336,7 @@ import StatusBar from "./components/StatusBar.vue";
 import InputField from "./components/Form/InputField.vue";
 import CheckboxField from './components/Form/CheckboxField.vue';
 import DropdownField from './components/Form/DropdownField.vue';
+import ButtonField from "./components/Form/ButtonField.vue";
 import ButtonInputField from './components/Form/ButtonInputField.vue';
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
@@ -360,6 +368,7 @@ export default {
     InputField,
     CheckboxField,
     DropdownField,
+    ButtonField,
     ButtonInputField,
   },
   data: function () {
@@ -596,7 +605,7 @@ export default {
     _logClear() {
       logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
-    _logMessage(message) {
+    _logInfo(message) {
       logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
     },
     _logProcessing(message) {

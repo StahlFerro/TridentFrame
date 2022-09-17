@@ -44,7 +44,7 @@ export default {
       default: false
     },
   },
-  emits: ['preset-button-click', 'ctx-menu-open', 'ctx-option-click', 'ctx-menu-click-outside',],
+  emits: ['preset-click', 'ctx-menu-open', 'ctx-option-click', 'ctx-menu-click-outside',],
   data() {
     return {
     }

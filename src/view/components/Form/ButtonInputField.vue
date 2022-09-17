@@ -4,7 +4,7 @@
     <div class="controls-container">
       <div class="control">
         <slot name="buttonControl" />
-        <!-- <a class="button square-button is-neon-cobalt" @click="$emit('control-button-click', $event)">
+        <!-- <a class="button square-button is-neon-cobalt" @click="$emit('control-click', $event)">
           <span class="icon is-small">
             <font-awesome-icon icon="folder-open" />
           </span>
@@ -65,6 +65,6 @@
         required: false,
       }
     },
-    emits: ['update:modelValue', 'input', 'control-button-click', 'field-blur']
+    emits: ['update:modelValue', 'input', 'control-click', 'field-blur']
   }
 </script>
