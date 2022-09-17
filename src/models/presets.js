@@ -51,6 +51,18 @@ class Preset {
     this.presetType = null;
     this.presetObject = null;
   }
+  static fromJSON(json){
+    let preset = Object.assign(new Preset(), json);
+    preset.name = json.name;
+    return preset;
+    // let preset = new Preset();
+    // preset.id = json.id;
+    // preset.createdDateTime = json.createdDateTime;
+    // preset.name = json.name;
+    // preset.presetType = json.presetType;
+    // preset.presetObject = json.presetObject;
+    // return preset;
+  }
   static createFromCriteria(criteriaType, presetName, criteria) {
     let preset = new Preset();
     preset.name = presetName;
@@ -76,6 +88,27 @@ class Preset {
     const obj = draft.draftAttributes.filter(attr => attr.include).reduce((aggr, attr) => (aggr[attr.pKey] = attr.pValue, aggr) ,{});
     preset.presetObject = obj;
     return preset;
+  }
+
+  /**
+   * Update Preset from PresetDraft object
+   * @param {string} newName New preset name
+   * @param {PresetDraft} draft Draft with updated values
+   */
+  updateFromDraft(newName, draft){
+    this.name = newName;
+    for (const draftAttr of draft.draftAttributes) {
+      const attrKey = draftAttr.pKey;
+      if (draftAttr.conclusion() == "EXCLUDE_ATTRIBUTE") {
+        delete this.presetObject[attrKey];
+      }
+      else if (draftAttr.conclusion() == "INSTANTIATE_NULL") {
+        this.presetObject[attrKey] = draftAttr.pValue;
+      }
+      else if (draftAttr.conclusion() == "UPDATE_VALUE") {
+        this.presetObject[attrKey] = draftAttr.pValueNew;
+      }
+    }
   }
   // static createfromJson(json){
   //   let preset = new Preset();
@@ -163,6 +196,7 @@ class PresetDraft {
       attr.pLabel = label;
     }
   }
+
 }
 
 /**
@@ -182,6 +216,25 @@ class PresetDraftAttribute{
     this.updateValue = false
     this.include = include;
     this.pLabel = "";
+  }
+
+  /**
+   * Get the conclusion of the draft attribute's operation
+   * @returns string
+   */
+  conclusion() {
+    if (!this.include) {
+      return "EXCLUDE_ATTRIBUTE";
+    }
+    else if (this.include && this.pValue == null && !this.updateValue) {
+      return "INSTANTIATE_NULL";
+    }
+    else if (this.include && this.updateValue) {
+      return "UPDATE_VALUE"
+    }
+    else {
+      return "DO_NOTHING";
+    }
   }
 }
 

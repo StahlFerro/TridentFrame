@@ -282,10 +282,10 @@
                     <template #modalHeader>
                       <p class="is-white-d">
                         <template v-if="presetModal.presetOperation == 'preset_new'">
-                          Create new preset
+                          Create preset
                         </template>
-                        <template v-if="presetModal.presetOperation == 'preset_update'">
-                          Update preset
+                        <template v-else-if="presetModal.presetOperation == 'preset_update'">
+                          Update existing preset
                         </template>
                       </p>
                     </template>
@@ -342,7 +342,8 @@
                       />
                     </template>
                     <template #modalControls>
-                      <ButtonField :label="presetModal.presetOperation == 'preset_update'? 'Update preset' : 'Create preset'" color="blue" @click="createNewPreset" />
+                      <ButtonField v-if="presetModal.presetOperation == 'preset_new'" label="Create preset" color="blue" @click="createNewPreset" />
+                      <ButtonField v-if="presetModal.presetOperation == 'preset_update'" label="Update preset" color="blue" @click="updatePreset" />
                       <ButtonField label="Cancel" @click="closePresetModal" />
                       <p v-if="presetModal.noPresetName">
                         <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
@@ -933,13 +934,29 @@ export default {
       this.closePresetModal(event);
       this._logInfo(`Created new preset ${preset.name}`);
     },
+    updatePreset(event) {
+      const id = this.presetSelectionValue;
+      console.log(id);
+      if (id) {
+        console.log(id);
+        const presetProxy = this.presets[id];
+        const presetJson = JSON.parse(JSON.stringify(presetProxy))
+        console.log(presetJson);
+        const preset = Preset.fromJSON(presetJson);
+        console.log(preset);
+        preset.updateFromDraft(this.presetModal.newPresetName, this.presetModal.presetDraft);
+        this.emitter.emit('update-preset', preset);
+        this.closePresetModal(event);
+        this._logInfo(`Updated preset ${preset.name}`);
+      }
+    },
     deletePreset(event){
       const id = this.presetSelectionValue;
       if (id) {
         console.log(id);
-        const preset = this.presets[id];
+        const presetJson = this.presets[id];
         this.emitter.emit('delete-preset', id);
-        this._logInfo(`Deleted preset ${preset.name}`);
+        this._logInfo(`Deleted preset ${presetJson.name}`);
       }
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
