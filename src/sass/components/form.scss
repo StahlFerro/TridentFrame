@@ -85,8 +85,8 @@ $general-fields-col-gap: 5px;
             &.span-6 {
                 flex: 0 0 calc(100% / 7 * 6 - (#{$general-fields-col-gap} * (6 - 5) / 7));
             }
-            &.span-6 {
-                flex: 0 0 calc(100% / 7 * 6 - (#{$general-fields-col-gap} * (6 - 5) / 7));
+            &.span-7 {
+                flex: 0 0 calc(100% / 7 * 7 - (#{$general-fields-col-gap} * (6 - 6) / 7));
             }
         }
     }
