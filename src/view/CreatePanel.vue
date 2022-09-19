@@ -265,7 +265,7 @@
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.skip_frame" :label="$t('criterion.skip_frame')" type="number" 
-                              hint="Amount of frames before the next frame is skipped. 0 for no skipping"
+                              hint="Amount of frames before the next frame is skipped. 0 or blank for no skipping"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
@@ -282,7 +282,8 @@
                 <div class="separator">
                   <div class="separator-space" />
                 </div>
-                <div class="field-cell full-width">
+                <!-- <div class="field-cell span-3" /> -->
+                <div class="field-cell span-4">
                   <FormModal :is-active="presetModal.modalIsActive"
                              :is-wide="presetModal.presetOperation == 'preset_update'"
                              @close-modal-clicked="closePresetModal"
@@ -424,7 +425,7 @@
                 <div class="separator">
                   <div class="separator-space" />
                 </div>
-                <div class="field-cell span-4">
+                <div class="field-cell span-5">
                   <ButtonInputField>
                     <template #buttonControl>
                       <ButtonField label="Save to" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
