@@ -133,6 +133,7 @@
             <h4 class="title is-4 settings-header">
               Language
             </h4>
+            <hr />
             <DropdownField v-model="$i18n.locale" :options-list="LOCALES_LIST" />
           </div>
         </div>
