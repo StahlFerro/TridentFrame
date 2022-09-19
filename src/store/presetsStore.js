@@ -47,7 +47,7 @@ function createPresetsFIle(path) {
     }
     const fileContent = readFileSync(PRESETS_PATH, { encoding: "utf-8"});
     const presetCollJson = JSON.parse(fileContent);
-    const presetColl = PresetCollection.fromJson(presetCollJson);
+    const presetColl = PresetCollection.fromJSON(presetCollJson);
     PRESETS_COLLECTION = presetColl;
   } catch(err) {
     console.error(err)

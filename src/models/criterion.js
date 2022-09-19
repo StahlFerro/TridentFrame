@@ -1,3 +1,5 @@
+const { Preset } = require('./presets.js');
+
 class TransformativeCriteria {
   constructor() {
     this.width = "";
@@ -6,6 +8,22 @@ class TransformativeCriteria {
     this.flip_x = false;
     this.flip_y = false;
     this.rotation = 0;
+  }
+
+  /**
+   * 
+   * @param {Preset} preset Preset instance
+   */
+  updateFromPreset(preset) {
+    console.debug('updateFromPreset');
+    for (const [k, v] of Object.entries(preset.presetObject)) {
+      if (k in this) {
+        if (!v) continue;
+        else {
+          this[k] = v;
+        }
+      }
+    }
   }
 }
 

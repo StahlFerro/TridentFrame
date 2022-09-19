@@ -39,7 +39,7 @@ export default {
   emits: ['update:modelValue', 'mouse-over-down'],
   methods: {
     handleMouseDownOver(event) {
-      console.log(event);
+      // console.log(event);
       // If mouse hovers over the element while the left button is held down (key 1), emit the custom event
       if (event.type == "mouseover" && event.which == 1) {
         this.$emit('mouse-over-down', event);

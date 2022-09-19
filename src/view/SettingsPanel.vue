@@ -127,6 +127,14 @@
               </template>
             </ButtonInputField>
           </div>
+          <div id="settings_empty_001" class="settings-group" />
+
+          <div id="settings_locale" class="settings-group">
+            <h4 class="title is-4 settings-header">
+              Language
+            </h4>
+            <DropdownField v-model="$i18n.locale" :options-list="LOCALES_LIST" />
+          </div>
         </div>
 
         <div
@@ -146,7 +154,6 @@
         <div 
           v-show="settings_tab_selection == 2"
           class="settings-subpanel-window">
-          <DropdownField v-model="$i18n.locale" :options-list="LOCALES_LIST" />
         </div>
 
         <div

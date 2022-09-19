@@ -1,9 +1,12 @@
 const { v4: uuidV4 } = require('uuid');
 const { VueI18n } = require('vue-i18n');
+const { Enumeration } = require('./enum.js');
 // const { globalTranslate } = require('../locales/i18n.js');
 
 
-
+/**
+ * Different types of presets for categorization
+ */
 class PresetType {
   static CreationCriteria = new PresetType(
     "creation_criteria", "Creation criteria")
@@ -21,6 +24,7 @@ class PresetType {
   }
 }
 
+
 /**
  * Root object to contain all presets
  */
@@ -32,7 +36,7 @@ class PresetCollection {
   constructor(presets){
     this.presets = presets? presets : {};
   }
-  static fromJson(json) {
+  static fromJSON(json) {
     let presetCollection = new PresetCollection();
     Object.assign(presetCollection, json);
     return presetCollection;
@@ -47,6 +51,7 @@ class Preset {
   constructor() {
     this.id = uuidV4();
     this.createdDateTime = Date.now();
+    this.lastModifiedDateTime = Date.now();
     this.name = "";
     this.presetType = null;
     this.presetObject = null;
@@ -87,6 +92,7 @@ class Preset {
     preset.presetType = presetType;
     const obj = draft.draftAttributes.filter(attr => attr.include).reduce((aggr, attr) => (aggr[attr.pKey] = attr.pValue, aggr) ,{});
     preset.presetObject = obj;
+    preset.lastModifiedDateTime = Date.now();
     return preset;
   }
 
@@ -99,18 +105,24 @@ class Preset {
     this.name = newName;
     for (const draftAttr of draft.draftAttributes) {
       const attrKey = draftAttr.pKey;
-      if (draftAttr.conclusion() == "EXCLUDE_ATTRIBUTE") {
+      if (draftAttr.conclusion().name == AttributeConclusion.ExcludeAttribute.name ) {
         delete this.presetObject[attrKey];
       }
-      else if (draftAttr.conclusion() == "INSTANTIATE_NULL") {
+      else if (draftAttr.conclusion().name == AttributeConclusion.IncludeNull.name) {
         this.presetObject[attrKey] = draftAttr.pValue;
       }
-      else if (draftAttr.conclusion() == "UPDATE_VALUE") {
+      else if (draftAttr.conclusion().name == AttributeConclusion.IncludeValue.name) {
         this.presetObject[attrKey] = draftAttr.pValueNew;
+      }
+      else if (draftAttr.conclusion().name == AttributeConclusion.UpdateValue.name) {
+        this.presetObject[attrKey] = draftAttr.pValueNew;
+      }
+      else if (draftAttr.conclusion().name == AttributeConclusion.DoNothing.name) {
+
       }
     }
   }
-  // static createfromJson(json){
+  // static createfromJSON(json){
   //   let preset = new Preset();
   //   Object.assign(preset, json);
   //   return preset;
@@ -199,6 +211,25 @@ class PresetDraft {
 
 }
 
+
+
+class AttributeConclusion extends Enumeration {
+  static DoNothing = new AttributeConclusion(
+    "DO_NOTHING", "Do nothing", "Do no changes to the existing attribute")
+  static ExcludeAttribute = new AttributeConclusion(
+    "EXCLUDE_ATTRIBUTE", "Exclude attribute", "Remove the attribute from the preset")
+  static IncludeNull = new AttributeConclusion(
+    "INCLUDE_NULL", "Include empty", "Add the attribute to the preset with empty value")
+  static IncludeValue = new AttributeConclusion(
+    "INCLUDE_VALUE", "Include value", "Add the attribute to the preset with new value")
+  static UpdateValue = new AttributeConclusion(
+    "UPDATE_VALUE", "Update value", "Update existing attribute's value with new value")
+  constructor(name, label, description=""){
+    super(name, label, description);
+  }
+}
+
+
 /**
  * Intermediary object for users to modify a single preset's attribute before creating the preset
  */
@@ -215,25 +246,50 @@ class PresetDraftAttribute{
     this.pValueNew = null;
     this.updateValue = false
     this.include = include;
+    this.currentlyIncluded = include
     this.pLabel = "";
+  }
+
+  // /**
+  //  * Get conclusion in the event that only the plain object representation of a PresetDraftAttribute is obtained
+  //  * @param {PresetDraftAttribute} draftAttr Preset draft attribute
+  //  * @returns {string}
+  //  */
+  // static getConclusion(draftAttrJson) {
+  //   const draftAttr = PresetDraftAttribute.fromJSON(draftAttrJson);
+  //   return draftAttr.conclusion();
+  // }
+
+  /**
+   * Recreate PresetDraftAttribute from plain object
+   * @param {object} json Plain object
+   * @returns {PresetDraftAttribute}
+   */
+  static fromJSON(json) {
+    let draftAttr = new PresetDraftAttribute("", "", false);
+    draftAttr = Object.assign(draftAttr, json);
+    return draftAttr;
   }
 
   /**
    * Get the conclusion of the draft attribute's operation
-   * @returns string
+   * @returns {AttributeConclusion}
    */
   conclusion() {
-    if (!this.include) {
-      return "EXCLUDE_ATTRIBUTE";
+    if (!this.include && this.currentlyIncluded) {
+      return AttributeConclusion.ExcludeAttribute;
     }
-    else if (this.include && this.pValue == null && !this.updateValue) {
-      return "INSTANTIATE_NULL";
+    else if (!this.currentlyIncluded && this.include) {
+      if (this.pValueNew != null && this.updateValue)
+        return AttributeConclusion.IncludeValue;
+      else
+        return AttributeConclusion.IncludeNull;
     }
-    else if (this.include && this.updateValue) {
-      return "UPDATE_VALUE"
+    else if (this.include && this.currentlyIncluded && this.updateValue) {
+      return AttributeConclusion.UpdateValue
     }
     else {
-      return "DO_NOTHING";
+      return AttributeConclusion.DoNothing;
     }
   }
 }
@@ -243,3 +299,4 @@ module.exports.PresetCollection = PresetCollection;
 module.exports.Preset = Preset;
 module.exports.PresetType = PresetType;
 module.exports.PresetDraft = PresetDraft;
+module.exports.PresetDraftAttribute = PresetDraftAttribute;

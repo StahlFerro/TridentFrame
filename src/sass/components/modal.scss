@@ -14,7 +14,13 @@ $modal-background-background-color: rgba(0, 0, 00, 0.7);
     border: 2px solid $white-d;
     background-color: $dark-2;
     // width: 60vw !important;
-    width: 500px !important;
+    width: 480px !important;
+    // &.width-create {
+    //     width: 480px !important;
+    // }
+    &.wide {
+        width: 650px !important;
+    }
 }
 
 .flexible-modal {

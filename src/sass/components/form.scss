@@ -67,6 +67,29 @@ $general-fields-col-gap: 5px;
             }
         }
     }
+    &.row-7 {
+        .field-cell {
+            flex: 0 0 calc(100% / 7 * 1 - (#{$general-fields-col-gap} * (6 - 0) / 7));
+            &.span-2 {
+                flex: 0 0 calc(100% / 7 * 2 - (#{$general-fields-col-gap} * (6 - 1) / 7));
+            }
+            &.span-3 {
+                flex: 0 0 calc(100% / 7 * 3 - (#{$general-fields-col-gap} * (6 - 2) / 7));
+            }
+            &.span-4 {
+                flex: 0 0 calc(100% / 7 * 4 - (#{$general-fields-col-gap} * (6 - 3) / 7));
+            }
+            &.span-5 {
+                flex: 0 0 calc(100% / 7 * 5 - (#{$general-fields-col-gap} * (6 - 4) / 7));
+            }
+            &.span-6 {
+                flex: 0 0 calc(100% / 7 * 6 - (#{$general-fields-col-gap} * (6 - 5) / 7));
+            }
+            &.span-6 {
+                flex: 0 0 calc(100% / 7 * 6 - (#{$general-fields-col-gap} * (6 - 5) / 7));
+            }
+        }
+    }
     label {
         margin: 0px !important;
         padding: 0 !important;

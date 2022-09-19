@@ -275,6 +275,7 @@
                 </div>
                 <div class="field-cell full-width">
                   <FormModal :is-active="presetModal.modalIsActive"
+                             :is-wide="presetModal.presetOperation == 'preset_update'"
                              @close-modal-clicked="closePresetModal"
                              @close-modal-background-clicked="closePresetModal"
                              @keydown.esc="presetModal.modalIsActive = false"
@@ -306,6 +307,9 @@
                           <th class="kvp-control-fit" hint="Update the current value of the preset with this new one?">
                             Update?
                           </th>
+                          <th class="kvp-desc-short-column">
+                            Conclusion
+                          </th>
                         </template>
                         <template #rowControlsLeft="draftAttr">
                           <td class="center">
@@ -317,15 +321,21 @@
                         </template>
                         <template #dataRow="draftAttr">
                           <td>
-                            {{ draftAttr.pLabel }}
+                            <p>
+                              {{ draftAttr.pLabel }}
+                            </p>
                           </td>
                           <td>
-                            {{ draftAttr.pValue }}
+                            <p>
+                              {{ draftAttr.pValue }}
+                            </p>
                           </td>
                         </template>
                         <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsRight="draftAttr">
                           <td>
-                            {{ draftAttr.pValueNew }}
+                            <p>
+                              {{ draftAttr.pValueNew }}
+                            </p>
                           </td>
                           <td class="center">
                             <CheckboxField :modelValue="draftAttr.updateValue" 
@@ -333,11 +343,15 @@
                                            @mouse-over-down="updatePresetDraftUpdate(draftAttr, !draftAttr.updateValue)"
                             />
                           </td>
+                          <td>
+                            {{ getPresetDraftAttributeConclusion(draftAttr).label }}
+                          </td>
                         </template>
                       </KeyValueTable>
                     </template>
                     <template #modalForm>
-                      <InputField v-model="presetModal.newPresetName" label="Preset name" type="text" hint="Name of the new preset"
+                      <InputField v-model="presetModal.newPresetName" type="text" hint="Name of the new preset"
+                                  :label="presetModal.presetOperation == 'preset_update'? 'Change preset name' : 'Preset name'"
                                   @input="presetModal.noPresetName = false;"
                       />
                     </template>
@@ -393,6 +407,7 @@
                     <template #presetControlsRight>
                       <ButtonField label="Apply preset" color="purple"
                                    :is-square="true"
+                                   @click="applyPreset"
                       />
                     </template>
                   </PresetSelector>
@@ -626,7 +641,7 @@ import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
-import { Preset, PresetDraft, PresetType } from '../models/presets';
+import { Preset, PresetDraft, PresetType, PresetDraftAttribute } from '../models/presets';
 
 const SUPPORTED_CREATE_EXTENSIONS = [
   {
@@ -806,12 +821,14 @@ export default {
       }
     },
     // Triggers everytime this.presets property is updated on App.vue
-    computeTotalPresets() {
-      return Object.keys(this.presets).length;
+    computeModifiedPresets() {
+      console.log('computeModifiedPresets triggered');
+      const modifiedDateTimes = Object.entries(this.presets).map(([k, v]) => v.lastModifiedDateTime);
+      return modifiedDateTimes
     },
   },
   watch: {
-    'computeTotalPresets': {
+    'computeModifiedPresets': {
       // When this property is updated, refresh the preset selector values
       handler: function(newVal, oldVal) {
         console.debug(`Preset updated\nOld/New count: ${oldVal}/${newVal}`);
@@ -891,6 +908,7 @@ export default {
           const attrObj = JSON.parse(JSON.stringify(this.criteria));
           const presetUpdateDraft = PresetDraft.buildUpdatePresetDraft(currPreset, attrObj);
           presetUpdateDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+          console.log('presetUpdateDraft');
           console.log(presetUpdateDraft);
           this.presetModal.presetDraft = presetUpdateDraft;
           this.presetModal.newPresetName = currPreset.name;
@@ -901,6 +919,10 @@ export default {
           return false;
         }
       }
+    },
+    getPresetDraftAttributeConclusion(draftAttrJson) {
+      const draftAttr = PresetDraftAttribute.fromJSON(draftAttrJson);
+      return draftAttr.conclusion();
     },
     updatePresetDraftInclude(draftAttr, checkValue) {
       console.log(draftAttr);
@@ -935,6 +957,11 @@ export default {
       this._logInfo(`Created new preset ${preset.name}`);
     },
     updatePreset(event) {
+      const presetName = this.presetModal.newPresetName;
+      if (!presetName) {
+        this.presetModal.noPresetName = true;
+        return;
+      }
       const id = this.presetSelectionValue;
       console.log(id);
       if (id) {
@@ -964,6 +991,16 @@ export default {
       this.presetModal.noPresetName = false;
       this.presetModal.newPresetName = "";
       this.presetModal.modalIsActive = false;
+    },
+    applyPreset(event) {
+      const id = this.presetSelectionValue;
+      if (id) {
+        console.log(id);
+        const presetJson = this.presets[id];
+        const preset = Preset.fromJSON(presetJson);
+        this.criteria.updateFromPreset(preset);
+      }
+      else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
     handlePresetsCtxMenuOpen(event) {
       this.presetsCtxMenuVisible = true;

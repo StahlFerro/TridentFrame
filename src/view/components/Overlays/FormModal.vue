@@ -1,7 +1,7 @@
 <template>
   <div class="modal" :class="{'is-active': isActive}">
     <div class="modal-background blur" @click="$emit('close-modal-background-clicked')"></div>
-    <div class="modal-content neon-modal ">
+    <div class="modal-content neon-modal" :class="{'wide': isWide}">
       <div class="modal-form-container">
         <div class="modal-header">
           <slot name="modalHeader" />
@@ -28,7 +28,11 @@
       isActive: {
         type: Boolean,
         default: false,
-      }
+      },    
+      isWide: {
+        type: Boolean,
+        default: false,
+      },
     },
     emits: ['close-modal-background-clicked', 'close-modal-clicked'],
     data() {
