@@ -10,14 +10,14 @@
             <li :class="{ 'is-active': settings_tab_selection == 1 }">
               <a @click="settings_tab_selection = 1">Presets</a>
             </li>
-            <li :class="{ 'is-active': settings_tab_selection == 2 }">
+            <!-- <li :class="{ 'is-active': settings_tab_selection == 2 }">
               <a @click="settings_tab_selection = 2">Languages</a>
-            </li>
+            </li> -->
             <li :class="{ 'is-active': settings_tab_selection == 3 }">
-              <a @click="settings_tab_selection = 3">Window</a>
+              <a @click="settings_tab_selection = 2">Window</a>
             </li>
             <li :class="{ 'is-active': settings_tab_selection == 4 }">
-              <a @click="settings_tab_selection = 4">About</a>
+              <a @click="settings_tab_selection = 3">About</a>
             </li>
           </ul>
         </div>
@@ -151,13 +151,13 @@
             </div>
         </div>
 
-        <div 
+        <!-- <div 
           v-show="settings_tab_selection == 2"
           class="settings-subpanel-window">
-        </div>
+        </div> -->
 
         <div
-          v-show="settings_tab_selection == 3"
+          v-show="settings_tab_selection == 2"
           class="settings-subpanel-window"
         >
           <table class="table is-borderless" style="padding: 5px" width="100%">
@@ -214,7 +214,7 @@
         </div>
 
         <div
-          v-show="settings_tab_selection == 4"
+          v-show="settings_tab_selection == 3"
           class="settings-subpanel-about"
         >
           <div class="about-content">

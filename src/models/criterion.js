@@ -40,6 +40,7 @@ class AnimationCriteria extends TransformativeCriteria {
     this.loop_count = "";
     this.start_frame = "";
     this.skip_frame = 0;
+    this.skip_frame_maintain_delay = false;
   }
 }
 

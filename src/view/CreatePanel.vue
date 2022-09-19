@@ -197,27 +197,32 @@
         <div class="cpc-right-panel">
           <div class="cpc-right-top-panel">
             <div v-show="crtSubMenuSelection == 0">
-              <div class="general-form row-6">
-                <div class="field-cell">
+              <div class="general-form row-7">
+                <div class="field-cell span-2">
                   <InputField v-model="fname" :label="$t('general.fname')" type="text" hint="The name of the GIF/APNG" />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
+                  <InputField v-model="criteria.width" :label="$t('criterion.width')" type="number" hint="The width of the animated image"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @input="widthHandler"
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.height" label="Height" type="number" hint="The height of the animated image" 
+                  <InputField v-model="criteria.height" :label="$t('criterion.height')" type="number" hint="The height of the animated image" 
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @input="heightHandler"
                   />
                 </div>
                 <div class="field-cell">
-                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" :is-fullwidth="true" />
+                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" :label="$t('criterion.resize_method')" :is-fullwidth="true" />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="lockAspectRatio" label="Lock aspect ratio" hint="Lock the width and height ratio" />
+                  <CheckboxField v-model="criteria.flip_x" :label="$t('criterion.flip_x')" hint="Flip the image horizontally" />
+                  <br />
+                  <CheckboxField v-model="criteria.flip_y" :label="$t('criterion.flip_y')" hint="Flip the image vertically" />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="lockAspectRatio" :label="$t('form_helper.lock_aspect_ratio')" hint="Lock the width and height ratio" />
                   <!-- <label class="checkbox">
                     <input v-model="lockAspectRatio" type="checkbox" />
                     Lock aspect ratio
@@ -236,39 +241,43 @@
                   </template>
                 </div>
                 <div class="field-cell">
-                </div>
-                <div class="field-cell">
-                  <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
+                  <InputField v-model="criteria.delay" :label="$t('criterion.delay')" type="number" hint="The time needed to move to the next frame"
                               :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @input="delayHandler" 
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
+                  <InputField v-model="criteria.fps" :label="$t('criterion.fps')" type="number" hint="How many frames will be consecutively displayed per second"
                               :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @input="fpsHandler" 
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
+                  <InputField v-model="criteria.loop_count" :label="$t('criterion.loop_count')" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.start_frame" label="Start at frame" type="number" 
+                  <InputField v-model="criteria.start_frame" :label="$t('criterion.start_frame')" type="number" 
                               hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
-                  <br />
-                  <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
+                  <InputField v-model="criteria.skip_frame" :label="$t('criterion.skip_frame')" type="number" 
+                              hint="Amount of frames before the next frame is skipped. 0 for no skipping"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.preserve_alpha" label="Preserve Alpha" hint="(For GIFs) Preserve transparent pixels" />
+                  <CheckboxField v-model="criteria.skip_frame_maintain_delay" :label="$t('criterion.skip_frame_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.preserve_alpha" :label="$t('criterion.preserve_alpha')" hint="(For GIFs) Preserve transparent pixels" />
                   <br />
-                  <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
+                  <CheckboxField v-model="criteria.is_reversed" :label="$t('criterion.is_reversed')" hint="Reverse the animation" />
                 </div>
                 <div class="separator">
                   <div class="separator-space" />
