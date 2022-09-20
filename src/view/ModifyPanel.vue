@@ -32,7 +32,7 @@
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Dimensions
+                  {{ $t('image_metadata.dimensions') }}
                 </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ previewAttributesTable.dimensions }}</span>
@@ -44,7 +44,7 @@
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  File size
+                  {{ $t('image_metadata.fsize_hr') }}
                   <template v-if="preview_attribute">
                     <br />
                     {{ previewSizePercentage }}
@@ -60,7 +60,7 @@
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Format
+                  {{ $t('image_metadata.format') }}
                 </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ previewAttributesTable.format }}</span>
@@ -72,7 +72,7 @@
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Total frames
+                  {{ $t('image_metadata.frame_count') }}
                 </td>
                 <td class="mod-info-data">
                   <span v-if="preview_info">{{ previewAttributesTable.frameCount }}</span>
@@ -84,7 +84,7 @@
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Frame rate
+                  {{ $t('image_metadata.fps') }}
                 </td>
                 <td class="mod-info-data">
                   <span v-if="preview_info">{{ previewAttributesTable.fps }}</span>
@@ -96,7 +96,7 @@
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Avg. Delay
+                  {{ $t('image_metadata.average_delay') }}
                 </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ previewAttributesTable.averageDelay }}</span>
@@ -107,7 +107,7 @@
                   <span v-if="orig_attribute">{{ origAttributesTable.loopDuration }}</span>
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Loop duration
+                  {{ $t('image_metadata.loop_duration') }}
                 </td>
                 <td class="mod-info-data">
                   <span v-if="preview_attribute">{{ previewAttributesTable.loopDuration }}</span>
@@ -118,7 +118,7 @@
                   {{ origAttributesTable.loopCount }}
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Loop count
+                  {{ $t('image_metadata.loop_count') }}
                 </td>
                 <td class="mod-info-data">
                   {{ previewAttributesTable.loopCount }}

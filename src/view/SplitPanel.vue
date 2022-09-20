@@ -21,28 +21,28 @@
             </thead>
             <tbody>
               <tr>
-                <td class="spl-info-label is-cyan">Name</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.name') }}</td>
                 <td class="spl-info-data">
                   <span v-if="name">{{ name }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Dimensions</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.dimensions') }}</td>
                 <td class="spl-info-data">
                   <span v-if="dimensions">{{ dimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">File Size</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.fsize_hr') }}</td>
                 <td class="spl-info-data">
                   <span v-if="file_size">{{ file_size_hr }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Has Transparency</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.has_transparency') }}</td>
                 <td class="spl-info-data">
                   <span v-if="has_transparency">{{
                     has_transparency ? "Yes" : "No"
@@ -51,7 +51,7 @@
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Total frames</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.frame_count') }}</td>
                 <td class="spl-info-data">
                   <span v-if="frame_count">{{ frame_count }}</span>
                   <!-- <span v-else>-</span> -->
@@ -65,7 +65,7 @@
                 </td>
               </tr> -->
               <tr>
-                <td class="spl-info-label is-cyan">Average delay (ms)</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.average_delay') }}</td>
                 <td class="spl-info-data">
                   <span v-if="average_delay">{{
                     roundPrecise(average_delay, 3)
@@ -74,7 +74,7 @@
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Delays are even</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.delays_are_even') }}</td>
                 <td class="spl-info-data">
                   <span v-if="delays">{{
                     delays_are_even ? "Yes" : "No"
@@ -83,28 +83,28 @@
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Delays</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.delays') }}</td>
                 <td class="spl-info-data">
                   <span v-if="delays">{{ delays }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Frame rate (FPS)</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.fps') }}</td>
                 <td class="spl-info-data">
                   <span v-if="fps">{{ fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Loop duration</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.loop_duration') }}</td>
                 <td class="spl-info-data">
                   <span v-if="loop_duration">{{ loop_duration }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
               </tr>
               <tr>
-                <td class="spl-info-label is-cyan">Loop count</td>
+                <td class="spl-info-label is-cyan">{{ $t('image_metadata.loop_count') }}</td>
                 <td class="spl-info-data">
                   <template v-if="previewPath">
                     <span v-if="loop_count == 0">Infinite</span>
