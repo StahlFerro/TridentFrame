@@ -232,8 +232,8 @@
         <div class="mpc-right-panel">
           <div class="mpc-right-top-panel">
             <div v-show="modSubMenuSelection == 0">
-              <div class="general-form row-6">
-                <div class="field-cell">
+              <div class="general-form row-7">
+                <div class="field-cell span-2">
                   <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
                 </div>
                 <div class="field-cell">
@@ -257,9 +257,14 @@
                   <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
-                  <br />
                   <CheckboxField v-model="lockAspectRatio" label="Lock aspect ratio" hint="Lock the width and height ratio" />
+                  <br />
+                  <template v-if="aspect_ratio && aspect_ratio.text">
+                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
+                  </template>
+                  <template v-else>
+                    &nbsp;
+                  </template>
                 </div>
                 <div class="field-cell">
                   <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
@@ -283,15 +288,20 @@
                                  :is-fullwidth="true" 
                   />
                 </div>
-                <div class="field-cell" />
                 <div class="field-cell">
+                  <InputField v-model="criteria.skip_frame" :label="$t('criterion.skip_frame')" type="number" 
+                              hint="Amount of frames before the next frame is skipped. 0 or blank for no skipping"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.skip_frame_maintain_delay" :label="$t('criterion.skip_frame_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
                   <br />
-                  <template v-if="aspect_ratio && aspect_ratio.text">
-                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
-                  </template>
-                  <template v-else>
-                    &nbsp;
-                  </template>
+                  <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
                 </div>
                 <div class="separator">
                   <div class="separator-space" />

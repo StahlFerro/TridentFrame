@@ -17,6 +17,7 @@
       "delay": "Delay (seconds)",
       "delays_are_even": "Delays are even",
       "delays_list": "Delays list",
+      "delay_handling": "Delay handling",
       "is_reversed": "Is reversed",
       "preserve_alpha": "Preserve alpha",
       "loop_count": "Loop count",
