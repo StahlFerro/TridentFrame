@@ -13,6 +13,10 @@ class ImageMetadata:
             "value": info.get("base_filename"),
             "category": "general_info",
         }
+        self.sanitized_namestem = {
+            "value": info.get("sanitized_namestem"),
+            "category": "general_info",
+        }
         self.width = {
             "value": info.get("width"),
             "category": "general_info",

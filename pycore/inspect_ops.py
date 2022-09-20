@@ -203,9 +203,11 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     if im.mode == "P":
         stdio.debug(im.getpalette())
     im.close()
+    sanitized_namestem = imageutils.rstrip_trailing_symbols(base_fname)
     metadata = ImageMetadata({
         "name": filename,
         "base_filename": base_fname,
+        "sanitized_namestem": sanitized_namestem,
         "width": width,
         "height": height,
         "format": fmt,
@@ -289,9 +291,11 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     color_mode = COLOR_MODE_FULL_NAME.get(gif.mode) or gif.mode
     # logger.debug({"gif.info": gif.info, "palette": imageutils.reshape_palette(palette) if palette else None})
     gif.close()
+    sanitized_namestem = imageutils.rstrip_trailing_symbols(base_fname)
     metadata = AnimatedImageMetadata({
         "name": filename,
         "base_filename": base_fname,
+        "sanitized_namestem": sanitized_namestem,
         "width": width,
         "height": height,
         "format": fmt,
@@ -364,9 +368,11 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     #     if index < 4:
     #         im.show()
 
+    sanitized_namestem = imageutils.rstrip_trailing_symbols(base_fname)
     metadata = AnimatedImageMetadata({
         "name": filename,
         "base_filename": base_fname,
+        "sanitized_namestem": sanitized_namestem,
         "width": width,
         "height": height,
         "format": fmt,
@@ -420,7 +426,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     # width, height = im.size
     # im.close()
     image_info = {
-        "name": sequence_info[0]["base_filename"]["value"],
+        "name": sequence_info[0]["sanitized_namestem"]["value"],
         "total": sequence_count,
         "sequence": static_img_paths,
         "sequence_info": sequence_info,
@@ -435,12 +441,20 @@ def inspect_sequence_autodetect(image_path: Path) -> Dict:
     """Receives a single image, then finds similar images with the same name and then returns the information of those
     sequence"""
     current_dir = image_path.parents[0]
-    filename = imageutils.sequence_nameget(image_path)
+    sequence_stem_name = imageutils.sequence_nameget(image_path)
     selected_im_metadata = inspect_general(image_path, "static")
     if selected_im_metadata.is_animated["value"]:
-        raise ImageNotStaticException(filename, selected_im_metadata.format["value"].upper())
+        raise ImageNotStaticException(sequence_stem_name, selected_im_metadata.format["value"].upper())
     # logger.message(f"filename {filename}")
-    possible_sequence = [f for f in sorted(current_dir.glob("*")) if filename in f.name and f.is_file()]
+    possible_sequence = []
+    for index, f in enumerate(sorted(current_dir.glob("*"))):
+        if not f.is_file():
+            continue
+        fname_stem = imageutils.sequence_nameget(f.stem)
+        stdio.message(f"Detecting {index} images...")
+        if fname_stem == sequence_stem_name:
+            possible_sequence.append(f)
+    # possible_sequence = [f for f in sorted(current_dir.glob("*")) if sequence_stem_name in f.stem and f.is_file()]
     # raise Exception(str(possible_sequence))
     # raise Exception(possible_sequence)
     # paths_bufferio = io.StringIO(json.dumps(possible_sequence))

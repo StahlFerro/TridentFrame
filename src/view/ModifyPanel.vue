@@ -979,7 +979,7 @@ export default {
     populateForm(res) {
       var geninfo = res.general_info;
       var ainfo = res.animation_info;
-      this.fname = geninfo.base_filename.value;
+      this.fname = geninfo.sanitized_namestem.value;
       this.criteria.format = geninfo.format.value.toLowerCase();
       this.criteria.width = geninfo.width.value;
       this.criteria.height = geninfo.height.value;

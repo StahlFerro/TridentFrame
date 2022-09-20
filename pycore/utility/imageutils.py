@@ -19,6 +19,7 @@ from pycore.utility import vectorutils
 PNG_BLOCK_SIZE = 64
 ACTL_CHUNK = b"\x61\x63\x54\x4C"
 FILENAME_GROUPING_REGEX = re.compile('^(?P<filestem>.*?)(?P<sequence>[0-9]+)(?P<extension>\..{1,4})?$')
+ALPHANUMERIC_RSTRIP_REGEX = re.compile('(?P<filtered_name>.*[A-Za-z0-9])')
 
 
 # def reshape_palette(palette_array) -> np.array:
@@ -143,6 +144,19 @@ def sequence_nameget(f: Union[Path, str]) -> str:
         return fname_parts.group('filestem')
     else:
         return ''
+
+
+def rstrip_trailing_symbols(text: str) -> str:
+    """Right-strip trailing non-alphanumeric characters from a string
+
+    Args:
+        name (str): Input string
+
+    Returns:
+        str: The resulting string with no trailing non-alphanumeric characters
+    """
+    match = ALPHANUMERIC_RSTRIP_REGEX.match(text)
+    return match.group('filtered_name')
 
 
 def shout_indices(frame_count: int, percentage_mult: int) -> Dict[int, str]:

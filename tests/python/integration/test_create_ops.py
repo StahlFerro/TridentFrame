@@ -22,7 +22,7 @@ def test_create_gif(scaffold_spaced_dir, fx_samples_crbundle_001_create_optimize
 
     metadata = inspect_general(out_path)
     assert metadata.name['value'] == "checker_rotating.gif"
-    assert metadata.base_filename['value'] == "checker_rotating"
+    assert metadata.sanitized_namestem['value'] == "checker_rotating"
     assert metadata.width['value'] == 71
     assert metadata.height['value'] == 71
     assert metadata.loop_count['value'] == 4
@@ -47,7 +47,7 @@ def test_create_apng(scaffold_spaced_dir: Path, fx_samples_crbundle_002_create_o
 
     metadata = inspect_general(out_path)
     assert metadata.name['value'] == "not_tetris.png"
-    assert metadata.base_filename['value'] == "not_tetris"
+    assert metadata.sanitized_namestem['value'] == "not_tetris"
     assert metadata.width['value'] == 128
     assert metadata.height['value'] == 128
     assert metadata.loop_count['value'] == 0
