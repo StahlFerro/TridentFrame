@@ -27,37 +27,37 @@ class ImageMetadata:
         }
         self.format_version = {
             "value": info.get("format_version"),
-            "label": "Full format",
+            # "label": "Full format",
             "category": "general_info",
         }
         self.fsize = {
             "value": info.get("fsize"),
-            "label": "File size (bytes)",
+            # "label": "File size (bytes)",
             "category": "general_info",
         }
         self.fsize_hr = {
             "value": filehandler.read_filesize(self.fsize["value"]),
-            "label": "File size",
+            # "label": "File size",
             "category": "general_info",
         }
         self.absolute_url = {
             "value": info.get("absolute_url"),
-            "label": "Path",
+            # "label": "Path",
             "category": "general_info",
         }
         self.creation_datetime = {
             "value": info.get("creation_datetime"),
-            "label": "Creation Time",
+            # "label": "Creation Time",
             "category": "general_info",
         }
         self.modification_datetime = {
-            "value": info.get("creation_datetime"),
-            "label": "Modification Time",
+            "value": info.get("modification_datetime"),
+            # "label": "Modification Time",
             "category": "general_info",
         }
         self.comments = {
             "value": info.get("comments"),
-            "label": "Comments",
+            # "label": "Comments",
             "category": "general_info",
         }
         self.color_mode = {
@@ -78,7 +78,7 @@ class ImageMetadata:
         }
         self.exif = {
             "value": info.get("exif"),
-            "label": "EXIF metadata",
+            # "label": "EXIF metadata",
             "category": "general_info",
         }
         self.is_animated = {
@@ -87,7 +87,7 @@ class ImageMetadata:
         }
         self.hash_sha1 = {
             "value": info.get("hash_sha1"),
-            "label": "SHA1 Hash",
+            # "label": "SHA1 Hash",
             "category": "general_info",
         }
 
@@ -106,8 +106,11 @@ class ImageMetadata:
             subinfo = {}
             for k, v in (attr for attr in attrs if attr[1]["category"] == category):
                 # print(f"{k} -> {v}")
-                label = v.get("label") or k.replace("_", " ").capitalize()
-                subinfo[k] = {"value": v["value"], "label": label}
+                # label = v.get("label") or k.replace("_", " ").capitalize()
+                subinfo[k] = {
+                    "value": v["value"],
+                    # "label": label
+                }
             info[category] = subinfo
         return info
 
@@ -120,7 +123,7 @@ class AnimatedImageMetadata(ImageMetadata):
         }
         self.delays = {
             "value": info.get("delays"),
-            "label": "Delays",
+            # "label": "Delays",
             "category": "animation_info",
         }
         self.delays_are_even = {
@@ -129,12 +132,12 @@ class AnimatedImageMetadata(ImageMetadata):
         }
         self.average_delay = {
             "value": sum(self.delays["value"]) / len(self.delays["value"]),
-            "label": "Average delay (ms)",
+            # "label": "Average delay (ms)",
             "category": "animation_info",
         }
         self.fps = {
             "value": round(1000.0 / self.average_delay["value"], 3) if self.average_delay["value"] != 0 else 0,
-            "label": "Frame rate (FPS)",
+            # "label": "Frame rate (FPS)",
             "category": "animation_info",
         }
         self.loop_duration = {

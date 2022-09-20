@@ -26,7 +26,31 @@
       "format": "Format"
     },
     "image_metadata": {
-
+      "name": "Name",
+      "width": "Width",
+      "height": "Height",
+      "format": "Format",
+      "format_vesion": "Full format",
+      "fsize": "File size (bytes)",
+      "fsize_hr": "File size",
+      "absolute_url": "Path",
+      "creation_datetime": "Creation time",
+      "modification_datetime": "Last modified time",
+      "comments": "Comments",
+      "color_mode": "Color mode",
+      "color_profile": "Color profile",
+      "bit_depth": "Bit depth",
+      "has_transparency": "Has transparency",
+      "exif": "EXIF metadata",
+      "is_animated": "Is animated",
+      "hash_sha1": "SHA1 Hash",
+      "frame_count": "Frame count",
+      "delays": "Delays list",
+      "delays_are_even": "Delays are even",
+      "average_delay": "Average delay (ms)",
+      "fps": "Frame rate",
+      "loop_duration": "Run duration",
+      "loop_count": "Run count"
     }
   }
 }

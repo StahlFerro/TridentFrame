@@ -39,11 +39,13 @@
                 </tr> -->
                 <tr
                   v-for="attribute in attr_group.attributes" 
-                  :key="'iprop_' + attr_group.category + '_' + attribute"
+                  :key="'Attribute$' + attr_group.category + '_' + attribute"
                   :set="attr_field = imageInfo[attr_group.category][attribute]"
                 >
                   <td style="width: 123px">
-                    <strong><span class="is-white-d">{{ attr_field.label }}</span></strong>
+                    <strong><span class="is-white-d">
+                      {{ $t(`image_metadata.${attribute}`) }}
+                    </span></strong>
                   </td>
                   <template v-if="attribute == 'loop_count' && attr_field.value == 0">
                     <td style="max-width: 369px; word-wrap: break-all">
