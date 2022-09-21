@@ -153,7 +153,7 @@
                 </template>
                 <template #dataRow="presetRow">
                   <td class="is-paddingless is-marginless">
-                    <div :id="`PresetRowId-${presetRow.id}`" class="clickable" @click="viewPreset(presetRow.id)">
+                    <div :id="`PresetRowId-${presetRow.id}`" class="clickable" :class="{'is-selected': presetSelectionId == presetRow.id}" @click="viewPreset(presetRow.id)">
                       {{ presetRow.name }}
                     </div>
                   </td>
@@ -369,7 +369,7 @@ export default {
       },
       LOCALES_LIST: LOCALES_LIST,
       localPresetsSelection: [],
-      presetSelectionValue: "",
+      presetSelectionId: "",
       selectedPresetAttributes: []
     };
   },
@@ -404,7 +404,7 @@ export default {
         console.debug(`Preset updated\nOld/New count: ${oldVal}/${newVal}`);
         const presetCount = this.populatePresetsSelectorTable();
         if (presetCount == 0) {
-          this.presetSelectionValue = "";
+          this.presetSelectionId = "";
         }
       },
     }
@@ -427,8 +427,7 @@ export default {
     console.log(this.$i18n.availableLocales);
     const loadedPresets = this.populatePresetsSelectorTable();
     if (loadedPresets > 0) {
-      this.presetSelectionValue = this.localPresetsSelection[0].id;
-      this.viewPreset(this.presetSelectionValue);
+      this.viewPreset(this.localPresetsSelection[0].id);
     }
   },
   methods: {
@@ -461,6 +460,8 @@ export default {
       return PresetType.fromName(presetTypeName).label;
     },
     viewPreset(presetId) {
+      this.presetSelectionId = presetId;
+      console.log(presetId);
       const presetJson = this.presets[presetId];
       if (presetJson) {
         const preset = Preset.fromJSON(presetJson);

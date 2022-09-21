@@ -152,5 +152,9 @@ table.kvp-table {
             border-color: lighten($color: $cyan, $amount: 10);
             color: lighten($color: $cyan, $amount: 10);
         }
+        &.is-selected {
+            background-color: $cyan;
+            color: $dark-3;
+        }
     }
 }

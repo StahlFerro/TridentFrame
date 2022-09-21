@@ -62,10 +62,10 @@ $settings-group-width: calc(100% / #{$settings-row-count} - (#{$settings-col-gap
         align-content: stretch;
         height: 100%;
         .settings-preset-selector {
-            flex: 0 0 calc(35% - 5px);
+            flex: 0 0 calc(50% - 5px);
         }
         .settings-preset-key-values {
-            flex: 0 0 calc(65% - 5px);
+            flex: 0 0 calc(50% - 5px);
             background-color: $dark-2;
         }
     }
