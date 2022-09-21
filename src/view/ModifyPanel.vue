@@ -407,7 +407,6 @@
                   <template #presetContextMenu>
                     <ContextMenu ref="modPresetContextMenu" ctx-menu-id="modifyPanelPresetContextMenu" 
                                 anchor-element-id="modPanelPresetPopperBtn" placement="top-start"
-                                @ctx-menu-open="handlePresetsCtxMenuOpen"
                                 @ctx-option-click="handlePresetsCtxMenuOptionClick"
                                 @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
                     >
@@ -1309,15 +1308,11 @@ export default {
       }
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
-    handlePresetsCtxMenuOpen(event) {
-      this.presetsCtxMenuVisible = true;
-    },
     handlePresetsCtxMenuOptionClick(event, optionId) {
       // console.log(`=== handlePresetsCtxMenuOptionClick START vis: ${this.presetsCtxMenuVisible} ===`);
       // console.log(event);
       // console.log(optionId);
       this.closePresetPopper(event);
-      this.presetsCtxMenuVisible = false;
       if (optionId == 'preset_create') {
         this.openPresetModal(event, optionId);
       }
@@ -1334,14 +1329,12 @@ export default {
       // console.log(event);
       // console.log(args);
       this.closePresetPopper(event);
-      this.presetsCtxMenuVisible = false;
       // console.log(`=== handlePresetsCtxMenuClickOutside END vis: ${this.presetsCtxMenuVisible}===`);
     },
     btnTogglePresetPopper(event) {
       // console.log(`=== btnTogglePresetPopper START vis: ${this.presetsCtxMenuVisible} ===`);
       if (this.presetsCtxMenuVisible) {
         this.closePresetPopper(event);
-        this.presetsCtxMenuVisible = false;
       }
       else {
         this.openPresetPopper(event);
@@ -1352,9 +1345,11 @@ export default {
       // console.log('check this one');
       // console.log(event);
       this.$refs.modPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
+      this.presetsCtxMenuVisible = true;
     },
     closePresetPopper(event) {
       this.$refs.modPresetContextMenu.closePopper();
+      this.presetsCtxMenuVisible = false;
     },
     loadOrigMetadata(res) {
       let geninfo = res.general_info;
