@@ -40,7 +40,6 @@
       <div class="create-panel-middlebar">
         <ContextMenu ref="crtLoadImagesContextMenu" ctx-menu-id="createPanelLoadImagesContextMenu" 
                      anchor-element-id="addPopperBtn" placement="top-start"
-                     @ctx-menu-open="handleLoadImageCtxMenuOpen"
                      @ctx-option-click="handleLoadImageCtxMenuOptionClick"
                      @ctx-menu-click-outside="handleLoadImageCtxMenuClickOutside"
         >
@@ -383,7 +382,6 @@
                   <template #presetContextMenu>
                     <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
                                 anchor-element-id="createPanelPresetPopperBtn" placement="top-start"
-                                @ctx-menu-open="handlePresetsCtxMenuOpen"
                                 @ctx-option-click="handlePresetsCtxMenuOptionClick"
                                 @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
                     >
@@ -1056,15 +1054,12 @@ export default {
       }
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
-    handlePresetsCtxMenuOpen(event) {
-      this.presetsCtxMenuVisible = true;
-    },
     handlePresetsCtxMenuOptionClick(event, optionId) {
       // console.log(`=== handlePresetsCtxMenuOptionClick START vis: ${this.presetsCtxMenuVisible} ===`);
       // console.log(event);
       // console.log(optionId);
       this.closePresetPopper(event);
-      this.presetsCtxMenuVisible = false;
+      // this.presetsCtxMenuVisible = false;
       if (optionId == 'preset_create') {
         this.openPresetModal(event, optionId);
       }
@@ -1081,14 +1076,14 @@ export default {
       // console.log(event);
       // console.log(args);
       this.closePresetPopper(event);
-      this.presetsCtxMenuVisible = false;
+      // this.presetsCtxMenuVisible = false;
       // console.log(`=== handlePresetsCtxMenuClickOutside END vis: ${this.presetsCtxMenuVisible}===`);
     },
     btnTogglePresetPopper(event) {
       // console.log(`=== btnTogglePresetPopper START vis: ${this.presetsCtxMenuVisible} ===`);
       if (this.presetsCtxMenuVisible) {
         this.closePresetPopper(event);
-        this.presetsCtxMenuVisible = false;
+        // this.presetsCtxMenuVisible = false;
       }
       else {
         this.openPresetPopper(event);
@@ -1096,22 +1091,21 @@ export default {
       // console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
     },
     openPresetPopper(event) {
-      console.log('check this one');
-      console.log(event);
+      // console.log('check this one');
+      // console.log(event);
       this.$refs.crtPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
+      this.presetsCtxMenuVisible = true;
     },
     closePresetPopper(event) {
       this.$refs.crtPresetContextMenu.closePopper();
-    },
-    handleLoadImageCtxMenuOpen(event) {
-      this.loadImageCtxMenuVisible = true;
+      this.presetsCtxMenuVisible = false;
     },
     handleLoadImageCtxMenuOptionClick(event, optionId) {
       // console.log(`=== handleLoadImageCtxMenuOptionClick START vis: ${this.loadImageCtxMenuVisible} ===`);
       console.log(event);
       console.log(optionId);
       this.closeLoadPopper(event);
-      this.loadImageCtxMenuVisible = false;
+      // this.loadImageCtxMenuVisible = false;
       if (optionId == 'load_images'){
         this.loadImages('insert');
       }
@@ -1125,7 +1119,7 @@ export default {
       // console.log(event);
       // console.log(args);
       this.closeLoadPopper(event);
-      this.loadImageCtxMenuVisible = false;
+      // this.loadImageCtxMenuVisible = false;
       // console.log(`=== handleLoadImageCtxMenuClickOutside END vis: ${this.loadImageCtxMenuVisible}===`);
     },
     toggleLoadButtonAnim(ops, state = false) {
@@ -1141,7 +1135,7 @@ export default {
       // console.log(`=== btnToggleLoadPopper START vis: ${this.loadImageCtxMenuVisible} ===`);
       if (this.loadImageCtxMenuVisible) {
         this.closeLoadPopper(event);
-        this.loadImageCtxMenuVisible = false;
+        // this.loadImageCtxMenuVisible = false;
       }
       else {
         this.openLoadPopper(event);
@@ -1150,9 +1144,11 @@ export default {
     },
     openLoadPopper(event) {
       this.$refs.crtLoadImagesContextMenu.openPopper(event, this.loadImagesCtxMenuOptions);
+      this.loadImageCtxMenuVisible = true;
     },
     closeLoadPopper(event) {
       this.$refs.crtLoadImagesContextMenu.closePopper();
+      this.loadImageCtxMenuVisible = false;
     },
     loadImages(ops) {
       console.log("crt load image with ops:", ops);

@@ -1123,6 +1123,11 @@ export default {
       },
     }
   },
+  created() {
+    window.addEventListener("resize", () => {
+      this.closePresetPopper();
+    });
+  },
   beforeMount: function () {
     const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
     try {
@@ -1141,6 +1146,11 @@ export default {
     // Load all 
     this.populatePresetsSelector();
     // this.emitter.on('global-presets-refresh', presetCollection => { this.addPreset(args); }))
+  },
+  unmounted() {
+    window.removeEventListener("resize", () => {
+      this.closePresetPopper();
+    });
   },
   methods: {
     populatePresetsSelector() {
@@ -1185,7 +1195,7 @@ export default {
       }
       else if (presetOperation == 'preset_create') {
         const attrJson = JSON.parse(JSON.stringify(this.criteria));
-        const presetType = PresetType.CreationCriteria;
+        const presetType = PresetType.ModificationCriteria;
         const presetNewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
         presetNewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
         console.debug(`populatePresetModalTable`);
@@ -1339,8 +1349,8 @@ export default {
       // console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
     },
     openPresetPopper(event) {
-      console.log('check this one');
-      console.log(event);
+      // console.log('check this one');
+      // console.log(event);
       this.$refs.modPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
     },
     closePresetPopper(event) {
