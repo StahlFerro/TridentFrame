@@ -1,9 +1,50 @@
 $general-fields-col-gap: 5px;
+$optim-fields-col-gap: 15px;
 
 .top-pad-5 {
     padding-top: 5px;
 }
 
+.optimization-form {
+    padding: 5px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: $optim-fields-col-gap;
+    row-gap: 5px;
+    label {
+        margin: 0px !important;
+        padding: 0 !important;
+    }
+    &.row-3 {
+        .field-cell-group {
+            align-items: center;
+            flex: 0 0 calc(100% / 3 * 1 - (#{$optim-fields-col-gap} * (2 - 0) / 3));
+            &.span-2 {
+                flex: 0 0 calc(100% / 3 * 2 - (#{$optim-fields-col-gap} * (2 - 1) / 3));
+            }
+            &.span-3 {
+                flex: 0 0 calc(100% / 3 * 3 - (#{$optim-fields-col-gap} * (2 - 2) / 3));
+            }
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            column-gap: 2px;
+            .toggle-cell {
+                flex: 0 0 calc(50% - 1px);
+            }
+            .field-cell {
+                flex: 0 0 calc(50% - 1px);
+                &.full-width {
+                    flex: 1 0 100%;
+                }
+                &.half {
+                    flex: 0 0 25%;
+                }
+            }
+        }
+    }
+}
 
 .general-form {
     padding: 5px;
@@ -12,6 +53,10 @@ $general-fields-col-gap: 5px;
     flex-wrap: wrap;
     column-gap: $general-fields-col-gap;
     row-gap: 5px;
+    label {
+        margin: 0px !important;
+        padding: 0 !important;
+    }
     .separator {
         flex: 1 0 100%;
         display: flex;
@@ -89,10 +134,6 @@ $general-fields-col-gap: 5px;
                 flex: 0 0 calc(100% / 7 * 7 - (#{$general-fields-col-gap} * (6 - 6) / 7));
             }
         }
-    }
-    label {
-        margin: 0px !important;
-        padding: 0 !important;
     }
     .field-cell.full-width {
         flex: 1 0 100%;

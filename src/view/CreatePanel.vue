@@ -559,7 +559,7 @@
               </table> -->
             </div>
             <div v-show="crtSubMenuSelection == 1 && criteria.format == 'gif'">
-              <table
+              <!-- <table
                 class="mod-new-control-table is-hpaddingless medium-size-label"
                 width="100%"
               >
@@ -577,16 +577,30 @@
                   v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
                   v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
                 />
-                <!-- <GIFUnoptimizationRow
+                <GIFUnoptimizationRow
                         :is_optimized.sync="is_optimized"
                         :is_lossy.sync="is_lossy"
                         :is_reduced_color.sync="is_reduced_color"
                         :is_unoptimized.sync="is_unoptimized"
-                      /> -->
-              </table>
+                      /> 
+              </table> -->
+              <GIFOptimizationRow
+                  v-model:is_optimized="gif_opt_criteria.is_optimized"
+                  v-model:optimization_level="gif_opt_criteria.optimization_level"
+                  v-model:is_lossy="gif_opt_criteria.is_lossy"
+                  v-model:lossy_value="gif_opt_criteria.lossy_value"
+                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
+                  v-model:color_space="gif_opt_criteria.color_space"
+                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
+                  v-model:dither_method="gif_opt_criteria.dither_method"
+                  v-model:palletization_method="gif_opt_criteria.palletization_method"
+                  v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
+                  v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
+                  v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
+              />
             </div>
             <div v-show="crtSubMenuSelection == 1 && criteria.format == 'png'">
-              <table
+              <!-- <table
                 class="mod-new-control-table is-hpaddingless medium-size-label"
                 width="100%"
               >
@@ -603,12 +617,20 @@
                   v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
                   v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
                 />
-                <!-- <APNGUnoptimizationRow
-                        :apng_is_optimized.sync="apng_is_optimized"
-                        :apng_is_reduced_color.sync="apng_is_reduced_color"
-                        :apng_is_unoptimized.sync="apng_is_unoptimized"
-                      /> -->
-              </table>
+              </table> -->
+              <APNGOptimizationRow
+                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
+                  v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
+                  v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
+                  v-model:apng_color_count="apng_opt_criteria.apng_color_count"
+                  v-model:apng_quantization_enabled="apng_opt_criteria.apng_quantization_enabled"
+                  v-model:apng_quantization_quality_min="apng_opt_criteria.apng_quantization_quality_min"
+                  v-model:apng_quantization_quality_max="apng_opt_criteria.apng_quantization_quality_max"
+                  v-model:apng_quantization_speed="apng_opt_criteria.apng_quantization_speed"
+                  v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
+                  v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
+                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
+              />
             </div>
           </div>
           <div class="cpc-right-bottom-panel">

@@ -1,15 +1,20 @@
 <template>
-  <tr>
-    <td class="force-vcenter">
-      <label class="checkbox" title="Unoptimizes the APNG">
-        <input
-          v-model="apng_is_unoptimized" type="checkbox" :disabled="apngIsOptimized || apngIsLossy"
-          @change="$emit('update:apng_is_unoptimized', apng_is_unoptimized)"
-        />
-        Unoptimize
-      </label>
-    </td>
-  </tr>
+  <div class="optimization-form row-3">
+    <div class="field-cell-group">
+      <div class="toggle-cell">
+        <label class="checkbox" title="Unoptimizes the APNG">
+          <input
+            v-model="apng_is_unoptimized" type="checkbox" :disabled="apngIsOptimized || apngIsLossy"
+            @change="$emit('update:apng_is_unoptimized', apng_is_unoptimized)"
+          />
+          Unoptimize
+        </label>
+      </div>
+      <div class="field-cell">
+
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
