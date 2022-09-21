@@ -82,7 +82,7 @@ export default {
   methods: {
     openPopper(event, contextData) {
       // console.log(event);
-      // console.log(contextData);
+      console.log(contextData);
       this.isVisible = true;
       this.contextData = contextData;
       this.originalEvent = event;

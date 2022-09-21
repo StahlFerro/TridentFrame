@@ -306,6 +306,164 @@
                 <div class="separator">
                   <div class="separator-space" />
                 </div>
+                <!-- <div class="field-cell span-3" /> -->
+                <!-- <div class="field-cell span-5"> -->
+                <FormModal :is-active="presetModal.modalIsActive"
+                          :is-wide="presetModal.presetOperation == 'preset_update'"
+                          @close-modal-clicked="closePresetModal"
+                          @close-modal-background-clicked="closePresetModal"
+                          @keydown.esc="presetModal.modalIsActive = false"
+                >
+                  <template #modalHeader>
+                    <p class="is-white-d">
+                      <template v-if="presetModal.presetOperation == 'preset_view'">
+                        View preset
+                      </template>
+                      <template v-else-if="presetModal.presetOperation == 'preset_create'">
+                        Create preset
+                      </template>
+                      <template v-else-if="presetModal.presetOperation == 'preset_update'">
+                        Update existing preset
+                      </template>
+                    </p>
+                  </template>
+                  <template #modalDisplay>
+                    <KeyValueTable :rows="presetModal.presetDraft.draftAttributes" 
+                                  keyHeader="Attribute" 
+                                  :valueHeader="presetModal.presetOperation == 'preset_update'? 'Current value' : 'Value'"
+                    >
+                      <template v-if="presetModal.presetOperation != 'preset_view'" #rowControlsHeaderLeft>
+                        <th class="kvp-control-fit" hint="Include this attribute to the preset?">
+                          Include?
+                        </th>
+                      </template>
+                      <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsHeaderRight>
+                        <th>
+                          New value
+                        </th>
+                        <th class="kvp-control-fit" hint="Update the current value of the preset with this new one?">
+                          Update?
+                        </th>
+                        <th class="kvp-desc-short-column">
+                          Conclusion
+                        </th>
+                      </template>
+                      <template v-if="presetModal.presetOperation != 'preset_view'" #rowControlsLeft="draftAttr">
+                        <td class="center">
+                          <CheckboxField :modelValue="draftAttr.include" 
+                                        @update:modelValue="newVal => updatePresetDraftInclude(draftAttr, newVal)"
+                                        @mouse-over-down="updatePresetDraftInclude(draftAttr, !draftAttr.include)"
+                          />
+                        </td>
+                      </template>
+                      <template #dataRow="draftAttr">
+                        <td>
+                          <p>
+                            {{ draftAttr.pLabel }}
+                          </p>
+                        </td>
+                        <td>
+                          <p>
+                            {{ draftAttr.pValue }}
+                          </p>
+                        </td>
+                      </template>
+                      <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsRight="draftAttr">
+                        <td>
+                          <p>
+                            {{ draftAttr.pValueNew }}
+                          </p>
+                        </td>
+                        <td class="center">
+                          <CheckboxField :modelValue="draftAttr.updateValue" 
+                                        @update:modelValue="newVal => updatePresetDraftUpdate(draftAttr, newVal)"
+                                        @mouse-over-down="updatePresetDraftUpdate(draftAttr, !draftAttr.updateValue)"
+                          />
+                        </td>
+                        <td>
+                          {{ getPresetDraftAttributeConclusion(draftAttr).label }}
+                        </td>
+                      </template>
+                    </KeyValueTable>
+                  </template>
+                  <template #modalForm>
+                    <InputField v-model="presetModal.newPresetName" type="text" hint="Name of the new preset"
+                                :label="presetModal.presetOperation == 'preset_update'? 'Change preset name' : 'Preset name'"
+                                @input="presetModal.noPresetName = false;"
+                                :is-readonly="presetModal.presetOperation == 'preset_view'"
+                    />
+                  </template>
+                  <template #modalControls>
+                    <ButtonField v-if="presetModal.presetOperation == 'preset_create'" label="Create preset" color="blue" @click="createNewPreset" />
+                    <ButtonField v-if="presetModal.presetOperation == 'preset_update'" label="Update preset" color="blue" @click="updatePreset" />
+                    <ButtonField :label="presetModal.presetOperation == 'preset_view'? 'Close' : 'Cancel'" @click="closePresetModal" />
+                    <p v-if="presetModal.noPresetName">
+                      <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
+                      Preset name is required!
+                    </p>
+                  </template>
+                </FormModal>
+                <PresetSelector>
+                  <template #presetContextMenu>
+                    <ContextMenu ref="modPresetContextMenu" ctx-menu-id="modifyPanelPresetContextMenu" 
+                                anchor-element-id="modPanelPresetPopperBtn" placement="top-start"
+                                @ctx-menu-open="handlePresetsCtxMenuOpen"
+                                @ctx-option-click="handlePresetsCtxMenuOptionClick"
+                                @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
+                    >
+                      <template #contextMenuItem="ctxItemData">
+                        <ContextMenuItem>
+                          <template #contextMenuOptionIcon>
+                            <ContextMenuItemIcon v-if="ctxItemData.icon">
+                              <font-awesome-icon :icon="ctxItemData.icon" />
+                            </ContextMenuItemIcon>
+                          </template>
+                          <template #contextMenuOptionLabel>
+                            {{ ctxItemData.name }}
+                          </template>
+                        </ContextMenuItem>
+                      </template>
+                    </ContextMenu>
+                  </template>
+                  <template #presetControlsLeft>
+                    <div class="field-cell">
+                      <ButtonField id="modPanelPresetPopperBtn" label="Presets..." color="blue"
+                                :listen-to-outside-clicks="true"
+                                :icons="['fas', 'paint-roller']"
+                                :is-square="true"
+                                @click="btnTogglePresetPopper"
+                                @click-outside="debugHandler"
+                    />
+                    </div>
+                  </template>
+                  <template #presetSelection>
+                    <div class="field-cell span-2">
+                      <DropdownField 
+                      v-model="presetSelectionValue"
+                      :options-list="localPresetsSelection" 
+                      :is-non-interactive="false" 
+                      :is-fullwidth="true"
+                    />
+                    </div>
+                  </template>
+                  <template #presetControlsRight>
+                    <div class="field-cell">
+
+                      <ButtonField label="View preset" color="blue"
+                                @click="viewPreset"
+                    />
+                    </div>
+                    <div class="field-cell">
+                      
+                    <ButtonField label="Apply preset" color="purple"
+                                @click="applyPreset"
+                    />
+                    </div>
+                  </template>
+                </PresetSelector>
+                <div class="separator">
+                  <div class="separator-space" />
+                </div>
                 <div class="field-cell span-4">
                   <ButtonInputField>
                     <template #buttonControl>
@@ -644,12 +802,21 @@ import CheckboxField from './components/Form/CheckboxField.vue';
 import DropdownField from './components/Form/DropdownField.vue';
 import ButtonField from './components/Form/ButtonField.vue';
 import ButtonInputField from './components/Form/ButtonInputField.vue';
+import ContextMenu from './components/ContextMenu/ContextMenu.vue';
+import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
+import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
+import FormModal from './components/Overlays/FormModal.vue';
+import PresetSelector from './components/Presets/PresetSelector.vue';
+import KeyValueTable from './components/Displays/KeyValueTable.vue';
+import KeyValueTableDataRow from './components/Displays/KeyValueTableDataRow.vue';
+import KeyValueTableRowControl from './components/Displays/KeyValueTableRowControl.vue';
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
 import { APNGOptimizationCriteria, GIFOptimizationCriteria, ModificationCriteria } from '../models/criterion';
+import { Preset, PresetDraft, PresetType, PresetDraftAttribute } from '../models/presets';
 // import Vue from 'vue';
 
 const SUPPORTED_MODIFY_EXTENSIONS = [
@@ -760,6 +927,23 @@ export default {
     DropdownField,
     ButtonField,
     ButtonInputField,
+    ContextMenu,
+    ContextMenuItem,
+    ContextMenuItemIcon,
+    FormModal,
+    PresetSelector,
+    KeyValueTable,
+    KeyValueTableDataRow,
+    KeyValueTableRowControl,
+  },
+  props: {
+    presets: {
+      type: Object,
+      default() {
+        return {}
+      },
+      required: false,
+    }
   },
   data() {
     return {
@@ -794,6 +978,21 @@ export default {
       ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
       statusBarId: "modifyPanelStatusBar",
       // statusBarBus: new Vue(),
+      presetsCtxMenuVisible: false,
+      presetModal: {
+        modalIsActive: false,
+        presetOperation: "preset_create",
+        newPresetName: "",
+        presetDraft: {},
+        noPresetName: false,
+      },
+      presetSelectionValue: "",
+      localPresetsSelection: [],
+      presetCtxMenuOptions: [
+        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'trash-can'], color: 'red'},
+        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'square-pen'], color: 'blue'},
+        {id: 'preset_create', name: "Create new preset", icon: ['fas', 'plus'], color: 'green'},
+      ],
     };
   },
   computed: {
@@ -905,6 +1104,24 @@ export default {
       console.debug(`hasModification: ${this.hasGeneralModification} ${this.hasFormatOptimization}`)
       return this.orig_attribute.path !== "" && this.hasGeneralModification || this.hasFormatOptimization;
     },
+    // Triggers everytime this.presets property is updated on App.vue
+    computeModifiedPresets() {
+      console.log('computeModifiedPresets triggered');
+      const modifiedDateTimes = Object.entries(this.presets).map(([k, v]) => v.lastModifiedDateTime);
+      return modifiedDateTimes
+    },
+  },
+  watch: {
+    'computeModifiedPresets': {
+      // When this property is updated, refresh the preset selector values
+      handler: function(newVal, oldVal) {
+        console.debug(`Preset updated\nOld/New count: ${oldVal}/${newVal}`);
+        const presetCount = this.populatePresetsSelector();
+        if (presetCount == 0) {
+          this.presetSelectionValue = "";
+        }
+      },
+    }
   },
   beforeMount: function () {
     const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
@@ -917,7 +1134,218 @@ export default {
       console.error(error);
     }
   },
+  mounted() {
+    // console.log(this.$i18n.availableLocales);
+    // console.log(this.$i18n.messages);
+    // console.log(this.$t('general.fname'));
+    // Load all 
+    this.populatePresetsSelector();
+    // this.emitter.on('global-presets-refresh', presetCollection => { this.addPreset(args); }))
+  },
   methods: {
+    populatePresetsSelector() {
+      console.log('populatePresetsSelector');
+      console.log(this.presets);
+      const presets = JSON.parse(JSON.stringify(this.presets));
+      console.log(presets);
+      this.localPresetsSelection = [];
+      for (const [id, preset] of Object.entries(this.presets)) {
+        this.localPresetsSelection.push({
+          name: id,
+          label: preset.name,
+          description: "",
+        })
+      }
+      return this.localPresetsSelection.length;
+    },
+    openPresetModal(event, presetOperation) {
+      this.presetModal.presetOperation = presetOperation;
+      const activateModal = this.populatePresetModalTable(presetOperation);
+      this.presetModal.modalIsActive = activateModal;
+    },
+    populatePresetModalTable(presetOperation) {
+      if (presetOperation == 'preset_view') {
+        const id = this.presetSelectionValue;
+        console.log(id);
+        if (id) {
+          console.log(id);
+          const currPreset = Preset.fromJSON(this.presets[id]);
+          const attrJson = JSON.parse(JSON.stringify(currPreset.presetObject));
+          const presetType = currPreset.presetType;
+          const presetViewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
+          presetViewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+          this.presetModal.presetDraft = presetViewDraft;
+          this.presetModal.newPresetName = currPreset.name;
+          return true;
+        } 
+        else {
+          this._logWarning(`Please select a preset from the dropdown to view!`);
+          return false;
+        }
+      }
+      else if (presetOperation == 'preset_create') {
+        const attrJson = JSON.parse(JSON.stringify(this.criteria));
+        const presetType = PresetType.CreationCriteria;
+        const presetNewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
+        presetNewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+        console.debug(`populatePresetModalTable`);
+        console.log(presetNewDraft);
+        this.presetModal.presetDraft = presetNewDraft;
+        return true;
+      }
+      else if (presetOperation == 'preset_update') {
+        const id = this.presetSelectionValue;
+        console.log(id);
+        if (id) {
+          console.log(id);
+          const currPreset = this.presets[id];
+          const attrObj = JSON.parse(JSON.stringify(this.criteria));
+          const presetUpdateDraft = PresetDraft.buildUpdatePresetDraft(currPreset, attrObj);
+          presetUpdateDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+          console.log('presetUpdateDraft');
+          console.log(presetUpdateDraft);
+          this.presetModal.presetDraft = presetUpdateDraft;
+          this.presetModal.newPresetName = currPreset.name;
+          return true;
+        } 
+        else {
+          this._logWarning(`Please select a preset from the dropdown to update!`);
+          return false;
+        }
+      }
+    },
+    getPresetDraftAttributeConclusion(draftAttrJson) {
+      const draftAttr = PresetDraftAttribute.fromJSON(draftAttrJson);
+      return draftAttr.conclusion();
+    },
+    updatePresetDraftInclude(draftAttr, checkValue) {
+      console.log(draftAttr);
+      console.log(checkValue);
+      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == draftAttr.pKey);
+      if (attr) {
+        attr.include = checkValue;
+      }
+    },
+    updatePresetDraftUpdate(draftAttr, checkValue) {
+      console.log(draftAttr);
+      console.log(checkValue);
+      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == draftAttr.pKey);
+      if (attr) {
+        attr.updateValue = checkValue;
+      }
+    },
+    createNewPreset(event) {
+      console.log(this.presetModal.presetDraft);
+      const presetName = this.presetModal.newPresetName;
+      if (!presetName) {
+        this.presetModal.noPresetName = true;
+        return;
+      }
+      const presetType = this.presetModal.presetDraft.presetType;
+      const preset = Preset.createFromDraft(presetName, presetType, this.presetModal.presetDraft)
+      console.log(preset);
+      this.emitter.emit('add-preset', preset);
+      console.log('after emit');
+      console.log(this.presets);
+      this.closePresetModal(event);
+      this._logInfo(`Created new preset ${preset.name}`);
+    },
+    updatePreset(event) {
+      const presetName = this.presetModal.newPresetName;
+      if (!presetName) {
+        this.presetModal.noPresetName = true;
+        return;
+      }
+      const id = this.presetSelectionValue;
+      console.log(id);
+      if (id) {
+        console.log(id);
+        const presetProxy = this.presets[id];
+        const presetJson = JSON.parse(JSON.stringify(presetProxy))
+        console.log(presetJson);
+        const preset = Preset.fromJSON(presetJson);
+        console.log(preset);
+        preset.updateFromDraft(this.presetModal.newPresetName, this.presetModal.presetDraft);
+        this.emitter.emit('update-preset', preset);
+        this.closePresetModal(event);
+        this._logInfo(`Updated preset ${preset.name}`);
+      }
+    },
+    deletePreset(event){
+      const id = this.presetSelectionValue;
+      if (id) {
+        console.log(id);
+        const presetJson = this.presets[id];
+        this.emitter.emit('delete-preset', id);
+        this._logInfo(`Deleted preset ${presetJson.name}`);
+      }
+      else this._logWarning(`Please select a preset from the dropdown to delete!`);
+    },
+    closePresetModal(event) {
+      this.presetModal.noPresetName = false;
+      this.presetModal.newPresetName = "";
+      this.presetModal.modalIsActive = false;
+    },
+    viewPreset(event) {
+      this.openPresetModal(event, 'preset_view');
+    },
+    applyPreset(event) {
+      const id = this.presetSelectionValue;
+      if (id) {
+        console.log(id);
+        const presetJson = this.presets[id];
+        const preset = Preset.fromJSON(presetJson);
+        this.criteria.updateFromPreset(preset);
+      }
+      else this._logWarning(`Please select a preset from the dropdown to delete!`);
+    },
+    handlePresetsCtxMenuOpen(event) {
+      this.presetsCtxMenuVisible = true;
+    },
+    handlePresetsCtxMenuOptionClick(event, optionId) {
+      // console.log(`=== handlePresetsCtxMenuOptionClick START vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(event);
+      // console.log(optionId);
+      this.closePresetPopper(event);
+      this.presetsCtxMenuVisible = false;
+      if (optionId == 'preset_create') {
+        this.openPresetModal(event, optionId);
+      }
+      else if (optionId == 'preset_update') {
+        this.openPresetModal(event, optionId);
+      }
+      else if (optionId == 'preset_delete') {
+        this.deletePreset(event);
+      }
+      // console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
+    },
+    handlePresetsCtxMenuClickOutside(event, args) {
+      // console.log(`=== handlePresetsCtxMenuClickOutside START vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(event);
+      // console.log(args);
+      this.closePresetPopper(event);
+      this.presetsCtxMenuVisible = false;
+      // console.log(`=== handlePresetsCtxMenuClickOutside END vis: ${this.presetsCtxMenuVisible}===`);
+    },
+    btnTogglePresetPopper(event) {
+      // console.log(`=== btnTogglePresetPopper START vis: ${this.presetsCtxMenuVisible} ===`);
+      if (this.presetsCtxMenuVisible) {
+        this.closePresetPopper(event);
+        this.presetsCtxMenuVisible = false;
+      }
+      else {
+        this.openPresetPopper(event);
+      }
+      // console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
+    },
+    openPresetPopper(event) {
+      console.log('check this one');
+      console.log(event);
+      this.$refs.modPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
+    },
+    closePresetPopper(event) {
+      this.$refs.modPresetContextMenu.closePopper();
+    },
     loadOrigMetadata(res) {
       let geninfo = res.general_info;
       let ainfo = res.animation_info;

@@ -11,13 +11,16 @@ class TransformativeCriteria {
   }
 
   /**
-   * 
+   * Update properties from Preset instance.
    * @param {Preset} preset Preset instance
    */
   updateFromPreset(preset) {
     console.debug('updateFromPreset');
+    // Loop through all key value pairs on presetObject
     for (const [k, v] of Object.entries(preset.presetObject)) {
+      // Check if key in presetObject exist as a property on criteria
       if (k in this) {
+        // Skip if value in presetObject is null or empty string
         if (!v) continue;
         else {
           this[k] = v;

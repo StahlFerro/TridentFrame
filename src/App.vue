@@ -131,7 +131,7 @@
       <!-- $refs.ctxmenu.open($event, 'Payload') -->
       <CreatePanel v-show="menuselection == 'create_panel'" :presets="creationCriteriaPresets" />
       <SplitPanel v-show="menuselection == 'split_panel'" />
-      <ModifyPanel v-show="menuselection == 'modify_panel'" />
+      <ModifyPanel v-show="menuselection == 'modify_panel'" :presets="modificationCriteriaPresets" />
       <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
       <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
       <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" />
@@ -223,6 +223,14 @@ export default {
       }
       return filteredPresets;
     },
+    modificationCriteriaPresets() {
+      const filteredPresets = {};
+      for (const [id, preset] of Object.entries(this.PRESETS_COLLECTION.presets)){
+        if (preset.presetType.name == PresetType.ModificationCriteria.name)
+          filteredPresets[id] = preset;
+      }
+      return filteredPresets;
+    }
   },
   beforeMount: function () {
     console.trace('beforeMount');

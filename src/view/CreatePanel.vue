@@ -382,7 +382,7 @@
                 <PresetSelector>
                   <template #presetContextMenu>
                     <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
-                                anchor-element-id="presetPopperBtn" placement="top-start"
+                                anchor-element-id="createPanelPresetPopperBtn" placement="top-start"
                                 @ctx-menu-open="handlePresetsCtxMenuOpen"
                                 @ctx-option-click="handlePresetsCtxMenuOptionClick"
                                 @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
@@ -403,7 +403,7 @@
                   </template>
                   <template #presetControlsLeft>
                     <div class="field-cell">
-                      <ButtonField id="presetPopperBtn" label="Presets..." color="blue"
+                      <ButtonField id="createPanelPresetPopperBtn" label="Presets..." color="blue"
                                 :listen-to-outside-clicks="true"
                                 :icons="['fas', 'paint-roller']"
                                 :is-square="true"
@@ -654,11 +654,11 @@ import CheckboxField from './components/Form/CheckboxField.vue';
 import DropdownField from './components/Form/DropdownField.vue';
 import ButtonField from './components/Form/ButtonField.vue';
 import ButtonInputField from './components/Form/ButtonInputField.vue';
-import PresetSelector from './components/Presets/PresetSelector.vue';
 import ContextMenu from './components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
 import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
 import FormModal from './components/Overlays/FormModal.vue';
+import PresetSelector from './components/Presets/PresetSelector.vue';
 import KeyValueTable from './components/Displays/KeyValueTable.vue';
 import KeyValueTableDataRow from './components/Displays/KeyValueTableDataRow.vue';
 import KeyValueTableRowControl from './components/Displays/KeyValueTableRowControl.vue';
@@ -736,11 +736,11 @@ export default {
     DropdownField,
     ButtonField,
     ButtonInputField,
-    PresetSelector,
     ContextMenu,
     ContextMenuItem,
     ContextMenuItemIcon,
     FormModal,
+    PresetSelector,
     KeyValueTable,
     KeyValueTableDataRow,
     KeyValueTableRowControl,
@@ -866,7 +866,10 @@ export default {
     }
   },
   created() {
-    window.addEventListener("resize", this.closeLoadPopper);
+    window.addEventListener("resize", () => {
+      this.closeLoadPopper();
+      this.closePresetPopper();
+    });
   },
   beforeMount: function () {
     const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
@@ -888,7 +891,10 @@ export default {
     // this.emitter.on('global-presets-refresh', presetCollection => { this.addPreset(args); }))
   },
   unmounted() {
-    window.removeEventListener("resize", this.closeLoadPopper);
+    window.removeEventListener("resize", () => {
+      this.closeLoadPopper();
+      this.closePresetPopper();
+    });
   },
   methods: {
     debugHandler(event) {
@@ -1090,8 +1096,8 @@ export default {
       // console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
     },
     openPresetPopper(event) {
-      // console.log('check this one');
-      // console.log(event);
+      console.log('check this one');
+      console.log(event);
       this.$refs.crtPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
     },
     closePresetPopper(event) {
