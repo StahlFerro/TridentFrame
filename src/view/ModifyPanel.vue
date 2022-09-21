@@ -234,30 +234,30 @@
             <div v-show="modSubMenuSelection == 0">
               <div class="general-form row-7">
                 <div class="field-cell span-2">
-                  <InputField v-model="fname" label="Name" type="text" hint="The name of the GIF/APNG" />
+                  <InputField v-model="fname" :label="$t('general.fname')" type="text" hint="The name of the GIF/APNG" />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.width" label="Width" type="number" hint="The width of the animated image"
+                  <InputField v-model="criteria.width" :label="$t('criterion.width')" type="number" hint="The width of the animated image"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @input="widthHandler"
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.height" label="Height" type="number" hint="The height of the animated image"
+                  <InputField v-model="criteria.height" :label="$t('criterion.height')" type="number" hint="The height of the animated image"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                               @input="heightHandler"
                   />
                 </div>
                 <div class="field-cell">
-                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" label="Resize method" :is-fullwidth="true" />
+                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" :label="$t('criterion.resize_method')" :is-fullwidth="true" />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
+                  <CheckboxField v-model="criteria.flip_x" :label="$t('criterion.flip_x')" hint="Flip the image horizontally" />
                   <br />
-                  <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
+                  <CheckboxField v-model="criteria.flip_y" :label="$t('criterion.flip_y')" hint="Flip the image vertically" />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="lockAspectRatio" label="Lock aspect ratio" hint="Lock the width and height ratio" />
+                  <CheckboxField v-model="lockAspectRatio" :label="$t('forms.lock_aspect_ratio')" hint="Lock the width and height ratio" />
                   <br />
                   <template v-if="aspect_ratio && aspect_ratio.text">
                     <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
@@ -267,24 +267,24 @@
                   </template>
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
+                  <InputField v-model="criteria.delay" :label="$t('criterion.delay')" type="number" hint="The time needed to move to the next frame"
                               :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @input="delayHandler" 
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
+                  <InputField v-model="criteria.fps" :label="$t('criterion.fps')" type="number" hint="How many frames will be consecutively displayed per second"
                               :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
                               @input="fpsHandler" 
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
+                  <InputField v-model="criteria.loop_count" :label="$t('criterion.loop_count')" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
                 <div class="field-cell">
-                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" label="Delay handling" hint="How to modify the delay"
+                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" :label="$t('criterion.delay_handling')" hint="How to modify the delay"
                                  :is-fullwidth="true" 
                   />
                 </div>

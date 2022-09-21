@@ -3,7 +3,7 @@
     "general": {
       "fname": "Name"
     },
-   "form_helper": {
+   "forms": {
     "lock_aspect_ratio": "Lock aspect ratio"
    },
     "criterion": {
@@ -51,8 +51,8 @@
       "delays_are_even": "Delays are even",
       "average_delay": "Average delay (ms)",
       "fps": "Frame rate",
-      "loop_duration": "Run duration (seconds)",
-      "loop_count": "Run count"
+      "loop_duration": "Loop duration (seconds)",
+      "loop_count": "Loop count"
     }
   }
 }

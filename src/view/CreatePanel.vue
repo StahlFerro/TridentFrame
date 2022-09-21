@@ -222,7 +222,7 @@
                   <CheckboxField v-model="criteria.flip_y" :label="$t('criterion.flip_y')" hint="Flip the image vertically" />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="lockAspectRatio" :label="$t('form_helper.lock_aspect_ratio')" hint="Lock the width and height ratio" />
+                  <CheckboxField v-model="lockAspectRatio" :label="$t('forms.lock_aspect_ratio')" hint="Lock the width and height ratio" />
                   <!-- <label class="checkbox">
                     <input v-model="lockAspectRatio" type="checkbox" />
                     Lock aspect ratio

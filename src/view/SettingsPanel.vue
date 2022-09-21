@@ -4,27 +4,27 @@
       <div class="settings-tab">
         <div class="tabs">
           <ul>
-            <li :class="{ 'is-active': settings_tab_selection == 0 }">
-              <a @click="settings_tab_selection = 0">General</a>
+            <li :class="{ 'is-active': settingsTabSelection == 0 }">
+              <a @click="settingsTabSelection = 0">General</a>
             </li>
-            <li :class="{ 'is-active': settings_tab_selection == 1 }">
-              <a @click="settings_tab_selection = 1">Presets</a>
+            <li :class="{ 'is-active': settingsTabSelection == 1 }">
+              <a @click="settingsTabSelection = 1">Presets</a>
             </li>
-            <!-- <li :class="{ 'is-active': settings_tab_selection == 2 }">
-              <a @click="settings_tab_selection = 2">Languages</a>
+            <!-- <li :class="{ 'is-active': settingsTabSelection == 2 }">
+              <a @click="settingsTabSelection = 2">Languages</a>
             </li> -->
-            <li :class="{ 'is-active': settings_tab_selection == 3 }">
-              <a @click="settings_tab_selection = 2">Window</a>
+            <li :class="{ 'is-active': settingsTabSelection == 2 }">
+              <a @click="settingsTabSelection = 2">Window</a>
             </li>
-            <li :class="{ 'is-active': settings_tab_selection == 4 }">
-              <a @click="settings_tab_selection = 3">About</a>
+            <li :class="{ 'is-active': settingsTabSelection == 3 }">
+              <a @click="settingsTabSelection = 3">About</a>
             </li>
           </ul>
         </div>
       </div>
       <div class="settings-subpanels">
         <div
-          v-show="settings_tab_selection == 0"
+          v-show="settingsTabSelection == 0"
           class="settings-subpanel-general"
         >
           <div id="settings_startup" class="settings-group">
@@ -139,7 +139,7 @@
         </div>
 
         <div
-          v-show="settings_tab_selection == 1"
+          v-show="settingsTabSelection == 1"
           class="settings-subpanel-presets">
             <div class="settings-preset-selector">
 
@@ -153,12 +153,12 @@
         </div>
 
         <!-- <div 
-          v-show="settings_tab_selection == 2"
+          v-show="settingsTabSelection == 2"
           class="settings-subpanel-window">
         </div> -->
 
         <div
-          v-show="settings_tab_selection == 2"
+          v-show="settingsTabSelection == 2"
           class="settings-subpanel-window"
         >
           <table class="table is-borderless" style="padding: 5px" width="100%">
@@ -215,7 +215,7 @@
         </div>
 
         <div
-          v-show="settings_tab_selection == 3"
+          v-show="settingsTabSelection == 3"
           class="settings-subpanel-about"
         >
           <div class="about-content">
@@ -305,7 +305,7 @@ export default {
   data: function () {
     return {
       logo: logo,
-      settings_tab_selection: 0,
+      settingsTabSelection: 0,
       previewImageSaveNameBehaviours: PreviewImageSaveNameBehaviour.getAll(),
       APP_SETTINGS: {},
       APP_SETTINGS_PREVIOUS: {},
