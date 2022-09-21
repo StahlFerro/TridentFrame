@@ -57,38 +57,6 @@
           </template>
         </ContextMenu>
 
-        <!-- <div
-          v-show="popperIsVisible" id="crtLoadPopper" ref="popper" class="context-menu"
-          tabindex="-1" style="display: block;"
-        >
-          <ul class="context-menu-options">
-            <li class="context-menu-option" @click="loadImages('insert')">
-              <div class="ctxmenu-content">
-                <div class="ctxmenu-icon">
-                  <span class="icon is-small">
-                    <font-awesome-icon :icon="['fas', 'plus']" />
-                  </span>
-                </div>
-                <div class="ctxmenu-text">
-                  <span>Images</span>
-                </div>
-              </div>
-            </li>
-            <li class="context-menu-option" @click="loadImages('smart_insert')">
-              <div class="ctxmenu-content">
-                <div class="ctxmenu-icon">
-                  <span class="icon is-small">
-                    <font-awesome-icon :icon="['fas', 'plus-circle']" />
-                  </span>
-                </div>
-                <div class="ctxmenu-text">
-                  Autodetect sequence
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div> -->
-
         <div class="cpb-sequence-buttons">
           <div class="cpb-sequence-btn">
             <ButtonField id="addPopperBtn" label="Add..." hint="Open image loading dialog"
@@ -99,15 +67,6 @@
                          @click="btnToggleLoadPopper"
                          @click-outside="closeLoadPopper"
             />
-            <!-- <a
-              id="addPopperBtn" v-click-outside="closeLoadPopper" class="button is-neon-emerald" :class="{'is-loading': CRT_IS_LOADING, 'non-interactive': isButtonFrozen }"
-              title="Open image loading dialog" @click="btnToggleLoadPopper"
-            >
-              <span class="icon is-small">
-                <font-awesome-icon icon="plus" />
-              </span>
-              <span>Add...</span>
-            </a> -->
           </div>
           <div class="cpb-sequence-btn">
             <span class="is-white-d compact-line">Insert<br />after</span>
@@ -461,129 +420,8 @@
                   />
                 </div>
               </div>
-             
-<!--    
-              <table class="" width="100%">
-                <tr>
-                  <td width="16.7%">
-                  </td>
-                  <td width="16.7%">
-                  </td>
-                  <td width="16.7%">
-                  </td>
-                  <td width="16.7%">
-                  </td>
-                  <td width="16.7%">
-                  </td>
-                  <td width="16.7%" style="vertical-align: bottom" />
-                </tr>
-                <tr>
-                  <td>
-                    <InputField v-model="criteria.delay" label="Delay (seconds)" type="number" hint="The time needed to move to the next frame"
-                                :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
-                                @input="delayHandler" 
-                    />
-                  </td>
-                  <td>
-                    <InputField v-model="criteria.fps" label="Frame rate" type="number" hint="How many frames will be consecutively displayed per second"
-                                :constraint-option="{ handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: false }}"
-                                @input="fpsHandler" 
-                    />
-                  </td>
-                  <td>
-                    <InputField v-model="criteria.loop_count" label="Run count" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
-                                :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
-                    />
-                  </td>
-                  <td>
-                    <InputField v-model="criteria.start_frame" label="Start at frame" type="number" 
-                                hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
-                                :constraint-option="{handlerName: 'numConstraint', options: {enforceUnsigned: true, enforceWhole: true}}" 
-                    />
-                  </td>
-                  <td style="vertical-align: bottom">
-                    <CheckboxField v-model="criteria.flip_x" label="Flip X" hint="Flip the image horizontally" />
-                    <br />
-                    <CheckboxField v-model="criteria.flip_y" label="Flip Y" hint="Flip the image vertically" />
-                  </td>
-                  <td style="vertical-align: bottom">
-                    <CheckboxField v-model="criteria.preserve_alpha" label="Preserve Alpha" hint="(For GIFs) Preserve transparent pixels" />
-                    <br />
-                    <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
-                  </td>
-                </tr>
-                <tr>
-                </tr>
-                <tr>
-                  <td colspan="4" style="padding-top: 15px">
-                    <div class="field has-addons">
-                      <div class="control">
-                        <a class="button is-neon-cyan" @click="btnSetSavePath">
-                          <span class="icon is-small">
-                            <font-awesome-icon icon="save" />
-                          </span>
-                          <span>Save to</span>
-                        </a>
-                      </div>
-                      <div class="control is-expanded">
-                        <input
-                          v-model="saveDir"
-                          class="input is-neon-white"
-                          type="text"
-                          placeholder="Output folder"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td colspan="1" style="padding-top: 15px">
-                    <DropdownField v-model="criteria.format" :options-list="SUPPORTED_CREATE_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
-                  </td>
-                  <td colspan="1" style="padding-top: 15px">
-                    <div class="field">
-                      <div class="control">
-                        <a
-                          class="button is-neon-cyan"
-                          :class="{
-                            'is-loading': CRT_IS_CREATING == true,
-                            'non-interactive': isButtonFrozen,
-                          }"
-                          @click="btnCreateAIMG"
-                        >CREATE</a>
-                      </div>
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="6" />
-                </tr>
-              </table> -->
             </div>
             <div v-show="crtSubMenuSelection == 1 && criteria.format == 'gif'">
-              <!-- <table
-                class="mod-new-control-table is-hpaddingless medium-size-label"
-                width="100%"
-              >
-                <GIFOptimizationRow
-                  v-model:is_optimized="gif_opt_criteria.is_optimized"
-                  v-model:optimization_level="gif_opt_criteria.optimization_level"
-                  v-model:is_lossy="gif_opt_criteria.is_lossy"
-                  v-model:lossy_value="gif_opt_criteria.lossy_value"
-                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
-                  v-model:color_space="gif_opt_criteria.color_space"
-                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
-                  v-model:dither_method="gif_opt_criteria.dither_method"
-                  v-model:palletization_method="gif_opt_criteria.palletization_method"
-                  v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
-                  v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
-                  v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
-                />
-                <GIFUnoptimizationRow
-                        :is_optimized.sync="is_optimized"
-                        :is_lossy.sync="is_lossy"
-                        :is_reduced_color.sync="is_reduced_color"
-                        :is_unoptimized.sync="is_unoptimized"
-                      /> 
-              </table> -->
               <GIFOptimizationRow
                   v-model:is_optimized="gif_opt_criteria.is_optimized"
                   v-model:optimization_level="gif_opt_criteria.optimization_level"
@@ -600,24 +438,6 @@
               />
             </div>
             <div v-show="crtSubMenuSelection == 1 && criteria.format == 'png'">
-              <!-- <table
-                class="mod-new-control-table is-hpaddingless medium-size-label"
-                width="100%"
-              >
-                <APNGOptimizationRow
-                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
-                  v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
-                  v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
-                  v-model:apng_color_count="apng_opt_criteria.apng_color_count"
-                  v-model:apng_quantization_enabled="apng_opt_criteria.apng_quantization_enabled"
-                  v-model:apng_quantization_quality_min="apng_opt_criteria.apng_quantization_quality_min"
-                  v-model:apng_quantization_quality_max="apng_opt_criteria.apng_quantization_quality_max"
-                  v-model:apng_quantization_speed="apng_opt_criteria.apng_quantization_speed"
-                  v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
-                  v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
-                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
-                />
-              </table> -->
               <APNGOptimizationRow
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
                   v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
@@ -1525,34 +1345,6 @@ export default {
         console.error(error);
       });
 
-      // if (this.saveDir) {
-      //   if (!validateFilename(this.fname)) {
-      //     this._logError("File name contains characters that are not allowed");
-      //     return;
-      //   }
-      //   this._checkFileOverwriteAsync().then((proceed_create) => {
-      //     if (proceed_create)
-      //       this.createAnimatedImage();
-      //     else
-      //       return;
-      //   })
-      // }
-      // else {
-      //   this.setSaveDirFromDialogAsync().then((result) => {
-      //     if (result.canceled)
-      //       return Promise.reject("Directory selection cancelled");
-      //     else
-      //       return this._checkFileOverwriteAsync()
-      //   }).then((proceed_create) => {
-      //     console.log(`proceed_create ${proceed_create}`);
-      //     if (proceed_create)
-      //       this.createAnimatedImage();
-      //     else
-      //       return Promise.reject("Cancelled creation");
-        // }).catch((error) => {
-        //   console.error(error);
-        // });
-      // }
     },
     async _checkFileOverwriteAsync(fullPath) {
       let proceed = true;
