@@ -463,7 +463,7 @@
                 <div class="separator">
                   <div class="separator-space" />
                 </div>
-                <div class="field-cell span-4">
+                <div class="field-cell span-5">
                   <ButtonInputField>
                     <template #buttonControl>
                       <ButtonField label="Save to" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
