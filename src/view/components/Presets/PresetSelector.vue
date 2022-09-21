@@ -1,18 +1,18 @@
 <template>
-  <div class="preset-selector-bar">
-    <div class="preset-contextmenu">
+  <!-- <div class="preset-selector-bar"> -->
+    <!-- <div class="preset-contextmenu"> -->
       <slot name="presetContextMenu" />
-    </div>
-    <div class="preset-controls-left">
+    <!-- </div> -->
+    <!-- <div class="preset-controls-left"> -->
       <slot name="presetControlsLeft" />
-    </div>
-    <div class="preset-selection">
+    <!-- </div> -->
+    <!-- <div class="preset-selection"> -->
       <slot name="presetSelection" />
-    </div>
-    <div class="preset-controls-right">
+    <!-- </div> -->
+    <!-- <div class="preset-controls-right"> -->
       <slot name="presetControlsRight" />
-    </div>
-  </div>
+    <!-- </div> -->
+  <!-- </div> -->
 </template>
 
 <script>

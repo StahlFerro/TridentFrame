@@ -56,18 +56,18 @@ class Preset {
     this.presetType = null;
     this.presetObject = null;
   }
+  
+  /**
+   * Create Preset instance from POJO object
+   * @param {object} json POJO object
+   * @returns {Preset} Preset class instance
+   */
   static fromJSON(json){
     let preset = Object.assign(new Preset(), json);
     preset.name = json.name;
     return preset;
-    // let preset = new Preset();
-    // preset.id = json.id;
-    // preset.createdDateTime = json.createdDateTime;
-    // preset.name = json.name;
-    // preset.presetType = json.presetType;
-    // preset.presetObject = json.presetObject;
-    // return preset;
   }
+
   static createFromCriteria(criteriaType, presetName, criteria) {
     let preset = new Preset();
     preset.name = presetName;

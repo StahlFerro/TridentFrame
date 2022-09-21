@@ -4,14 +4,16 @@
     <div class="control">
       <input 
         :value="modelValue" 
-        class="input is-neon-white"
         :type="type"
         :min="minNumber"
         :max="maxNumber"
+        class="input is-neon-white"
         @change="$emit('update:modelValue', $event.target.value)"
         @input="$emit('input', $event)"
         @blur="$emit('blur', $event)"
         @keydown="handleKeyDown($event)" 
+        :readonly="isReadonly? 'readonly' : null"
+        :disabled="isDisabled? 'disabled' : null"
       />
     </div>
   </div>
@@ -48,6 +50,14 @@ export default {
       type: ConstraintOption,
       default: null,
       required: false
+    },
+    isReadonly: {
+      type: Boolean,
+      default: false,
+    },
+    isDisabled: {
+      type: Boolean,
+      default: false,
     },
     minNumber: {
       type: Number,

@@ -283,145 +283,161 @@
                   <div class="separator-space" />
                 </div>
                 <!-- <div class="field-cell span-3" /> -->
-                <div class="field-cell span-4">
-                  <FormModal :is-active="presetModal.modalIsActive"
-                             :is-wide="presetModal.presetOperation == 'preset_update'"
-                             @close-modal-clicked="closePresetModal"
-                             @close-modal-background-clicked="closePresetModal"
-                             @keydown.esc="presetModal.modalIsActive = false"
-                  >
-                    <template #modalHeader>
-                      <p class="is-white-d">
-                        <template v-if="presetModal.presetOperation == 'preset_new'">
-                          Create preset
-                        </template>
-                        <template v-else-if="presetModal.presetOperation == 'preset_update'">
-                          Update existing preset
-                        </template>
-                      </p>
-                    </template>
-                    <template #modalDisplay>
-                      <KeyValueTable :rows="presetModal.presetDraft.draftAttributes" 
-                                     keyHeader="Attribute" 
-                                     :valueHeader="presetModal.presetOperation == 'preset_update'? 'Current value' : 'Value'"
-                      >
-                        <template #rowControlsHeaderLeft>
-                          <th class="kvp-control-fit" hint="Include this attribute to the preset?">
-                            Include?
-                          </th>
-                        </template>
-                        <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsHeaderRight>
-                          <th>
-                            New value
-                          </th>
-                          <th class="kvp-control-fit" hint="Update the current value of the preset with this new one?">
-                            Update?
-                          </th>
-                          <th class="kvp-desc-short-column">
-                            Conclusion
-                          </th>
-                        </template>
-                        <template #rowControlsLeft="draftAttr">
-                          <td class="center">
-                            <CheckboxField :modelValue="draftAttr.include" 
-                                           @update:modelValue="newVal => updatePresetDraftInclude(draftAttr, newVal)"
-                                           @mouse-over-down="updatePresetDraftInclude(draftAttr, !draftAttr.include)"
-                            />
-                          </td>
-                        </template>
-                        <template #dataRow="draftAttr">
-                          <td>
-                            <p>
-                              {{ draftAttr.pLabel }}
-                            </p>
-                          </td>
-                          <td>
-                            <p>
-                              {{ draftAttr.pValue }}
-                            </p>
-                          </td>
-                        </template>
-                        <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsRight="draftAttr">
-                          <td>
-                            <p>
-                              {{ draftAttr.pValueNew }}
-                            </p>
-                          </td>
-                          <td class="center">
-                            <CheckboxField :modelValue="draftAttr.updateValue" 
-                                           @update:modelValue="newVal => updatePresetDraftUpdate(draftAttr, newVal)"
-                                           @mouse-over-down="updatePresetDraftUpdate(draftAttr, !draftAttr.updateValue)"
-                            />
-                          </td>
-                          <td>
-                            {{ getPresetDraftAttributeConclusion(draftAttr).label }}
-                          </td>
-                        </template>
-                      </KeyValueTable>
-                    </template>
-                    <template #modalForm>
-                      <InputField v-model="presetModal.newPresetName" type="text" hint="Name of the new preset"
-                                  :label="presetModal.presetOperation == 'preset_update'? 'Change preset name' : 'Preset name'"
-                                  @input="presetModal.noPresetName = false;"
-                      />
-                    </template>
-                    <template #modalControls>
-                      <ButtonField v-if="presetModal.presetOperation == 'preset_new'" label="Create preset" color="blue" @click="createNewPreset" />
-                      <ButtonField v-if="presetModal.presetOperation == 'preset_update'" label="Update preset" color="blue" @click="updatePreset" />
-                      <ButtonField label="Cancel" @click="closePresetModal" />
-                      <p v-if="presetModal.noPresetName">
-                        <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
-                        Preset name is required!
-                      </p>
-                    </template>
-                  </FormModal>
-                  <PresetSelector>
-                    <template #presetContextMenu>
-                      <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
-                                   anchor-element-id="presetPopperBtn" placement="top-start"
-                                   @ctx-menu-open="handlePresetsCtxMenuOpen"
-                                   @ctx-option-click="handlePresetsCtxMenuOptionClick"
-                                   @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
-                      >
-                        <template #contextMenuItem="ctxItemData">
-                          <ContextMenuItem>
-                            <template #contextMenuOptionIcon>
-                              <ContextMenuItemIcon v-if="ctxItemData.icon">
-                                <font-awesome-icon :icon="ctxItemData.icon" />
-                              </ContextMenuItemIcon>
-                            </template>
-                            <template #contextMenuOptionLabel>
-                              {{ ctxItemData.name }}
-                            </template>
-                          </ContextMenuItem>
-                        </template>
-                      </ContextMenu>
-                    </template>
-                    <template #presetControlsLeft>
+                <!-- <div class="field-cell span-5"> -->
+                <FormModal :is-active="presetModal.modalIsActive"
+                          :is-wide="presetModal.presetOperation == 'preset_update'"
+                          @close-modal-clicked="closePresetModal"
+                          @close-modal-background-clicked="closePresetModal"
+                          @keydown.esc="presetModal.modalIsActive = false"
+                >
+                  <template #modalHeader>
+                    <p class="is-white-d">
+                      <template v-if="presetModal.presetOperation == 'preset_view'">
+                        View preset
+                      </template>
+                      <template v-else-if="presetModal.presetOperation == 'preset_create'">
+                        Create preset
+                      </template>
+                      <template v-else-if="presetModal.presetOperation == 'preset_update'">
+                        Update existing preset
+                      </template>
+                    </p>
+                  </template>
+                  <template #modalDisplay>
+                    <KeyValueTable :rows="presetModal.presetDraft.draftAttributes" 
+                                  keyHeader="Attribute" 
+                                  :valueHeader="presetModal.presetOperation == 'preset_update'? 'Current value' : 'Value'"
+                    >
+                      <template v-if="presetModal.presetOperation != 'preset_view'" #rowControlsHeaderLeft>
+                        <th class="kvp-control-fit" hint="Include this attribute to the preset?">
+                          Include?
+                        </th>
+                      </template>
+                      <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsHeaderRight>
+                        <th>
+                          New value
+                        </th>
+                        <th class="kvp-control-fit" hint="Update the current value of the preset with this new one?">
+                          Update?
+                        </th>
+                        <th class="kvp-desc-short-column">
+                          Conclusion
+                        </th>
+                      </template>
+                      <template v-if="presetModal.presetOperation != 'preset_view'" #rowControlsLeft="draftAttr">
+                        <td class="center">
+                          <CheckboxField :modelValue="draftAttr.include" 
+                                        @update:modelValue="newVal => updatePresetDraftInclude(draftAttr, newVal)"
+                                        @mouse-over-down="updatePresetDraftInclude(draftAttr, !draftAttr.include)"
+                          />
+                        </td>
+                      </template>
+                      <template #dataRow="draftAttr">
+                        <td>
+                          <p>
+                            {{ draftAttr.pLabel }}
+                          </p>
+                        </td>
+                        <td>
+                          <p>
+                            {{ draftAttr.pValue }}
+                          </p>
+                        </td>
+                      </template>
+                      <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsRight="draftAttr">
+                        <td>
+                          <p>
+                            {{ draftAttr.pValueNew }}
+                          </p>
+                        </td>
+                        <td class="center">
+                          <CheckboxField :modelValue="draftAttr.updateValue" 
+                                        @update:modelValue="newVal => updatePresetDraftUpdate(draftAttr, newVal)"
+                                        @mouse-over-down="updatePresetDraftUpdate(draftAttr, !draftAttr.updateValue)"
+                          />
+                        </td>
+                        <td>
+                          {{ getPresetDraftAttributeConclusion(draftAttr).label }}
+                        </td>
+                      </template>
+                    </KeyValueTable>
+                  </template>
+                  <template #modalForm>
+                    <InputField v-model="presetModal.newPresetName" type="text" hint="Name of the new preset"
+                                :label="presetModal.presetOperation == 'preset_update'? 'Change preset name' : 'Preset name'"
+                                @input="presetModal.noPresetName = false;"
+                                :is-readonly="presetModal.presetOperation == 'preset_view'"
+                    />
+                  </template>
+                  <template #modalControls>
+                    <ButtonField v-if="presetModal.presetOperation == 'preset_create'" label="Create preset" color="blue" @click="createNewPreset" />
+                    <ButtonField v-if="presetModal.presetOperation == 'preset_update'" label="Update preset" color="blue" @click="updatePreset" />
+                    <ButtonField :label="presetModal.presetOperation == 'preset_view'? 'Close' : 'Cancel'" @click="closePresetModal" />
+                    <p v-if="presetModal.noPresetName">
+                      <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
+                      Preset name is required!
+                    </p>
+                  </template>
+                </FormModal>
+                <PresetSelector>
+                  <template #presetContextMenu>
+                    <ContextMenu ref="crtPresetContextMenu" ctx-menu-id="createPanelPresetContextMenu" 
+                                anchor-element-id="presetPopperBtn" placement="top-start"
+                                @ctx-menu-open="handlePresetsCtxMenuOpen"
+                                @ctx-option-click="handlePresetsCtxMenuOptionClick"
+                                @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
+                    >
+                      <template #contextMenuItem="ctxItemData">
+                        <ContextMenuItem>
+                          <template #contextMenuOptionIcon>
+                            <ContextMenuItemIcon v-if="ctxItemData.icon">
+                              <font-awesome-icon :icon="ctxItemData.icon" />
+                            </ContextMenuItemIcon>
+                          </template>
+                          <template #contextMenuOptionLabel>
+                            {{ ctxItemData.name }}
+                          </template>
+                        </ContextMenuItem>
+                      </template>
+                    </ContextMenu>
+                  </template>
+                  <template #presetControlsLeft>
+                    <div class="field-cell">
                       <ButtonField id="presetPopperBtn" label="Presets..." color="blue"
-                                   :listen-to-outside-clicks="true"
-                                   :icons="['fas', 'paint-roller']"
-                                   :is-square="true"
-                                   @click="btnTogglePresetPopper"
-                                   @click-outside="debugHandler"
-                      />
-                    </template>
-                    <template #presetSelection>
+                                :listen-to-outside-clicks="true"
+                                :icons="['fas', 'paint-roller']"
+                                :is-square="true"
+                                @click="btnTogglePresetPopper"
+                                @click-outside="debugHandler"
+                    />
+                    </div>
+                  </template>
+                  <template #presetSelection>
+                    <div class="field-cell span-2">
                       <DropdownField 
-                        v-model="presetSelectionValue"
-                        :options-list="localPresetsSelection" 
-                        :is-non-interactive="false" 
-                        :is-fullwidth="true"
-                      />
-                    </template>
-                    <template #presetControlsRight>
-                      <ButtonField label="Apply preset" color="purple"
-                                   :is-square="true"
-                                   @click="applyPreset"
-                      />
-                    </template>
-                  </PresetSelector>
-                </div>
+                      v-model="presetSelectionValue"
+                      :options-list="localPresetsSelection" 
+                      :is-non-interactive="false" 
+                      :is-fullwidth="true"
+                    />
+                    </div>
+                  </template>
+                  <template #presetControlsRight>
+                    <div class="field-cell">
+
+                      <ButtonField label="View preset" color="blue"
+                                @click="viewPreset"
+                    />
+                    </div>
+                    <div class="field-cell">
+                      
+                    <ButtonField label="Apply preset" color="purple"
+                                @click="applyPreset"
+                    />
+                    </div>
+                  </template>
+                </PresetSelector>
+                <!-- </div> -->
                 <div class="separator">
                   <div class="separator-space" />
                 </div>
@@ -790,9 +806,9 @@ export default {
         {id: 'load_images_autodetect', name: "Autodetect sequence", icon: ['fas', 'plus-circle']},
       ],
       presetCtxMenuOptions: [
-        {id: 'preset_new', name: "Create new preset", icon: ['fas', 'plus']},
-        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'square-pen']},
-        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'trash-can']},
+        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'trash-can'], color: 'red'},
+        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'square-pen'], color: 'blue'},
+        {id: 'preset_create', name: "Create new preset", icon: ['fas', 'plus'], color: 'green'},
       ],
     };
   },
@@ -895,16 +911,35 @@ export default {
     },
     openPresetModal(event, presetOperation) {
       this.presetModal.presetOperation = presetOperation;
-      const activateModal = this.populatePresetDraftModal(presetOperation);
+      const activateModal = this.populatePresetModalTable(presetOperation);
       this.presetModal.modalIsActive = activateModal;
     },
-    populatePresetDraftModal(presetOperation) {
-      if (presetOperation == 'preset_new') {
+    populatePresetModalTable(presetOperation) {
+      if (presetOperation == 'preset_view') {
+        const id = this.presetSelectionValue;
+        console.log(id);
+        if (id) {
+          console.log(id);
+          const currPreset = Preset.fromJSON(this.presets[id]);
+          const attrJson = JSON.parse(JSON.stringify(currPreset.presetObject));
+          const presetType = currPreset.presetType;
+          const presetViewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
+          presetViewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+          this.presetModal.presetDraft = presetViewDraft;
+          this.presetModal.newPresetName = currPreset.name;
+          return true;
+        } 
+        else {
+          this._logWarning(`Please select a preset from the dropdown to view!`);
+          return false;
+        }
+      }
+      else if (presetOperation == 'preset_create') {
         const attrJson = JSON.parse(JSON.stringify(this.criteria));
         const presetType = PresetType.CreationCriteria;
         const presetNewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
         presetNewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
-        console.debug(`populatePresetDraftModal`);
+        console.debug(`populatePresetModalTable`);
         console.log(presetNewDraft);
         this.presetModal.presetDraft = presetNewDraft;
         return true;
@@ -1002,6 +1037,9 @@ export default {
       this.presetModal.newPresetName = "";
       this.presetModal.modalIsActive = false;
     },
+    viewPreset(event) {
+      this.openPresetModal(event, 'preset_view');
+    },
     applyPreset(event) {
       const id = this.presetSelectionValue;
       if (id) {
@@ -1021,7 +1059,7 @@ export default {
       // console.log(optionId);
       this.closePresetPopper(event);
       this.presetsCtxMenuVisible = false;
-      if (optionId == 'preset_new') {
+      if (optionId == 'preset_create') {
         this.openPresetModal(event, optionId);
       }
       else if (optionId == 'preset_update') {

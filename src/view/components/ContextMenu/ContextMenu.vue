@@ -9,6 +9,18 @@
       > -->
       <li v-for="(ctxItemData, ctxItemIndex) in contextData" :key="ctxItemIndex" 
           @click="$emit('ctx-option-click', $event, ctxItemData.id)"
+          class="context-menu-option"
+          :class="{
+            'is-neon-white': ctxItemData.color == 'white',
+            'is-neon-emerald': ctxItemData.color == 'green',
+            'is-neon-cyan': ctxItemData.color == 'cyan',
+            'is-neon-crimson': ctxItemData.color == 'red',
+            'is-neon-cobalt': ctxItemData.color == 'blue',
+            'is-neon-purple': ctxItemData.color == 'purple',
+            'is-loading': ctxItemData.isLoading,
+            'square-button': ctxItemData.isSquare,
+            'non-interactive': ctxItemData.isNonInteractive,
+        }"
       >
         <slot name="contextMenuItem" v-bind="ctxItemData" />
       </li>

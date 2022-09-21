@@ -44,6 +44,8 @@
                 outline: 0;
             }
 
+            $base-color: $cyan;
+
             &:hover {
                 border-color: $cyan;
                 color: $cyan;
@@ -52,6 +54,39 @@
             &:active {
                 border-color: lighten($color: $cyan, $amount: 10);
                 color: lighten($color: $cyan, $amount: 10);
+            }
+
+            &.is-neon-crimson {
+                &:hover {
+                    border-color: $crimson;
+                    color: $crimson;
+                }
+                &:active {
+                    border-color: lighten($color: $crimson, $amount: 10);
+                    color: lighten($color: $crimson, $amount: 10);
+                }
+            }
+
+            &.is-neon-emerald {
+                &:hover {
+                    border-color: $emerald;
+                    color: $emerald;
+                }
+                &:active {
+                    border-color: lighten($color: $emerald, $amount: 10);
+                    color: lighten($color: $emerald, $amount: 10);
+                }
+            }
+
+            &.is-neon-cobalt {
+                &:hover {
+                    border-color: $blue;
+                    color: $blue;
+                }
+                &:active {
+                    border-color: lighten($color: $blue, $amount: 10);
+                    color: lighten($color: $blue, $amount: 10);
+                }
             }
 
             .ctxmenu-content {
