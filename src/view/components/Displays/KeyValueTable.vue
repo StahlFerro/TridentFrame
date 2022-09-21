@@ -1,13 +1,13 @@
 <template>
   <table class="kvp-table is-paddingless">
-    <tr>
+    <tr v-if="useHeader">
       <template v-if="$slots.rowControlsHeaderLeft">
         <slot name="rowControlsHeaderLeft" />
       </template>
-      <th class="kvp-key-column">
+      <th v-if="keyHeader" class="kvp-key-column">
         {{ keyHeader }}
       </th>
-      <th class="kvp-value-column">
+      <th v-if="valueHeader" class="kvp-value-column">
         {{ valueHeader }}
       </th>
       <template v-if="$slots.rowControlsHeaderRight">
@@ -35,13 +35,17 @@
       },
       keyHeader: {
         type: String,
-        default: "Attribute",
+        default: "",
         required: false,
       },
       valueHeader: {
         type: String,
-        default: "Value",
+        default: "",
         required: false,
+      },
+      useHeader: {
+        type: Boolean,
+        default: true,
       },
     },
     emits: [],

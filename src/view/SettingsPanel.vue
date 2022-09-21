@@ -142,10 +142,42 @@
           v-show="settingsTabSelection == 1"
           class="settings-subpanel-presets">
             <div class="settings-preset-selector">
-
+              <KeyValueTable :rows="localPresetsSelection" value-header="Preset">
+                <template #rowControlsHeaderRight>
+                  <th>
+                    Type
+                  </th>
+                  <th class="kvp-control-fit">
+                    Controls
+                  </th>
+                </template>
+                <template #dataRow="presetRow">
+                  <td class="is-paddingless is-marginless">
+                    <div :id="`PresetRowId-${presetRow.id}`" class="clickable" @click="viewPreset(presetRow.id)">
+                      {{ presetRow.name }}
+                    </div>
+                  </td>
+                    <td class="is-paddingless is-marginless">
+                    {{ presetRow.typeName }}
+                  </td>
+                </template>
+              </KeyValueTable>
             </div>
             <div class="settings-preset-key-values">
-
+              <KeyValueTable :rows="selectedPresetAttributes" key-header="Attribute" value-header="Value">
+                <template #dataRow="attr">
+                  <td>
+                    <p>
+                      {{ attr.label }}
+                    </p>
+                  </td>
+                  <td>
+                    <p>
+                      {{ attr.value }}
+                    </p>
+                  </td>
+                </template>
+              </KeyValueTable>
             </div>
             <div class="settings-preset-controls">
               
@@ -285,6 +317,8 @@ import InputField from "./components/Form/InputField.vue";
 import ButtonField from "./components/Form/ButtonField.vue";
 import ButtonInputField from "./components/Form/ButtonInputField.vue";
 import DropdownField from "./components/Form/DropdownField.vue";
+import KeyValueTable from "./components/Displays/KeyValueTable.vue";
+import { Preset, PresetType } from "../models/presets";
 
 const DIR_DIALOG_PROPS = ["openDirectory", "createDirectory"];
 const LOCALES_LIST = [
@@ -301,6 +335,16 @@ export default {
     ButtonField,
     ButtonInputField,
     DropdownField,
+    KeyValueTable,
+  },
+  props: {
+    presets: {
+      type: Object,
+      default() {
+        return {}
+      },
+      required: false,
+    }
   },
   data: function () {
     return {
@@ -324,9 +368,9 @@ export default {
         }
       },
       LOCALES_LIST: LOCALES_LIST,
-      PRESET_COLLECTION: {
-        presets: [],
-      },
+      localPresetsSelection: [],
+      presetSelectionValue: "",
+      selectedPresetAttributes: []
     };
   },
   computed: {
@@ -342,6 +386,11 @@ export default {
     // defaultOutDirModifyValid: function() {
     //   return this.APP_SETTINGS.directories.default_out_dir.modify_panel
     // }
+    computeModifiedPresets() {
+      console.log('computeModifiedPresets triggered');
+      const modifiedDateTimes = Object.entries(this.presets).map(([k, v]) => v.lastModifiedDateTime);
+      return modifiedDateTimes
+    },
   },
   watch: {
     'intermediate.directories.default_out_dir.create_panel': {
@@ -349,6 +398,16 @@ export default {
         console.log(val);
       },
     },
+    'computeModifiedPresets': {
+      // When this property is updated, refresh the preset selector values
+      handler: function(newVal, oldVal) {
+        console.debug(`Preset updated\nOld/New count: ${oldVal}/${newVal}`);
+        const presetCount = this.populatePresetsSelectorTable();
+        if (presetCount == 0) {
+          this.presetSelectionValue = "";
+        }
+      },
+    }
   },
   beforeMount: function () {
     console.debug("SettingsPanel beforeMounting...");
@@ -366,8 +425,50 @@ export default {
     this.applySettingsWatcher();
     console.log(this.$i18n.locale);
     console.log(this.$i18n.availableLocales);
+    const loadedPresets = this.populatePresetsSelectorTable();
+    if (loadedPresets > 0) {
+      this.presetSelectionValue = this.localPresetsSelection[0].id;
+      this.viewPreset(this.presetSelectionValue);
+    }
   },
   methods: {
+    populatePresetsSelectorTable() {
+      console.log('populatePresetsSelector');
+      console.log(this.presets);
+      const presets = JSON.parse(JSON.stringify(this.presets));
+      console.log(presets);
+      this.localPresetsSelection = [];
+      for (const [id, preset] of Object.entries(this.presets)) {
+        this.localPresetsSelection.push({
+          id: id,
+          name: preset.name,
+          typeName: PresetType.fromName(preset.presetType.name).label,
+        })
+      }
+      return this.localPresetsSelection.length;
+    },
+    populatePresetAttributeTable(preset) {
+      this.selectedPresetAttributes = [];
+      for (const [k, v] of Object.entries(preset.presetObject)) {
+        this.selectedPresetAttributes.push({
+          key: k,
+          label: this.$i18n.t(`criterion.${k}`),
+          value: v
+        });
+      }
+    },
+    getPresetTypeLabel(presetTypeName) {
+      return PresetType.fromName(presetTypeName).label;
+    },
+    viewPreset(presetId) {
+      const presetJson = this.presets[presetId];
+      if (presetJson) {
+        const preset = Preset.fromJSON(presetJson);
+        console.log(this.presets);
+        console.log(preset.presetObject);
+        this.populatePresetAttributeTable(preset);
+      }
+    },
     mapIntermediateProperties() {
       console.log('mapIntermediateProperties');
       this.intermediate.directories.default_out_dir.create_panel = this.APP_SETTINGS.directories.default_out_dir.create_panel

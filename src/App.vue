@@ -137,7 +137,7 @@
       <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" />
       <!-- <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" /> -->
       <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
-      <SettingsPanel v-show="menuselection == 'settings_panel'" />
+      <SettingsPanel v-show="menuselection == 'settings_panel'" :presets="PRESETS_COLLECTION.presets" />
       <!-- <AboutPanel v-show="menuselection == 'about_panel'" /> -->
     </div>
     <div>

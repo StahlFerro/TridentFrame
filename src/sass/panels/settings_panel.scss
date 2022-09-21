@@ -56,18 +56,17 @@ $settings-group-width: calc(100% / #{$settings-row-count} - (#{$settings-col-gap
 
     .settings-subpanel-presets {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        column-gap: 10px;
+        align-items: stretch;
+        align-content: stretch;
+        height: 100%;
         .settings-preset-selector {
-            flex: 0 0 25%;
-            height: 25%;
+            flex: 0 0 calc(35% - 5px);
         }
         .settings-preset-key-values {
-            flex: 0 0 65%;
-            height: 65%
-        }
-        .settings-preset-controls {
-            flex: 0 0 10%;
-            height: 10%;
+            flex: 0 0 calc(65% - 5px);
+            background-color: $dark-2;
         }
     }
 

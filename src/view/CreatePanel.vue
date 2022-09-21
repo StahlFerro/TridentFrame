@@ -263,8 +263,8 @@
                   </template>
                   <template #modalDisplay>
                     <KeyValueTable :rows="presetModal.presetDraft.draftAttributes" 
-                                  keyHeader="Attribute" 
-                                  :valueHeader="presetModal.presetOperation == 'preset_update'? 'Current value' : 'Value'"
+                                  key-header="Attribute" 
+                                  :value-header="presetModal.presetOperation == 'preset_update'? 'Current value' : 'Value'"
                     >
                       <template v-if="presetModal.presetOperation != 'preset_view'" #rowControlsHeaderLeft>
                         <th class="kvp-control-fit" hint="Include this attribute to the preset?">

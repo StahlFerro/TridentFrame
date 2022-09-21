@@ -127,4 +127,30 @@ table.kvp-table {
     .center {
         text-align: center;
     }
+    td.is-paddingless {
+        padding: 0 !important;
+    }
+    td.is-marginless {
+        margin: 0 !important;
+    }
+
+    td div.clickable {
+        width: 100%;
+        height: 100%;
+        border: 2px solid transparent;
+        // Override Chromium User Agent stylesheet
+        &:focus {
+            outline: 0;
+        }
+
+        &:hover {
+            border-color: $cyan !important;
+            color: $cyan;
+        }
+
+        &:active {
+            border-color: lighten($color: $cyan, $amount: 10);
+            color: lighten($color: $cyan, $amount: 10);
+        }
+    }
 }

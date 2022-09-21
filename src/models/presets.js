@@ -56,7 +56,7 @@ class Preset {
     this.presetType = null;
     this.presetObject = null;
   }
-  
+
   /**
    * Create Preset instance from POJO object
    * @param {object} json POJO object
@@ -221,7 +221,7 @@ class AttributeConclusion extends Enumeration {
   static IncludeNull = new AttributeConclusion(
     "INCLUDE_NULL", "Include empty", "Add the attribute to the preset with empty value")
   static IncludeValue = new AttributeConclusion(
-    "INCLUDE_VALUE", "Include value", "Add the attribute to the preset with new value")
+    "INCLUDE_VALUE", "Include new value", "Add the attribute to the preset with new value")
   static UpdateValue = new AttributeConclusion(
     "UPDATE_VALUE", "Update value", "Update existing attribute's value with new value")
   constructor(name, label, description=""){
