@@ -882,7 +882,7 @@ export default {
         this._logInfo(`Updated preset ${preset.name}`);
       }
     },
-    deletePreset(event){
+    async deletePresetAsync(event){
       const id = this.presetSelectionValue;
       if (id) {
         console.log(id);
@@ -891,8 +891,19 @@ export default {
           this._logWarning(`Please select a preset from the dropdown to delete!`);
           return;
         }
-        this.emitter.emit('delete-preset', id);
-        this._logInfo(`Deleted preset ${presetJson.name}`);
+        let options = {
+          title: "TridentFrame Preset Deletion",
+          buttons: ["Yes", "No"],
+          message:
+            `Are you sure you want to delete the preset '${presetJson.name}'?`,
+        };
+        const promptResult = await ipcRenderer.invoke("IPC-SHOW-MESSAGE-BOX", options);
+        console.log(`msgbox promptResult:`);
+        console.log(promptResult);
+        if (promptResult.response == 0) {
+          this.emitter.emit('delete-preset', id);
+          this._logInfo(`Deleted preset ${presetJson.name}`);
+        }
       }
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
@@ -931,7 +942,7 @@ export default {
         this.openPresetModal(event, optionId);
       }
       else if (optionId == 'preset_delete') {
-        this.deletePreset(event);
+        this.deletePresetAsync(event);
       }
       // console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
     },

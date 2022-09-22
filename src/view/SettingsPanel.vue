@@ -163,7 +163,7 @@
                 </template>
                 <template #rowControlsRight="presetRow">
                   <td class="center">
-                    <ButtonField color="red" size="small" :icons="['fas', 'trash-can']" @click="deletePreset(presetRow.id)" />
+                    <ButtonField color="red" size="small" :icons="['fas', 'trash-can']" @click="deletePresetAsync(presetRow.id)" />
                   </td>
                 </template>
               </KeyValueTable>
@@ -411,6 +411,15 @@ export default {
         if (presetCount == 0) {
           this.presetSelectionId = "";
         }
+        // If there is a preset already selected to preview the attributes, attempt to reload the attributes table in case an update is made to that particular preset.
+        if (this.presetSelectionId) {
+          const preset = this.viewPreset(this.presetSelectionId);
+          // If preset is deleted, deselect the selection and clear the attributes table
+          if (!preset) {
+            this.presetSelectionId = "";
+            this.selectedPresetAttributes = [];
+          }
+        }
       },
     }
   },
@@ -473,14 +482,29 @@ export default {
         console.log(this.presets);
         console.log(preset.presetObject);
         this.populatePresetAttributeTable(preset);
+        return preset;
+      }
+      else {
+        return null;
       }
     },
-    deletePreset(id) {      
+    async deletePresetAsync(id) {      
       if (id) {
         console.log(id);
         const presetJson = this.presets[id];
-        this.emitter.emit('delete-preset', id);
-        // this._logInfo(`Deleted preset ${presetJson.name}`);
+        let options = {
+          title: "TridentFrame Preset Deletion",
+          buttons: ["Yes", "No"],
+          message:
+            `Are you sure you want to delete the preset '${presetJson.name}'?`,
+        };
+        const promptResult = await ipcRenderer.invoke("IPC-SHOW-MESSAGE-BOX", options);
+        console.log(`msgbox promptResult:`);
+        console.log(promptResult);
+        if (promptResult.response == 0) {
+          this.emitter.emit('delete-preset', id);
+          // this._logInfo(`Deleted preset ${presetJson.name}`);
+        }
       }
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },

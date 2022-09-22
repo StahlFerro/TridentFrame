@@ -7,20 +7,13 @@ const { Enumeration } = require('./enum.js');
 /**
  * Different types of presets for categorization
  */
-class PresetType {
+class PresetType extends Enumeration {
   static CreationCriteria = new PresetType(
     "creation_criteria", "Creation criteria")
   static ModificationCriteria = new PresetType(
     "modification_criteria", "Modification criteria")
-  constructor(name, label) {
-    this.name = name;
-    this.label = label;
-  }
-  static getAll() {
-    return Object.keys(this).map(k => this[k]);
-  }
-  static fromName(name) {
-    return this.getAll().filter(pt => pt.name === name)[0];
+  constructor(name, label, description=""){
+    super(name, label, description);
   }
 }
 
