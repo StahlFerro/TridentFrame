@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
-          <table v-if="imageInfo" class="table ins-info-table is-paddingless" width="100%">
+          <table v-if="imageInfo" class="ins-info-table" width="100%">
             <template v-for="attr_group in INSPECT_PANEL_SETTINGS.image_attributes">
               <!-- <template v-for="(meta_list, meta_categ) in imageInfo"> -->
               <!-- <span v-bind:key="key"/> -->
