@@ -142,10 +142,16 @@
           v-show="settingsTabSelection == 1"
           class="settings-subpanel-presets">
             <div class="settings-preset-selector">
-              <KeyValueTable :rows="localPresetsSelection" value-header="Preset">
+              <KeyValueTable :rows="localPresetsList" value-header="Preset">
                 <template #rowControlsHeaderRight>
                   <th>
                     Type
+                  </th>
+                  <!-- <th>
+                    Created at
+                  </th> -->
+                  <th>
+                    Last modifed at
                   </th>
                   <th class="kvp-control-fit">
                     Controls
@@ -157,8 +163,14 @@
                       {{ presetRow.name }}
                     </div>
                   </td>
-                    <td class="is-paddingless is-marginless">
-                      {{ presetRow.typeName }}
+                  <td class="is-paddingless is-marginless kvp-control-fit">
+                    {{ presetRow.typeName }}
+                  </td>
+                  <!-- <td>
+                    {{ formatUnixTimestamp(presetRow.createdDateTime) }}
+                  </td> -->
+                  <td class="kvp-control-fit">
+                    {{ formatUnixTimestamp(presetRow.lastModifiedDateTime) }}
                   </td>
                 </template>
                 <template #rowControlsRight="presetRow">
@@ -325,6 +337,8 @@ import DropdownField from "./components/Form/DropdownField.vue";
 import KeyValueTable from "./components/Displays/KeyValueTable.vue";
 import { Preset, PresetType } from "../models/presets";
 
+import dayjs from "dayjs";
+
 const DIR_DIALOG_PROPS = ["openDirectory", "createDirectory"];
 const LOCALES_LIST = [
   {
@@ -373,7 +387,7 @@ export default {
         }
       },
       LOCALES_LIST: LOCALES_LIST,
-      localPresetsSelection: [],
+      localPresetsList: [],
       presetSelectionId: "",
       selectedPresetAttributes: []
     };
@@ -407,7 +421,7 @@ export default {
       // When this property is updated, refresh the preset selector values
       handler: function(newVal, oldVal) {
         console.debug(`Preset updated\nOld/New count: ${oldVal}/${newVal}`);
-        const presetCount = this.populatePresetsSelectorTable();
+        const presetCount = this.populatePresetsListTable();
         if (presetCount == 0) {
           this.presetSelectionId = "";
         }
@@ -439,26 +453,32 @@ export default {
     this.applySettingsWatcher();
     console.log(this.$i18n.locale);
     console.log(this.$i18n.availableLocales);
-    const loadedPresets = this.populatePresetsSelectorTable();
+    const loadedPresets = this.populatePresetsListTable();
     if (loadedPresets > 0) {
-      this.viewPreset(this.localPresetsSelection[0].id);
+      this.viewPreset(this.localPresetsList[0].id);
     }
   },
   methods: {
-    populatePresetsSelectorTable() {
+    formatUnixTimestamp(unixTimestamp) {
+      const date = dayjs(unixTimestamp);
+      return date.format('YYYY-MM-DD HH:mm:ss');
+    },
+    populatePresetsListTable() {
       console.log('populatePresetsSelector');
       console.log(this.presets);
       const presets = JSON.parse(JSON.stringify(this.presets));
       console.log(presets);
-      this.localPresetsSelection = [];
+      this.localPresetsList = [];
       for (const [id, preset] of Object.entries(this.presets)) {
-        this.localPresetsSelection.push({
+        this.localPresetsList.push({
           id: id,
           name: preset.name,
           typeName: PresetType.fromName(preset.presetType.name).label,
+          createdDateTime: preset.createdDateTime,
+          lastModifiedDateTime: preset.lastModifiedDateTime,
         })
       }
-      return this.localPresetsSelection.length;
+      return this.localPresetsList.length;
     },
     populatePresetAttributeTable(preset) {
       this.selectedPresetAttributes = [];
