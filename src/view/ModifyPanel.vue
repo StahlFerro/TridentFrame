@@ -951,8 +951,13 @@ export default {
         const id = this.presetSelectionValue;
         console.log(id);
         if (id) {
-          console.log(id);
-          const currPreset = Preset.fromJSON(this.presets[id]);
+          const presetJson = this.presets[id];
+          console.log(presetJson);
+          if (!presetJson) {
+            this._logWarning(`Please select a preset from the dropdown to view!`);
+            return false;
+          }
+          const currPreset = Preset.fromJSON(presetJson);
           const attrJson = JSON.parse(JSON.stringify(currPreset.presetObject));
           const presetType = currPreset.presetType;
           const presetViewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
@@ -981,7 +986,12 @@ export default {
         console.log(id);
         if (id) {
           console.log(id);
-          const currPreset = this.presets[id];
+          const presetJson = this.presets[id];
+          if (!presetJson) {
+            this._logWarning(`Please select a preset from the dropdown to update!`);
+            return false;
+          }
+          const currPreset = Preset.fromJSON(presetJson);
           const attrObj = JSON.parse(JSON.stringify(this.criteria));
           const presetUpdateDraft = PresetDraft.buildUpdatePresetDraft(currPreset, attrObj);
           presetUpdateDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
@@ -1043,9 +1053,12 @@ export default {
       console.log(id);
       if (id) {
         console.log(id);
-        const presetProxy = this.presets[id];
-        const presetJson = JSON.parse(JSON.stringify(presetProxy))
-        console.log(presetJson);
+        const presetJson = this.presets[id];
+        if (!presetJson) {
+          this._logWarning(`Please select a preset from the dropdown to update!`);
+          this.closePresetModal(event);
+          return;
+        }
         const preset = Preset.fromJSON(presetJson);
         console.log(preset);
         preset.updateFromDraft(this.presetModal.newPresetName, this.presetModal.presetDraft);
@@ -1059,6 +1072,10 @@ export default {
       if (id) {
         console.log(id);
         const presetJson = this.presets[id];
+        if (!presetJson) {
+          this._logWarning(`Please select a preset from the dropdown to delete!`);
+          return;
+        }
         this.emitter.emit('delete-preset', id);
         this._logInfo(`Deleted preset ${presetJson.name}`);
       }
@@ -1455,7 +1472,7 @@ export default {
           message:
             `A file with the same name (${this.fname}.${this.criteria.format}) already exists in the output folder and it will get overwritten. Do you want to proceed?`,
         };
-        const promptResult = await ipcRenderer.invoke("show-msg-box", options);
+        const promptResult = await ipcRenderer.invoke("IPC-SHOW-MESSAGE-BOX", options);
         console.log(`msgbox promptResult:`);
         console.log(promptResult);
         if (promptResult.response == 1) proceed = false;

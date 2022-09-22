@@ -119,11 +119,11 @@ ipcMain.on('get-app-path-sync', function (event, args) {
 	event.returnValue = app.getAppPath();
 });
 
-ipcMain.on("show-msg-box-sync", function (event, args) {
+ipcMain.on("IPC-SHOW-MESSAGE-BOX-SYNC", function (event, args) {
 	event.returnValue = dialog.showMessageBoxSync(args);
 })
 
-ipcMain.handle("show-msg-box", async (event, args) => {
+ipcMain.handle("IPC-SHOW-MESSAGE-BOX", async (event, args) => {
 	return dialog.showMessageBox(mainWindow, args);
 })
 

@@ -480,7 +480,7 @@ export default {
         console.log(id);
         const presetJson = this.presets[id];
         this.emitter.emit('delete-preset', id);
-        this._logInfo(`Deleted preset ${presetJson.name}`);
+        // this._logInfo(`Deleted preset ${presetJson.name}`);
       }
       else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
