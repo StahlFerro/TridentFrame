@@ -12,19 +12,21 @@
       'is-loading': isLoading,
       'square-button': isSquare,
       'non-interactive': isNonInteractive,
+      'is-small': size == 'small',
+      'is-medium': size == 'medium',
+      'is-large': size == 'large',
     }"
     :title="hint" @click="$emit('click')"
   >
     <span v-if="icons.length >= 2" class="icon is-small">
       <font-awesome-icon :icon="icons" />
     </span>
-    <span>{{ label }}</span>
+    <span v-if="label">{{ label }}</span>
   </a>
 </template>
 
 
 <script>
-  
   export default {
     name: "ButtonField",
     props: {
@@ -42,12 +44,18 @@
       },
       label: {
         type: String,
-        required: true,
+        default: "",
+        required: false,
       },
       color: {
         type: String,
         default: "white",
         required: false
+      },
+      size: {
+        type: String,
+        default: "normal",
+        required: false,
       },
       isSquare: {
         type: Boolean,

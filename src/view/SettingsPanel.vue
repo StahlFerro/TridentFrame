@@ -152,13 +152,18 @@
                   </th>
                 </template>
                 <template #dataRow="presetRow">
-                  <td class="is-paddingless is-marginless">
-                    <div :id="`PresetRowId-${presetRow.id}`" class="clickable" :class="{'is-selected': presetSelectionId == presetRow.id}" @click="viewPreset(presetRow.id)">
+                  <td class="clickable is-paddingless is-marginless">
+                    <div :id="`PresetRowId-${presetRow.id}`" :class="{'is-selected': presetSelectionId == presetRow.id}" @click="viewPreset(presetRow.id)">
                       {{ presetRow.name }}
                     </div>
                   </td>
                     <td class="is-paddingless is-marginless">
-                    {{ presetRow.typeName }}
+                      {{ presetRow.typeName }}
+                  </td>
+                </template>
+                <template #rowControlsRight="presetRow">
+                  <td class="center">
+                    <ButtonField color="red" size="small" :icons="['fas', 'trash-can']" @click="deletePreset(presetRow.id)" />
                   </td>
                 </template>
               </KeyValueTable>
@@ -469,6 +474,15 @@ export default {
         console.log(preset.presetObject);
         this.populatePresetAttributeTable(preset);
       }
+    },
+    deletePreset(id) {      
+      if (id) {
+        console.log(id);
+        const presetJson = this.presets[id];
+        this.emitter.emit('delete-preset', id);
+        this._logInfo(`Deleted preset ${presetJson.name}`);
+      }
+      else this._logWarning(`Please select a preset from the dropdown to delete!`);
     },
     mapIntermediateProperties() {
       console.log('mapIntermediateProperties');

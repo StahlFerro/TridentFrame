@@ -134,27 +134,28 @@ table.kvp-table {
         margin: 0 !important;
     }
 
-    td div.clickable {
-        width: 100%;
-        height: 100%;
-        border: 2px solid transparent;
-        // Override Chromium User Agent stylesheet
-        &:focus {
-            outline: 0;
-        }
-
-        &:hover {
-            border-color: $cyan !important;
-            color: $cyan;
-        }
-
-        &:active {
-            border-color: lighten($color: $cyan, $amount: 10);
-            color: lighten($color: $cyan, $amount: 10);
-        }
-        &.is-selected {
-            background-color: $cyan;
-            color: $dark-3;
+    td.clickable {
+        height: 30px;
+        div {
+            width: 100%;
+            height: 100%;
+            border: 2px solid transparent;
+            // Override Chromium User Agent stylesheet
+            &:focus {
+                outline: 0;
+            }
+            &:hover {
+                border-color: $cyan !important;
+                color: $cyan;
+            }
+            &:active {
+                border-color: lighten($color: $cyan, $amount: 10);
+                color: lighten($color: $cyan, $amount: 10);
+            }
+            &.is-selected {
+                background-color: $cyan;
+                color: $dark-3;
+            }
         }
     }
 }
