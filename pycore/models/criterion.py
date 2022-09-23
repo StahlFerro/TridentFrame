@@ -78,8 +78,8 @@ class AnimationCriteria(TransformativeCriteria):
         self.loop_count = int(vals["loop_count"] or 0)
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
-        self.skip_frame = int(vals.get("skip_frame") or 0)
-        self.skip_frame_maintain_delay = vals.get("skip_frame_maintain_delay") or False
+        self.frame_skip_count = int(vals.get("frame_skip_count") or 0)
+        self.frame_skip_maintain_delay = vals.get("frame_skip_maintain_delay") or False
 
 
     @property

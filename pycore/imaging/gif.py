@@ -32,12 +32,12 @@ def create_animated_gif(image_paths: List, out_full_path: Path, crbundle: Criter
     fcount = len(image_paths)
     if criteria.start_frame:
         image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
-    skip_frame_mult = criteria.skip_frame + 1
+    frame_skip_count_mult = criteria.frame_skip_count + 1
     shout_nums = imageutils.shout_indices(fcount, 1)
     for index, ipath in enumerate(image_paths):
-        if skip_frame_mult > 1:
+        if frame_skip_count_mult > 1:
             im_number = index + 1
-            if im_number % skip_frame_mult == 0:
+            if im_number % frame_skip_count_mult == 0:
                 continue
         if shout_nums.get(index):
             stdio.message(f"Processing frames... ({shout_nums.get(index)})")

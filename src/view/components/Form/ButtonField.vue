@@ -15,6 +15,7 @@
       'is-small': size == 'small',
       'is-medium': size == 'medium',
       'is-large': size == 'large',
+      'text-padding-small': textPadding == 'small'
     }"
     :title="hint" @click="$emit('click')"
   >
@@ -55,6 +56,11 @@
       size: {
         type: String,
         default: "normal",
+        required: false,
+      },
+      textPadding: {
+        type: String,
+        default: "",
         required: false,
       },
       isSquare: {

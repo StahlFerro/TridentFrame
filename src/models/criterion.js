@@ -42,8 +42,10 @@ class AnimationCriteria extends TransformativeCriteria {
     this.preserve_alpha = false;
     this.loop_count = null;
     this.start_frame = null;
-    this.skip_frame = null;
-    this.skip_frame_maintain_delay = false;
+    this.frame_skip_count = null;
+    this.frame_skip_gap = null;
+    this.frame_skip_offset = null;
+    this.frame_skip_maintain_delay = false;
   }
 }
 

@@ -22,8 +22,9 @@
       "preserve_alpha": "Preserve alpha",
       "loop_count": "Loop count",
       "start_frame": "Start frame",
-      "skip_frame": "Frame skip",
-      "skip_frame_maintain_delay": "Maintain delay",
+      "frame_skip_count": "Frame skip count",
+      "frame_skip_gap": "Frame skip gap",
+      "frame_skip_maintain_delay": "Maintain delay",
       "format": "Format"
     },
     "image_metadata": {

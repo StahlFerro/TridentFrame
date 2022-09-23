@@ -137,11 +137,22 @@
                   <p class="is-white-d">General</p>
                 </a>
               </li>
+              
+              <li class="subtab-menu-item" :class="{ 'is-selected': crtSubMenuSelection == 1 }">
+                <a @click="crtSubMenuSelection = 1">
+                  <span class="icon is-large">
+                    <font-awesome-icon :icon="['fas', 'layer-group']" size="2x" inverse />
+                    <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
+                  </span>
+                  <p class="is-white-d">Frames</p>
+                </a>
+              </li>
+
               <li
                 class="subtab-menu-item is-cyan"
-                :class="{ 'is-selected': crtSubMenuSelection == 1 }"
+                :class="{ 'is-selected': crtSubMenuSelection == 2 }"
               >
-                <a @click="crtSubMenuSelection = 1">
+                <a @click="crtSubMenuSelection = 2">
                   <span class="icon is-large">
                     <font-awesome-icon icon="sliders" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
@@ -190,7 +201,7 @@
                     <input
                       v-model="aspectRatio.text"
                       class="input is-border-colorless is-paddingless"
-                      style="height: 1.5em"
+                      style="height: 1.2em"
                       readonly="readonly"
                     />
                   </template>
@@ -222,20 +233,10 @@
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.skip_frame" :label="$t('criterion.skip_frame')" type="number" 
-                              hint="Amount of frames before the next frame is skipped. 0 or blank for no skipping"
-                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
-                  />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.skip_frame_maintain_delay" :label="$t('criterion.skip_frame_maintain_delay')" 
-                                 hint="(For GIFs) Preserve transparent pixels" 
-                  />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.preserve_alpha" :label="$t('criterion.preserve_alpha')" hint="(For GIFs) Preserve transparent pixels" />
-                  <br />
-                  <CheckboxField v-model="criteria.is_reversed" :label="$t('criterion.is_reversed')" hint="Reverse the animation" />
                 </div>
                 <div class="separator">
                   <div class="separator-space" />
@@ -360,7 +361,7 @@
                   </template>
                   <template #presetControlsLeft>
                     <div class="field-cell">
-                      <ButtonField id="createPanelPresetPopperBtn" label="Presets..." color="blue"
+                      <ButtonField id="createPanelPresetPopperBtn" label="Presets..." color="blue" text-padding="small"
                                 :listen-to-outside-clicks="true"
                                 :icons="['fas', 'paint-roller']"
                                 :is-square="true"
@@ -388,13 +389,21 @@
                     </div>
                     <div class="field-cell">
                       
-                    <ButtonField label="Apply preset" color="purple"
+                    <ButtonField label="Apply preset" color="purple" text-padding="small"
                                 @click="applyPreset"
                     />
                     </div>
                   </template>
                 </PresetSelector>
                 <!-- </div> -->
+                <div class="field-cell">
+
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.preserve_alpha" :label="$t('criterion.preserve_alpha')" hint="(For GIFs) Preserve transparent pixels" />
+                  <br />
+                  <CheckboxField v-model="criteria.is_reversed" :label="$t('criterion.is_reversed')" hint="Reverse the animation" />
+                </div>
                 <div class="separator">
                   <div class="separator-space" />
                 </div>
@@ -421,7 +430,43 @@
                 </div>
               </div>
             </div>
-            <div v-show="crtSubMenuSelection == 1 && criteria.format == 'gif'">
+            <div v-show="crtSubMenuSelection == 1">
+              <div class="general-form row-7">
+                <div class="field-cell">
+                  Skip {x} frames
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.frame_skip_count" :label="$t('criterion.frame_skip_count')" type="number" 
+                              hint="Amount of frames to skip."
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                  After every {y} frames
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.frame_skip_gap" :label="$t('criterion.frame_skip_gap')" type="number" 
+                              hint="Amount of frames to preserve between skippings"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
+                </div>
+                <div class="field-cell">
+
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+              </div>
+            </div>
+            <div v-show="crtSubMenuSelection == 2 && criteria.format == 'gif'">
               <GIFOptimizationRow
                   v-model:is_optimized="gif_opt_criteria.is_optimized"
                   v-model:optimization_level="gif_opt_criteria.optimization_level"
@@ -437,7 +482,7 @@
                   v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
               />
             </div>
-            <div v-show="crtSubMenuSelection == 1 && criteria.format == 'png'">
+            <div v-show="crtSubMenuSelection == 2 && criteria.format == 'png'">
               <APNGOptimizationRow
                   v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
                   v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"

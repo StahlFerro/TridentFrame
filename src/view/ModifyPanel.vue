@@ -289,7 +289,7 @@
                   />
                 </div>
                 <div class="field-cell">
-                  <InputField v-model="criteria.skip_frame" :label="$t('criterion.skip_frame')" type="number" 
+                  <InputField v-model="criteria.frame_skip_count" :label="$t('criterion.frame_skip_count')" type="number" 
                               hint="Amount of frames before the next frame is skipped. 0 or blank for no skipping"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
@@ -297,7 +297,7 @@
                 <div class="field-cell">
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.skip_frame_maintain_delay" :label="$t('criterion.skip_frame_maintain_delay')" 
+                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
                                  hint="(For GIFs) Preserve transparent pixels" 
                   />
                   <br />
@@ -1376,7 +1376,7 @@ export default {
       this.criteria.fps = "";
       this.criteria.delay = "";
       this.criteria.loop_count = "";
-      this.criteria.skip_frame = "";
+      this.criteria.frame_skip_count = "";
       this._logClear();
       // this.criteria.modify_msgbox = "";
       let ARData = {
