@@ -22,7 +22,7 @@
       "preserve_alpha": "Preserve alpha",
       "loop_count": "Loop count",
       "start_frame": "Start frame",
-      "skip_frame": "Skip frame",
+      "skip_frame": "Frame skip",
       "skip_frame_maintain_delay": "Maintain delay",
       "format": "Format"
     },

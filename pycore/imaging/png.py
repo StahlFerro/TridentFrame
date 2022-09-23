@@ -5,6 +5,7 @@ import shutil
 from typing import List, Tuple
 from fractions import Fraction
 from pathlib import Path
+from unittest import skip
 
 from PIL import Image
 from apng import APNG, PNG, FrameControl
@@ -66,7 +67,12 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
     preprocessed_paths = []
     delays_list = criteria.delays_list
     # logger.debug(crbundle.create_aimg_criteria.__dict__)
+    skip_frame_mult = criteria.skip_frame + 1
     for index, ipath in enumerate(image_paths):
+        if skip_frame_mult > 1:
+            im_number = index + 1
+            if im_number % skip_frame_mult == 0:
+                continue
         fragment_name = str(ipath.name)
         if criteria.reverse:
             reverse_index = len(image_paths) - (index + 1)
@@ -118,12 +124,12 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
         delays_list = vectorutils.shift_items(delays_list, criteria.start_frame)
         
     if criteria.delays_are_even:
-        delay_fraction = Fraction(round(1/criteria.fps, 4)).limit_denominator()
+        delay_fraction = Fraction(round(1/criteria.fps * skip_frame_mult, 4)).limit_denominator()
         apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)
     else:
         for index, preproc_path in enumerate(preprocessed_paths):
             frame_delay = delays_list[index]
-            frame_delay = round(frame_delay, 4)
+            frame_delay = round(frame_delay * skip_frame_mult, 4)
             delay_fraction = Fraction(frame_delay).limit_denominator()
             apng.append(PNG.open_any(preproc_path), delay=int(delay_fraction.numerator), delay_den=int(delay_fraction.denominator))
     apng.num_plays = criteria.loop_count
