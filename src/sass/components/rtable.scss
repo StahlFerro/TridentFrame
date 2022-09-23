@@ -43,37 +43,6 @@ $bw: 3px;
     left: 0;
     opacity: 0.8;
 }
-.del-anchor {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: transparent;
-    background-repeat: no-repeat;
-    border: none;
-    cursor: pointer;
-    overflow: hidden;
-    outline: none;
-    padding: 0;
-    &:hover svg {
-        opacity: 1.0;
-    }
-    &:active svg {
-        opacity: 1.0;
-        color: lighten($crimson, 20%);
-    }
-    svg {
-        opacity: 0.3;
-        color: $crimson;
-        &:hover {
-            opacity: 1.0;
-        }
-        &:active {
-            opacity: 1.0;
-            color: lighten($crimson, 20%);
-        }
-    }
-}
-
 
 .table-kvp {
     display: flex;

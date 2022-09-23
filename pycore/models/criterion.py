@@ -79,6 +79,8 @@ class AnimationCriteria(TransformativeCriteria):
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.frame_skip_count = int(vals.get("frame_skip_count") or 0)
+        self.frame_skip_gap = int(vals.get("frame_skip_gap") or 0)
+        self.frame_skip_offset = int(vals.get("frame_skip_offset") or 0)
         self.frame_skip_maintain_delay = vals.get("frame_skip_maintain_delay") or False
 
 

@@ -24,6 +24,7 @@
       "start_frame": "Start frame",
       "frame_skip_count": "Frame skip count",
       "frame_skip_gap": "Frame skip gap",
+      "frame_skip_offset": "Frame skip offset",
       "frame_skip_maintain_delay": "Maintain delay",
       "format": "Format"
     },
@@ -31,7 +32,7 @@
       "name": "Name",
       "width": "Width",
       "height": "Height",
-      "dimensions": "Dimensions",
+      "dimensions": "Dimensions",     
       "format": "Format",
       "format_vesion": "Full format",
       "fsize": "File size (bytes)",

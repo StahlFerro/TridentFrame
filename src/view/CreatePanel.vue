@@ -18,9 +18,9 @@
               <span class="index-anchor is-white-d">
                 {{ parseInt(index) + 1 }}
               </span>
-              <button class="del-anchor" @click="removeFrame(parseInt(index))">
-                <span class="icon" @click="removeFrame(parseInt(index))">
-                  <font-awesome-icon icon="minus-circle" @click="removeFrame(parseInt(index))" />
+              <button class="hover-icon-button delete" @click="removeFrame(parseInt(index))">
+                <span class="icon">
+                  <font-awesome-icon icon="minus-circle" />
                 </span>
               </button>
             </div>
@@ -451,12 +451,15 @@
                   />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
-                                 hint="(For GIFs) Preserve transparent pixels" 
+                  <InputField v-model="criteria.frame_skip_offset" :label="$t('criterion.frame_skip_offset')" type="number" 
+                              hint="Amount of frames to preserve between skippings"
+                              :constraint-option="ENFORCE_UNSIGNED"
                   />
                 </div>
                 <div class="field-cell">
-
+                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
                 </div>
                 <div class="field-cell">
                   
@@ -654,6 +657,7 @@ export default {
       crtSubMenuSelection: 0,
       imagePaths: [],
       imageSequenceInfo: [],
+      frameOperation: {},
       latestLoadCount: 0,
       saveDir: "",
       insertIndex: "",
@@ -731,6 +735,27 @@ export default {
         return '';
       }
     },
+    computeSkipFrameList() {
+      console.log('computeSkipFrameList');
+      console.log(this.criteria);
+      const skip = Number.parseInt(this.criteria.frame_skip_count);
+      const gap = Number.parseInt(this.criteria.frame_skip_gap) > 0? Number.parseInt(this.criteria.frame_skip_gap) : 1;
+      const cycleLength = skip + gap;
+      const offset = Number.parseInt(this.criteria.frame_skip_offset);
+      const frameCount = this.imageSequenceInfo.length;
+      const frameList = [];
+      for (let index = 0; index < frameCount; index++){
+        const cycleOrd = Math.floor(index / cycleLength);
+        const currentCycleGapMax = cycleOrd * cycleLength + gap - 1;
+        const isSkipped = false;
+        if (index > currentCycleGapMax) {
+          isSkipped = true;
+        }
+        frameList.push({index: isSkipped, 'cyleOrd': cycleOrd, 'currentCycleGapMax': currentCycleGapMax, 'cycleLength': cycleLength})
+      }
+      console.log(frameList);
+      return frameList;
+    },
     // Triggers everytime this.presets property is updated on App.vue
     computeModifiedPresets() {
       console.log('computeModifiedPresets triggered');
@@ -748,6 +773,11 @@ export default {
           this.presetSelectionValue = "";
         }
       },
+    },
+    'computeSkipFrameList': {
+      handler: function(newVal, oldVal) {
+        console.debug('watch computeSkipFrameList');
+      }
     }
   },
   created() {
@@ -1239,6 +1269,7 @@ export default {
       this.previewPathCB = cb_url;
     },
     removeFrame(index) {
+      console.log(`removeFrame ${index}`);
       this.imagePaths.splice(index, 1);
       this.imageSequenceInfo.splice(index, 1);
     },
