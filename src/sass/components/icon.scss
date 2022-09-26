@@ -1,5 +1,22 @@
 @import "_colors.scss";
 
+.hover-icon-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+
+    &.excluded-frame {
+        bottom: 0;
+        top: auto;
+        left: 0;
+        svg {
+            opacity: 1.0;
+            color: $sunset;
+        }
+    }
+}
+
 
 .hover-icon-button {
   position: absolute;
@@ -12,7 +29,7 @@
   overflow: hidden;
   outline: none;
   padding: 0;
-  &.delete {
+  &.remove-frame {
     &:hover svg {
         opacity: 1.0;
     }

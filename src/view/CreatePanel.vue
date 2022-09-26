@@ -15,12 +15,17 @@
               "
             >
               <img :src="escapeLocalPath(item.absolute_url.value)" />
-              <span class="index-anchor is-white-d">
+              <span class="hover-icon-info is-white-d">
                 {{ parseInt(index) + 1 }}
               </span>
-              <button class="hover-icon-button delete" @click="removeFrame(parseInt(index))">
+              <span v-if="framesInfo[index].isSkipped" class="hover-icon-info excluded-frame">
                 <span class="icon">
-                  <font-awesome-icon icon="minus-circle" />
+                  <font-awesome-icon :icon="['fas', 'minus-circle']" />
+                </span>
+              </span>
+              <button class="hover-icon-button remove-frame" @click="removeFrame(parseInt(index))">
+                <span class="icon">
+                  <font-awesome-icon :icon="['fas', 'trash-can']" />
                 </span>
               </button>
             </div>
@@ -235,6 +240,9 @@
                 <div class="field-cell">
                 </div>
                 <div class="field-cell">
+                  <CheckboxField v-model="criteria.preserve_alpha" :label="$t('criterion.preserve_alpha')" hint="(For GIFs) Preserve transparent pixels" />
+                  <br />
+                  <CheckboxField v-model="criteria.is_reversed" :label="$t('criterion.is_reversed')" hint="Reverse the animation" />
                 </div>
                 <div class="field-cell">
                 </div>
@@ -400,9 +408,6 @@
 
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.preserve_alpha" :label="$t('criterion.preserve_alpha')" hint="(For GIFs) Preserve transparent pixels" />
-                  <br />
-                  <CheckboxField v-model="criteria.is_reversed" :label="$t('criterion.is_reversed')" hint="Reverse the animation" />
                 </div>
                 <div class="separator">
                   <div class="separator-space" />
@@ -442,6 +447,17 @@
                   />
                 </div>
                 <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
                   After every {y} frames
                 </div>
                 <div class="field-cell">
@@ -451,18 +467,53 @@
                   />
                 </div>
                 <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
                   <InputField v-model="criteria.frame_skip_offset" :label="$t('criterion.frame_skip_offset')" type="number" 
                               hint="Amount of frames to preserve between skippings"
                               :constraint-option="ENFORCE_UNSIGNED"
                   />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
-                                 hint="(For GIFs) Preserve transparent pixels" 
-                  />
+                  
                 </div>
                 <div class="field-cell">
                   
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
                 </div>
                 <div class="field-cell">
                   
@@ -553,6 +604,7 @@ import KeyValueTableRowControl from './components/Displays/KeyValueTableRowContr
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
+import { buildFrameInfo } from "../modules/utility/frames";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
 import { Preset, PresetDraft, PresetType, PresetDraftAttribute } from '../models/presets';
@@ -735,26 +787,27 @@ export default {
         return '';
       }
     },
-    computeSkipFrameList() {
-      console.log('computeSkipFrameList');
+    computeFramesAuxInfo() {
+      console.log('computeFramesAuxInfo');
       console.log(this.criteria);
-      const skip = Number.parseInt(this.criteria.frame_skip_count);
-      const gap = Number.parseInt(this.criteria.frame_skip_gap) > 0? Number.parseInt(this.criteria.frame_skip_gap) : 1;
-      const cycleLength = skip + gap;
-      const offset = Number.parseInt(this.criteria.frame_skip_offset);
+      const skip = Number.parseInt(this.criteria.frame_skip_count ?? 0);
+      const gap = Number.parseInt(this.criteria.frame_skip_gap ?? 0) > 0? Number.parseInt(this.criteria.frame_skip_gap) : 1;
+      const offset = - Number.parseInt(this.criteria.frame_skip_offset ?? 0);
       const frameCount = this.imageSequenceInfo.length;
-      const frameList = [];
-      for (let index = 0; index < frameCount; index++){
-        const cycleOrd = Math.floor(index / cycleLength);
-        const currentCycleGapMax = cycleOrd * cycleLength + gap - 1;
-        const isSkipped = false;
-        if (index > currentCycleGapMax) {
-          isSkipped = true;
-        }
-        frameList.push({index: isSkipped, 'cyleOrd': cycleOrd, 'currentCycleGapMax': currentCycleGapMax, 'cycleLength': cycleLength})
-      }
-      console.log(frameList);
-      return frameList;
+      const framesInfo = buildFrameInfo(frameCount, skip, gap, offset);
+      // const framesInfo = {};
+      // const cycleLength = skip + gap;
+      // for (let index = 0; index < frameCount; index++){
+      //   const cycleOrd = Math.floor((index + offset) / cycleLength);
+      //   const currentCycleGapMax = cycleOrd * cycleLength + gap - 1 - offset;
+      //   const isSkipped = false;
+      //   if (index > currentCycleGapMax) {
+      //     isSkipped = true;
+      //   }
+      //   framesInfo[index] = {'isSkipped': isSkipped, 'cyleOrd': cycleOrd, 'currentCycleGapMax': currentCycleGapMax, 'cycleLength': cycleLength, 'offset': offset};
+      // }
+      console.log(framesInfo);
+      return framesInfo;
     },
     // Triggers everytime this.presets property is updated on App.vue
     computeModifiedPresets() {
@@ -774,9 +827,11 @@ export default {
         }
       },
     },
-    'computeSkipFrameList': {
+    'computeFramesAuxInfo': {
       handler: function(newVal, oldVal) {
-        console.debug('watch computeSkipFrameList');
+        console.debug('watch computeFramesAuxInfo');
+        console.log(newVal);
+        this.framesInfo = newVal;
       }
     }
   },

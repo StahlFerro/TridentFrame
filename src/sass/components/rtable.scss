@@ -36,13 +36,7 @@ $bw: 3px;
     &.rtable-6cols > .rtable-cell  { max-width: 16.6%; }
 }
 
-/* Additional overlays */
-.index-anchor {
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0.8;
-}
+
 
 .table-kvp {
     display: flex;
