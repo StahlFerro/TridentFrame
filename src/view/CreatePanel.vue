@@ -15,15 +15,15 @@
               "
             >
               <img :src="escapeLocalPath(item.absolute_url.value)" />
-              <span class="hover-icon-info is-white-d">
+              <span class="frame-indicator is-white-d">
                 {{ parseInt(index) + 1 }}
               </span>
-              <span v-if="framesInfo[index].isSkipped" class="hover-icon-info excluded-frame">
-                <span class="icon">
-                  <font-awesome-icon :icon="['fas', 'minus-circle']" />
+              <span v-if="framesInfo[index].isSkipped" class="frame-indicator excluded-frame">
+                <span class="icon" title="Excluded frame">
+                  <font-awesome-icon :icon="['fas', 'xmark']" />
                 </span>
               </span>
-              <button class="hover-icon-button remove-frame" @click="removeFrame(parseInt(index))">
+              <button class="frame-control remove-frame" @click="removeFrame(parseInt(index))">
                 <span class="icon">
                   <font-awesome-icon :icon="['fas', 'trash-can']" />
                 </span>
