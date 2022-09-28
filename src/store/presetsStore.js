@@ -90,6 +90,10 @@ function deletePresetFromCollection(id) {
   // PRESETS_COLLECTION.presets.splice(presetIndex, 1);
 }
 
+function ipcGetPresets() {
+
+}
+
 
 const initStoreListener = () => {
   console.debug("Start attaching store IPC listeners...");
@@ -99,6 +103,9 @@ const initStoreListener = () => {
   ipcMain.on("IPC-GET-PRESETS", function (event, args) {
     console.debug(PRESETS_COLLECTION);
     event.returnValue = PRESETS_COLLECTION;
+  });
+  ipcMain.handle("IPC-GET-PRESETS", async (event, args) => {
+    return PRESETS_COLLECTION;
   });
   ipcMain.on("IPC-GET-PRESETS-CRITERION", function (event, criteriaType) {
     console.debug("IPC-GET-PRESETS-CRITERION invoked with args:");

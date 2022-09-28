@@ -14,11 +14,20 @@
         <slot name="rowControlsHeaderRight" />
       </template>
     </tr>
-    <tr v-for="(rowData, index) in rows" :key="index">
-      <slot name="rowControlsLeft" v-bind="rowData" />
-      <slot name="dataRow" v-bind="rowData" />
-      <slot name="rowControlsRight" v-bind="rowData" />
-    </tr>
+    <template v-if="dataType == 'table'">
+      <tr v-for="(rowData, index) in rows" :key="index">
+        <slot name="rowControlsLeft" v-bind="rowData" />
+        <slot name="dataRow" v-bind="rowData" />
+        <slot name="rowControlsRight" v-bind="rowData" />
+      </tr>
+    </template>
+    <template v-else-if="dataType == 'object'">
+      <tr v-for="(rowData, index) in rows" :key="index">
+        <slot name="rowControlsLeft" v-bind="rowData" />
+        <slot name="dataRow" v-bind="rowData" />
+        <slot name="rowControlsRight" v-bind="rowData" />
+      </tr>
+    </template>
   </table>
 </template>
 
@@ -47,6 +56,11 @@
         type: Boolean,
         default: true,
       },
+      dataType: {
+        type: String,
+        default: "table",
+        required: false,
+      }
     },
     emits: [],
   }

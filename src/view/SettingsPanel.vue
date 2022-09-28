@@ -14,19 +14,19 @@
               <a @click="settingsTabSelection = 2">Languages</a>
             </li> -->
             <li :class="{ 'is-active': settingsTabSelection == 2 }">
-              <a @click="settingsTabSelection = 2">Window</a>
+              <a @click="settingsTabSelection = 2">Backup & Restore</a>
             </li>
             <li :class="{ 'is-active': settingsTabSelection == 3 }">
-              <a @click="settingsTabSelection = 3">About</a>
+              <a @click="settingsTabSelection = 3">Window</a>
+            </li>
+            <li :class="{ 'is-active': settingsTabSelection == 4 }">
+              <a @click="settingsTabSelection = 4">About</a>
             </li>
           </ul>
         </div>
       </div>
       <div class="settings-subpanels">
-        <div
-          v-show="settingsTabSelection == 0"
-          class="settings-subpanel-general"
-        >
+        <div v-show="settingsTabSelection == 0" class="settings-subpanel-general">
           <div id="settings_startup" class="settings-group">
             <h4 class="title is-4 settings-header">
               On startup
@@ -138,78 +138,87 @@
           </div>
         </div>
 
-        <div
-          v-show="settingsTabSelection == 1"
-          class="settings-subpanel-presets">
-            <div class="settings-preset-selector">
-              <KeyValueTable :rows="localPresetsList" value-header="Preset">
-                <template #rowControlsHeaderRight>
-                  <th>
-                    Type
-                  </th>
-                  <!-- <th>
-                    Created at
-                  </th> -->
-                  <th>
-                    Last modifed at
-                  </th>
-                  <th class="kvp-control-fit">
-                    Controls
-                  </th>
-                </template>
-                <template #dataRow="presetRow">
-                  <td class="clickable is-paddingless is-marginless">
-                    <div :id="`PresetRowId-${presetRow.id}`" :class="{'is-selected': presetSelectionId == presetRow.id}" @click="viewPreset(presetRow.id)">
-                      {{ presetRow.name }}
-                    </div>
-                  </td>
-                  <td class="is-paddingless is-marginless kvp-control-fit">
-                    {{ presetRow.typeName }}
-                  </td>
-                  <!-- <td>
-                    {{ formatUnixTimestamp(presetRow.createdDateTime) }}
-                  </td> -->
-                  <td class="kvp-control-fit">
-                    {{ formatUnixTimestamp(presetRow.lastModifiedDateTime) }}
-                  </td>
-                </template>
-                <template #rowControlsRight="presetRow">
-                  <td class="center">
-                    <ButtonField color="red" size="small" :icons="['fas', 'trash-can']" @click="deletePresetAsync(presetRow.id)" />
-                  </td>
-                </template>
-              </KeyValueTable>
-            </div>
-            <div class="settings-preset-key-values">
-              <KeyValueTable :rows="selectedPresetAttributes" key-header="Attribute" value-header="Value">
-                <template #dataRow="attr">
-                  <td>
-                    <p>
-                      {{ attr.label }}
-                    </p>
-                  </td>
-                  <td>
-                    <p>
-                      {{ attr.value }}
-                    </p>
-                  </td>
-                </template>
-              </KeyValueTable>
-            </div>
-            <div class="settings-preset-controls">
-              
-            </div>
+        <div v-show="settingsTabSelection == 1" class="settings-subpanel-presets">
+          <div class="settings-preset-selector">
+            <KeyValueTable :rows="localPresetsList" value-header="Preset">
+              <template #rowControlsHeaderRight>
+                <th>
+                  Type
+                </th>
+                <!-- <th>
+                  Created at
+                </th> -->
+                <th>
+                  Last modifed at
+                </th>
+                <th class="kvp-control-fit">
+                  Controls
+                </th>
+              </template>
+              <template #dataRow="presetRow">
+                <td class="clickable is-paddingless is-marginless">
+                  <div :id="`PresetRowId-${presetRow.id}`" :class="{'is-selected': presetSelectionId == presetRow.id}" @click="viewPreset(presetRow.id)">
+                    {{ presetRow.name }}
+                  </div>
+                </td>
+                <td class="is-paddingless is-marginless kvp-control-fit">
+                  {{ presetRow.typeName }}
+                </td>
+                <!-- <td>
+                  {{ formatUnixTimestamp(presetRow.createdDateTime) }}
+                </td> -->
+                <td class="kvp-control-fit">
+                  {{ formatUnixTimestamp(presetRow.lastModifiedDateTime) }}
+                </td>
+              </template>
+              <template #rowControlsRight="presetRow">
+                <td class="center">
+                  <ButtonField color="red" size="small" :icons="['fas', 'trash-can']" @click="deletePresetAsync(presetRow.id)" />
+                </td>
+              </template>
+            </KeyValueTable>
+          </div>
+          <div class="settings-preset-key-values">
+            <KeyValueTable :rows="selectedPresetAttributes" key-header="Attribute" value-header="Value">
+              <template #dataRow="attr">
+                <td>
+                  <p>
+                    {{ attr.label }}
+                  </p>
+                </td>
+                <td>
+                  <p>
+                    {{ attr.value }}
+                  </p>
+                </td>
+              </template>
+            </KeyValueTable>
+          </div>
+          <div class="settings-preset-controls">
+            
+          </div>
         </div>
 
-        <!-- <div 
-          v-show="settingsTabSelection == 2"
-          class="settings-subpanel-window">
-        </div> -->
+        <div v-show="settingsTabSelection == 2" class="settings-subpanel-backup">
+          <div class="settings-backup-view">
+            <KeyValueTable :rows="appStats" data-type="object" key-header="Statistics" value-header="Value">
+              <template #dataRow="presetRow">
+                <td class="is-paddingless is-marginless kvp-control-fit">
+                  {{ presetRow.name }}
+                </td>
+                <td>
+                  {{ presetRow.value }}
+                </td>
+              </template>
+            </KeyValueTable>
+          </div>
+          <div class="settings-backup-control">
+            <ButtonField @click="createBackup" label="Create Backup" />
+            <ButtonField @click="restoreBackup" label="Restore Backup" />
+          </div>
+        </div>
 
-        <div
-          v-show="settingsTabSelection == 2"
-          class="settings-subpanel-window"
-        >
+        <div v-show="settingsTabSelection == 3" class="settings-subpanel-window">
           <table class="table is-borderless" style="padding: 5px" width="100%">
             <tr>
               <td>
@@ -263,10 +272,7 @@
           </table>
         </div>
 
-        <div
-          v-show="settingsTabSelection == 3"
-          class="settings-subpanel-about"
-        >
+        <div v-show="settingsTabSelection == 4" class="settings-subpanel-about">
           <div class="about-content">
             <div class="about-logo">
               <img :src="logo" class="about-logo no-select-drag" />
@@ -325,7 +331,7 @@
 
 <script>
 import { ipcRenderer, shell } from "electron";
-import { access } from "fs";
+import { access, writeFile } from "fs";
 import { tridentEngine } from "../modules/streams/trident_engine.js";
 import { PreviewImageSaveNameBehaviour } from "../models/previewImage.js";
 import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
@@ -336,8 +342,10 @@ import ButtonInputField from "./components/Form/ButtonInputField.vue";
 import DropdownField from "./components/Form/DropdownField.vue";
 import KeyValueTable from "./components/Displays/KeyValueTable.vue";
 import { Preset, PresetType } from "../models/presets";
+import { ApplicationBackup } from "../models/applicationBackup";
 
 import dayjs from "dayjs";
+import { join } from "path";
 
 const DIR_DIALOG_PROPS = ["openDirectory", "createDirectory"];
 const LOCALES_LIST = [
@@ -388,6 +396,7 @@ export default {
       },
       LOCALES_LIST: LOCALES_LIST,
       localPresetsList: [],
+      appStats: {},
       presetSelectionId: "",
       selectedPresetAttributes: []
     };
@@ -410,8 +419,38 @@ export default {
       const modifiedDateTimes = Object.entries(this.presets).map(([k, v]) => v.lastModifiedDateTime);
       return modifiedDateTimes
     },
+    computeApplicationStatistics() {
+      console.log(`computeApplicationStatistics ${Object.keys(this.APP_SETTINGS).length}`);
+      if (!this.APP_SETTINGS || Object.keys(this.APP_SETTINGS).length == 0){
+        console.log(`computeApplicationStatistics is null`);
+        return null;
+      }
+      const presetCount = this.localPresetsList.length;
+      const dateText = this.formatUnixTimestamp(this.APP_SETTINGS.statistics.last_backup);
+      console.log('dateText');
+      console.log(dateText);
+      const stats = {
+        "presetsCount": {
+          name: "Presets Count",
+          value: presetCount,
+        },
+        "lastBackupTime": {
+          name: "Last backup time",
+          value: this.formatUnixTimestamp(this.APP_SETTINGS.statistics.last_backup),
+        },
+      };
+      console.log(this.APP_SETTINGS);
+      return stats;
+    }
   },
   watch: {
+    'computeApplicationStatistics': {
+      handler: function(val) {
+        console.log(`watch computeApplicationStatistics`);
+        console.log({val});
+        this.appStats = val;
+      }
+    },
     'intermediate.directories.default_out_dir.create_panel': {
       handler: function (val) {
         console.log(val);
@@ -451,6 +490,7 @@ export default {
     console.debug("SettingsPanel mounted");
     this.mapIntermediateProperties();
     this.applySettingsWatcher();
+    // this.applyStatisticsCompute();
     console.log(this.$i18n.locale);
     console.log(this.$i18n.availableLocales);
     const loadedPresets = this.populatePresetsListTable();
@@ -459,9 +499,71 @@ export default {
     }
   },
   methods: {
-    formatUnixTimestamp(unixTimestamp) {
-      const date = dayjs(unixTimestamp);
-      return date.format('YYYY-MM-DD HH:mm:ss');
+    formatUnixTimestamp(unixTimestamp, mode="generic") {
+      try {
+        const date = dayjs(unixTimestamp);
+        if (!date.isValid())
+          throw Error(date);
+        // console.log(`date try`);
+        // console.log(date);
+        if (mode == "generic")
+          return date.format('YYYY-MM-DD HH:mm:ss');
+        else if (mode == "filename")
+          return date.format('YYYY-MM-DD-HH.mm.ss');
+      }
+      catch (error) {
+        console.error(error);
+        return "";
+      }
+    },
+    createBackup() {
+      (async () => {
+        const presets = ipcRenderer.sendSync("IPC-GET-PRESETS");
+        console.log('backing up preset yields...');
+        console.log(presets);
+        const settings = ipcRenderer.sendSync("IPC-GET-SETTINGS");
+        let dialogOptions = { properties: ["openDirectory", "createDirectory"] };
+        const result = await ipcRenderer.invoke('open-dialog', dialogOptions);
+        if (result.canceled)
+          return Promise.reject("Directory selection cancelled");
+        else{
+          let outDirs = result.filePaths;
+          if (outDirs && outDirs.length > 0) { 
+            return {
+              outDirs: outDirs, 
+              backup: new ApplicationBackup("0.1.0-beta.13", settings, presets)
+            };
+          }
+          else {
+            return Promise.reject("No directories are selected")
+          }
+        }
+      })()
+      .catch((error) => {
+        console.error(error);
+      })
+      .then(async (res) => {
+        const dir = res.outDirs[0];
+        const backup =  res.backup;
+        const bkTime = backup.createdDateTime;
+        this.APP_SETTINGS.statistics.last_backup = bkTime;
+        console.log('create Backup res');
+        console.log(res);
+        const bkFileName = `tridentframe_userdata_backup_${this.formatUnixTimestamp(bkTime, "filename")}.json`
+        const filePath = join(dir, bkFileName);
+        const serializedBackup = JSON.stringify(backup, null, 4)
+        return new Promise(function(resolve, reject) {
+          writeFile(filePath, serializedBackup, 'utf-8', function(err) {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
+      }).catch((error) => {
+        console.error(error);
+      });
+    },
+    restoreBackup() {
+      
     },
     populatePresetsListTable() {
       console.log('populatePresetsSelector');

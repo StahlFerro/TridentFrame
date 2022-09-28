@@ -70,6 +70,30 @@ $settings-group-width: calc(100% / #{$settings-row-count} - (#{$settings-col-gap
             background-color: $dark-2;
             overflow-y: auto;
         }
+    }    
+    
+    .settings-subpanel-backup {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        .settings-backup-view {
+            overflow-y: auto;
+            display: flex;
+            flex: 1 0 auto;
+            justify-content: center;
+            align-items: center;
+        }
+        .settings-backup-control {
+            display: flex;
+            flex-direction: row;
+            flex: 1 0 auto;
+            justify-content: center;
+            align-items: center;
+            column-gap: 5px;
+        }
     }
 
 }
