@@ -94,6 +94,11 @@ $settings-group-width: calc(100% / #{$settings-row-count} - (#{$settings-col-gap
             align-items: center;
             column-gap: 5px;
         }
+        .settings-backup-footer {
+            height: $status-bar-height;
+            border: 1.5px solid $white-d;
+            min-width: 100%;
+        }
     }
 
 }

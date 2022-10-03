@@ -14,7 +14,7 @@
               <a @click="settingsTabSelection = 2">Languages</a>
             </li> -->
             <li :class="{ 'is-active': settingsTabSelection == 2 }">
-              <a @click="settingsTabSelection = 2">Backup & Restore</a>
+              <a @click="settingsTabSelection = 2">Backup</a>
             </li>
             <li :class="{ 'is-active': settingsTabSelection == 3 }">
               <a @click="settingsTabSelection = 3">Window</a>
@@ -214,7 +214,10 @@
           </div>
           <div class="settings-backup-control">
             <ButtonField @click="createBackup" label="Create Backup" />
-            <ButtonField @click="restoreBackup" label="Restore Backup" />
+            <!-- <ButtonField @click="restoreBackup" label="Restore Backup" /> -->
+          </div>
+          <div class="settings-backup-footer">
+            <StatusBar :status-bar-id="statusBarId" />
           </div>
         </div>
 
@@ -335,6 +338,7 @@ import { access, writeFile } from "fs";
 import { tridentEngine } from "../modules/streams/trident_engine.js";
 import { PreviewImageSaveNameBehaviour } from "../models/previewImage.js";
 import logo from '../assets/imgs/TridentFrame_logo_512x512.png';
+import StatusBar from "./components/StatusBar.vue";
 
 import InputField from "./components/Form/InputField.vue";
 import ButtonField from "./components/Form/ButtonField.vue";
@@ -343,6 +347,8 @@ import DropdownField from "./components/Form/DropdownField.vue";
 import KeyValueTable from "./components/Displays/KeyValueTable.vue";
 import { Preset, PresetType } from "../models/presets";
 import { ApplicationBackup } from "../models/applicationBackup";
+import { EnumStatusLogLevel } from "../modules/constants/loglevels";
+import { logStatus } from "../modules/events/statusBarEmitter";
 
 import dayjs from "dayjs";
 import { join } from "path";
@@ -363,6 +369,7 @@ export default {
     ButtonInputField,
     DropdownField,
     KeyValueTable,
+    StatusBar,
   },
   props: {
     presets: {
@@ -398,7 +405,8 @@ export default {
       localPresetsList: [],
       appStats: {},
       presetSelectionId: "",
-      selectedPresetAttributes: []
+      selectedPresetAttributes: [],
+      statusBarId: "settingsBackupSubpanelStatusBar",
     };
   },
   computed: {
@@ -539,10 +547,8 @@ export default {
           }
         }
       })()
-      .catch((error) => {
-        console.error(error);
-      })
       .then(async (res) => {
+        console.log('createBackup res');
         const dir = res.outDirs[0];
         const backup =  res.backup;
         const bkTime = backup.createdDateTime;
@@ -555,10 +561,14 @@ export default {
         return new Promise(function(resolve, reject) {
           writeFile(filePath, serializedBackup, 'utf-8', function(err) {
             if (err) reject(err);
-            else resolve();
+            else resolve(filePath);
           });
         });
-      }).catch((error) => {
+      })
+      .then((res) => {
+        this._logSuccess(`Backup written to ${res}`);
+      })
+      .catch((error) => {
         console.error(error);
       });
     },
@@ -756,6 +766,24 @@ export default {
           console.debug(res);
         }
       });
+    },
+    _logClear() {
+      logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
+    },
+    _logInfo(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
+    },
+    _logProcessing(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.PROCESSING, message);
+    },
+    _logSuccess(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.SUCCESS, message);
+    },
+    _logWarning(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.WARNING, message);
+    },
+    _logError(message) {
+      logStatus(this.statusBarId, EnumStatusLogLevel.ERROR, message);
     },
     ipcWindow: function () {
       let extension_filters = [
