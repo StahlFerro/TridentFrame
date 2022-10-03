@@ -1,7 +1,7 @@
 from fractions import Fraction
 import math
 
-from numpy import average
+from functools import reduce 
 from pycore.core_funcs import stdio
 from pycore.models.image_formats import ImageFormat
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
@@ -79,7 +79,7 @@ class AnimationCriteria(TransformativeCriteria):
         start_frame_val = int(vals["start_frame"] or 0) or 1
         self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
         self.frame_skip_count = int(vals.get("frame_skip_count") or 0)
-        self.frame_skip_gap = int(vals.get("frame_skip_gap") or 0)
+        self.frame_skip_gap = int(vals.get("frame_skip_gap") or 1)
         self.frame_skip_offset = int(vals.get("frame_skip_offset") or 0)
         self.frame_skip_maintain_delay = vals.get("frame_skip_maintain_delay") or False
 
@@ -87,7 +87,80 @@ class AnimationCriteria(TransformativeCriteria):
     @property
     def actual_average_delay(self):
         pass
+    
+    # def skip_fraction(self, frame_count):
+    #     gap = self.frame_skip_gap or 1
+    #     skip = self.frame_skip_count
+    #     cycle_length = skip + gap
+    #     offset = self.frame_skip_offset % cycle_length
+    #     cycles, rem = divmod(frame_count, cycle_length)
+    #     sustained_count = cycles * gap
+    #     skipped_count = cycles * skip
+    #     # cycle_gap_max = (gap + self.frame_skip_offset) % offset
+    #     skip_pattern = [*[False] * gap, *[True] * skip]
         
+        
+    #     if sustained_count + skipped_count != frame_count:
+    #         raise Exception("Wrong frame skip calculation!")
+    #     fraction = Fraction(sustained_count, skipped_count + sustained_count)
+
+    
+    def get_frames_info(self, frame_count: int) -> Dict[int, Dict]:
+        """Get per-frame criteria
+
+        Args:
+            frame_count (int): Frame count
+
+        Returns:
+            Dict[int, Dict]: Frame info dictionary
+        """
+        gap = self.frame_skip_gap or 1
+        skip = self.frame_skip_count
+        offset = -self.frame_skip_offset
+        cycle_length = skip + gap
+        frames_info = {}
+        sustained_frames = 0
+        for index in range(0, frame_count):
+            cycle_ordinal = math.floor((index + offset) / cycle_length)
+            current_cycle_gap_max = cycle_ordinal * cycle_length + gap - 1 - offset
+            is_skipped = False
+            if (index > current_cycle_gap_max):
+                is_skipped = True
+            if not is_skipped:
+                sustained_frames += 1
+            frames_info[index] = {
+                'is_skipped': is_skipped
+            }
+        skip_perc = sustained_frames / frame_count
+        if self.delays_are_even:
+            # global_delay = self.delay
+            # if not self.frame_skip_maintain_delay:
+            global_delay = round(self.delay / skip_perc, 6)
+            for index, v in frames_info.items():
+                v['delay'] = global_delay
+        else:
+            for index, v in frames_info.items():
+                v['delay'] = self.delays_list[index]
+        return frames_info
+    
+    
+    # def get_true_average_delay(self, frame_count):
+    #     frames_info = self.get_frames_info(frame_count)
+    #     return self._compute_average_delay(frames_info)
+
+    def _compute_average_delay(self, frames_info) -> float:
+        if self.frame_skip_maintain_delay:
+            return self.delay
+        else:
+            unskipped_delays = [fr['delay'] for i, fr in frames_info.items() if not fr['is_skipped']]
+            total_delays = reduce(lambda td, d: td + d, unskipped_delays)
+            sustained_frame_count = len(unskipped_delays)
+            average_delay = total_delays / sustained_frame_count
+            # stdio.error(f'udelays {total_delays}')
+            # stdio.error(f'divisor {sustained_frame_count}')
+            return average_delay
+
+
 class CreationCriteria(AnimationCriteria):
     """Contains all of the criterias for Creating an animated image of a certain format
 

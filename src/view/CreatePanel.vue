@@ -792,7 +792,7 @@ export default {
       console.log(this.criteria);
       const skip = Number.parseInt(this.criteria.frame_skip_count ?? 0);
       const gap = Number.parseInt(this.criteria.frame_skip_gap ?? 0) > 0? Number.parseInt(this.criteria.frame_skip_gap) : 1;
-      const offset = - Number.parseInt(this.criteria.frame_skip_offset ?? 0);
+      const offset = Number.parseInt(this.criteria.frame_skip_offset ?? 0);
       const frameCount = this.imageSequenceInfo.length;
       const framesInfo = buildFrameInfo(frameCount, skip, gap, offset);
       // const framesInfo = {};

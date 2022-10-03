@@ -1,4 +1,7 @@
 function buildFrameInfo(frameCount, skip, gap, offset) {
+  offset = -offset;
+  if (gap < 0)
+    gap = 1;
   const cycleLength = skip + gap;
   const framesInfo = {};
   for (let index = 0; index < frameCount; index++){
@@ -13,5 +16,9 @@ function buildFrameInfo(frameCount, skip, gap, offset) {
   console.log(framesInfo);
   return framesInfo;
 }
+
+// function skipPercentage() {
+  
+// }
 
 module.exports.buildFrameInfo = buildFrameInfo;

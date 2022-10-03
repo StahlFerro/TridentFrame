@@ -214,11 +214,20 @@
                   <p class="is-white-d">General</p>
                 </a>
               </li>
+              <li class="subtab-menu-item" :class="{ 'is-selected': modSubMenuSelection == 1 }">
+                <a @click="modSubMenuSelection = 1">
+                  <span class="icon is-large">
+                    <font-awesome-icon :icon="['fas', 'layer-group']" size="2x" inverse />
+                    <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
+                  </span>
+                  <p class="is-white-d">Frames</p>
+                </a>
+              </li>
               <li
                 id="MOD_box_gif" class="subtab-menu-item is-cyan"
-                :class="{'is-selected': modSubMenuSelection == 1}"
+                :class="{'is-selected': modSubMenuSelection == 2}"
               >
-                <a id="MOD_menu_gif" @click="modSubMenuSelection = 1">
+                <a id="MOD_menu_gif" @click="modSubMenuSelection = 2">
                   <span class="icon is-large">
                     <font-awesome-icon icon="sliders" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
@@ -487,7 +496,92 @@
               </div>
 
             </div>
-            <div v-show="modSubMenuSelection == 1 && criteria.format == 'gif'">
+            <div v-show="modSubMenuSelection == 1">
+              <div class="general-form row-7">
+                <div class="field-cell">
+                  Skip {x} frames
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.frame_skip_count" :label="$t('criterion.frame_skip_count')" type="number" 
+                              hint="Amount of frames to skip."
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  After every {y} frames
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.frame_skip_gap" :label="$t('criterion.frame_skip_gap')" type="number" 
+                              hint="Amount of frames to preserve between skippings"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                  <InputField v-model="criteria.frame_skip_offset" :label="$t('criterion.frame_skip_offset')" type="number" 
+                              hint="Amount of frames to preserve between skippings"
+                              :constraint-option="ENFORCE_UNSIGNED"
+                  />
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+              </div>
+            </div>
+            <div v-show="modSubMenuSelection == 2 && criteria.format == 'gif'">
               <!-- <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%"> -->
               <GIFOptimizationRow
                 v-model:hasOptimization="hasGIFOptimization"
@@ -512,7 +606,7 @@
               />
               <!-- </table> -->
             </div>
-            <div v-show="modSubMenuSelection == 1 && criteria.format == 'png'">
+            <div v-show="modSubMenuSelection == 2 && criteria.format == 'png'">
               <!-- <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%"> -->
               <APNGOptimizationRow 
                 ref="apngOptimRow"

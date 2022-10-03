@@ -11,7 +11,7 @@ from subprocess import CalledProcessError
 from pathlib import Path
 from sys import platform, stderr
 from enum import Enum, unique
-from typing import List, Tuple, Iterator, Optional, Generator
+from typing import Dict, List, Tuple, Iterator, Optional, Generator
 
 from PIL import Image
 from apng import APNG, FrameControl
@@ -120,7 +120,7 @@ class GifsicleAPI:
     gifsicle_path = config.imager_exec_path("gifsicle")
 
     @classmethod
-    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, quotes=False, metadata: AnimatedImageMetadata=None) -> List[str]:
+    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, frames_info: Dict, quotes=False) -> List[str]:
         """Generate a list containing gifsicle command and its arguments.
 
         Args:
@@ -133,7 +133,10 @@ class GifsicleAPI:
         """
         criteria = crbundle.create_aimg_criteria
         gif_opt_criteria = crbundle.gif_opt_criteria
-        delay = int(criteria.delay * 100)
+        delay = int(criteria._compute_average_delay(frames_info) * 100)
+        # stdio.error('final average delay')
+        # stdio.error(delay)
+        # delay = int(criteria.delay * 100)
         disposal = "background"
         loop_arg = "--loopcount"
         opti_mode = "--unoptimize"
@@ -279,7 +282,7 @@ class GifsicleAPI:
         return options
 
     @classmethod
-    def combine_gif_images(cls, gifragment_dir: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
+    def combine_gif_images(cls, gifragment_dir: Path, out_full_path: Path, crbundle: CriteriaBundle, frames_info: Dict) -> Path:
         """Combine a list of static GIF images in a directory into one animated GIF image.
 
         Args:
@@ -307,11 +310,11 @@ class GifsicleAPI:
         #     logger.error(stderr_res)
 
         if os_platform() == OS.WINDOWS:
-            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=False)
+            args = cls._combine_cmd_builder(out_full_path, crbundle, frames_info, quotes=False)
             stdio.debug(args)
             result = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         elif os_platform() == OS.LINUX:
-            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=True)
+            args = cls._combine_cmd_builder(out_full_path, crbundle, frames_info, quotes=True)
             cmd = " ".join(args)
             stdio.debug(f"linux cmd -> {cmd}")
             result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)

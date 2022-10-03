@@ -34,11 +34,11 @@ def create_animated_gif(image_paths: List, out_full_path: Path, crbundle: Criter
         image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
     frame_skip_count_mult = criteria.frame_skip_count + 1
     shout_nums = imageutils.shout_indices(fcount, 1)
+    frames_info = criteria.get_frames_info(len(image_paths))
+    # stdio.error(frames_info)
     for index, ipath in enumerate(image_paths):
-        if frame_skip_count_mult > 1:
-            im_number = index + 1
-            if im_number % frame_skip_count_mult == 0:
-                continue
+        if frames_info[index]['is_skipped']:
+            continue
         if shout_nums.get(index):
             stdio.message(f"Processing frames... ({shout_nums.get(index)})")
         with Image.open(ipath) as im:
@@ -55,7 +55,7 @@ def create_animated_gif(image_paths: List, out_full_path: Path, crbundle: Criter
 
             im.save(save_path)
 
-    out_full_path = GifsicleAPI.combine_gif_images(target_dir, out_full_path, crbundle)
+    out_full_path = GifsicleAPI.combine_gif_images(target_dir, out_full_path, crbundle, frames_info)
     shutil.rmtree(target_dir)
     # logger.control("CRT_FINISH")
     return out_full_path
