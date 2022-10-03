@@ -65,14 +65,14 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
     #         or aopt_criteria.convert_color_mode:
     out_dir = filehandler.mk_cache_dir(prefix_name="tmp_apngfrags")
     preprocessed_paths = []
-    delays_list = criteria.delays_list
+    # delays_list = criteria.delays_list
     # logger.debug(crbundle.create_aimg_criteria.__dict__)
     frame_skip_count_mult = criteria.frame_skip_count + 1
+    frames_info = criteria.get_frames_info(len(image_paths))
+    computed_delays_list = []
     for index, ipath in enumerate(image_paths):
-        if frame_skip_count_mult > 1:
-            im_number = index + 1
-            if im_number % frame_skip_count_mult == 0:
-                continue
+        if frames_info[index]['is_skipped']:
+            continue
         fragment_name = str(ipath.name)
         if criteria.reverse:
             reverse_index = len(image_paths) - (index + 1)
@@ -117,18 +117,20 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
             if aopt_criteria.quantization_enabled:
                 save_path = PNGQuantAPI.quantize_png_image(aopt_criteria, save_path)
             preprocessed_paths.append(save_path)
+            computed_delays_list.append(frames_info[index]['delay'])
             # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
     stdio.message("Saving APNG....")
     if criteria.start_frame:
         preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, criteria.start_frame)
-        delays_list = vectorutils.shift_items(delays_list, criteria.start_frame)
+        # delays_list = vectorutils.shift_items(delays_list, criteria.start_frame)
+        computed_delays_list = vectorutils.shift_items(computed_delays_list, criteria.start_frame)
         
     if criteria.delays_are_even:
         delay_fraction = Fraction(round(1/criteria.fps * frame_skip_count_mult, 4)).limit_denominator()
         apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)
     else:
         for index, preproc_path in enumerate(preprocessed_paths):
-            frame_delay = delays_list[index]
+            frame_delay = computed_delays_list[index]
             frame_delay = round(frame_delay * frame_skip_count_mult, 4)
             delay_fraction = Fraction(frame_delay).limit_denominator()
             apng.append(PNG.open_any(preproc_path), delay=int(delay_fraction.numerator), delay_den=int(delay_fraction.denominator))
