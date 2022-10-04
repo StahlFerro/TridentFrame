@@ -84,7 +84,11 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "start_frame": 1,
         "is_reversed": mod_criteria.reverse,
         "rotation": mod_criteria.rotation,
-        "resize_method": mod_criteria.resize_method
+        "resize_method": mod_criteria.resize_method,
+        "frame_skip_count": mod_criteria.frame_skip_count,
+        "frame_skip_gap": mod_criteria.frame_skip_gap,
+        "frame_skip_offset": mod_criteria.frame_skip_offset,
+        "frame_skip_maintain_delay": mod_criteria.frame_skip_maintain_delay,
     })
     creation_crbundle = CriteriaBundle({
         "create_aimg_criteria": create_criteria,
@@ -94,8 +98,10 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
     # stdio.error("MOD CREATE")
     new_image_path = create_aimg(frame_paths, out_path, creation_crbundle)
     # stdio.error("MOD RETEMPO")
+    frames_info = create_criteria.get_frames_info(len(frame_paths))
+    computed_delays_list = [fr['delay'] for _, fr in frames_info.items() if not fr['is_skipped']]
     if create_criteria.format == ImageFormat.GIF:
-        GifsicleAPI.retempo_gif(new_image_path, delays)
+        GifsicleAPI.retempo_gif(new_image_path, computed_delays_list)
     shutil.rmtree(frames_dir)
     return new_image_path
 
@@ -109,7 +115,7 @@ def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Pat
     aopt_criteria = crbundle.apng_opt_criteria
     change_format = criteria.change_format(orig_attribute)
 
-    if change_format or criteria.must_transform(orig_attribute) or (criteria.format == ImageFormat.PNG and aopt_criteria.quantization_enabled) :
+    if change_format or criteria.must_transform(orig_attribute) or criteria.frame_skip_count > 0 or (criteria.format == ImageFormat.PNG and aopt_criteria.quantization_enabled) :
         stdio.debug(f"Rebuilding {orig_attribute.format} image into {criteria.format}...")
         return rebuild_aimg(img_path, out_path, orig_attribute, crbundle)
     else:
