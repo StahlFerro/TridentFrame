@@ -417,7 +417,7 @@ class GifsicleAPI:
             "--output",
             shlex.quote(str(out_full_path)) if os_platform() == OS.LINUX else str(out_full_path)
         ])
-        # cmd = " ".join(cmdlist)
+        cmd = " ".join(args)
         # yield {"msg": f"[{index}/{total_ops}] {description}"}
         # yield {"cmd": cmd}
         # cmd = " ".join(args)
