@@ -30,6 +30,8 @@ def test_creation_criteria():
     creation_criteria = CreationCriteria({
         "fps": "4",
         "delay": 0.25,
+        "delays_are_even": True,
+        "delays_list": [],
         "format": "GIF",
         "is_reversed": False,
         "preserve_alpha": False,
@@ -40,7 +42,11 @@ def test_creation_criteria():
         "resize_method": "",
         "loop_count": "",
         "start_frame": "1",
-        "rotation": 0
+        "rotation": 0,
+        "frame_skip_count": 0,
+        "frame_skip_gap": 0,
+        "frame_skip_offset": 0,
+        "frame_skip_maintain_delay": False,
     })
 
     assert creation_criteria.size == (320, 320)
@@ -56,6 +62,12 @@ def test_creation_criteria():
     assert creation_criteria.loop_count == 0
     assert creation_criteria.start_frame == 0
     assert creation_criteria.rotation == 0
+    assert creation_criteria.frame_skip_count == 0
+    assert creation_criteria.frame_skip_gap == 1
+    
+    frames_info = creation_criteria.get_frames_info(12)
+    assert set(fr['is_skipped'] for _, fr in frames_info.items()) == {False}
+    assert set(fr['delay'] for _, fr in frames_info.items()) == {0.25}
 
 
 def test_split_criteria():

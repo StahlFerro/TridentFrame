@@ -67,7 +67,7 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
     preprocessed_paths = []
     # delays_list = criteria.delays_list
     # logger.debug(crbundle.create_aimg_criteria.__dict__)
-    frame_skip_count_mult = criteria.frame_skip_count + 1
+    # frame_skip_count_mult = criteria.frame_skip_count + 1
     frames_info = criteria.get_frames_info(len(image_paths))
     computed_delays_list = []
     for index, ipath in enumerate(image_paths):
@@ -117,22 +117,25 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
             if aopt_criteria.quantization_enabled:
                 save_path = PNGQuantAPI.quantize_png_image(aopt_criteria, save_path)
             preprocessed_paths.append(save_path)
-            computed_delays_list.append(frames_info[index]['delay'])
+        computed_delays_list.append(frames_info[index]['delay'])
             # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
     stdio.message("Saving APNG....")
+    stdio.debug(frames_info)
+    stdio.debug(computed_delays_list)
     if criteria.start_frame:
         preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, criteria.start_frame)
         # delays_list = vectorutils.shift_items(delays_list, criteria.start_frame)
         computed_delays_list = vectorutils.shift_items(computed_delays_list, criteria.start_frame)
         
     if criteria.delays_are_even:
-        delay_fraction = Fraction(round(1/criteria.fps * frame_skip_count_mult, 4)).limit_denominator()
+        average_computed_delay = criteria._compute_average_delay(frames_info)
+        delay_fraction = Fraction(round(average_computed_delay, 4)).limit_denominator()
+        # delay_fraction = Fraction(round(1/criteria.fps * frame_skip_count_mult, 4)).limit_denominator()
         apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)
     else:
         for index, preproc_path in enumerate(preprocessed_paths):
             frame_delay = computed_delays_list[index]
-            frame_delay = round(frame_delay * frame_skip_count_mult, 4)
-            delay_fraction = Fraction(frame_delay).limit_denominator()
+            delay_fraction = Fraction(round(frame_delay, 4)).limit_denominator()
             apng.append(PNG.open_any(preproc_path), delay=int(delay_fraction.numerator), delay_den=int(delay_fraction.denominator))
     apng.num_plays = criteria.loop_count
     apng.save(out_full_path)

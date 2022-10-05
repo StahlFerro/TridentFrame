@@ -75,7 +75,7 @@ def fx_samples_checkers_02_dir(fx_samples_path) -> Path:
 
 
 @pytest.fixture(scope="session")
-def fx_samples_checkers_01_sequence(fx_samples_checkers_02_dir) -> List[Path]:
+def fx_samples_checkers_02_sequence(fx_samples_checkers_02_dir) -> List[Path]:
     sequence = [p for p in fx_samples_checkers_02_dir.iterdir() if p.stem.startswith("checker_4x4_")]
     sequence.sort()
     return sequence
@@ -119,6 +119,14 @@ def fx_samples_crbundle_001_create_optimized_gif_json(fx_samples_json_dir: Path)
 @pytest.fixture(scope="session")
 def fx_samples_crbundle_002_create_optimized_apng_json(fx_samples_json_dir: Path) -> Dict:
     json_path = fx_samples_json_dir.joinpath("crbundle_002_create_optimized_apng.json")
+    with open(json_path, "r") as f:
+        crpack = json.loads(f.read())
+    return crpack
+
+
+@pytest.fixture(scope="session")
+def fx_samples_crbundle_004_create_skipped_apng_json(fx_samples_json_dir: Path) -> Dict:
+    json_path = fx_samples_json_dir.joinpath("crbundle_004_create_skipped_apng.json")
     with open(json_path, "r") as f:
         crpack = json.loads(f.read())
     return crpack

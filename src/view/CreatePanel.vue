@@ -777,6 +777,7 @@ export default {
           this.previewInfo.animation_info != null,
           this.previewInfo.animation_info? this.previewInfo.animation_info.frame_count.value : 1,
           this.previewInfo.animation_info? this.previewInfo.animation_info.fps.value : null,
+          this.previewInfo.animation_info? this.previewInfo.animation_info.average_delay.value : null,
           this.previewInfo.animation_info? this.previewInfo.animation_info.loop_duration.value : null,
           this.previewInfo.animation_info? (this.previewInfo.animation_info.loop_count.value || 'Infinite') : null,
           this.previewInfo.general_info.format.value
