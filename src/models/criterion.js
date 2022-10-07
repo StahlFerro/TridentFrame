@@ -61,12 +61,13 @@ class AnimationCriteria extends TransformativeCriteria {
       if (index > currentCycleGapMax) {
         isSkipped = true;
       }
-      framesInfo[index] = {'isSkipped': isSkipped, 'cyleOrd': cycleOrd, 'currentCycleGapMax': currentCycleGapMax, 'cycleLength': cycleLength, 'offset': offset};
+      framesInfo[index] = {'isSkipped': isSkipped};
     }
     console.log(framesInfo);
     return framesInfo;
   }
 }
+
 
 
 class CreationCriteria extends AnimationCriteria {
