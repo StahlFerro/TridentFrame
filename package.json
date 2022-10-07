@@ -61,6 +61,7 @@
     "dayjs": "^1.11.5",
     "toml": "^3.0.0",
     "uuid": "^9.0.0",
+    "vue": "^3.2.40",
     "vue-i18n": "^9.3.0-beta.6"
   },
   "devDependencies": {
@@ -116,7 +117,6 @@
     "sass-loader": "^13.1.0",
     "terser-webpack-plugin": "^5.3.6",
     "url-loader": "^4.1.1",
-    "vue": "^3.2.40",
     "vue-click-outside": "^1.1.0",
     "vue-loader": "^17.0.0",
     "vue-slider-component": "^4.0.0-beta.4",
