@@ -87,22 +87,41 @@ class AnimationCriteria(TransformativeCriteria):
     def actual_average_delay(self):
         pass
     
-    # def skip_fraction(self, frame_count):
-    #     gap = self.frame_skip_gap or 1
-    #     skip = self.frame_skip_count
-    #     cycle_length = skip + gap
-    #     offset = self.frame_skip_offset % cycle_length
-    #     cycles, rem = divmod(frame_count, cycle_length)
-    #     sustained_count = cycles * gap
-    #     skipped_count = cycles * skip
-    #     # cycle_gap_max = (gap + self.frame_skip_offset) % offset
-    #     skip_pattern = [*[False] * gap, *[True] * skip]
-        
-        
-    #     if sustained_count + skipped_count != frame_count:
-    #         raise Exception("Wrong frame skip calculation!")
-    #     fraction = Fraction(sustained_count, skipped_count + sustained_count)
+    # @classmethod
+    # def compute_unskipped_fraction(cls, frames_info) -> Fraction:
+    #     """Get the percentage of sustained frames after skipping
 
+    #     Args:
+    #         frames_info (Any): Frames information
+
+    #     Returns:
+    #         Fraction: Fraction of unskipped frames to the total frame count
+    #     """
+    #     unskipped_count = 0
+    #     total_count = 0
+    #     for _, fr in frames_info.items():
+    #         total_count += 1
+    #         if not fr['is_skipped']:
+    #             unskipped_count += 1
+    #     return Fraction(unskipped_count, total_count).limit_denominator(10*4)
+        
+    @classmethod
+    def compute_average_delay(cls, frames_info) -> float:
+        """Compute the average delay of unskipped frames
+
+        Args:
+            frames_info (Any): Frames information dictionary
+
+        Returns:
+            float: Averaged delay
+        """
+        unskipped_delays = [fr['delay'] for i, fr in frames_info.items() if not fr['is_skipped']]
+        total_delays = reduce(lambda td, d: td + d, unskipped_delays)
+        sustained_frame_count = len(unskipped_delays)
+        average_delay = total_delays / sustained_frame_count
+        # stdio.error(f'udelays {total_delays}')
+        # stdio.error(f'divisor {sustained_frame_count}')
+        return average_delay
     
     def get_frames_info(self, frame_count: int) -> Dict[int, Dict]:
         """Get per-frame criteria
@@ -139,25 +158,14 @@ class AnimationCriteria(TransformativeCriteria):
                 v['delay'] = global_delay
         else:
             for index, v in frames_info.items():
-                v['delay'] = self.delays_list[index]
+                v['delay'] = round(self.delays_list[index] / skip_perc, 6)
         return frames_info
     
     
     # def get_true_average_delay(self, frame_count):
     #     frames_info = self.get_frames_info(frame_count)
-    #     return self._compute_average_delay(frames_info)
+    #     return self.compute_average_delay(frames_info)
 
-    def _compute_average_delay(self, frames_info) -> float:
-        if self.frame_skip_maintain_delay:
-            return self.delay
-        else:
-            unskipped_delays = [fr['delay'] for i, fr in frames_info.items() if not fr['is_skipped']]
-            total_delays = reduce(lambda td, d: td + d, unskipped_delays)
-            sustained_frame_count = len(unskipped_delays)
-            average_delay = total_delays / sustained_frame_count
-            # stdio.error(f'udelays {total_delays}')
-            # stdio.error(f'divisor {sustained_frame_count}')
-            return average_delay
 
 
 class CreationCriteria(AnimationCriteria):

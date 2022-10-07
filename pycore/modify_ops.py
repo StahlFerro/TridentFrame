@@ -95,13 +95,13 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "gif_opt_criteria": crbundle.gif_opt_criteria,
         "apng_opt_criteria": crbundle.apng_opt_criteria,
     })
-    # stdio.error("MOD CREATE")
+    stdio.error("MOD CREATE")
+    stdio.error(create_criteria)
     new_image_path = create_aimg(frame_paths, out_path, creation_crbundle)
     # stdio.error("MOD RETEMPO")
-    frames_info = create_criteria.get_frames_info(len(frame_paths))
-    computed_delays_list = [fr['delay'] for _, fr in frames_info.items() if not fr['is_skipped']]
     if create_criteria.format == ImageFormat.GIF:
-        GifsicleAPI.retempo_gif(new_image_path, computed_delays_list)
+        frames_info = create_criteria.get_frames_info(len(frame_paths))
+        GifsicleAPI.retempo_gif(new_image_path, create_criteria, frames_info)
     shutil.rmtree(frames_dir)
     return new_image_path
 

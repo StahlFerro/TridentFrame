@@ -16,6 +16,7 @@ from pycore.core_funcs.config import (
     STATIC_IMG_EXTS,
 )
 from pycore.models.criterion import (
+    AnimationCriteria,
     CreationCriteria,
     GIFOptimizationCriteria,
     CriteriaBundle,
@@ -71,6 +72,7 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
     # frame_skip_count_mult = criteria.frame_skip_count + 1
     frames_info = criteria.get_frames_info(len(image_paths))
     computed_delays_list = []
+    # unskipped_fraction = AnimationCriteria.compute_unskipped_fraction(frames_info)
     for index, ipath in enumerate(image_paths):
         if frames_info[index]['is_skipped']:
             continue
@@ -118,7 +120,11 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
             if aopt_criteria.quantization_enabled:
                 save_path = PNGQuantAPI.quantize_png_image(aopt_criteria, save_path)
             preprocessed_paths.append(save_path)
-        computed_delays_list.append(frames_info[index]['delay'])
+        if criteria.frame_skip_maintain_delay:
+            computed_delay = criteria.delay
+        else:
+            computed_delay = frames_info[index]['delay']
+        computed_delays_list.append(computed_delay)
             # apng.append(PNG.from_bytes(bytebox.getvalue()), delay=int(criteria.delay * 1000))
     stdio.message("Saving APNG....")
     stdio.debug(frames_info)
@@ -130,7 +136,7 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
         computed_delays_list = vectorutils.shift_items(computed_delays_list, frame_shift)
         
     if criteria.delays_are_even:
-        average_computed_delay = criteria._compute_average_delay(frames_info)
+        average_computed_delay = criteria.delay if criteria.frame_skip_maintain_delay else AnimationCriteria.compute_average_delay(frames_info)
         delay_fraction = Fraction(round(average_computed_delay, 4)).limit_denominator()
         # delay_fraction = Fraction(round(1/criteria.fps * frame_skip_count_mult, 4)).limit_denominator()
         apng = APNG.from_files(preprocessed_paths, delay=delay_fraction.numerator, delay_den=delay_fraction.denominator)

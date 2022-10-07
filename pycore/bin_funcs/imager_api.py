@@ -18,6 +18,7 @@ from apng import APNG, FrameControl
 
 
 from pycore.models.criterion import (
+    AnimationCriteria,
     CriteriaBundle,
     DelayHandling,
     SplitCriteria,
@@ -133,7 +134,8 @@ class GifsicleAPI:
         """
         criteria = crbundle.create_aimg_criteria
         gif_opt_criteria = crbundle.gif_opt_criteria
-        delay = int(criteria._compute_average_delay(frames_info) * 100)
+        delay = criteria.delay if criteria.frame_skip_maintain_delay else AnimationCriteria.compute_average_delay(frames_info)
+        g_delay = int(delay * 100)
         # stdio.error('final average delay')
         # stdio.error(delay)
         # delay = int(criteria.delay * 100)
@@ -163,7 +165,7 @@ class GifsicleAPI:
             if gif_opt_criteria.is_reduced_color and gif_opt_criteria.color_space:
                 colorspace_arg = f"--colors={gif_opt_criteria.color_space}"
                 args.append(colorspace_arg)
-        delay_option = f"--delay={delay}"
+        delay_option = f"--delay={g_delay}"
         # stdio.error(f"delay check {criteria.delays_are_even} {len(criteria.delays_list)}")
         # if not criteria.delays_are_even and len(criteria.delays_list) > 0:
         #     grouped_delays = group_list_by_values(criteria.delays_list)
@@ -389,7 +391,7 @@ class GifsicleAPI:
         return target_path
     
     @classmethod
-    def retempo_gif(cls, gif_path: Path, delays: List, out_full_path: Optional[Path] = None) -> Optional[Path]:
+    def retempo_gif(cls, gif_path: Path, criteria: AnimationCriteria, frames_info: Dict, out_full_path: Optional[Path] = None) -> Optional[Path]:
         """Execute Gifsicle to change a GIF's frame delays
 
         Args:
@@ -405,7 +407,10 @@ class GifsicleAPI:
         """
         supressed_error_txts = ["warning: too many colors, using local colormaps",
                                 "You may want to try"]
-        delay_options = cls._delays_option_builder(delays)
+        # unskipped_perc = AnimationCriteria.compute_unskipped_fraction(frames_info)
+        computed_delays_list = [fr['delay'] if not criteria.frame_skip_maintain_delay else criteria.delay 
+                                for _, fr in frames_info.items() if not fr['is_skipped']]
+        delay_options = cls._delays_option_builder(computed_delays_list)
         args = [
             shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
             "-b" if not out_full_path else "",
