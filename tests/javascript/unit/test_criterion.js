@@ -27,6 +27,20 @@ describe("criterion test", function () {
     });
   }
 
+  function validateSkipFrameCreation(criteria, frameCount, isValid) {
+    
+    it(`Criteria with frame skip information below:
+        skip           : ${criteria.frame_skip_count}, 
+        gap            : ${criteria.frame_skip_gap}, 
+        offset         : ${criteria.frame_skip_offset}, 
+        maintain delay : ${criteria.frame_skip_maintain_delay}, 
+        frame count    : ${frameCount}
+        is valid: ${isValid}`, function() {
+      const canCreate = criteria.validateSkipFrames(frameCount);
+      strictEqual(canCreate, isValid);
+    });
+  }
+
   let criteria01 = new CreationCriteria();
   criteria01.frame_skip_count = 0;
   criteria01.frame_skip_gap = 0;
@@ -71,7 +85,16 @@ describe("criterion test", function () {
     [criteria05, 2, [true, false]],
   ];
 
+  let validSkipAssertionsList = [
+    [criteria02, 2, false],
+    [criteria02, 3, true],
+    [criteria05, 2, false],
+  ]
+
   for (let assertionTuple of skipFrameAssertionsList) {
     getSkippedFrames(...assertionTuple);
+  }
+  for (let assertionTuple of validSkipAssertionsList) {
+    validateSkipFrameCreation(...assertionTuple);
   }
 })

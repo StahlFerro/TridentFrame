@@ -66,6 +66,19 @@ class AnimationCriteria extends TransformativeCriteria {
     console.log(framesInfo);
     return framesInfo;
   }
+
+  validateSkipFrames(count) {
+    const framesInfo = this.getFramesInfo(count);
+    return this._validateSkipFrames(framesInfo);
+  }
+
+  _validateSkipFrames(framesInfo) {
+    const skippedFrames = Object.entries(framesInfo).map(([k, v]) => v.isSkipped);
+    const unskippedFrameCount = skippedFrames.filter(sk => !sk).length;
+    if (unskippedFrameCount >= 2)
+      return true;
+    return false;
+  }
 }
 
 

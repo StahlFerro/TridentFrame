@@ -1272,6 +1272,10 @@ export default {
         this._logError("Please load at least 2 images!");
         return;
       }
+      if (!this.criteria.validateSkipFrames(this.imageSequenceInfo.length)) {
+        this._logError("Cannot create animated images with less than 2 frames!");
+        return;
+      }
       this._setMinimalDimensions();
       this.CRT_IS_PREVIEWING = true;
       let criteria_pack = {
@@ -1482,6 +1486,10 @@ export default {
       if (this.imageSequenceInfo.length < 2) {
         this._logError("Please load at least 2 messages!");
         // this.create_msgbox = "Please load at least 2 images!";
+        return;
+      }
+      if (!this.criteria.validateSkipFrames(this.imageSequenceInfo.length)) {
+        this._logError("Cannot create animated images with less than 2 frames!");
         return;
       }
       this.validateFilenameAsync().then(async (isValid) => {
