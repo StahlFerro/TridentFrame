@@ -17,7 +17,7 @@ def shift_items(items: List[Any], start_index: int) -> List[Any]:
     """
     shift_items = deque(items)
     shift = -start_index
-    stdio.message(f"SHIFT {shift}")
+    # stdio.message(f"SHIFT {shift}")
     shift_items.rotate(shift)
     items = list(shift_items)
     return items

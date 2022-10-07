@@ -81,7 +81,7 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "width": mod_criteria.width,
         "height": mod_criteria.height,
         "loop_count": mod_criteria.loop_count,
-        "start_frame": 1,
+        "start_frame": mod_criteria.start_frame,
         "is_reversed": mod_criteria.reverse,
         "rotation": mod_criteria.rotation,
         "resize_method": mod_criteria.resize_method,
@@ -115,7 +115,8 @@ def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Pat
     aopt_criteria = crbundle.apng_opt_criteria
     change_format = criteria.change_format(orig_attribute)
 
-    if change_format or criteria.must_transform(orig_attribute) or criteria.frame_skip_count > 0 or (criteria.format == ImageFormat.PNG and aopt_criteria.quantization_enabled) :
+    if change_format or criteria.must_transform(orig_attribute) or criteria.start_frame > 1 \
+        or criteria.frame_skip_count > 0 or (criteria.format == ImageFormat.PNG and aopt_criteria.quantization_enabled) :
         stdio.debug(f"Rebuilding {orig_attribute.format} image into {criteria.format}...")
         return rebuild_aimg(img_path, out_path, orig_attribute, crbundle)
     else:

@@ -123,10 +123,11 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
     stdio.message("Saving APNG....")
     stdio.debug(frames_info)
     stdio.debug(computed_delays_list)
-    if criteria.start_frame:
-        preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, criteria.start_frame)
+    if criteria.start_frame > 1:
+        frame_shift = criteria.start_frame - 1
+        preprocessed_paths = imageutils.shift_image_sequence(preprocessed_paths, frame_shift)
         # delays_list = vectorutils.shift_items(delays_list, criteria.start_frame)
-        computed_delays_list = vectorutils.shift_items(computed_delays_list, criteria.start_frame)
+        computed_delays_list = vectorutils.shift_items(computed_delays_list, frame_shift)
         
     if criteria.delays_are_even:
         average_computed_delay = criteria._compute_average_delay(frames_info)

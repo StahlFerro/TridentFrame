@@ -30,8 +30,9 @@ def create_animated_gif(image_paths: List, out_full_path: Path, crbundle: Criter
     black_bg_rgba = Image.new("RGBA", size=criteria.size, color=(0, 0, 0, 255))
     target_dir = filehandler.mk_cache_dir(prefix_name="tmp_gifrags")
     fcount = len(image_paths)
-    if criteria.start_frame:
-        image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
+    if criteria.start_frame > 1:
+        frame_shift = criteria.start_frame - 1
+        image_paths = imageutils.shift_image_sequence(image_paths, frame_shift)
     frame_skip_count_mult = criteria.frame_skip_count + 1
     shout_nums = imageutils.shout_indices(fcount, 1)
     frames_info = criteria.get_frames_info(len(image_paths))

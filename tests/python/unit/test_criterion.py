@@ -41,7 +41,7 @@ def test_creation_criteria():
         "height": 320,
         "resize_method": "",
         "loop_count": "",
-        "start_frame": "1",
+        "start_frame": "0",
         "rotation": 0,
         "frame_skip_count": 0,
         "frame_skip_gap": 0,
@@ -60,7 +60,7 @@ def test_creation_criteria():
     assert creation_criteria.format == ImageFormat.GIF
     assert creation_criteria.resize_method == "BICUBIC"
     assert creation_criteria.loop_count == 0
-    assert creation_criteria.start_frame == 0
+    assert creation_criteria.start_frame == 1
     assert creation_criteria.rotation == 0
     assert creation_criteria.frame_skip_count == 0
     assert creation_criteria.frame_skip_gap == 1

@@ -293,23 +293,23 @@
                   />
                 </div>
                 <div class="field-cell">
-                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" :label="$t('criterion.delay_handling')" hint="How to modify the delay"
-                                 :is-fullwidth="true" 
-                  />
-                </div>
-                <div class="field-cell">
-                  <InputField v-model="criteria.frame_skip_count" :label="$t('criterion.frame_skip_count')" type="number" 
-                              hint="Amount of frames before the next frame is skipped. 0 or blank for no skipping"
+                  <InputField v-model="criteria.start_frame" :label="$t('criterion.start_frame')" type="number" 
+                              hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
                               :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
                   />
                 </div>
                 <div class="field-cell">
+                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" :label="$t('criterion.delay_handling')" hint="How to modify the delay"
+                                 :is-fullwidth="true"
+                  />
                 </div>
                 <div class="field-cell">
-                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
+                </div>
+                <div class="field-cell">
+                  <!-- <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
                                  hint="(For GIFs) Preserve transparent pixels" 
                   />
-                  <br />
+                  <br /> -->
                   <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
                 </div>
                 <div class="separator">
@@ -435,7 +435,7 @@
                   </template>
                   <template #presetControlsLeft>
                     <div class="field-cell">
-                      <ButtonField id="modPanelPresetPopperBtn" label="Presets..." color="blue"
+                      <ButtonField id="modPanelPresetPopperBtn" label="Presets..." color="blue" text-padding="small"
                                 :listen-to-outside-clicks="true"
                                 :icons="['fas', 'paint-roller']"
                                 :is-square="true"
@@ -463,7 +463,7 @@
                     </div>
                     <div class="field-cell">
                       
-                    <ButtonField label="Apply preset" color="purple"
+                    <ButtonField label="Apply preset" color="purple" text-padding="small"
                                 @click="applyPreset"
                     />
                     </div>

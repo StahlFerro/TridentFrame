@@ -76,8 +76,7 @@ class AnimationCriteria(TransformativeCriteria):
         self.reverse: bool = vals["is_reversed"]
         self.preserve_alpha: bool = vals["preserve_alpha"]
         self.loop_count = int(vals["loop_count"] or 0)
-        start_frame_val = int(vals["start_frame"] or 0) or 1
-        self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
+        self.start_frame = int(vals["start_frame"] or 0) or 1
         self.frame_skip_count = int(vals.get("frame_skip_count") or 0)
         self.frame_skip_gap = int(vals.get("frame_skip_gap") or 1)
         self.frame_skip_offset = int(vals.get("frame_skip_offset") or 0)
