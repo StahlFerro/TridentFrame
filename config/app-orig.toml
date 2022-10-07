@@ -1,3 +1,6 @@
+[statistics]
+last_backup = ""
+
 [startup]
 fullscreen = false
 open_debugger = false

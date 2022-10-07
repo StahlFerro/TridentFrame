@@ -1,5 +1,4 @@
 const { v4: uuidV4 } = require('uuid');
-const { VueI18n } = require('vue-i18n');
 const { Enumeration } = require('./enum.js');
 // const { globalTranslate } = require('../locales/i18n.js');
 
@@ -189,15 +188,15 @@ class PresetDraft {
   }
 
   /**
-   * Update each of preset draft attribute's pLabel value using an i18n translator 
-   * @param {VueI18n} translator
+   * Update each of preset draft attribute's pLabel value using an i18n translator function
+   * @param {any} translatorFunc
    * @param {string} localeStem 
    */
-  nameAttributesUsingTranslator(translator, localeStem){
+  nameAttributesUsingTranslator(translatorFunc, localeStem){
     for (const attr of this.draftAttributes){
       const attrLocaleKey = `${localeStem}.${attr.pKey}`
       const label = "";
-      label = translator(attrLocaleKey);
+      label = translatorFunc(attrLocaleKey);
       attr.pLabel = label;
     }
   }

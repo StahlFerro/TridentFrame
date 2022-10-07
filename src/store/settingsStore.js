@@ -7,6 +7,7 @@ const { APP_SETTINGS_PATH } = require("../common/paths.js")
 const toml = require("@iarna/toml");
 
 const _DEFAULT_SETTINGS = {
+  "statistics": { "last_backup": "" },
   "startup": {
       "fullscreen": false,
       "open_debugger": false,
