@@ -144,26 +144,48 @@
       </div>
       <div class="modify-panel-middlebar">
         <div class="mpb-load-buttons">
-          <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': isButtonFrozen}" @click="loadImage">
+          <!-- <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': isButtonFrozen}" @click="loadImage">
             <span class="icon is-small">
               <font-awesome-icon icon="plus" />
             </span>
             <span>Load Image</span>
-          </a>
-          <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearImage">
-            <span class="icon is-small">
-              <font-awesome-icon icon="times" />
-            </span>
-            <span>Clear</span>
-          </a>
-          <a
+          </a> -->
+
+          <ButtonField label="Load Image" color="green" hint="Load an animated image"
+                       :icons="['fas', 'plus']"
+                       :icon-size="medium"
+                       :is-loading="MOD_IS_LOADING"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="loadImage"
+          />
+          
+          <!-- <a
             class="button is-neon-white" :class="{'is-active': orig_checkerbg_active}"
             @click="toggleOrigCheckerBG"
           >
             <span class="icon is-medium">
               <font-awesome-icon icon="chess-board" />
             </span>
-          </a>
+          </a> -->
+          
+          <ButtonField :icons="['fas', 'chess-board']"
+                       :is-active="orig_checkerbg_active"
+                       :icon-size="medium"
+                       @click="toggleOrigCheckerBG"
+          />
+
+          <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearImage">
+            <span class="icon is-small">
+              <font-awesome-icon icon="times" />
+            </span>
+            <span>Clear</span>
+          </a> -->
+          
+          <ButtonField label="Clear" color="red" hint="Clear the original image, preview image and the modification criteria"
+                       :icons="['fas', 'times']"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="clearImage"
+          />
         </div>
         <div class="mpb-center-buttons">
           <p class="is-white-d">
@@ -171,31 +193,54 @@
           </p>
         </div>
         <div class="mpb-preview-buttons">
-          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': isButtonFrozen}" @click="btnPreviewModImg">
+          <!-- <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': isButtonFrozen}" @click="btnPreviewModImg">
             <span class="icon is-small">
               <font-awesome-icon :icon="['far', 'eye']" />
             </span>
             <span>Preview</span>
-          </a>
-          <a class="button is-neon-cyan" :class="{'non-interactive': isButtonFrozen}" @click="btnPreviewSaveAIMG">
+          </a> -->
+          <ButtonField label="Preview" color="cyan" hint="SaPreview the modified animated image"
+                       :icons="['far', 'eye']"
+                       :icon-size="medium"
+                       :is-loading="MOD_IS_PREVIEWING"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="btnPreviewModImg"
+          />
+          <!-- <a class="button is-neon-cyan" :class="{'non-interactive': isButtonFrozen}" @click="btnPreviewSaveAIMG">
             <span class="icon is-medium">
               <font-awesome-icon icon="save" />
             </span>
-          </a>
-          <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearPreviewImage">
-            <span class="icon is-small">
-              <font-awesome-icon icon="times" />
-            </span>
-            <span>Clear</span>
-          </a>
-          <a
+          </a> -->
+          <ButtonField color="cyan" hint="Save the preview image"
+                       :icons="['fas', 'save']"
+                       :icon-size="medium"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="btnPreviewSaveAIMG"
+          />
+          <!-- <a
             class="button is-neon-white" :class="{'is-active': new_checkerbg_active}"
             @click="toggleNewCheckerBG"
           >
             <span class="icon is-medium">
               <font-awesome-icon icon="chess-board" />
             </span>
-          </a>
+          </a> -->
+          <ButtonField :icons="['fas', 'chess-board']"
+                       :is-active="new_checkerbg_active"
+                       :icon-size="medium"
+                       @click="toggleNewCheckerBG"
+          />
+          <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearPreviewImage">
+            <span class="icon is-small">
+              <font-awesome-icon icon="times" />
+            </span>
+            <span>Clear</span>
+          </a> -->
+          <ButtonField label="Clear" color="red" hint="Clear the preview image"
+                       :icons="['fas', 'times']"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="clearPreviewImage"
+          />
         </div>
       </div>
       <div class="modify-panel-controls">
@@ -269,7 +314,7 @@
                   <CheckboxField v-model="lockAspectRatio" :label="$t('forms.lock_aspect_ratio')" hint="Lock the width and height ratio" />
                   <br />
                   <template v-if="aspect_ratio && aspect_ratio.text">
-                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
+                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.2em;" readonly="readonly" />
                   </template>
                   <template v-else>
                     &nbsp;
@@ -1441,7 +1486,7 @@ export default {
       this.orig_attribute.last_modified_dt = "";
       this._logClear();
     },
-    clearPreiewMetadata() {
+    clearPreviewMetadata() {
       this.preview_attribute.name = "";
       this.preview_attribute.width = "";
       this.preview_attribute.height = "";
@@ -1491,7 +1536,7 @@ export default {
       this.previewPathCB = "";
       this.preview_size = "";
       this.preview_size_hr = "";
-      this.clearPreiewMetadata();
+      this.clearPreviewMetadata();
     },
     btnSetSavePath() {
       // setSavePath();

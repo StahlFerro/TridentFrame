@@ -15,11 +15,15 @@
       'is-small': size == 'small',
       'is-medium': size == 'medium',
       'is-large': size == 'large',
+      'is-active': isActive,
       'text-padding-small': textPadding == 'small'
     }"
     :title="hint" @click="$emit('click')"
   >
-    <span v-if="icons.length >= 2" class="icon is-small">
+    <span v-if="icons.length >= 2" class="icon" :class="{
+      'is-small': iconSize == 'small',
+      'is-medium': iconSize == 'medium',
+    }">
       <font-awesome-icon :icon="icons" />
     </span>
     <span v-if="label">{{ label }}</span>
@@ -58,6 +62,11 @@
         default: "normal",
         required: false,
       },
+      iconSize: {
+        type: String,
+        default: "small",
+        required: false,
+      },
       textPadding: {
         type: String,
         default: "",
@@ -66,6 +75,10 @@
       isSquare: {
         type: Boolean,
         default: false,
+      },
+      isActive: {
+        type: Boolean,
+        default: false
       },
       isLoading: {
         type: Boolean,

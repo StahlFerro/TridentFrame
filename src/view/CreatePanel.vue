@@ -84,7 +84,7 @@
             />
           </div>
           <div class="cpb-sequence-btn">
-            <ButtonField label="Clear" color="red" hint="Clears the entire sequence"
+            <ButtonField label="Clear" color="red" hint="Clears the entire sequence, preview image and creation criteria"
                          :icons="['fas', 'times']"
                          :is-non-interactive="isButtonFrozen"
                          @click="btnClearAll"
@@ -101,31 +101,29 @@
           </div>
         </div>
         <div class="cpb-preview-buttons">
-          <a
-            class="button is-neon-cyan" :class="{
-              'is-loading': CRT_IS_PREVIEWING,
-              'non-interactive': isButtonFrozen,
-            }"
-            @click="btnPreviewAIMG"
-          >
-            <span class="icon is-medium">
-              <font-awesome-icon id="autoprev_icon" :icon="['far', 'eye']" />
-            </span>
-            <span>Preview</span>
-          </a>
-          <a class="button is-neon-cyan" :class="{'non-interactive': isButtonFrozen}" @click="btnPreviewSaveAIMG">
-            <span class="icon is-medium">
-              <font-awesome-icon icon="save" />
-            </span>
-          </a>
-          <a
-            class="button is-neon-white" :class="{'is-active': checkerBGIsActive}"
-            @click="btnToggleCheckerBG"
-          >
-            <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board" />
-            </span>
-          </a>
+          <ButtonField label="Preview" color="cyan" hint="Preview the modified animated image"
+                       :icons="['far', 'eye']"
+                       :icon-size="medium"
+                       :is-loading="CRT_IS_PREVIEWING"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="btnPreviewAIMG"
+          />
+          <ButtonField color="cyan" hint="Save the preview image"
+                       :icons="['fas', 'save']"
+                       :icon-size="medium"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="btnPreviewSaveAIMG"
+          />
+          <ButtonField :icons="['fas', 'chess-board']"
+                       :is-active="checkerBGIsActive"
+                       :icon-size="medium"
+                       @click="btnToggleCheckerBG"
+          />
+          <ButtonField label="Clear" color="red" hint="Clear the preview image"
+                       :icons="['fas', 'times']"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="clearPreviewAIMG"
+          />
         </div>  
       </div>
 
