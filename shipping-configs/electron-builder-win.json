@@ -11,10 +11,6 @@
     "artifactName": "${productName}-${version}-windows.${ext}",
     "publisherName": "${author.name}",
     "target": [
-      "7z",
-      "zip",
-      "nsis",
-      "msi"
     ],
     "icon": "./build/icons"
   },
@@ -28,6 +24,7 @@
     "**/*",
     "engine/**",
     "dist/**",
+    "!data/**",
     "!dist/config/**",
     "!config/**",
     "config/app.toml",

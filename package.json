@@ -58,7 +58,8 @@
     "concat-stream": "^2.0.0",
     "dayjs": "^1.11.5",
     "toml": "^3.0.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "vue-i18n": "^9.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.19.0",
@@ -115,7 +116,6 @@
     "url-loader": "^4.1.1",
     "vue": "^3.2.39",
     "vue-click-outside": "^1.1.0",
-    "vue-i18n": "^9.3.0-beta.3",
     "vue-loader": "^17.0.0",
     "vue-slider-component": "^4.0.0-beta.4",
     "webpack": "^5.74.0",

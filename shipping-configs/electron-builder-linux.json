@@ -21,6 +21,7 @@
     "**/*",
     "engine/**",
     "dist/**",
+    "!data/**",
     "!dist/config/**",
     "!config/**",
     "config/app.toml",
