@@ -47,6 +47,25 @@ class AnimationCriteria extends TransformativeCriteria {
     this.frame_skip_offset = null;
     this.frame_skip_maintain_delay = false;
   }
+
+  getFramesInfo(frameCount) {
+    const skip = Number.parseInt(this.frame_skip_count ?? 0);
+    const gap = Number.parseInt(this.frame_skip_gap ?? 0) > 0 ? Number.parseInt(this.frame_skip_gap) : 1;
+    const offset = - Number.parseInt(this.frame_skip_offset ?? 0);
+    const cycleLength = skip + gap;
+    const framesInfo = {};
+    for (let index = 0; index < frameCount; index++){
+      const cycleOrd = Math.floor((index + offset) / cycleLength);
+      const currentCycleGapMax = cycleOrd * cycleLength + gap - 1 - offset;
+      const isSkipped = false;
+      if (index > currentCycleGapMax) {
+        isSkipped = true;
+      }
+      framesInfo[index] = {'isSkipped': isSkipped, 'cyleOrd': cycleOrd, 'currentCycleGapMax': currentCycleGapMax, 'cycleLength': cycleLength, 'offset': offset};
+    }
+    console.log(framesInfo);
+    return framesInfo;
+  }
 }
 
 

@@ -604,7 +604,7 @@ import KeyValueTableRowControl from './components/Displays/KeyValueTableRowContr
 
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
-import { buildFrameInfo } from "../modules/utility/frames";
+// import { buildFrameInfo } from "../modules/utility/frames";
 
 import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
 import { Preset, PresetDraft, PresetType, PresetDraftAttribute } from '../models/presets';
@@ -791,11 +791,12 @@ export default {
     computeFramesAuxInfo() {
       console.log('computeFramesAuxInfo');
       console.log(this.criteria);
-      const skip = Number.parseInt(this.criteria.frame_skip_count ?? 0);
-      const gap = Number.parseInt(this.criteria.frame_skip_gap ?? 0) > 0? Number.parseInt(this.criteria.frame_skip_gap) : 1;
-      const offset = Number.parseInt(this.criteria.frame_skip_offset ?? 0);
+      // const skip = Number.parseInt(this.criteria.frame_skip_count ?? 0);
+      // const gap = Number.parseInt(this.criteria.frame_skip_gap ?? 0) > 0? Number.parseInt(this.criteria.frame_skip_gap) : 1;
+      // const offset = Number.parseInt(this.criteria.frame_skip_offset ?? 0);
       const frameCount = this.imageSequenceInfo.length;
-      const framesInfo = buildFrameInfo(frameCount, skip, gap, offset);
+      // const framesInfo = buildFrameInfo(frameCount, skip, gap, offset);
+      const framesInfo = this.criteria.getFramesInfo(frameCount);
       // const framesInfo = {};
       // const cycleLength = skip + gap;
       // for (let index = 0; index < frameCount; index++){
