@@ -8,6 +8,7 @@
       'is-neon-cyan': color == 'cyan',
       'is-neon-crimson': color == 'red',
       'is-neon-cobalt': color == 'blue',
+      'is-neon-sunset': color == 'orange',
       'is-neon-purple': color == 'purple',
       'is-loading': isLoading,
       'square-button': isSquare,

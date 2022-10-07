@@ -55,12 +55,14 @@ import { faTrashCan } from '@fortawesome/free-solid-svg-icons/faTrashCan';
 import { faLayerGroup } from "@fortawesome/free-solid-svg-icons/faLayerGroup";
 import { faFileArrowDown } from "@fortawesome/free-solid-svg-icons/faFileArrowDown";
 import { faArrowRotateLeft } from "@fortawesome/free-solid-svg-icons/faArrowRotateLeft";
+import { faScaleBalanced } from "@fortawesome/free-solid-svg-icons/faScaleBalanced";
+import { faMugHot } from "@fortawesome/free-solid-svg-icons/faMugHot";
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 library.add([faImage, farImage, faImages, faExchangeAlt, faSearch, faCog, faInfoCircle, faPlus, faPlusCircle, faTimes, faTimesCircle, faMinusCircle, 
   faTriangleExclamation, faCircleExclamation, faCheck, faSpinner, faSave, faFolderOpen, faChessBoard, faRedoAlt, faBug, faPowerOff, faEye, 
   farCopyright, faFileUpload, farEye, fabGithub, faFlask, faGlobe, faSlidersH, faPaintRoller, faSquarePen, faTrashCan, faLayerGroup,
-  faFileArrowDown, faArrowRotateLeft, ]);
+  faFileArrowDown, faArrowRotateLeft, faScaleBalanced, faMugHot ]);
 
 const app = createApp(App);
 // const emitter = mitt();

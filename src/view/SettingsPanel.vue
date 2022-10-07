@@ -304,24 +304,28 @@
             <div class="about-buttons">
               <div class="field is-grouped is-grouped-centered">
                 <p class="control">
-                  <a
-                    class="button is-neon-cyan is-medium"
-                    @click="warpGithub"
-                  >
-                    <span class="icon">
-                      <font-awesome-icon :icon="['fab', 'github']" />
-                      <!-- <i class="fab fa-github"></i> -->
-                    </span>
-                    <span>Github</span>
-                  </a>
+                  <ButtonField label="Github" color="white" size="medium" :hint="externalLinks.github"
+                               :icons="['fab', 'github']"
+                               @click="warpGithub"
+                  />
                 </p>
                 <p class="control">
-                  <a class="button is-neon-cyan is-medium" @click="warpLicense">
-                    <span class="icon">
-                      <font-awesome-icon icon="globe" />
-                    </span>
-                    <span>License</span>
-                  </a>
+                  <ButtonField label="Website" color="cyan" size="medium" :hint="externalLinks.authorWebsite"
+                               :icons="['fas', 'globe']"
+                               @click="warpAuthorWebsite"
+                  />
+                </p>
+                <p class="control">
+                  <ButtonField label="License" color="orange" size="medium" :hint="externalLinks.license"
+                               :icons="['fas', 'scale-balanced']"
+                               @click="warpLicense"
+                  />
+                </p>
+                <p class="control">
+                  <ButtonField label="Buy me a coffee" color="green" size="medium" :hint="externalLinks.kofi"
+                               :icons="['fas', 'mug-hot']"
+                               @click="warpDonate"
+                  />
                 </p>
               </div>
             </div>
@@ -407,6 +411,12 @@ export default {
       presetSelectionId: "",
       selectedPresetAttributes: [],
       statusBarId: "settingsBackupSubpanelStatusBar",
+      externalLinks: {
+        github: "https://github.com/StahlFerro/TridentFrame",
+        authorWebsite: "https://stahlferro.pages.dev",
+        license: "https://www.gnu.org/licenses/gpl-3.0.en.html",
+        kofi: "https://ko-fi.com/StahlFerro",
+      }
     };
   },
   computed: {
@@ -736,13 +746,16 @@ export default {
       ipcRenderer.invoke("relaunch-application");
     },
     warpGithub() {
-      shell.openExternal("https://github.com/StahlFerro/TridentFrame");
+      shell.openExternal(this.externalLinks.github);
+    },
+    warpAuthorWebsite() {
+      shell.openExternal(this.externalLinks.authorWebsite);
     },
     warpLicense() {
-      shell.openExternal("https://www.gnu.org/licenses/gpl-3.0.en.html");
+      shell.openExternal(this.externalLinks.license);
     },
     warpDonate() {
-      shell.openExternal("https://en.liberapay.com/StahlFerro");
+      shell.openExternal(this.externalLinks.kofi);
     },
     applySettingsWatcher() {
       this.$watch("computedAppSettings", (newVal, oldVal) => {
