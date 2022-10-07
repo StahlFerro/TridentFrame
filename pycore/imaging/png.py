@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest import skip
 
 from PIL import Image
+from PIL.Image import Resampling, Quantize
 from apng import APNG, PNG, FrameControl
 
 from pycore.core_funcs import stdio
@@ -89,7 +90,7 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
             has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
             stdio.debug(f"Color mode im: {im.mode}")
             if criteria.must_resize(width=orig_width, height=orig_height):
-                resize_method_enum = getattr(Image, criteria.resize_method)
+                resize_method_enum = getattr(Resampling, criteria.resize_method)
                 # yield {"resize_method_enum": resize_method_enum}
                 im = im.resize(
                     (round(criteria.width), round(criteria.height)),
@@ -105,7 +106,7 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
             # if criteria.rotation:
             #     im = im.rotate(criteria.rotation, expand=True)
             # logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
-            quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
+            quant_method = Quantize.FASTOCTREE if has_transparency else Quantize.MEDIANCUT
             if aopt_criteria.is_reduced_color:
                 stdio.debug(f"Frame #{index}, has transparency: {has_transparency}, transparency: "
                              f"{im.info.get('transparency')}, quantization method: {quant_method}")
@@ -220,7 +221,7 @@ def modify_animated_png(apng_path: Path, out_path: Path, metadata: AnimatedImage
                         im = im.convert("RGBA")
                     else:
                         im = im.convert("RGB")
-                quant_method = Image.FASTOCTREE if has_transparency else Image.MEDIANCUT
+                quant_method = Quantize.FASTOCTREE if has_transparency else Quantize.MEDIANCUT
                 if aopt_criteria.is_reduced_color:
                     im = im.quantize(
                         aopt_criteria.color_count, method=quant_method, dither=1).convert("RGBA")

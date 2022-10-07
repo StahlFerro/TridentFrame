@@ -1,7 +1,7 @@
 import shutil
 
-import PIL.Image
 from PIL import Image
+from PIL.Image import Palette, Quantize, Resampling
 from pathlib import Path
 from typing import List, Tuple
 import hitherdither
@@ -71,12 +71,12 @@ def modify_animated_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageM
     return final_path
 
 
-def palletize_image(im: PIL.Image.Image, dither_method: str, palletization_method: str) -> PIL.Image.Image:
+def palletize_image(im: Image.Image, dither_method: str, palletization_method: str) -> Image.Image:
     pil_pal_enum = 1
     if palletization_method == "ADAPTIVE":
-        pil_pal_enum = Image.ADAPTIVE
+        pil_pal_enum = Palette.ADAPTIVE
     elif palletization_method == "WEB":
-        pil_pal_enum = Image.WEB
+        pil_pal_enum = Palette.WEB
     
     if dither_method == "FLOYD_STEINBERG":
         im = im.convert("RGB").convert("P", palette=pil_pal_enum, colors=255, dither=Image.FLOYDSTEINBERG)
@@ -97,7 +97,7 @@ def palletize_image(im: PIL.Image.Image, dither_method: str, palletization_metho
     return im
 
 
-def has_rgba_use(im: PIL.Image.Image) -> bool:
+def has_rgba_use(im: Image.Image) -> bool:
     """Checks whether or not a RGBA PNG image's alpha channel is used (has transparent/translucent pixels)
 
     Args:
@@ -113,7 +113,7 @@ def has_rgba_use(im: PIL.Image.Image) -> bool:
     return False
 
 
-def gif_encode(im: PIL.Image.Image, crbundle: CriteriaBundle, bg_im: PIL.Image.Image) -> PIL.Image.Image:
+def gif_encode(im: Image.Image, crbundle: CriteriaBundle, bg_im: Image.Image) -> Image.Image:
     """
     Encodes any Pillow image into a GIF image
     Args:
