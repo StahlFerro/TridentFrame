@@ -184,10 +184,10 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         f = io.BytesIO(icc)
         color_profile = ImageCms.getOpenProfile(f).profile
         # print(color_profile.profile_description)
-        stdio.debug({"copyright": color_profile.copyright, "technology": color_profile.technology,
-                     "manufacturer": color_profile.manufacturer, "creation_date": '',
-                     "header_manufacturer": color_profile.header_manufacturer, "header_model": color_profile.header_model,
-                     "icc_version": color_profile.icc_version, "target": color_profile.target})
+        # stdio.debug({"copyright": color_profile.copyright, "technology": color_profile.technology,
+        #              "manufacturer": color_profile.manufacturer, "creation_date": '',
+        #              "header_manufacturer": color_profile.header_manufacturer, "header_model": color_profile.header_model,
+        #              "icc_version": color_profile.icc_version, "target": color_profile.target})
         color_profile = color_profile.profile_description
     # if palette:
     #     logger.debug(imageutils.reshape_palette(palette))
@@ -199,9 +199,9 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
     # logger.debug({"im.info": im.info, "icc": icc, "palette": imageutils.reshape_palette(palette) if palette else None})
-    stdio.debug(im.info)
-    if im.mode == "P":
-        stdio.debug(im.getpalette())
+    # stdio.debug(im.info)
+    # if im.mode == "P":
+        # stdio.debug(im.getpalette())
     im.close()
     sanitized_namestem = imageutils.rstrip_trailing_symbols(base_fname)
     metadata = ImageMetadata({
@@ -341,9 +341,9 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     height = png_one.height
     # raise Exception(frames)
     delays = [round(f[1].delay / f[1].delay_den * 1000, 3) if f[1] else 0 for f in frames]
-    stdio.debug([(f[1].delay, f[1].delay_den) if f[1] else 0 for f in frames])
+    # stdio.debug([(f[1].delay, f[1].delay_den) if f[1] else 0 for f in frames])
     im = Image.open(abspath)
-    stdio.debug(im.default_image)
+    # stdio.debug(im.default_image)
     # for index in range(0, im.n_frames):
         # logger.debug(im.info)
         # logger.debug(im.mode)

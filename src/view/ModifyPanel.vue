@@ -153,7 +153,7 @@
 
           <ButtonField label="Load Image" color="green" hint="Load an animated image"
                        :icons="['fas', 'plus']"
-                       :icon-size="medium"
+                       icon-size="medium"
                        :is-loading="MOD_IS_LOADING"
                        :is-non-interactive="isButtonFrozen"
                        @click="loadImage"
@@ -170,7 +170,7 @@
           
           <ButtonField :icons="['fas', 'chess-board']"
                        :is-active="orig_checkerbg_active"
-                       :icon-size="medium"
+                       icon-size="medium"
                        @click="toggleOrigCheckerBG"
           />
 
@@ -201,7 +201,7 @@
           </a> -->
           <ButtonField label="Preview" color="cyan" hint="SaPreview the modified animated image"
                        :icons="['far', 'eye']"
-                       :icon-size="medium"
+                       icon-size="medium"
                        :is-loading="MOD_IS_PREVIEWING"
                        :is-non-interactive="isButtonFrozen"
                        @click="btnPreviewModImg"
@@ -213,7 +213,7 @@
           </a> -->
           <ButtonField color="cyan" hint="Save the preview image"
                        :icons="['fas', 'save']"
-                       :icon-size="medium"
+                       icon-size="medium"
                        :is-non-interactive="isButtonFrozen"
                        @click="btnPreviewSaveAIMG"
           />
@@ -227,7 +227,7 @@
           </a> -->
           <ButtonField :icons="['fas', 'chess-board']"
                        :is-active="new_checkerbg_active"
-                       :icon-size="medium"
+                       icon-size="medium"
                        @click="toggleNewCheckerBG"
           />
           <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearPreviewImage">
@@ -642,12 +642,14 @@
                 v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
                 v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
                 v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
+                :is-unoptimized="gif_opt_criteria.is_unoptimized"
               />
               <GIFUnoptimizationRow
-                v-model:is_optimized="gif_opt_criteria.is_optimized"
-                v-model:is_lossy="gif_opt_criteria.is_lossy"
-                v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
-                v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
+                :is-disabled="gif_opt_criteria.is_optimized || 
+                              gif_opt_criteria.is_lossy || 
+                              gif_opt_criteria.is_reduced_color || 
+                              gif_opt_criteria.is_dither_alpha"
+                v-model:isUnoptimized="gif_opt_criteria.is_unoptimized"
               />
               <!-- </table> -->
             </div>
@@ -670,9 +672,10 @@
               />
               <APNGUnoptimizationRow
                 ref="apngUnoptimRow"
-                v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
-                v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
-                v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
+                :is-disabled="apng_opt_criteria.apng_is_optimized || 
+                              apng_opt_criteria.apng_is_reduced_color || 
+                              apng_opt_criteria.apng_quantization_enabled"
+                v-model:isUnoptimized="apng_opt_criteria.apng_is_unoptimized"
               />
               <!-- </table> -->
             </div>
@@ -1374,7 +1377,7 @@ export default {
     },
     updateAspectRatio(width, height) {
       if (this.criteria.width && this.criteria.height) {
-        console.log('uAR', width, height);
+        // console.log('uAR', width, height);
         let divisor = gcd(width, height);
         let w_ratio = width / divisor;
         let h_ratio = height / divisor;
@@ -1383,7 +1386,7 @@ export default {
           "h_ratio": h_ratio,
           "text": `${w_ratio}:${h_ratio}`,
         };
-        console.log(ARData);
+        // console.log(ARData);
         this.aspect_ratio = ARData;
       }
     },
@@ -1461,7 +1464,7 @@ export default {
             this.lockAspectRatio = true;
           }
         });
-        console.log("registered!");
+        // console.log("registered!");
       });
     },
     clearOrigMetadata() {

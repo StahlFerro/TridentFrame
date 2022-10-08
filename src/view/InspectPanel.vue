@@ -101,7 +101,6 @@
         />
         <ButtonField :is-active="checkerBGIsActive"
                      :icons="['fas', 'chess-board']"
-                     :is-non-interactive="isButtonFrozen"
                      @click="toggleCheckerBG"
                      @click.middle.prevent="toggleCheckerBG"
                      @contextmenu.prevent="toggleCheckerBG"
@@ -279,12 +278,12 @@ export default {
      */
     _addExtraCtxOptions(options) {
       // let existing_options = this.imageContextMenuOptions.filter()
-      console.debug(options);
-      console.debug(this.imageContextMenuOptions);
+      // console.debug(options);
+      // console.debug(this.imageContextMenuOptions);
       for (let opt of options){
         let exist_opt = this.imageContextMenuOptions.find(o => o.id == opt.id);
-        console.debug("exist opt:");
-        console.debug(exist_opt);
+        // console.debug("exist opt:");
+        // console.debug(exist_opt);
         if (exist_opt){
           /** 
            * TODO: For now do nothing if attempting to add a new option with the same id. In the future option updating with the same id must be supported.
@@ -304,10 +303,10 @@ export default {
       this.imageContextMenuOptions = remaining_options;
     },
     toggleCheckerBG(e) {
-      console.debug(e);
+      // console.debug(e);
       if (e.button == 0){
         this.checkerBGIsActive = !this.checkerBGIsActive;
-        console.log("now checkerbg is", this.checkerBGIsActive);
+        // console.log("now checkerbg is", this.checkerBGIsActive);
       }
     },
     varToSpaceUpper: varToSpaceUpper,

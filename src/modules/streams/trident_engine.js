@@ -87,8 +87,8 @@ function parseStdErrAndCall(errStream, callback) {
  * @param {callback} endCallback - The callback function to execute after python/child process terminates
  */
 export function tridentEngine(args, outCallback, endCallback) {
-  console.log(`Current dir: ${cwd()}`);
-  console.log(`DEPLOY ENV ${env.DEPLOY_ENV}`);
+  console.debug(`Current dir: ${cwd()}`);
+  console.debug(`DEPLOY ENV ${env.DEPLOY_ENV}`);
 
   let command = args[0];
   let cmd_args = args.slice(1);
@@ -103,52 +103,52 @@ export function tridentEngine(args, outCallback, endCallback) {
 
 
   if (env.DEPLOY_ENV == "DEV") {
-    console.log({"json_command": json_command});
-    console.log("str_cmd");
-    console.log(str_cmd);
+    console.debug({"json_command": json_command});
+    console.debug("str_cmd");
+    console.debug(str_cmd);
     let pyshell = new PythonShell(ENGINE_EXEC_PATH, {
       mode: "text",
       pythonPath: PYTHON_PATH,
       // pythonOptions: ["-u"],
     });
-    console.log("DEBUG 1");
+    // console.log("DEBUG 1");
     pyshell.on("message", (res) => {
-      console.log("pycommander stdout start >>>>>");
+      // console.log("pycommander stdout start >>>>>");
       if (!(isNullOrWhitespace(res))) {
-        console.log(res);
+        // console.log(res);
         parseStdOutAndCall(res, outCallback);
       }
-      console.log("pycommander stdout end <<<<<");
+      // console.log("pycommander stdout end <<<<<");
     });
-    console.log("DEBUG 2");
+    // console.log("DEBUG 2");
     pyshell.on("stderr", (err) => {
-      console.log("pycommander stderr start >>>>>");
+      // console.log("pycommander stderr start >>>>>");
       if (!(isNullOrWhitespace(err))) {
-        console.log(err);
+        // console.log(err);
         parseStdErrAndCall(err, outCallback);
       }
-      console.log("pycommander stderr end <<<<<");
+      // console.log("pycommander stderr end <<<<<");
     });
-    console.log("DEBUG 3");
+    // console.log("DEBUG 3");
     pyshell.send(`${str_cmd}\n`);
     
-    console.log("DEBUG 4");
+    // console.log("DEBUG 4");
     pyshell.end(function (err,code,signal) {
-      console.log(`pycommander exit (${code}) start >>>`);
+      // console.log(`pycommander exit (${code}) start >>>`);
       console.log({status: "exited", code: code, signal: signal});
       if (err) {
         console.error(err);
       }
-      console.log("out call back was:");
-      console.log(outCallback)
-      console.log("end call back is:");
-      console.log(endCallback);
+      // console.log("out call back was:");
+      // console.log(outCallback)
+      // console.log("end call back is:");
+      // console.log(endCallback);
       if (code == 0 && endCallback) {
         endCallback();
       }
-      console.log("pycommander exit end <<<");
+      // console.log("pycommander exit end <<<");
     });
-    console.log("DEBUG 5");
+    // console.log("DEBUG 5");
   } 
   
   else {
@@ -162,10 +162,10 @@ export function tridentEngine(args, outCallback, endCallback) {
     so we use newlineTransformer to emit each batch seperated by newline
     */
 
-    console.debug("Spawning python engine");
+    // console.debug("Spawning python engine");
     const child = spawn(ENGINE_EXEC_PATH, {mode: "text"});
     // child.stdout.on("data", receive.bind(this));
-    console.debug("Attached event handlers");
+    // console.debug("Attached event handlers");
     let stdoutSplitter = new NewlineTransformer();
     let stderrSplitter = new NewlineTransformer();
     stdoutSplitter.setEncoding('utf8');
@@ -185,13 +185,13 @@ export function tridentEngine(args, outCallback, endCallback) {
         endCallback();
       }
     });
-    console.log("beforewrite");
+    // console.log("beforewrite");
     child.stdin.write(`${str_cmd}\n`, (error) => {
       if (error)
-        console.log({"stdin.write error": error});
+        console.error({"stdin.write error": error});
     });
     child.stdin.end();
-    console.log("afterwrite");
+    // console.log("afterwrite");
     child.on('exit', function (code) {
       console.log({status: "exited", code: code});
     });

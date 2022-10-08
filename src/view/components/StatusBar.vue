@@ -52,7 +52,7 @@ export default {
   },
   mounted() {
     this.emitter.on(`status-bar-log-${this.statusBarId}`, args => {
-      console.log(`StatusBarLog ID: ${this.statusBarId}`);
+      // console.log(`StatusBarLog ID: ${this.statusBarId}`);
       switch(args.logLevel){
         case EnumStatusLogLevel.CLEAR:
           this.logClear(args.payload);
@@ -127,7 +127,7 @@ export default {
   },
   methods: {
     logClear() {
-      console.log("Clearing log...");
+      // console.log("Clearing log...");
       this.statusText = "";
       this.logLevel = "";
     },

@@ -96,7 +96,7 @@
           <input
             v-model="is_reduced_color"
             type="checkbox"
-            :disabled="is_unoptimized"
+            :disabled="isUnoptimized"
             @change="$emit('update:is_reduced_color', is_reduced_color)"
           />
           Color space
@@ -208,7 +208,7 @@
           <input
             v-model="is_dither_alpha"
             type="checkbox"
-            :disabled="is_unoptimized"
+            :disabled="isUnoptimized"
             @change="$emit('update:is_dither_alpha', is_dither_alpha)"
           />
           Transparency Dither

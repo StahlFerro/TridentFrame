@@ -33,7 +33,7 @@ export default {
   props: {
     presetSelectionValue: {
       type: String,
-      required: true,
+      required: false,
     },
     presetOptionsList: {
       type: DropdownOptions,

@@ -63,7 +63,7 @@ class AnimationCriteria extends TransformativeCriteria {
       }
       framesInfo[index] = {'isSkipped': isSkipped};
     }
-    console.log(framesInfo);
+    // console.log(framesInfo);
     return framesInfo;
   }
 

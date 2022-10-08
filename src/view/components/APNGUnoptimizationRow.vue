@@ -4,8 +4,8 @@
       <div class="toggle-cell">
         <label class="checkbox" title="Unoptimizes the APNG">
           <input
-            v-model="apng_is_unoptimized" type="checkbox" :disabled="apngIsOptimized || apngIsLossy"
-            @change="$emit('update:apng_is_unoptimized', apng_is_unoptimized)"
+            v-model="isUnoptimized" type="checkbox" :disabled="isDisabled"
+            @change="$emit('update:isUnoptimized', isUnoptimized)"
           />
           Unoptimize
         </label>
@@ -23,19 +23,16 @@
 export default {
   name: "APNGUnoptimizationRow",
   props: {
-    apngIsOptimized: Boolean,
-    apngIsLossy: Boolean,
+    isDisabled: {
+      type: Boolean,
+      default: false,
+    },
+    isUnoptimized: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: ['update:apng_is_unoptimized'],
+  emits: ['update:isUnoptimized'],
   // components: { Fragment },
-  data: function() {
-    return {
-      // apng_is_optimized: false,
-      // apng_optimization_level: "1",
-      // apng_is_reduced_color: false,
-      // apng_color_count: "",
-      apng_is_unoptimized: false,
-    };
-  }
 };
 </script>

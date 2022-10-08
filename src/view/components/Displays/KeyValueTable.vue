@@ -36,7 +36,7 @@
     name: "KeyValueTable",
     props: {
       rows: {
-        type: Array,
+        type: [Array, Object],
         default: function() {
           return [];
         },

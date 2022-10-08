@@ -762,8 +762,8 @@ export default {
       } else return "";
     },
     computeTotalSequenceSize() {
-      console.log("computeTotalSequenceSize");
-      console.log(this.imageSequenceInfo.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
+      // console.log("computeTotalSequenceSize");
+      // console.log(this.imageSequenceInfo.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0));
       return formatBytes(this.imageSequenceInfo.reduce((accumulator, currval) => accumulator + currval.fsize.value, 0), 3);
     },
     computePreviewImageSummary() {
@@ -806,7 +806,7 @@ export default {
       //   }
       //   framesInfo[index] = {'isSkipped': isSkipped, 'cyleOrd': cycleOrd, 'currentCycleGapMax': currentCycleGapMax, 'cycleLength': cycleLength, 'offset': offset};
       // }
-      console.log(framesInfo);
+      // console.log(framesInfo);
       return framesInfo;
     },
     // Triggers everytime this.presets property is updated on App.vue
@@ -829,8 +829,8 @@ export default {
     },
     'computeFramesAuxInfo': {
       handler: function(newVal, oldVal) {
-        console.debug('watch computeFramesAuxInfo');
-        console.log(newVal);
+        // console.debug('watch computeFramesAuxInfo');
+        // console.log(newVal);
         this.framesInfo = newVal;
       }
     }
@@ -1203,9 +1203,9 @@ export default {
               this._logProcessing(res.msg);
             } else if (res && res.data) {
               let info = res.data;
-              console.log("sequence info");
-              console.log(info.sequence_info);
-              console.log(info);
+              // console.log("sequence info");
+              // console.log(info.sequence_info);
+              // console.log(info);
               this._renderSequence(info, { operation: ops });
               this.totalSize = `Total size: ${info.totalSize}`;
               // data.save_fstem = stem(data.save_fstem || info.name);
@@ -1235,7 +1235,7 @@ export default {
         // data.image_paths = pyinfo.sequence;
         // data.sequence_info = pyinfo.sequence_info;
       // } else if (["insert", "smart_insert"].includes(operation)) {
-        console.log("BB");
+        // console.log("BB");
         let image_paths = []
         let sequence_info = []
         /*
@@ -1616,7 +1616,7 @@ export default {
     },
     _updateAspectRatio(width, height) {
       if (this.criteria.width && this.criteria.height) {
-        console.log("uAR", width, height);
+        // console.log("uAR", width, height);
         let divisor = gcd(width, height);
         let w_ratio = width / divisor;
         let h_ratio = height / divisor;
@@ -1625,7 +1625,7 @@ export default {
           h_ratio: h_ratio,
           text: `${w_ratio}:${h_ratio}`,
         };
-        console.log(ARData);
+        // console.log(ARData);
         this.aspectRatio = ARData;
       }
     },

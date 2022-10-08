@@ -27,7 +27,7 @@ export default {
   props: {
     modelValue: {
       type: String,
-      required: true,
+      required: false,
     },
     optionsList: {
       type: Array,

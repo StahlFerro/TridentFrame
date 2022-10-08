@@ -500,7 +500,7 @@ export default {
     },
     toggleCheckerBG() {
       this.checkerbg_active = !this.checkerbg_active;
-      console.log("now checkerbg is", this.checkerbg_active);
+      // console.log("now checkerbg is", this.checkerbg_active);
     },
     btnSetSavePath() {
       this.setSaveDirFromDialogAsync();

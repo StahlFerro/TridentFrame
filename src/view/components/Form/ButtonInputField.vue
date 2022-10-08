@@ -39,10 +39,6 @@
         default: null,
         required: false,
       },
-      buttonLabel: {
-        type: String,
-        required: true,
-      },
       hint: {
         type: String,
         default: null,

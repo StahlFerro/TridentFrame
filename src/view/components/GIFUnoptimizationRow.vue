@@ -7,8 +7,8 @@
           title="Unoptimize each frame of the GIF to fully define their original look. Allows editing of each frame on any other application at the cost of increased file size."
         >
           <input
-            v-model="is_unoptimized" type="checkbox" :disabled="isOptimized || isLossy || isReducedColor"
-            @change="$emit('update:is_unoptimized', is_unoptimized)"
+            v-model="isUnoptimized" type="checkbox" :disabled="isDisabled"
+            @change="$emit('update:isUnoptimized', isUnoptimized)"
           />
           Unoptimize
         </label>
@@ -25,14 +25,15 @@
 export default {
   name: "GIFUnoptimizationRow",
   props: {
-    isOptimized: Boolean,
-    isLossy: Boolean,
-    isReducedColor: Boolean
+    isDisabled: {
+      type: Boolean,
+      default: false,
+    },
+    isUnoptimized: {
+      type: Boolean,
+      default: false,
+    },
   },
-  data() {
-    return {
-      is_unoptimized: false,
-    };
-  }
+  emits: ['update:isUnoptimized'],
 };
 </script>

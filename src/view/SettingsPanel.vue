@@ -445,8 +445,8 @@ export default {
       }
       const presetCount = this.localPresetsList.length;
       const dateText = this.formatUnixTimestamp(this.APP_SETTINGS.statistics.last_backup);
-      console.log('dateText');
-      console.log(dateText);
+      // console.log('dateText');
+      // console.log(dateText);
       const stats = {
         "presetsCount": {
           name: "Presets Count",
