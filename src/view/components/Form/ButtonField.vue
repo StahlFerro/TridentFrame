@@ -19,7 +19,7 @@
       'is-active': isActive,
       'text-padding-small': textPadding == 'small'
     }"
-    :title="hint" @click="$emit('click')"
+    :title="hint" @click="$emit('click', $event)"
   >
     <span v-if="icons.length >= 2" class="icon" :class="{
       'is-small': iconSize == 'small',

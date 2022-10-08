@@ -81,7 +81,7 @@
         </div>
       </div>
       <div class="inspect-panel-controls">
-        <a
+        <!-- <a
           class="button is-neon-emerald" :class="{
             'is-loading': INS_IS_INSPECTING,
             'non-interactive': isButtonFrozen,
@@ -90,29 +90,42 @@
         >
           <span class="icon is-small">
             <font-awesome-icon icon="plus" />
-            <!-- <i class="fas fa-plus"></i> -->
           </span>
           <span>Load Image</span>
-        </a>
-        <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearButton">
+        </a> -->
+        <ButtonField label="Load Image" color="green"
+                     :icons="['fas', 'plus']"
+                     :is-loading="INS_IS_INSPECTING"
+                     :is-non-interactive="isButtonFrozen"
+                     @click="loadImage"
+        />
+        <ButtonField :is-active="checkerBGIsActive"
+                     :icons="['fas', 'chess-board']"
+                     :is-non-interactive="isButtonFrozen"
+                     @click="toggleCheckerBG"
+                     @click.middle.prevent="toggleCheckerBG"
+                     @contextmenu.prevent="toggleCheckerBG"
+        />
+        <ButtonField label="Clear" color="red"
+                     :icons="['fas', 'times']"
+                     :is-non-interactive="isButtonFrozen"
+                     @click="clearButton"
+        />
+        <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearButton">
           <span class="icon is-small">
             <font-awesome-icon icon="times" />
-            <!-- <i class="fas fa-times"></i> -->
           </span>
           <span>Clear</span>
-        </a>
-        <a
+        </a> -->
+        <!-- <a
           class="button is-neon-white"
           :class="{ 'is-active': checkerBGIsActive }"
           @click="toggleCheckerBG"
-          @click.middle.prevent="toggleCheckerBG"
-          @contextmenu.prevent="toggleCheckerBG"
         >
           <span class="icon is-medium">
             <font-awesome-icon icon="chess-board" />
-            <!-- <i class="fas fa-chess-board"></i> -->
           </span>
-        </a>
+        </a> -->
       </div>
       <div class="inspect-panel-bottom-bar">
         <StatusBar :status-bar-id="statusBarId" />
@@ -133,13 +146,15 @@ import { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } from "../modules/c
 import { extension as mime_extension } from "mime-types";
 
 import StatusBar from "./components/StatusBar.vue";
+import ButtonField from './components/Form/ButtonField.vue';
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 
 export default {
   components: {
-    StatusBar
+    StatusBar,
+    ButtonField,
   },
   emits: ['right-click', 'close-root-ctxmenu'],
   data: function () {

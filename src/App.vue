@@ -134,7 +134,7 @@
       <ModifyPanel v-show="menuselection == 'modify_panel'" :presets="modificationCriteriaPresets" />
       <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
       <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
-      <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" />
+      <InspectPanel v-show="menuselection == 'inspect_panel'" />
       <!-- <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" /> -->
       <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
       <SettingsPanel v-show="menuselection == 'settings_panel'" :presets="PRESETS_COLLECTION.presets" />
