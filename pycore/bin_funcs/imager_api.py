@@ -20,6 +20,7 @@ from apng import APNG, FrameControl
 from pycore.models.criterion import (
     AnimationCriteria,
     CriteriaBundle,
+    CriteriaUtils,
     DelayHandling,
     SplitCriteria,
     APNGOptimizationCriteria,
@@ -257,14 +258,14 @@ class GifsicleAPI:
         if gif_criteria.is_reduced_color and gif_criteria.color_space:
             options.append((f"--colors={gif_criteria.color_space}",
                             f"Reducing colors to: {gif_criteria.color_space}..."))
-        if criteria.must_redelay(metadata):
-            if not metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
-                grouped_new_delays = criteria.get_grouped_new_delays(metadata)
-                stdio.error(grouped_new_delays)
-                options.append((f"", f"Setting per-frame delay to {criteria.delay}"))
-            elif (metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE) or \
-                criteria.delay_handling == DelayHandling.EVEN_OUT:
-                options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
+        # if criteria.must_redelay(metadata):
+        #     if not metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+        #         # grouped_new_delays = CriteriaUtils.get_grouped_new_delays(metadata)
+        #         # stdio.error(grouped_new_delays)
+        #         options.append((f"", f"Setting per-frame delay to {criteria.delay}"))
+        #     elif (metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE) or \
+        #         criteria.delay_handling == DelayHandling.EVEN_OUT:
+        #         options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
         # if criteria.flip_x:
         #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
         # if criteria.flip_y:
@@ -336,7 +337,7 @@ class GifsicleAPI:
         return out_full_path
 
     @classmethod
-    def modify_gif_image(cls, target_path: Path, out_full_path: Path, original_metadata: AnimatedImageMetadata,
+    def modify_gif_image(cls, original_gif_path: Path, out_full_path: Path, original_metadata: AnimatedImageMetadata,
                          crbundle: CriteriaBundle) -> Path:
         """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied
         arguments.
@@ -352,11 +353,15 @@ class GifsicleAPI:
         """
         gifsicle_options = cls._mod_options_builder(original_metadata, crbundle.modify_aimg_criteria,
                                                     crbundle.gif_opt_criteria)
+        # If no supported modifications, return the original GIF path                                            
+        if len(gifsicle_options) == 0:
+            return original_gif_path
         supressed_error_txts = ["warning: too many colors, using local colormaps",
                                 "You may want to try"]
         # yield {"sicle_args": sicle_args}
         if os_platform() not in (OS.WINDOWS, OS.LINUX):
             raise UnsupportedPlatformException(platform)
+        target_path = Path(str(original_gif_path)).resolve()
         for index, (option, description) in enumerate(gifsicle_options, start=1):
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
             stdio.message(description)
@@ -388,7 +393,7 @@ class GifsicleAPI:
                         stdio.error(stderr_res)
             if target_path != out_full_path:
                 target_path = out_full_path
-        return target_path
+        return out_full_path
     
     @classmethod
     def retempo_gif(cls, gif_path: Path, criteria: AnimationCriteria, frames_info: Dict, out_full_path: Optional[Path] = None) -> Optional[Path]:
@@ -396,7 +401,8 @@ class GifsicleAPI:
 
         Args:
             gif_path (Path): Path to the GIF on disk.
-            delays (List): List of delays (in seconds).
+            criteria (AnimationCriteria): Animation criteria for GIF retempo
+            frames_info (Dict): Frames information
             out_full_path (Optional[Path], optional): The output path of the final GIF image. Defaults to None if intending to overwrite it.
 
         Raises:
@@ -413,7 +419,6 @@ class GifsicleAPI:
         delay_options = cls._delays_option_builder(computed_delays_list)
         args = [
             shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
-            "-b" if not out_full_path else "",
             shlex.quote(str(gif_path)) if os_platform() == OS.LINUX else str(gif_path),
             *delay_options,
         ]
@@ -422,13 +427,16 @@ class GifsicleAPI:
             "--output",
             shlex.quote(str(out_full_path)) if os_platform() == OS.LINUX else str(out_full_path)
         ])
+        if not out_full_path:
+            args.insert("-b")
         cmd = " ".join(args)
         # yield {"msg": f"[{index}/{total_ops}] {description}"}
         # yield {"cmd": cmd}
         # cmd = " ".join(args)
         if ";" in args:
             raise MalformedCommandException("gifsicle")
-        stdio.debug({"retempo_gif args": args})
+        stdio.debug({"retempo_gif cmd": cmd})
+        stdio.message(f"Setting GIF frames...")
         result = subprocess.Popen(args if os_platform() == OS.WINDOWS else cmd,
                                     stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                     shell=os_platform() == OS.LINUX)

@@ -68,7 +68,20 @@ def modify_animated_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageM
         # ImageMagick is used to unoptimized rather than Gifsicle's unoptimizer because Gifsicle doesn't support
         # unoptimization of GIFs with local color table
         gif_path = ImageMagickAPI.unoptimize_gif(gif_path, out_path)
-    final_path = GifsicleAPI.modify_gif_image(gif_path, out_path, metadata, crbundle)
+    stdio.debug(gif_path)
+    stdio.debug(out_path)
+    modified_path = GifsicleAPI.modify_gif_image(gif_path, out_path, metadata, crbundle)
+    stdio.debug(modified_path)
+    mod_criteria = crbundle.modify_aimg_criteria
+    if mod_criteria.must_redelay(metadata):
+        frames_info = mod_criteria.get_frames_info(metadata.frame_count['value'])
+        retempo_path = modified_path
+        if gif_path == modified_path:
+            retempo_path = out_path
+        final_path = GifsicleAPI.retempo_gif(modified_path, mod_criteria, frames_info, retempo_path)
+    else:
+        final_path = modified_path
+    stdio.debug(final_path)
     return final_path
 
 
