@@ -97,8 +97,8 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
         "gif_opt_criteria": crbundle.gif_opt_criteria,
         "apng_opt_criteria": crbundle.apng_opt_criteria,
     })
-    stdio.error("MOD CREATE")
-    stdio.error(create_criteria)
+    # stdio.error("MOD CREATE")
+    # stdio.error(create_criteria)
     new_image_path = create_aimg(frame_paths, out_path, creation_crbundle)
     # stdio.error("MOD RETEMPO")
     if create_criteria.format == ImageFormat.GIF:
