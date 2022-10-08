@@ -67,6 +67,8 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
     delays = []
     if mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
         delays = CriteriaUtils.calculate_new_delays(mod_criteria, metadata)
+    elif mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
+        delays = [mod_criteria.delay] * len(frame_paths)
     # stdio.error(delays)
     create_criteria = CreationCriteria({
         # "name": mod_criteria.name,
