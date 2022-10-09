@@ -119,45 +119,25 @@
       </div>
       <div class="split-panel-middlebar">
         <div class="spl-control-btn">
-          <a
-            class="button is-neon-emerald"
-            :class="{
-              'is-loading': SPL_IS_LOADING,
-              'non-interactive': isButtonFrozen,
-            }"
-            @click="loadImage"
-          >
-            <span class="icon is-small">
-              <font-awesome-icon icon="plus" />
-              <!-- <i class="fas fa-plus"></i> -->
-            </span>
-            <span>Load GIF/APNG</span>
-          </a>
+          <ButtonField label="Load GIF/APNG" color="green"
+                       :icons="['fas', 'plus']"
+                       :is-loading="SPL_IS_LOADING"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="loadImage"
+          />
         </div>
         <div class="spl-control-btn">
-          <a
-            class="button is-neon-crimson"
-            :class="{ 'non-interactive': isButtonFrozen }"
-            @click="clearImage"
-          >
-            <span class="icon is-small">
-              <font-awesome-icon icon="times" />
-              <!-- <i class="fas fa-times"></i> -->
-            </span>
-            <span>Clear</span>
-          </a>
+          <ButtonField :icons="['fas', 'chess-board']"
+                       :is-active="checkerbg_active"
+                       @click="toggleCheckerBG"
+          />
         </div>
         <div class="spl-control-btn">
-          <a
-            class="button is-neon-white"
-            :class="{ 'is-active': checkerbg_active }"
-            @click="toggleCheckerBG"
-          >
-            <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board" />
-              <!-- <i class="fas fa-chess-board"></i> -->
-            </span>
-          </a>
+          <ButtonField label="Clear" color="red"
+                       :icons="['fas', 'times']"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="clearImage"
+          />
         </div>
       </div>
       <div class="split-panel-controls">
