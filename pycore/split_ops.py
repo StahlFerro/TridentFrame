@@ -13,6 +13,7 @@ from pycore.core_funcs.config import (
     ANIMATED_IMG_EXTS,
 )
 from pycore.models.criterion import SplitCriteria
+from pycore.models.image_formats import ImageFormat
 from pycore.utility import filehandler, imageutils
 from pycore.core_funcs import stdio
 
@@ -508,9 +509,10 @@ def split_aimg(image_path: Path, out_dir: Path, criteria: SplitCriteria) -> List
     stdio.debug({"split_criteria": criteria})
     if ext not in ANIMATED_IMG_EXTS:
         raise Exception("Only supported extensions are .gif and .png (for APNG)")
-    if ext == "gif":
+    iformat = ImageFormat[ext.upper()]
+    if iformat == ImageFormat.GIF:
         frame_paths = _split_gif(image_path, out_dir, criteria)
-    elif ext == "png":
+    elif iformat == ImageFormat.PNG:
         frame_paths = _split_apng(image_path, out_dir, name, criteria)
     stdio.control("SPL_FINISH")
     return frame_paths

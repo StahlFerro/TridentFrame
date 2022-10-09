@@ -5,7 +5,7 @@
         <div
           v-cloak class="inspect-panel-viewbox silver-bordered" 
           :class="{'has-checkerboard-bg': checkerBGIsActive }"
-          @contextmenu="$emit('open-root-ctxmenu', $event, imageContextMenuOptions)" 
+          @contextmenu="$emit('right-click', $event, imageContextMenuOptions)" 
           @drop.prevent="helidropFile" @dragenter.prevent @dragover.prevent
         >
           <div v-if="imageFilePath === ''" class="inspect-panel-hint">
@@ -21,7 +21,7 @@
           </div>
         </div>
         <div class="inspect-panel-info silver-bordered-no-left">
-          <table v-if="imageInfo" class="table ins-info-table is-paddingless" width="100%">
+          <table v-if="imageInfo" class="ins-info-table" width="100%">
             <template v-for="attr_group in INSPECT_PANEL_SETTINGS.image_attributes">
               <!-- <template v-for="(meta_list, meta_categ) in imageInfo"> -->
               <!-- <span v-bind:key="key"/> -->
@@ -39,11 +39,13 @@
                 </tr> -->
                 <tr
                   v-for="attribute in attr_group.attributes" 
-                  :key="'iprop_' + attr_group.category + '_' + attribute"
+                  :key="'Attribute$' + attr_group.category + '_' + attribute"
                   :set="attr_field = imageInfo[attr_group.category][attribute]"
                 >
                   <td style="width: 123px">
-                    <strong><span class="is-white-d">{{ attr_field.label }}</span></strong>
+                    <strong><span class="is-white-d">
+                      {{ $t(`image_metadata.${attribute}`) }}
+                    </span></strong>
                   </td>
                   <template v-if="attribute == 'loop_count' && attr_field.value == 0">
                     <td style="max-width: 369px; word-wrap: break-all">
@@ -79,7 +81,7 @@
         </div>
       </div>
       <div class="inspect-panel-controls">
-        <a
+        <!-- <a
           class="button is-neon-emerald" :class="{
             'is-loading': INS_IS_INSPECTING,
             'non-interactive': isButtonFrozen,
@@ -88,29 +90,41 @@
         >
           <span class="icon is-small">
             <font-awesome-icon icon="plus" />
-            <!-- <i class="fas fa-plus"></i> -->
           </span>
           <span>Load Image</span>
-        </a>
-        <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearButton">
+        </a> -->
+        <ButtonField label="Load Image" color="green"
+                     :icons="['fas', 'plus']"
+                     :is-loading="INS_IS_INSPECTING"
+                     :is-non-interactive="isButtonFrozen"
+                     @click="loadImage"
+        />
+        <ButtonField :is-active="checkerBGIsActive"
+                     :icons="['fas', 'chess-board']"
+                     @click="toggleCheckerBG"
+                     @click.middle.prevent="toggleCheckerBG"
+                     @contextmenu.prevent="toggleCheckerBG"
+        />
+        <ButtonField label="Clear" color="red"
+                     :icons="['fas', 'times']"
+                     :is-non-interactive="isButtonFrozen"
+                     @click="clearButton"
+        />
+        <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearButton">
           <span class="icon is-small">
             <font-awesome-icon icon="times" />
-            <!-- <i class="fas fa-times"></i> -->
           </span>
           <span>Clear</span>
-        </a>
-        <a
+        </a> -->
+        <!-- <a
           class="button is-neon-white"
           :class="{ 'is-active': checkerBGIsActive }"
           @click="toggleCheckerBG"
-          @click.middle.prevent="toggleCheckerBG"
-          @contextmenu.prevent="toggleCheckerBG"
         >
           <span class="icon is-medium">
             <font-awesome-icon icon="chess-board" />
-            <!-- <i class="fas fa-chess-board"></i> -->
           </span>
-        </a>
+        </a> -->
       </div>
       <div class="inspect-panel-bottom-bar">
         <StatusBar :status-bar-id="statusBarId" />
@@ -131,15 +145,17 @@ import { DIALOG_INSPECTING_EXT_FILTERS, INSPECTING_IMG_EXTS } from "../modules/c
 import { extension as mime_extension } from "mime-types";
 
 import StatusBar from "./components/StatusBar.vue";
+import ButtonField from './components/Form/ButtonField.vue';
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
 
 
 export default {
   components: {
-    StatusBar
+    StatusBar,
+    ButtonField,
   },
-  emits: ['open-root-ctxmenu'],
+  emits: ['right-click', 'close-root-ctxmenu'],
   data: function () {
     return {
       imageFilePath: "",
@@ -149,9 +165,9 @@ export default {
       imageInfo: {},
       // inspect_msgbox: "",
       imageContextMenuOptions: [
-        {id: 'copy_image', name: "Copy Image", callback: this.cmCopyImage},
-        {id: 'share_image', name: "Share Image", callback: this.cmShareImage},
-        {id: 'send_to', name: 'Send To', callback: this.cmSendTo},
+        {id: 'copy_image', name: "Copy Image"},
+        {id: 'share_image', name: "Share Image"},
+        {id: 'send_to', name: 'Send To'},
       ],
       infoContextMenuOptions: [
         {id: 'copy_info', name: "Copy Info", callback: this.cmCopyInfo}
@@ -167,9 +183,30 @@ export default {
   },
   beforeMount: function () {
     // ipcRenderer.invoke('reload-window-once');
-    const SETTINGS = ipcRenderer.sendSync("get-settings");
+    const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
     this.INSPECT_PANEL_SETTINGS = { ...SETTINGS.inspect_panel };
     console.log(this);
+  },
+  mounted() {
+    this.emitter.on('global-ctx-option-click-[copy_image]', args => {
+      console.log('global-ctx-option-click-[copy_image] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
+    
+    this.emitter.on('global-ctx-option-click-[share_image]', args => {
+      console.log('global-ctx-option-click-[share_image] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
+
+    this.emitter.on('global-ctx-option-click-[send_to]', args => {
+      console.log('global-ctx-option-click-[send_to] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
+
+    this.emitter.on('global-ctx-option-click-[copy_info]', args => {
+      console.log('global-ctx-option-click-[copy_info] triggered!');
+      this.$emit('close-root-ctxmenu');
+    });
   },
   methods: {
     loadImage() {
@@ -189,7 +226,7 @@ export default {
         console.log(err);
       });
     },
-    _inspectImage (image_path) {
+    _inspectImage(image_path) {
       this._logProcessing(`Loading image ${image_path}`);
       this.INS_IS_INSPECTING = true;
       console.log(image_path);
@@ -241,12 +278,12 @@ export default {
      */
     _addExtraCtxOptions(options) {
       // let existing_options = this.imageContextMenuOptions.filter()
-      console.debug(options);
-      console.debug(this.imageContextMenuOptions);
+      // console.debug(options);
+      // console.debug(this.imageContextMenuOptions);
       for (let opt of options){
         let exist_opt = this.imageContextMenuOptions.find(o => o.id == opt.id);
-        console.debug("exist opt:");
-        console.debug(exist_opt);
+        // console.debug("exist opt:");
+        // console.debug(exist_opt);
         if (exist_opt){
           /** 
            * TODO: For now do nothing if attempting to add a new option with the same id. In the future option updating with the same id must be supported.
@@ -266,10 +303,10 @@ export default {
       this.imageContextMenuOptions = remaining_options;
     },
     toggleCheckerBG(e) {
-      console.debug(e);
+      // console.debug(e);
       if (e.button == 0){
         this.checkerBGIsActive = !this.checkerBGIsActive;
-        console.log("now checkerbg is", this.checkerBGIsActive);
+        // console.log("now checkerbg is", this.checkerBGIsActive);
       }
     },
     varToSpaceUpper: varToSpaceUpper,
@@ -305,7 +342,7 @@ export default {
     _logClear() {
       logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
-    _logMessage(message) {
+    _logInfo(message) {
       logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
     },
     _logProcessing(message) {

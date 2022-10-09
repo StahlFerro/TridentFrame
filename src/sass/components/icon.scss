@@ -1,0 +1,52 @@
+@import "_colors.scss";
+
+.frame-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.8;
+
+    &.excluded-frame {
+        bottom: 0;
+        top: auto;
+        left: 0;
+        svg {
+            opacity: 1.0;
+            color: $sunset;
+        }
+    }
+}
+
+
+.frame-control {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  border: none;
+  cursor: pointer;
+  overflow: hidden;
+  outline: none;
+  padding: 0;
+  &.remove-frame {
+    &:hover svg {
+        opacity: 1.0;
+    }
+    &:active svg {
+        opacity: 1.0;
+        color: lighten($crimson, 20%);
+    }
+    svg {
+        opacity: 0.3;
+        color: $crimson;
+        &:hover {
+            opacity: 1.0;
+        }
+        &:active {
+            opacity: 1.0;
+            color: lighten($crimson, 20%);
+        }
+    }
+  }
+}

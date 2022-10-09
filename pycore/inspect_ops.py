@@ -1,6 +1,7 @@
 import os
 import io
 from pathlib import Path
+from select import select
 from typing import List, Dict, Optional, Union
 
 from PIL import Image, ImageCms, ExifTags, UnidentifiedImageError
@@ -168,9 +169,9 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
             exif = {ExifTags.TAGS[k]: v for k, v in exif_raw.items() if k in ExifTags.TAGS}
     width, height = im.size
     filename = image_path.name
-    base_fname = image_path.stem
+    # base_fname = image_path.stem
     ext = image_path.suffix
-    base_fname = imageutils.sequence_nameget(base_fname)
+    base_fname = imageutils.sequence_nameget(filename)
     fsize = image_path.stat().st_size
     # fsize_hr = read_filesize(fsize)
     color_mode = COLOR_MODE_FULL_NAME.get(im.mode) or im.mode
@@ -183,10 +184,10 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
         f = io.BytesIO(icc)
         color_profile = ImageCms.getOpenProfile(f).profile
         # print(color_profile.profile_description)
-        stdio.debug({"copyright": color_profile.copyright, "technology": color_profile.technology,
-                     "manufacturer": color_profile.manufacturer, "creation_date": '',
-                     "header_manufacturer": color_profile.header_manufacturer, "header_model": color_profile.header_model,
-                     "icc_version": color_profile.icc_version, "target": color_profile.target})
+        # stdio.debug({"copyright": color_profile.copyright, "technology": color_profile.technology,
+        #              "manufacturer": color_profile.manufacturer, "creation_date": '',
+        #              "header_manufacturer": color_profile.header_manufacturer, "header_model": color_profile.header_model,
+        #              "icc_version": color_profile.icc_version, "target": color_profile.target})
         color_profile = color_profile.profile_description
     # if palette:
     #     logger.debug(imageutils.reshape_palette(palette))
@@ -198,13 +199,15 @@ def inspect_static_image(image_path: Path) -> ImageMetadata:
     modification_dt = filehandler.get_modification_time(image_path)
     checksum = filehandler.hash_sha1(image_path)
     # logger.debug({"im.info": im.info, "icc": icc, "palette": imageutils.reshape_palette(palette) if palette else None})
-    stdio.debug(im.info)
-    if im.mode == "P":
-        stdio.debug(im.getpalette())
+    # stdio.debug(im.info)
+    # if im.mode == "P":
+        # stdio.debug(im.getpalette())
     im.close()
+    sanitized_namestem = imageutils.rstrip_trailing_symbols(base_fname)
     metadata = ImageMetadata({
         "name": filename,
         "base_filename": base_fname,
+        "sanitized_namestem": sanitized_namestem,
         "width": width,
         "height": height,
         "format": fmt,
@@ -235,7 +238,8 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
         Dict: Metadata of the animated GIF
     """
     filename = abspath.name
-    base_fname = imageutils.sequence_nameget(abspath.stem)
+    # base_fname = imageutils.sequence_nameget(filename)
+    base_fname = abspath.stem
     width, height = gif.size
     frame_count = gif.n_frames
     fsize = os.stat(abspath).st_size
@@ -287,9 +291,11 @@ def inspect_animated_gif(abspath: Path, gif: Image) -> AnimatedImageMetadata:
     color_mode = COLOR_MODE_FULL_NAME.get(gif.mode) or gif.mode
     # logger.debug({"gif.info": gif.info, "palette": imageutils.reshape_palette(palette) if palette else None})
     gif.close()
+    sanitized_namestem = imageutils.rstrip_trailing_symbols(base_fname)
     metadata = AnimatedImageMetadata({
         "name": filename,
         "base_filename": base_fname,
+        "sanitized_namestem": sanitized_namestem,
         "width": width,
         "height": height,
         "format": fmt,
@@ -322,7 +328,8 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
         Dict: Metadata of the animated PNG
     """
     filename = abspath.name
-    base_fname = imageutils.sequence_nameget(abspath.stem)
+    # base_fname = imageutils.sequence_nameget(filename)
+    base_fname = abspath.stem
     frames = apng.frames
     frame_count = len(frames)
     loop_count = apng.num_plays
@@ -334,9 +341,9 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     height = png_one.height
     # raise Exception(frames)
     delays = [round(f[1].delay / f[1].delay_den * 1000, 3) if f[1] else 0 for f in frames]
-    stdio.debug([(f[1].delay, f[1].delay_den) if f[1] else 0 for f in frames])
+    # stdio.debug([(f[1].delay, f[1].delay_den) if f[1] else 0 for f in frames])
     im = Image.open(abspath)
-    stdio.debug(im.default_image)
+    # stdio.debug(im.default_image)
     # for index in range(0, im.n_frames):
         # logger.debug(im.info)
         # logger.debug(im.mode)
@@ -361,9 +368,11 @@ def inspect_animated_png(abspath: Path, apng: APNG) -> AnimatedImageMetadata:
     #     if index < 4:
     #         im.show()
 
+    sanitized_namestem = imageutils.rstrip_trailing_symbols(base_fname)
     metadata = AnimatedImageMetadata({
         "name": filename,
         "base_filename": base_fname,
+        "sanitized_namestem": sanitized_namestem,
         "width": width,
         "height": height,
         "format": fmt,
@@ -417,7 +426,7 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
     # width, height = im.size
     # im.close()
     image_info = {
-        "name": sequence_info[0]["base_filename"]["value"],
+        "name": sequence_info[0]["sanitized_namestem"]["value"],
         "total": sequence_count,
         "sequence": static_img_paths,
         "sequence_info": sequence_info,
@@ -431,10 +440,21 @@ def inspect_sequence(image_paths: List[Path]) -> Dict:
 def inspect_sequence_autodetect(image_path: Path) -> Dict:
     """Receives a single image, then finds similar images with the same name and then returns the information of those
     sequence"""
-    images_dir = image_path.parents[0]
-    filename = imageutils.sequence_nameget(image_path.stem)
+    current_dir = image_path.parents[0]
+    sequence_stem_name = imageutils.sequence_nameget(image_path)
+    selected_im_metadata = inspect_general(image_path, "static")
+    if selected_im_metadata.is_animated["value"]:
+        raise ImageNotStaticException(sequence_stem_name, selected_im_metadata.format["value"].upper())
     # logger.message(f"filename {filename}")
-    possible_sequence = [f for f in sorted(images_dir.glob("*")) if filename in f.stem and f.is_file()]
+    possible_sequence = []
+    for index, f in enumerate(sorted(current_dir.glob("*"))):
+        if not f.is_file():
+            continue
+        fname_stem = imageutils.sequence_nameget(f.stem)
+        stdio.message(f"Detecting {index} images...")
+        if fname_stem == sequence_stem_name:
+            possible_sequence.append(f)
+    # possible_sequence = [f for f in sorted(current_dir.glob("*")) if sequence_stem_name in f.stem and f.is_file()]
     # raise Exception(str(possible_sequence))
     # raise Exception(possible_sequence)
     # paths_bufferio = io.StringIO(json.dumps(possible_sequence))

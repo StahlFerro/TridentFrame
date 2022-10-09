@@ -1,6 +1,8 @@
+from ctypes import Union
 import os
 import io
 import math
+from turtle import delay
 import uuid
 import shlex
 import shutil
@@ -9,20 +11,23 @@ from subprocess import CalledProcessError
 from pathlib import Path
 from sys import platform, stderr
 from enum import Enum, unique
-from typing import List, Tuple, Iterator, Optional, Generator
+from typing import Dict, List, Tuple, Iterator, Optional, Generator
 
 from PIL import Image
 from apng import APNG, FrameControl
 
 
 from pycore.models.criterion import (
+    AnimationCriteria,
     CriteriaBundle,
+    CriteriaUtils,
+    DelayHandling,
     SplitCriteria,
     APNGOptimizationCriteria,
     ModificationCriteria,
     GIFOptimizationCriteria,
 )
-from pycore.models.enums import ALPHADITHER
+from pycore.models.dithers import ALPHADITHER
 from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
 from pycore.core_funcs import stdio
 from pycore.core_funcs import config
@@ -30,6 +35,7 @@ from pycore.core_funcs.exception import MalformedCommandException, UnsupportedPl
     UnsupportedImageModeException
 from pycore.utility import filehandler, imageutils
 from pycore.utility.sysinfo import os_platform, OS
+from pycore.utility.vectorutils import group_list_by_values, group_list_by_values_sequentially
 
 
 class InternalImageAPI:
@@ -116,7 +122,7 @@ class GifsicleAPI:
     gifsicle_path = config.imager_exec_path("gifsicle")
 
     @classmethod
-    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, quotes=False) -> List[str]:
+    def _combine_cmd_builder(cls, out_full_path: Path, crbundle: CriteriaBundle, frames_info: Dict, quotes=False) -> List[str]:
         """Generate a list containing gifsicle command and its arguments.
 
         Args:
@@ -129,7 +135,11 @@ class GifsicleAPI:
         """
         criteria = crbundle.create_aimg_criteria
         gif_opt_criteria = crbundle.gif_opt_criteria
-        delay = int(criteria.delay * 100)
+        delay = criteria.delay if criteria.frame_skip_maintain_delay else AnimationCriteria.compute_average_delay(frames_info)
+        g_delay = int(delay * 100)
+        # stdio.error('final average delay')
+        # stdio.error(delay)
+        # delay = int(criteria.delay * 100)
         disposal = "background"
         loop_arg = "--loopcount"
         opti_mode = "--unoptimize"
@@ -156,18 +166,71 @@ class GifsicleAPI:
             if gif_opt_criteria.is_reduced_color and gif_opt_criteria.color_space:
                 colorspace_arg = f"--colors={gif_opt_criteria.color_space}"
                 args.append(colorspace_arg)
-
+        delay_option = f"--delay={g_delay}"
+        # stdio.error(f"delay check {criteria.delays_are_even} {len(criteria.delays_list)}")
+        # if not criteria.delays_are_even and len(criteria.delays_list) > 0:
+        #     grouped_delays = group_list_by_values(criteria.delays_list)
+        #     stdio.error({
+        #         "grouped_delays": grouped_delays
+        #     })
+        #     # delay_args = [f'-d{round(delay * 100)} {" ".join([f"\"#{i}\"" for i in indices])}' for delay, indices in grouped_delays.items()]
+        #     delay_args = []
+        #     for delay, indices in grouped_delays.items():
+        #         delay_marker = f'-d{round(delay * 100)}'
+        #         delay_indices = " ".join([f"\"#{i}\"" for i in indices])
+        #         delay_args.append(f'{delay_marker} {delay_indices}')
+            
+        #     stdio.error({
+        #         "delay_args": delay_args
+        #     })
+        #     delay_option = ' '.join(delay_args)
         args.extend([
-            f"--delay={delay}",
+            delay_option,
             f"--disposal={disposal}",
             loop_arg,
             globstar_path,
             "--output",
             shlex.quote(str(out_full_path)) if quotes else str(out_full_path),
         ])
+        # stdio.error(' '.join(args))
         if ";" in " ".join(args):
             raise MalformedCommandException("gifsicle")
         return args
+    
+    @classmethod
+    def _delays_option_builder(cls, delays) -> List:
+        delay_args = []
+        gs_delays = group_list_by_values_sequentially(delays)
+        # stdio.error({
+        #     "gs_delays": gs_delays
+        # })
+        # grouped_delays = group_list_by_values(delays)
+        # stdio.error({
+        #     "grouped_delays": grouped_delays
+        # })
+        # # delay_args = [f'-d{round(delay * 100)} {" ".join([f"\"#{i}\"" for i in indices])}' for delay, indices in grouped_delays.items()]
+        # delay_args = []
+        # for delay, indices in grouped_delays.items():
+        #     delay_marker = f'-d{round(delay * 100)}'
+        #     delay_indices = " ".join([f"\"#{i}\"" for i in indices])
+        #     delay_args.append(f'{delay_marker} {delay_indices}')
+        
+        # stdio.error({
+        #     "delay_args": delay_args
+        # })
+        for delay, indices in gs_delays:
+            stdio.debug({
+                "delay": delay,
+                "indices": indices
+            })
+            delay_selector = str(indices[0]) if len(indices) == 1 else f'{indices[0]}-{indices[-1]}'
+            delay_args.extend([
+                '-d',
+                str(round(delay * 100)),
+                f'#{delay_selector}'
+            ])
+            # delay_args.append(f'-d{round(delay * 100)} #{delay_selector}')
+        return delay_args
 
     @classmethod
     def _mod_options_builder(
@@ -186,8 +249,6 @@ class GifsicleAPI:
         options = []
         if criteria.must_resize(metadata):
             options.append((f"--resize={criteria.width}x{criteria.height}", "Resizing image..."))
-        if criteria.must_redelay(metadata):
-            options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
         if gif_criteria.is_optimized and gif_criteria.optimization_level:
             options.append((f"--optimize={gif_criteria.optimization_level}",
                             f"Optimizing image with level {gif_criteria.optimization_level}..."))
@@ -197,6 +258,14 @@ class GifsicleAPI:
         if gif_criteria.is_reduced_color and gif_criteria.color_space:
             options.append((f"--colors={gif_criteria.color_space}",
                             f"Reducing colors to: {gif_criteria.color_space}..."))
+        # if criteria.must_redelay(metadata):
+        #     if not metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+        #         # grouped_new_delays = CriteriaUtils.get_grouped_new_delays(metadata)
+        #         # stdio.error(grouped_new_delays)
+        #         options.append((f"", f"Setting per-frame delay to {criteria.delay}"))
+        #     elif (metadata.delays_are_even["value"] and criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE) or \
+        #         criteria.delay_handling == DelayHandling.EVEN_OUT:
+        #         options.append((f"--delay={int(criteria.delay * 100)}", f"Setting per-frame delay to {criteria.delay}"))
         # if criteria.flip_x:
         #     args.append(("--flip-horizontal", "Flipping image horizontally..."))
         # if criteria.flip_y:
@@ -216,7 +285,7 @@ class GifsicleAPI:
         return options
 
     @classmethod
-    def combine_gif_images(cls, gifragment_dir: Path, out_full_path: Path, crbundle: CriteriaBundle) -> Path:
+    def combine_gif_images(cls, gifragment_dir: Path, out_full_path: Path, crbundle: CriteriaBundle, frames_info: Dict) -> Path:
         """Combine a list of static GIF images in a directory into one animated GIF image.
 
         Args:
@@ -244,11 +313,11 @@ class GifsicleAPI:
         #     logger.error(stderr_res)
 
         if os_platform() == OS.WINDOWS:
-            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=False)
+            args = cls._combine_cmd_builder(out_full_path, crbundle, frames_info, quotes=False)
             stdio.debug(args)
             result = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         elif os_platform() == OS.LINUX:
-            args = cls._combine_cmd_builder(out_full_path, crbundle, quotes=True)
+            args = cls._combine_cmd_builder(out_full_path, crbundle, frames_info, quotes=True)
             cmd = " ".join(args)
             stdio.debug(f"linux cmd -> {cmd}")
             result = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -268,7 +337,7 @@ class GifsicleAPI:
         return out_full_path
 
     @classmethod
-    def modify_gif_image(cls, target_path: Path, out_full_path: Path, original_metadata: AnimatedImageMetadata,
+    def modify_gif_image(cls, original_gif_path: Path, out_full_path: Path, original_metadata: AnimatedImageMetadata,
                          crbundle: CriteriaBundle) -> Path:
         """Use gifsicle to perform an array of modifications on an existing GIF image, by looping through the supplied
         arguments.
@@ -284,11 +353,15 @@ class GifsicleAPI:
         """
         gifsicle_options = cls._mod_options_builder(original_metadata, crbundle.modify_aimg_criteria,
                                                     crbundle.gif_opt_criteria)
+        # If no supported modifications, return the original GIF path                                            
+        if len(gifsicle_options) == 0:
+            return original_gif_path
         supressed_error_txts = ["warning: too many colors, using local colormaps",
                                 "You may want to try"]
         # yield {"sicle_args": sicle_args}
         if os_platform() not in (OS.WINDOWS, OS.LINUX):
             raise UnsupportedPlatformException(platform)
+        target_path = Path(str(original_gif_path)).resolve()
         for index, (option, description) in enumerate(gifsicle_options, start=1):
             # yield {"msg": f"index {index}, arg {arg}, description: {description}"}
             stdio.message(description)
@@ -320,7 +393,65 @@ class GifsicleAPI:
                         stdio.error(stderr_res)
             if target_path != out_full_path:
                 target_path = out_full_path
-        return target_path
+        return out_full_path
+    
+    @classmethod
+    def retempo_gif(cls, gif_path: Path, criteria: AnimationCriteria, frames_info: Dict, out_full_path: Optional[Path] = None) -> Optional[Path]:
+        """Execute Gifsicle to change a GIF's frame delays
+
+        Args:
+            gif_path (Path): Path to the GIF on disk.
+            criteria (AnimationCriteria): Animation criteria for GIF retempo
+            frames_info (Dict): Frames information
+            out_full_path (Optional[Path], optional): The output path of the final GIF image. Defaults to None if intending to overwrite it.
+
+        Raises:
+            MalformedCommandException: Invalid command
+
+        Returns:
+            Optional[Path]: Output path of the GIF. None if the GIF is overwritten.
+        """
+        supressed_error_txts = ["warning: too many colors, using local colormaps",
+                                "You may want to try"]
+        # unskipped_perc = AnimationCriteria.compute_unskipped_fraction(frames_info)
+        computed_delays_list = [fr['delay'] if not criteria.frame_skip_maintain_delay else criteria.delay 
+                                for _, fr in frames_info.items() if not fr['is_skipped']]
+        delay_options = cls._delays_option_builder(computed_delays_list)
+        args = [
+            shlex.quote(str(cls.gifsicle_path)) if os_platform() == OS.LINUX else str(cls.gifsicle_path),
+            shlex.quote(str(gif_path)) if os_platform() == OS.LINUX else str(gif_path),
+            *delay_options,
+        ]
+        if out_full_path:
+            args.extend([
+            "--output",
+            shlex.quote(str(out_full_path)) if os_platform() == OS.LINUX else str(out_full_path)
+        ])
+        if not out_full_path:
+            args.insert(1, "-b")
+        cmd = " ".join(args)
+        # yield {"msg": f"[{index}/{total_ops}] {description}"}
+        # yield {"cmd": cmd}
+        # cmd = " ".join(args)
+        if ";" in args:
+            raise MalformedCommandException("gifsicle")
+        stdio.debug({"retempo_gif cmd": cmd})
+        stdio.message(f"Setting GIF frames...")
+        result = subprocess.Popen(args if os_platform() == OS.WINDOWS else cmd,
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    shell=os_platform() == OS.LINUX)
+        while result.poll() is None:
+            if result.stdout:
+                stdout_res = result.stdout.readline().decode("utf-8")
+                if stdout_res and not any(s in stdout_res for s in supressed_error_txts):
+                    stdio.message(stdout_res)
+            if result.stderr:
+                stderr_res = result.stderr.readline().decode("utf-8")
+                if stderr_res and not any(s in stderr_res for s in supressed_error_txts):
+                    stdio.error(stderr_res)
+        if out_full_path:
+            return out_full_path
+
 
     @classmethod
     def extract_gif_frames(cls, gif_path: Path, name: str, criteria: SplitCriteria,
@@ -770,8 +901,8 @@ class PNGQuantAPI:
                 raise Exception("Please specify at least a max quality value!")
             if speed:
                 args.append(f"--speed={speed}")
-        stdio.debug(f"aopt_criteria ------> {apngopt_criteria}")
-        stdio.debug(f"internal args ------> {args}")
+        # stdio.debug(f"aopt_criteria ------> {apngopt_criteria}")
+        # stdio.debug(f"internal args ------> {args}")
         # if criteria.is_reduced_color:
         # args.append(())
         return args
@@ -810,12 +941,17 @@ class PNGQuantAPI:
             str(image_path),
         ]
         cmd = " ".join(args)
-        stdio.debug(f"PNGQUANT ARGS ---------> {cmd}")
+        # stdio.debug(f"PNGQUANT ARGS ---------> {cmd}")
         try:
-            result = subprocess.check_output(args)
-        except CalledProcessError as err:
+            result = subprocess.run(args)
+        except Exception as err:
             # raise err
-            stdio.warn(f'{err}')
+            stdio.error(f'{err}')
+        # if result.stdout:
+        #     stdio.warn(result.stdout.decode('ascii'))
+        # if result.stderr:
+        #     stdio.warn(result.stderr.decode('ascii'))
+        stdio.debug(f'pngquant.exe status code: {result.returncode}')
         # Convert back to RGBA image
         with Image.open(image_path).convert("RGBA") as rgba_im:
             rgba_im.save(image_path)

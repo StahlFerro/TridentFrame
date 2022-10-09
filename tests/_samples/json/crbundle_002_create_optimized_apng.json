@@ -2,6 +2,8 @@
     "criteria": {
         "fps": "5",
         "delay": 0.2,
+        "delays_are_even": true,
+        "delays_list": [],
         "format": "PNG",
         "is_reversed": false,
         "preserve_alpha": false,
@@ -12,7 +14,11 @@
         "resize_method": "NEAREST",
         "loop_count": "",
         "start_frame": "",
-        "rotation": 0
+        "rotation": 0,
+        "frame_skip_count": 0,
+        "frame_skip_gap": 0,
+        "frame_skip_offset": 0,
+        "frame_skip_maintain_delay": false
     },
     "gif_opt_criteria": {
         "is_optimized": false,

@@ -1,0 +1,41 @@
+.field {
+  &.is-enhanced {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2px;
+    .stat-icon {
+      flex: 0 0 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .icon {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    &.selection {
+      label {
+        flex: 0 0 40%
+      }
+      .controls-container {
+        flex: 1 1 auto;
+      }
+    }
+    &.textbox {
+      label {
+        flex: 0 0 20%
+      }
+      .controls-container {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+  .control.main {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+}

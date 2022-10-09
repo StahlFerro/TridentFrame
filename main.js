@@ -7,8 +7,11 @@ const ipcMain = electron.ipcMain;
 const path = require('path');
 const deploy_env = process.env.DEPLOY_ENV;
 
-const SettingStore = require("./src/store/settings.js");
+const SettingsStore = require("./src/store/settingsStore.js");
+const PresetsStore = require("./src/store/presetsStore.js");
+
 let SETTINGS;
+// let PRESETS;
 
 console.log('DIRNAME', __dirname);
 console.log('APP PATH', app.getAppPath());
@@ -46,7 +49,7 @@ const createWindow = () => {
 	if (deploy_env && deploy_env == 'DEV') {
 		// Development environment
 		console.debug('------ DEVELOPMENT VERSION ------');
-		mainWindow.loadURL('http://localhost:8080/');
+		mainWindow.loadURL('http://localhost:8705/');
 	} else {
 		console.debug('------ PRODUCTION VERSION ------');
 		// Production environment
@@ -75,7 +78,8 @@ const createWindow = () => {
 app.on('ready', () => {
 	// createPyProc();
 	console.log("[Ready] Initialize settings");
-	SETTINGS = SettingStore.initialize();
+	SETTINGS = SettingsStore.initialize();
+	PRESETS = PresetsStore.initialize();
 	console.log("[Ready] Creating window...");
 	createWindow();
 	mainWindow.reload();
@@ -107,7 +111,7 @@ ipcMain.handle('choose-dir-dialog', async (event, args) => {
 	return "";
 });
 
-ipcMain.handle('save-dialog', async (event, args) => {
+ipcMain.handle('IPC-SHOW-SAVE-DIALOG', async (event, args) => {
 	return dialog.showSaveDialog(mainWindow, args);
 });
 
@@ -115,11 +119,11 @@ ipcMain.on('get-app-path-sync', function (event, args) {
 	event.returnValue = app.getAppPath();
 });
 
-ipcMain.on("show-msg-box-sync", function (event, args) {
+ipcMain.on("IPC-SHOW-MESSAGE-BOX-SYNC", function (event, args) {
 	event.returnValue = dialog.showMessageBoxSync(args);
 })
 
-ipcMain.handle("show-msg-box", async (event, args) => {
+ipcMain.handle("IPC-SHOW-MESSAGE-BOX", async (event, args) => {
 	return dialog.showMessageBox(mainWindow, args);
 })
 

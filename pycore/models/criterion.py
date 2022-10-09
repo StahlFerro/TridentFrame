@@ -1,14 +1,35 @@
+from fractions import Fraction
 import math
-from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
-from pycore.models.enums import ALPHADITHER
-from typing import Dict, List, Tuple, Any, Optional
 
+from functools import reduce 
+from pycore.core_funcs import stdio
+from pycore.models.image_formats import ImageFormat
+from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
+from pycore.models.dithers import ALPHADITHER
+from typing import Dict, List, Tuple, Any, Optional, Union
+
+
+from enum import Enum, unique
+
+from pycore.utility.vectorutils import group_list_by_values
+
+
+@unique
+class DelayHandling(Enum):
+    DO_NOTHING = 0
+    EVEN_OUT = 1
+    MULTIPLY_AVERAGE = 2
 
 class CriteriaBase:
     pass
 
 
 class TransformativeCriteria(CriteriaBase):
+    """Base criteria that describes the editable properties of any images
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
     def __init__(self, vals: Dict):
         self.width: int = int(vals.get("width", 1))
         self.height: int = int(vals.get("height"))
@@ -36,63 +57,192 @@ class TransformativeCriteria(CriteriaBase):
 
     # def must_rotate(self) -> bool:
     #     return self.rotation != 0
+    
 
+class AnimationCriteria(TransformativeCriteria):
+    """Contains the basic criteria that describes an animated image
 
-class CreationCriteria(TransformativeCriteria):
-    """ Contains all of the criterias for Creating an animated image """
+    Args:
+        TransformativeCriteria (Dict): Dictionary values
+    """
 
-    def __init__(self, vals):
-        super(CreationCriteria, self).__init__(vals)
+    def __init__(self, vals: Dict):
+        super(AnimationCriteria, self).__init__(vals)
         # self.name: str = vals["name"]
         self.fps: float = float(vals["fps"] or 10) or 10
         self.delay: float = float(vals["delay"] or 0.1) or 0.1
-        self.format: str = vals["format"]
+        self.delays_are_even: bool = vals["delays_are_even"]
+        self.delays_list: List[Union[Fraction, float]] = vals["delays_list"]
         self.reverse: bool = vals["is_reversed"]
         self.preserve_alpha: bool = vals["preserve_alpha"]
         self.loop_count = int(vals["loop_count"] or 0)
-        start_frame_val = int(vals["start_frame"] or 0) or 1
-        self.start_frame = start_frame_val - 1 if start_frame_val >= 0 else start_frame_val
-        self.skip_frame = vals.get("skip_frame") or 0
+        self.start_frame = int(vals["start_frame"] or 0) or 1
+        self.frame_skip_count = int(vals.get("frame_skip_count") or 0)
+        self.frame_skip_gap = int(vals.get("frame_skip_gap") or 1)
+        self.frame_skip_offset = int(vals.get("frame_skip_offset") or 0)
+        self.frame_skip_maintain_delay = vals.get("frame_skip_maintain_delay") or False
+
+
+    @property
+    def actual_average_delay(self):
+        pass
+    
+    # @classmethod
+    # def compute_unskipped_fraction(cls, frames_info) -> Fraction:
+    #     """Get the percentage of sustained frames after skipping
+
+    #     Args:
+    #         frames_info (Any): Frames information
+
+    #     Returns:
+    #         Fraction: Fraction of unskipped frames to the total frame count
+    #     """
+    #     unskipped_count = 0
+    #     total_count = 0
+    #     for _, fr in frames_info.items():
+    #         total_count += 1
+    #         if not fr['is_skipped']:
+    #             unskipped_count += 1
+    #     return Fraction(unskipped_count, total_count).limit_denominator(10*4)
+        
+    @classmethod
+    def compute_average_delay(cls, frames_info) -> float:
+        """Compute the average delay of unskipped frames
+
+        Args:
+            frames_info (Any): Frames information dictionary
+
+        Returns:
+            float: Averaged delay
+        """
+        unskipped_delays = [fr['delay'] for i, fr in frames_info.items() if not fr['is_skipped']]
+        total_delays = reduce(lambda td, d: td + d, unskipped_delays)
+        sustained_frame_count = len(unskipped_delays)
+        average_delay = total_delays / sustained_frame_count
+        # stdio.error(f'udelays {total_delays}')
+        # stdio.error(f'divisor {sustained_frame_count}')
+        return average_delay
+    
+    def get_frames_info(self, frame_count: int) -> Dict[int, Dict]:
+        """Get per-frame criteria
+
+        Args:
+            frame_count (int): Frame count
+
+        Returns:
+            Dict[int, Dict]: Frame info dictionary
+        """
+        gap = self.frame_skip_gap or 1
+        skip = self.frame_skip_count
+        offset = -self.frame_skip_offset
+        cycle_length = skip + gap
+        frames_info = {}
+        sustained_frames = 0
+        for index in range(0, frame_count):
+            cycle_ordinal = math.floor((index + offset) / cycle_length)
+            current_cycle_gap_max = cycle_ordinal * cycle_length + gap - 1 - offset
+            is_skipped = False
+            if (index > current_cycle_gap_max):
+                is_skipped = True
+            if not is_skipped:
+                sustained_frames += 1
+            frames_info[index] = {
+                'is_skipped': is_skipped
+            }
+        skip_perc = sustained_frames / frame_count
+        if self.delays_are_even:
+            # global_delay = self.delay
+            # if not self.frame_skip_maintain_delay:
+            global_delay = round(self.delay / skip_perc, 6)
+            for index, v in frames_info.items():
+                v['delay'] = global_delay
+        else:
+            for index, v in frames_info.items():
+                v['delay'] = round(self.delays_list[index] / skip_perc, 6)
+        return frames_info
+    
+    
+    # def get_true_average_delay(self, frame_count):
+    #     frames_info = self.get_frames_info(frame_count)
+    #     return self.compute_average_delay(frames_info)
+
+
+
+class CreationCriteria(AnimationCriteria):
+    """Contains all of the criterias for Creating an animated image of a certain format
+
+    Args:
+        AnimationCriteria (Dictionary): Dictionary values
+    """
+
+    def __init__(self, vals: Dict):
+        super(CreationCriteria, self).__init__(vals)
+        iformat: ImageFormat = False
+        if type(vals["format"]) is str:
+            iformat = ImageFormat[str.upper(vals["format"])]
+        elif type(vals["format"]) is ImageFormat:
+            iformat = vals["format"]
+        else:
+            raise Exception(f"Unknown Image format: {vals['format']}")
+        self.format: ImageFormat = iformat
 
 
 class ModificationCriteria(CreationCriteria):
-    """ Contains all of the criterias for Modifying the specifications of an animated image """
+    """Contains all of the criterias for Modifying the specifications of an animated image
 
-    def __init__(self, vals):
+    Args:
+        CreationCriteria (Dict): Dictionary values
+    """
+
+    def __init__(self, vals: Dict):
         self.hash_sha1 = vals["hash_sha1"]
         self.last_modified_dt = vals["last_modified_dt"]
+        self.delay_handling = DelayHandling[str.upper(vals["delay_handling"])]
 
         super(ModificationCriteria, self).__init__(vals)
 
     def change_format(self, metadata: ImageMetadata):
-        return metadata.format["value"] != self.format
+        # stdio.error(f'{metadata.format["value"]} {self.format.name}')
+        return str.upper(metadata.format["value"]) != self.format.name
 
     def must_resize(self, metadata: Optional[AnimatedImageMetadata] = None, width: Optional[int] = 0,
                     height: Optional[int] = 0) -> bool:
+        """Checks whether or not the animated image needs to be resized
+
+        Args:
+            metadata (Optional[AnimatedImageMetadata], optional): _description_. Animated image metadata.
+            width (Optional[int], optional): _description_. Original width of the image.
+            height (Optional[int], optional): _description_. Original height of an image.
+
+        Returns:
+            bool: True if the animated image needs to be resized, else False.
+        """
         return super(ModificationCriteria, self).must_resize(metadata, width, height)
 
     def must_transform(self, metadata: AnimatedImageMetadata) -> bool:
+        """Check whether or not pixel transformation must be performed to the animated image 
+
+        Args:
+            metadata (AnimatedImageMetadata): The metadata of the animated image
+
+        Returns:
+            bool: True if the animated image must be pixel-transformed, else False.
+        """
         return self.must_resize(metadata) or self.must_flip()
 
     def apng_must_reiterate(self, metadata: AnimatedImageMetadata) -> bool:
         return self.must_resize(metadata) or self.must_flip() or self.must_redelay(metadata) or self.reverse
-    
-    def gif_must_rebuild(self) -> bool:
-        """Determine whether the modification needs the animated GIF to be split and rebuilt with the required modifications,
-
-        Returns:
-            bool: True or False
-        """
-        return self.format == "GIF" and (self.flip_x or self.flip_y or self.reverse)
 
     def must_redelay(self, metadata: Optional[AnimatedImageMetadata] = None, delays: Optional[List[float]] = None,
                      delay: Optional[float] = None):
+        average_delay = 0
         if metadata:
-            return metadata.average_delay["value"] != self.delay
+            average_delay = metadata.average_delay["value"]
         elif delays:
-            return sum(delays) / len(delays) != self.delay
+            average_delay = sum(delays) / len(delays)
         elif delay:
-            return delay != self.delay
+            average_delay = self.delay
+        return (average_delay != self.delay or self.delay_handling == DelayHandling.EVEN_OUT) and not self.delay_handling == DelayHandling.DO_NOTHING
 
     def must_reloop(self, metadata: Optional[AnimatedImageMetadata] = None, loop_count: Optional[int] = 0):
         if metadata:
@@ -103,9 +253,9 @@ class ModificationCriteria(CreationCriteria):
     def project_modifications_list(self, image_obj: Any) -> List[Dict]:
         return [image_obj, self.start_frame]
 
-    def gif_must_split(self) -> bool:
-        altered = self.reverse or self.flip_x or self.flip_y or self.rotation
-        return altered
+    # def gif_must_split(self) -> bool:
+    #     altered = self.reverse or self.flip_x or self.flip_y or self.rotation
+    #     return altered
 
     def orig_dimensions(self) -> str:
         return f"{self.orig_width}x{self.orig_height}"
@@ -115,7 +265,11 @@ class ModificationCriteria(CreationCriteria):
 
 
 class SplitCriteria(CriteriaBase):
-    """ Contains all of the criterias for Splitting an animated image """
+    """Contains all of the criterias for Splitting an animated image
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
 
     def __init__(self, vals):
         self.new_name: str = vals["new_name"].strip()
@@ -160,7 +314,11 @@ class SpritesheetSliceCriteria(CriteriaBase):
 
 
 class GIFOptimizationCriteria(CriteriaBase):
-    """ Criteria for GIF-related optimization/unoptimization """
+    """Criteria for GIF-related optimization/unoptimization
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
 
     def __init__(self, vals):
         self.is_optimized = vals["is_optimized"]
@@ -193,7 +351,11 @@ class GIFOptimizationCriteria(CriteriaBase):
 
 
 class APNGOptimizationCriteria(CriteriaBase):
-    """ Criteria for APNG-related optimization/unoptimization """
+    """Criteria for APNG-related optimization/unoptimization
+
+    Args:
+        CriteriaBase (Dict): Dictionary values
+    """
 
     def __init__(self, vals):
         self.is_optimized = vals["apng_is_optimized"]
@@ -212,8 +374,44 @@ class APNGOptimizationCriteria(CriteriaBase):
         return (self.is_optimized and self.optimization_level) or (self.is_reduced_color and self.color_count)
 
 
+class CriteriaUtils():
+    """Contains various utility methods for properties relating to image criteria
+    """
+    
+    @classmethod
+    def get_grouped_new_delays(cls, mod_criteria: ModificationCriteria, metadata: AnimatedImageMetadata) -> List[Dict]:
+        delays = cls.calculate_new_delays(mod_criteria=mod_criteria, metadata=metadata)
+        grouped_delays: Dict[int, List] = group_list_by_values(delays)
+        return grouped_delays
+        
+    @classmethod
+    def calculate_new_delays(cls, mod_criteria: ModificationCriteria, metadata: AnimatedImageMetadata) -> List[Fraction]:
+        orig_delays = metadata.delays["value"]
+        new_delays: List
+        if mod_criteria.delay_handling == DelayHandling.EVEN_OUT:
+            new_delays = [Fraction(mod_criteria.delay).limit_denominator() for _ in orig_delays]
+        elif mod_criteria.delay_handling == DelayHandling.MULTIPLY_AVERAGE:
+            orig_avg_delay = sum(orig_delays) / len(orig_delays)
+            delay_ratio = mod_criteria.delay / orig_avg_delay
+            # stdio.error(f"delay ratio {delay_ratio}, {mod_criteria.delay}, {Fraction(mod_criteria.delay).limit_denominator()}, {orig_avg_delay}")
+            new_delays = [Fraction(delay_ratio * od).limit_denominator() for od in orig_delays]
+        elif mod_criteria.delay_handling == DelayHandling.DO_NOTHING:
+            new_delays = orig_delays
+        else:
+            raise Exception(f"Unknown delay handling method: {mod_criteria.delay_handling}")
+        # stdio.error({
+        #     "orig_delays": orig_delays,
+        #     "new_delays": new_delays
+        # })
+        return new_delays
+
+
 class CriteriaBundle(CriteriaBase):
-    """ Packs multiple criterias into one"""
+    """Container class that carries multiple criterias into one
+
+    Args:
+        CriteriaBase (Dict): Dictionary values of each criteria
+    """
 
     def __init__(self, vals):
         self.create_aimg_criteria: CreationCriteria = vals.get("create_aimg_criteria")

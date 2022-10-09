@@ -1,10 +1,12 @@
 /* Color definitions */
 $cyan: #34caf8;
-$blue: #2e3cd5;
+$blue: #5e91ff;
 $cyan-bright: #98e7ff;
+$purple: #ce54f3;
 $emerald: #44d444;
 $crimson: #f74848;
 $sunset: #f5904d;
+$tuscany: #fdd128;
 $white-d: #cccccc;
 $dark-2: #232629;
 $dark-3: #31363b;
@@ -23,6 +25,9 @@ $white-a: #aaaaaa;
 }
 .is-sunset {
     color: $sunset;
+}
+.is-tuscany {
+    color: $tuscany;
 }
 .is-emerald {
     color: $emerald;

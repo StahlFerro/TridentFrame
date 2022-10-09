@@ -1,0 +1,51 @@
+{
+    "criteria": {
+        "fps": "5",
+        "delay": 0.2,
+        "delays_are_even": true,
+        "delays_list": [],
+        "format": "PNG",
+        "is_reversed": false,
+        "preserve_alpha": false,
+        "flip_x": false,
+        "flip_y": false,
+        "width": 157,
+        "height": 157,
+        "resize_method": "NEAREST",
+        "loop_count": "",
+        "start_frame": "",
+        "rotation": 0,
+        "frame_skip_count": 1,
+        "frame_skip_gap": 2,
+        "frame_skip_offset": 0,
+        "frame_skip_maintain_delay": false
+    },
+    "gif_opt_criteria": {
+        "is_optimized": false,
+        "optimization_level": "1",
+        "is_lossy": false,
+        "lossy_value": "",
+        "is_reduced_color": false,
+        "color_space": "",
+        "is_unoptimized": false,
+        "dither_method": "FLYOD_STEINBERG",
+        "palletization_method": "ADAPTIVE",
+        "is_dither_alpha": true,
+        "dither_alpha_method": "screendoor",
+        "dither_alpha_threshold": 50
+    },
+    "apng_opt_criteria": {
+        "apng_is_optimized": false,
+        "apng_optimization_level": "1",
+        "apng_is_reduced_color": false,
+        "apng_color_count": 128,
+        "apng_is_unoptimized": false,
+        "apng_quantization_enabled": true,
+        "apng_quantization_quality_min": 0,
+        "apng_quantization_quality_max": 100,
+        "apng_quantization_speed": 3,
+        "apng_preconvert_rgba": false,
+        "apng_convert_color_mode": false,
+        "apng_new_color_mode": "RGBA"
+    }
+}

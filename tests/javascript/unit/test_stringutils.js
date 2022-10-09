@@ -10,7 +10,7 @@ describe("stringutils.formatBytes() test", function () {
     });
   }
 
-  let assertions_list = [
+  let assertionsList = [
     [0, 0, "0 B"],
     [1023, 0, "1023 B"],
     [2048, 0, "2 KB"],
@@ -21,8 +21,8 @@ describe("stringutils.formatBytes() test", function () {
     [1111111111, 2, "1.03 GB"],
   ];
 
-  for (let assertion_tuple of assertions_list) {
-    formatBytesMultiTest(...assertion_tuple);
+  for (let assertionTuple of assertionsList) {
+    formatBytesMultiTest(...assertionTuple);
   }
 })
 
@@ -35,12 +35,12 @@ describe("stringutils.varSpaceToUpper() test", function() {
     });
   }
 
-  let assertions_list = [
+  let assertionsList = [
     ["general_info", "GENERAL INFO"],
     ["animation_info", "ANIMATION INFO"],
   ];
 
-  for (let assertion_tuple of assertions_list) {
-    varSpaceToUpperMultiTest(...assertion_tuple);
+  for (let assertionTuple of assertionsList) {
+    varSpaceToUpperMultiTest(...assertionTuple);
   }
 })

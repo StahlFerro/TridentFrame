@@ -33,7 +33,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -252,29 +251,7 @@ typings/
 
 
 
-##### Ignore everything inside cache/, previews/, writer/markdown/, writer/checksums/ and temp/ except .include files so that this folder will be commited to the VCS
 
-
-cache/*
-!cache/.include
-previews/*
-!previews/.include
-temp/*
-!temp/.include
-release/*
-engine/*
-writer/markdown/*
-writer/checksums/*
-jsconfig.json
-
-
-### Mochawesome Reports
-
-**/mochawesome-report/**
-
-### Pytest-HTML Reports
-
-**/pytest-report/**
 
 
 
@@ -339,3 +316,26 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+
+##### TridentFrame project-specific ignores
+
+
+config/app.toml
+data/*
+temp/*
+release/*
+engine/*
+engine-prebuild/*
+tools/writer/markdown/*
+tools/writer/checksums/*
+jsconfig.json
+
+
+### Mochawesome Reports
+
+**/mochawesome-report/**
+
+### Pytest-HTML Reports
+
+**/pytest-report/**

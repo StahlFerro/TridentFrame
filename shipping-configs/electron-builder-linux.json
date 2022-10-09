@@ -1,0 +1,29 @@
+{
+  "productName": "TridentFrame",
+  "appId": "com.stahlferro.tridentframe",
+  "copyright": "Copyright 2021 StahlFerro",
+  "buildVersion": "${version}",
+  "directories": {
+    "output": "release/tridentframe"
+  },
+  "asar": false,
+  "linux": {
+    "artifactName": "${productName}-${version}-linux.${ext}",
+    "target": [
+      "deb",
+      "rpm",
+      "tar.gz"
+    ],
+    "icon": "./build/icons",
+    "category": "Graphics"
+  },
+  "files": [
+    "main.js",
+    "engine/**",
+    "dist/**",
+    "src/common/paths.js",
+    "src/models/**",
+    "src/store/**",
+    "LICENSE.md"
+  ]
+}

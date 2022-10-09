@@ -51,17 +51,17 @@ def message(logmsg):
 
 def warn(logmsg: str):
     msg = {"warning": logmsg}
-    print(json.dumps(msg), file=sys.stderr)
+    print(json.dumps(msg, cls=JSONEncoderTrident), file=sys.stderr)
 
 
 def error(logmsg: Any):
     msg = {"error": logmsg}
-    print(json.dumps(msg), file=sys.stderr)
+    print(json.dumps(msg, cls=JSONEncoderTrident), file=sys.stderr)
 
 
 def error_traceback(tb):
     msg = {"traceback": traceback.extract_tb(tb, limit=None).format()}
-    print(json.dumps(msg), file=sys.stderr)
+    print(json.dumps(msg, cls=JSONEncoderTrident), file=sys.stderr)
 
 
 def control(logmsg: str):

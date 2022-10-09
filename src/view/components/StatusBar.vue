@@ -13,8 +13,12 @@
         <font-awesome-icon icon="check" class="is-emerald" />
         <!-- <i class="fas fa-check is-emerald"></i> -->
       </span>
+      <span v-show="logLevel == EnumStatusLogLevel.WARNING" class="icon">
+        <font-awesome-icon icon="triangle-exclamation" class="is-tuscany" />
+        <!-- <i class="fas fa-times is-crimson"></i> -->
+      </span>
       <span v-show="logLevel == EnumStatusLogLevel.ERROR" class="icon">
-        <font-awesome-icon icon="times" class="is-crimson" />
+        <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
         <!-- <i class="fas fa-times is-crimson"></i> -->
       </span>
     </div>
@@ -48,7 +52,7 @@ export default {
   },
   mounted() {
     this.emitter.on(`status-bar-log-${this.statusBarId}`, args => {
-      console.log(`StatusBarLog ID: ${this.statusBarId}`);
+      // console.log(`StatusBarLog ID: ${this.statusBarId}`);
       switch(args.logLevel){
         case EnumStatusLogLevel.CLEAR:
           this.logClear(args.payload);
@@ -123,7 +127,7 @@ export default {
   },
   methods: {
     logClear() {
-      console.log("Clearing log...");
+      // console.log("Clearing log...");
       this.statusText = "";
       this.logLevel = "";
     },

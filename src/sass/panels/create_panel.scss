@@ -2,6 +2,8 @@
 @import "../components/_globalvars.scss";
 @import "../components/_colors.scss";
 
+
+
 .create-panel-root {
     display: flex;
     flex-direction: column;
@@ -85,24 +87,24 @@
                 display: flex;
             }
         }
-        table {
-            width: 100%;
-            padding: 0;
-            margin: 0;
-            border: 0 !important;
-            margin: 0 !important;
-            th {
-                border: 0 !important;
-            }
-            td {
-                border: 0 !important;
-                padding: 1vh !important;
-                border: 1px solid black;
-            }
-            label {
-                margin: 0px !important;
-            }
-        }
+        // table {
+        //     width: 100%;
+        //     padding: 0;
+        //     margin: 0;
+        //     border: 0 !important;
+        //     margin: 0 !important;
+        //     th {
+        //         border: 0 !important;
+        //     }
+        //     td {
+        //         border: 0 !important;
+        //         padding: 1vh !important;
+        //         border: 1px solid black;
+        //     }
+        //     label {
+        //         margin: 0px !important;
+        //     }
+        // }
     }
 }   
 

@@ -129,24 +129,32 @@
     </div>
     <div class="root-panel">
       <!-- $refs.ctxmenu.open($event, 'Payload') -->
-      <CreatePanel v-show="menuselection == 'create_panel'" />
+      <CreatePanel v-show="menuselection == 'create_panel'" :presets="creationCriteriaPresets" />
       <SplitPanel v-show="menuselection == 'split_panel'" />
-      <ModifyPanel v-show="menuselection == 'modify_panel'" />
+      <ModifyPanel v-show="menuselection == 'modify_panel'" :presets="modificationCriteriaPresets" />
       <!-- <BuildSpritesheetPanel v-show="menuselection == 'buildspritesheet_panel'" /> -->
       <!-- <SliceSpritesheetPanel v-show="menuselection == 'slicespritesheet_panel'" /> -->
-      <InspectPanel v-show="menuselection == 'inspect_panel'" @open-root-ctxmenu="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" />
+      <InspectPanel v-show="menuselection == 'inspect_panel'" />
+      <!-- <InspectPanel v-show="menuselection == 'inspect_panel'" @right-click="openRootContextMenu" @close-root-ctxmenu="closeRootContextMenu" /> -->
       <!-- <TilesPanel v-show="menuselection == 'tiles_panel'" /> -->
-      <SettingsPanel v-show="menuselection == 'settings_panel'" />
+      <SettingsPanel v-show="menuselection == 'settings_panel'" :presets="PRESETS_COLLECTION.presets" />
       <!-- <AboutPanel v-show="menuselection == 'about_panel'" /> -->
     </div>
     <div>
-      <ContextMenu ref="ctxmenu">
-        <template #default="{ contextData }">
-          <ContextMenuItem
-            v-for="(ctxData, ctxIndex) in contextData" :key="ctxIndex" 
-            @click="$refs.ctxmenu.callOptionFunction(ctxData.callback);"
-          >
-            {{ ctxData.name }}
+      <ContextMenu ref="rootCtxMenu" ctx-menu-id="generalRClickMenu" 
+                   @ctx-menu-click-outside="closeRootContextMenu"
+                   @ctx-option-click="emitGlobalCtxOptionClick" 
+      >
+        <template #contextMenuItem="ctxItemData">
+          <ContextMenuItem>
+            <template #contextMenuOptionIcon>
+              <ContextMenuItemIcon v-if="ctxItemData.icon">
+                <font-awesome-icon :icon="ctxItemData.icon" />
+              </ContextMenuItemIcon>
+            </template>
+            <template #contextMenuOptionLabel>
+              {{ ctxItemData.name }}
+            </template>
           </ContextMenuItem>
         </template>
       </ContextMenu>
@@ -161,11 +169,13 @@
 
 <script>
 
+import { ipcRenderer } from "electron";
 // import { client } from "./src/Client.vue";
 // import { client, ImageViewer } from "./src/Client.vue";
 // const { tridentEngine } = require("./src/modules/streams/trident_engine")
 import ContextMenu from './view/components/ContextMenu/ContextMenu.vue';
 import ContextMenuItem from './view/components/ContextMenu/ContextMenuItem.vue';
+import ContextMenuItemIcon from './view/components/ContextMenu/ContextMenuItemIcon.vue';
 
 import CreatePanel from "./view/CreatePanel.vue";
 import SplitPanel from "./view/SplitPanel.vue";
@@ -175,6 +185,8 @@ import ModifyPanel from "./view/ModifyPanel.vue";
 import InspectPanel from "./view/InspectPanel.vue";
 // import TilesPanel from "./src/TilesPanel.vue";
 import SettingsPanel from "./view/SettingsPanel.vue";
+import { StoreOperation } from "./models/storeOperation";
+import { PresetType } from "./models/presets";
 // import AboutPanel from "./view/AboutPanel.vue";
 
 
@@ -192,11 +204,45 @@ export default {
     // AboutPanel,
     ContextMenu,
     ContextMenuItem,
+    ContextMenuItemIcon,
   },
   data: function () {
     return {
+      PRESETS_COLLECTION: {
+        presets: {},
+      },
       menuselection: "create_panel",
     };
+  },
+  computed: {
+    creationCriteriaPresets(){
+      const filteredPresets = {};
+      for (const [id, preset] of Object.entries(this.PRESETS_COLLECTION.presets)){
+        if (preset.presetType.name == PresetType.CreationCriteria.name)
+          filteredPresets[id] = preset;
+      }
+      return filteredPresets;
+    },
+    modificationCriteriaPresets() {
+      const filteredPresets = {};
+      for (const [id, preset] of Object.entries(this.PRESETS_COLLECTION.presets)){
+        if (preset.presetType.name == PresetType.ModificationCriteria.name)
+          filteredPresets[id] = preset;
+      }
+      return filteredPresets;
+    }
+  },
+  beforeMount: function () {
+    console.trace('beforeMount');
+    const PRESETS = ipcRenderer.sendSync("IPC-GET-PRESETS");
+    console.debug(PRESETS);
+    this.PRESETS_COLLECTION = { ...PRESETS };
+    console.debug(this.PRESETS_COLLECTION);
+  },
+  mounted() {
+    this.emitter.on('add-preset', args => { this.addPreset(args); });
+    this.emitter.on('update-preset', args => { this.updatePreset(args); });
+    this.emitter.on('delete-preset', args => { this.removePreset(args); });
   },
   created() {
     window.addEventListener("resize", this.closeRootContextMenu);
@@ -209,15 +255,38 @@ export default {
       console.log("openContextMenu");
       console.log(event);
       console.log(payload);
-      this.$refs.ctxmenu.openPopper(event, payload);
+      this.$refs.rootCtxMenu.openPopper(event, payload);
     },
     closeRootContextMenu(event){
-      this.$refs.ctxmenu.closePopper();
+      this.$refs.rootCtxMenu.closePopper();
     },
-    whatClicked(event) {
+    emitGlobalCtxOptionClick(event, optionId) {
+      this.emitter.emit(`global-ctx-option-click-[${optionId}]`);
+    },
+    whatClicked(event, args) {
       console.log(`CLICK!!!`);
       console.log(event);
+      console.log(args);
     },
+    addPreset(preset) {
+      console.debug('App.vue addPreset');
+      this.PRESETS_COLLECTION.presets[preset.id] = preset;
+      console.log(this.PRESETS_COLLECTION);
+      const pojoPreset = JSON.parse(JSON.stringify(preset));
+      ipcRenderer.sendSync('IPC-SET-PRESETS', StoreOperation.Add, pojoPreset);
+    },
+    updatePreset(preset) {
+      this.PRESETS_COLLECTION.presets[preset.id] = preset;
+      const pojoPreset = JSON.parse(JSON.stringify(preset));
+      ipcRenderer.sendSync('IPC-SET-PRESETS', StoreOperation.Update, pojoPreset);
+    },
+    removePreset(id) {
+      delete this.PRESETS_COLLECTION.presets[id];
+      ipcRenderer.sendSync('IPC-SET-PRESETS', StoreOperation.Delete, id);
+    },
+    updatePresetsToComponents() {
+      this.emitter.emit('global-presets-refresh', this.PRESETS_COLLECTION)
+    }
   },
 };
 </script>

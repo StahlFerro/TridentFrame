@@ -13,6 +13,10 @@
     &.neon-borderless {
         border: none;
     }
+    &.text-padding-small {
+        padding-left: 14px;        
+        padding-right: 14px;
+    }
     &.is-neon-white {
         $base-color: $white-d;
         $base-color-on: lighten($base-color, 20%);
@@ -115,6 +119,56 @@
     }
     &.is-neon-sunset {
         $base-color: $sunset;
+        $base-color-on: lighten($base-color, 20%);
+        $base-color-off: desaturate(rgba($base-color, 0.7), 20%);
+        $co-color: $dark-3;
+
+        color: $base-color;
+        background-color: $co-color;
+        border: 2px solid $base-color;
+        &:hover,
+        .is-neon-crimson.is-hovered {
+            border-color: $base-color-on;
+            color: $base-color-on;
+        }
+        &:active,
+        .is-neon-crimson.is-active {
+            background-color: $base-color;
+            border-color: $base-color;
+            color: $co-color;
+        }
+        &.non-interactive {
+            border-color: $base-color-off;
+            color: $base-color-off;
+        }
+    }
+    &.is-neon-cobalt {
+        $base-color: $blue;
+        $base-color-on: lighten($base-color, 20%);
+        $base-color-off: desaturate(rgba($base-color, 0.7), 20%);
+        $co-color: $dark-3;
+
+        color: $base-color;
+        background-color: $co-color;
+        border: 2px solid $base-color;
+        &:hover,
+        .is-neon-crimson.is-hovered {
+            border-color: $base-color-on;
+            color: $base-color-on;
+        }
+        &:active,
+        .is-neon-crimson.is-active {
+            background-color: $base-color;
+            border-color: $base-color;
+            color: $co-color;
+        }
+        &.non-interactive {
+            border-color: $base-color-off;
+            color: $base-color-off;
+        }
+    }
+    &.is-neon-purple {
+        $base-color: $purple;
         $base-color-on: lighten($base-color, 20%);
         $base-color-off: desaturate(rgba($base-color, 0.7), 20%);
         $co-color: $dark-3;

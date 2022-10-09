@@ -1,4 +1,5 @@
 module.exports = {
+  parser: "@babel/eslint-parser",
   extends: [
     // add more generic rulesets here, such as:
     // 'eslint:recommended',
@@ -29,6 +30,10 @@ module.exports = {
     }],
     "vue/no-unused-components": ["warn", {
       "ignoreWhenBindingPresent": true
+    }],
+    "vue/first-attribute-linebreak": ["warn", {
+      "singleline": "ignore",
+      "multiline": "ignore"
     }]
   },
   overrides: [

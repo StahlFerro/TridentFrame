@@ -1,0 +1,36 @@
+{
+  "productName": "TridentFrame",
+  "appId": "com.stahlferro.tridentframe",
+  "copyright": "Copyright 2021 StahlFerro",
+  "buildVersion": "0.1.0.2013",
+  "directories": {
+    "output": "release/tridentframe"
+  },
+  "asar": false,
+  "win": {
+    "artifactName": "${productName}-${version}-windows.${ext}",
+    "publisherName": "${author.name}",
+    "target": [
+      "7z",
+      "zip",
+      "nsis",
+      "msi"
+    ],
+    "icon": "./build/icons"
+  },
+  "nsis": {
+    "artifactName": "${productName}-${version}-windows-installer-nsis.${ext}",
+    "oneClick": false,
+    "perMachine": true,
+    "allowToChangeInstallationDirectory": true
+  },
+  "files": [
+    "main.js",
+    "engine/**",
+    "dist/**",
+    "src/common/paths.js",
+    "src/models/**",
+    "src/store/**",
+    "LICENSE.md"
+  ]
+}

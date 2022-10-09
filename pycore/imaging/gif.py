@@ -1,13 +1,14 @@
 import shutil
 
-import PIL.Image
 from PIL import Image
+from PIL.Image import Palette, Quantize, Resampling
 from pathlib import Path
 from typing import List, Tuple
 import hitherdither
 from pycore.core_funcs import stdio
 from pycore.models.criterion import CriteriaBundle, GIFOptimizationCriteria
-from pycore.bin_funcs.imager_api import InternalImageAPI, GifsicleAPI
+from pycore.models.metadata import ImageMetadata, AnimatedImageMetadata
+from pycore.bin_funcs.imager_api import InternalImageAPI, GifsicleAPI, ImageMagickAPI
 from pycore.imaging.generic import transform_image
 from pycore.utility import filehandler, imageutils
 
@@ -29,10 +30,16 @@ def create_animated_gif(image_paths: List, out_full_path: Path, crbundle: Criter
     black_bg_rgba = Image.new("RGBA", size=criteria.size, color=(0, 0, 0, 255))
     target_dir = filehandler.mk_cache_dir(prefix_name="tmp_gifrags")
     fcount = len(image_paths)
-    if criteria.start_frame:
-        image_paths = imageutils.shift_image_sequence(image_paths, criteria.start_frame)
+    if criteria.start_frame > 1:
+        frame_shift = criteria.start_frame - 1
+        image_paths = imageutils.shift_image_sequence(image_paths, frame_shift)
+    frame_skip_count_mult = criteria.frame_skip_count + 1
     shout_nums = imageutils.shout_indices(fcount, 1)
+    frames_info = criteria.get_frames_info(len(image_paths))
+    # stdio.error(frames_info)
     for index, ipath in enumerate(image_paths):
+        if frames_info[index]['is_skipped']:
+            continue
         if shout_nums.get(index):
             stdio.message(f"Processing frames... ({shout_nums.get(index)})")
         with Image.open(ipath) as im:
@@ -49,18 +56,41 @@ def create_animated_gif(image_paths: List, out_full_path: Path, crbundle: Criter
 
             im.save(save_path)
 
-    out_full_path = GifsicleAPI.combine_gif_images(target_dir, out_full_path, crbundle)
+    out_full_path = GifsicleAPI.combine_gif_images(target_dir, out_full_path, crbundle, frames_info)
     shutil.rmtree(target_dir)
     # logger.control("CRT_FINISH")
     return out_full_path
 
 
-def palletize_image(im: PIL.Image.Image, dither_method: str, palletization_method: str) -> PIL.Image.Image:
+def modify_animated_gif(gif_path: Path, out_path: Path, metadata: AnimatedImageMetadata, crbundle: CriteriaBundle) -> Path:
+    if crbundle.gif_opt_criteria.is_unoptimized:
+        stdio.message("Unoptimizing GIF...")
+        # ImageMagick is used to unoptimized rather than Gifsicle's unoptimizer because Gifsicle doesn't support
+        # unoptimization of GIFs with local color table
+        gif_path = ImageMagickAPI.unoptimize_gif(gif_path, out_path)
+    # stdio.debug(gif_path)
+    # stdio.debug(out_path)
+    modified_path = GifsicleAPI.modify_gif_image(gif_path, out_path, metadata, crbundle)
+    # stdio.debug(modified_path)
+    mod_criteria = crbundle.modify_aimg_criteria
+    if mod_criteria.must_redelay(metadata):
+        frames_info = mod_criteria.get_frames_info(metadata.frame_count['value'])
+        retempo_path = modified_path
+        if gif_path == modified_path:
+            retempo_path = out_path
+        final_path = GifsicleAPI.retempo_gif(modified_path, mod_criteria, frames_info, retempo_path)
+    else:
+        final_path = modified_path
+    # stdio.debug(final_path)
+    return final_path
+
+
+def palletize_image(im: Image.Image, dither_method: str, palletization_method: str) -> Image.Image:
     pil_pal_enum = 1
     if palletization_method == "ADAPTIVE":
-        pil_pal_enum = Image.ADAPTIVE
+        pil_pal_enum = Palette.ADAPTIVE
     elif palletization_method == "WEB":
-        pil_pal_enum = Image.WEB
+        pil_pal_enum = Palette.WEB
     
     if dither_method == "FLOYD_STEINBERG":
         im = im.convert("RGB").convert("P", palette=pil_pal_enum, colors=255, dither=Image.FLOYDSTEINBERG)
@@ -81,7 +111,7 @@ def palletize_image(im: PIL.Image.Image, dither_method: str, palletization_metho
     return im
 
 
-def has_rgba_use(im: PIL.Image.Image) -> bool:
+def has_rgba_use(im: Image.Image) -> bool:
     """Checks whether or not a RGBA PNG image's alpha channel is used (has transparent/translucent pixels)
 
     Args:
@@ -97,7 +127,7 @@ def has_rgba_use(im: PIL.Image.Image) -> bool:
     return False
 
 
-def gif_encode(im: PIL.Image.Image, crbundle: CriteriaBundle, bg_im: PIL.Image.Image) -> PIL.Image.Image:
+def gif_encode(im: Image.Image, crbundle: CriteriaBundle, bg_im: Image.Image) -> Image.Image:
     """
     Encodes any Pillow image into a GIF image
     Args:

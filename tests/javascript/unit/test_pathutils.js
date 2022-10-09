@@ -10,11 +10,11 @@ describe("pathutils.escapeLocalPath() test", function () {
     });
   }
 
-  let assertions_list = [
+  let assertionsList = [
     ["spaced + - = # $ @ & % ,", "spaced + - = %23 $ @ & %25 ,"],
   ];
 
-  for (let assertion_tuple of assertions_list) {
-    escapeLocalPathMultiTest(...assertion_tuple);
+  for (let assertionTuple of assertionsList) {
+    escapeLocalPathMultiTest(...assertionTuple);
   }
 })

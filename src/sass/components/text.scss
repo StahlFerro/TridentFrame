@@ -1,3 +1,9 @@
+@import "../components/_colors.scss";
+
+p {
+    color: $white-d;
+}
+
 .compact-line {
     line-height: 20px;
 }

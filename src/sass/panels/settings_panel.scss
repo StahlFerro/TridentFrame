@@ -3,6 +3,10 @@
 @import "../components/_colors.scss";
 @import "../../../node_modules/bulma/sass/components/tabs.sass";
 
+$settings-col-gap: 20px;
+$settings-row-count: 3;
+$settings-group-width: calc(100% / #{$settings-row-count} - (#{$settings-col-gap} * (#{$settings-row-count} - 1)));
+
 .settings-panel-root {
     display: flex;
     flex-direction: column;
@@ -27,15 +31,76 @@
     }
     .settings-subpanels {
         height: calc(100vh - 70px - #{$root-height-offset});
-        padding: 10px;
+        // padding: 10px;
     }
     hr {
         margin-top: 12px;
         margin-bottom: 12px;
         background-color: $white-d;
         height: 1px;
-        width: 40% !important;
+        width: 100% !important;
     }
+    .settings-subpanel-general {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        row-gap: 30px;
+        column-gap: $settings-col-gap;
+        .settings-group {
+            flex: 0 0 $settings-group-width;
+            &.is-2 {
+                flex: 0 0 calc(2 * #{$settings-group-width});
+            }
+        }
+    }
+
+    .settings-subpanel-presets {
+        display: flex;
+        flex-direction: row;
+        column-gap: 16px;
+        align-items: stretch;
+        align-content: stretch;
+        height: 100%;
+        .settings-preset-selector {
+            flex: 0 0 calc(60% - 8px);
+            overflow-y: auto;
+        }
+        .settings-preset-key-values {
+            flex: 0 0 calc(40% - 8px);
+            background-color: $dark-2;
+            overflow-y: auto;
+        }
+    }    
+    
+    .settings-subpanel-backup {
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        .settings-backup-view {
+            overflow-y: auto;
+            display: flex;
+            flex: 1 0 auto;
+            justify-content: center;
+            align-items: center;
+        }
+        .settings-backup-control {
+            display: flex;
+            flex-direction: row;
+            flex: 1 0 auto;
+            justify-content: center;
+            align-items: center;
+            column-gap: 5px;
+        }
+        .settings-backup-footer {
+            height: $status-bar-height;
+            border: 1.5px solid $white-d;
+            min-width: 100%;
+        }
+    }
+
 }
 
 .settings-header {

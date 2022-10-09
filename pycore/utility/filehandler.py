@@ -24,7 +24,7 @@ def mk_cache_dir(prefix_name: str = "") -> Path:
     dirname = str(int(round(time.time() * 1000)))
     if prefix_name:
         dirname = f"{prefix_name}_{dirname}"
-    temp_dir = config.get_absolute_cache_path().joinpath(dirname)
+    temp_dir = config.get_absolute_cache_dir().joinpath(dirname)
     # raise Exception(temp_dir, os.getcwd())
     Path.mkdir(temp_dir)
     return temp_dir
@@ -32,7 +32,7 @@ def mk_cache_dir(prefix_name: str = "") -> Path:
 
 def empty_cache_dir(excluded_files: List[str]) -> None:
     excluded_files.append(".include")
-    empty_directory_contents(config.get_absolute_cache_path(), excluded_files)
+    empty_directory_contents(config.get_absolute_cache_dir(), excluded_files)
 
 
 def empty_previews_dir(excluded_files: List[str]) -> None:
@@ -42,7 +42,7 @@ def empty_previews_dir(excluded_files: List[str]) -> None:
 
 def empty_temp_dir(excluded_files: List[str]) -> None:
     excluded_files.append(".include")
-    empty_directory_contents(config.get_absolute_temp_path(), excluded_files)
+    empty_directory_contents(config.get_absolute_temp_dir(), excluded_files)
 
 
 def empty_directory_contents(target_dir: Path, excluded_files: List[str]) -> None:

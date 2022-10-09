@@ -1,18 +1,19 @@
 # -*- mode: python ; coding: utf-8 -*-
+
+
 import PyInstaller.config
+PyInstaller.config.CONF['workpath'] = "./engine-prebuild/tripy_linux"
 PyInstaller.config.CONF['distpath'] = "./engine/"
+PyInstaller.config.CONF['warnfile'] = "./engine-prebuild/tripy_linux/warn-tripy_linux"
+PyInstaller.config.CONF['xref-file'] = "./engine-prebuild/tripy_linux/xref-tripy_linux"
 block_cipher = None
 
 _bin_dirpath = 'bin/linux'
 imaging_engines = [(branch[1], os.path.dirname(os.path.join(_bin_dirpath, branch[0]))) for branch in Tree(_bin_dirpath)]
 added_files = [
-    ('temp/cache/.include', 'temp/cache/.include'),
-    ('temp/previews/.include', 'temp/previews/.include'),
-    ('config/app.toml', 'config/'),
     ('config/engine.toml', 'config/'),
 ]
 added_files.extend(imaging_engines)
-print(imaging_engines)
 a = Analysis(['main.py'],
              pathex=['.'],
              binaries=[],

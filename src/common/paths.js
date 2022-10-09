@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.TEMP_PATH = exports.SETTINGS = exports.PYTHON_PATH = exports.PREVIEWS_PATH = exports.ENGINE_EXEC_PATH = exports.ENGINE_DIR = void 0;
+exports.TEMP_PATH = exports.APP_SETTINGS_PATH = exports.PYTHON_PATH = exports.PREVIEWS_PATH = exports.ENGINE_EXEC_PATH = exports.PRESETS_PATH = exports.ENGINE_DIR = void 0;
 
 var { ipcMain, ipcRenderer, app } = require("electron");
 
@@ -28,19 +28,13 @@ let engine_exec_path;
 let previews_path;
 let temp_path;
 let app_settings_path;
-let engine_settings_path;
-let settings_path;
-let settings; // console.log(appPath);
-// console.log(`current appPath: ${appPath}`);
-// console.log(`current dirname -> ${__dirname}`);
-// console.log(`current process.cwd() -> ${cwd()}`);
-// console.log(`current dot -> ${resolve(".")}`);
+let presets_path;
+let settings;
 
 if (_process.env.DEPLOY_ENV == "DEV") {
   engine_exec_path = "main.py";
-  // settings_path = join(appPath, "config", "settings.toml");
   app_settings_path = join(appPath, "config", "app.toml");
-  // settings = JSON.parse(readFileSync(join(appPath, "config", "settings.json")));
+  presets_path = join(appPath, "data", "presets.json");
   temp_path = join(appPath, "temp");
   previews_path = join(temp_path, "previews");
 } else {
@@ -54,23 +48,20 @@ if (_process.env.DEPLOY_ENV == "DEV") {
     engine_exec_path = join(engine_dir, "tridentengine");
   }
   app_settings_path = join(appPath, "config", "app.toml");
-  // settings_path = join(engine_dir, "config", "settings.toml");
-  // settings = JSON.parse(readFileSync(join(engine_dir, "config", "settings.json")));
+  presets_path = join(appPath, "data", "presets.json");
   temp_path = join(engine_dir, "temp");
   previews_path = join(temp_path, "previews");
 }
 
 console.log(settings);
-// const SETTINGS = settings;
-// exports.SETTINGS = SETTINGS;
-// const SETTINGS_PATH = settings_path;
-// exports.SETTINGS_PATH = SETTINGS_PATH;
 const APP_SETTINGS_PATH = app_settings_path;
 exports.APP_SETTINGS_PATH = APP_SETTINGS_PATH;
 const PREVIEWS_PATH = previews_path;
 exports.PREVIEWS_PATH = PREVIEWS_PATH;
 const TEMP_PATH = temp_path;
 exports.TEMP_PATH = TEMP_PATH;
+const PRESETS_PATH = presets_path;
+exports.PRESETS_PATH = PRESETS_PATH;
 const ENGINE_DIR = engine_dir;
 exports.ENGINE_DIR = ENGINE_DIR;
 const ENGINE_EXEC_PATH = engine_exec_path;

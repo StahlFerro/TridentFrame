@@ -13,9 +13,13 @@
 @import "components/text.scss";
 @import "components/interaction.scss";
 @import "components/label.scss";
+@import "components/field.scss";
 @import "components/input.scss";
 @import "components/slider.scss";
 @import "components/tabs.scss";
+@import "components/form.scss";
+@import "components/modal.scss";
+@import "components/icon.scss";
 @import "panels/create_panel.scss";
 @import "panels/split_panel.scss";
 @import "panels/modify_panel.scss";
@@ -81,10 +85,6 @@ thead.frame-title-bar {
 
 a.is-disabled {
     pointer-events: none;
-}
-
-label.checkbox {
-    font-size: 15px !important;
 }
 
 .medium-size-label label.checkbox{

@@ -1,0 +1,60 @@
+{
+  "en": {
+    "general": {
+      "fname": "Name"
+    },
+   "forms": {
+    "lock_aspect_ratio": "Lock aspect ratio"
+   },
+    "criterion": {
+      "width": "Width",
+      "height": "Height",
+      "resize_method": "Resize method",
+      "flip_x": "Flip X",
+      "flip_y": "Flip Y",
+      "rotation": "Rotation",
+      "fps": "Frame rate",
+      "delay": "Delay (seconds)",
+      "delays_are_even": "Delays are even",
+      "delays_list": "Delays list",
+      "delay_handling": "Delay handling",
+      "is_reversed": "Is reversed",
+      "preserve_alpha": "Preserve alpha",
+      "loop_count": "Loop count",
+      "start_frame": "Start frame",
+      "frame_skip_count": "Frame skip count",
+      "frame_skip_gap": "Frame skip gap",
+      "frame_skip_offset": "Frame skip offset",
+      "frame_skip_maintain_delay": "Maintain delay",
+      "format": "Format"
+    },
+    "image_metadata": {
+      "name": "Name",
+      "width": "Width",
+      "height": "Height",
+      "dimensions": "Dimensions",     
+      "format": "Format",
+      "format_vesion": "Full format",
+      "fsize": "File size (bytes)",
+      "fsize_hr": "File size",
+      "absolute_url": "Path",
+      "creation_datetime": "Creation time",
+      "modification_datetime": "Last modified time",
+      "comments": "Comments",
+      "color_mode": "Color mode",
+      "color_profile": "Color profile",
+      "bit_depth": "Bit depth",
+      "has_transparency": "Has transparency",
+      "exif": "EXIF metadata",
+      "is_animated": "Is animated",
+      "hash_sha1": "SHA1 Hash",
+      "frame_count": "Frame count",
+      "delays": "Delays list",
+      "delays_are_even": "Delays are even",
+      "average_delay": "Average delay (ms)",
+      "fps": "Frame rate",
+      "loop_duration": "Loop duration (seconds)",
+      "loop_count": "Loop count"
+    }
+  }
+}

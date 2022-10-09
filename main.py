@@ -13,7 +13,7 @@ if IS_FROZEN:
     os.chdir(frozen_dir)
 
 
-from pycore.core_funcs import stdio, exception
+from pycore.core_funcs import stdio, exception, config
 from pycore.core_funcs.wrappers import enable_diagnostics
 from pycore.utility import filehandler
 from typing import Dict, List
@@ -38,6 +38,14 @@ from pycore.models.criterion import (
 class TridentFrameImager:
     def __init__(self):
         self.start_time = time.time()
+        self.setup_directories()
+        
+    def setup_directories(self):
+        cache_dir = config.get_absolute_cache_dir()
+        temp_dir = config.get_absolute_temp_dir()
+        previews_dir = config.get_absolute_previews_dir()
+        if not cache_dir or not temp_dir or not previews_dir:
+            raise Exception("Error: Cannot create temporary and cache directories")
 
     def echo(self, msg):
         stdio.debug(f"{msg}")
@@ -82,6 +90,7 @@ class TridentFrameImager:
         if info:
             stdio.data(info)
 
+    @enable_diagnostics
     def inspect_smart(self, image_path: str):
         """Inspect a sequence of images and then return their information"""
         if not image_path:

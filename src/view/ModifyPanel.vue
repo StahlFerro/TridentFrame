@@ -28,109 +28,102 @@
               </tr> -->
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ origDimensions }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.dimensions }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Dimensions
+                  {{ $t('image_metadata.dimensions') }}
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ previewDimensions }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.dimensions }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.file_size_hr }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.fileSize }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  File size
+                  {{ $t('image_metadata.fsize_hr') }}
                   <template v-if="preview_attribute">
                     <br />
                     {{ previewSizePercentage }}
                   </template>
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.file_size_hr }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.fileSize }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.format_info }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.format }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Format
+                  {{ $t('image_metadata.format') }}
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.format_info }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.format }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.frame_count }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.frameCount }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Total frames
+                  {{ $t('image_metadata.frame_count') }}
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_info">{{ preview_attribute.frame_count }}</span>
+                  <span v-if="preview_info">{{ previewAttributesTable.frameCount }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.fps_info }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.fps }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Frame rate
+                  {{ $t('image_metadata.fps') }}
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_info">{{ preview_attribute.fps }}</span>
+                  <span v-if="preview_info">{{ previewAttributesTable.fps }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute">{{ orig_attribute.delay_info }}</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.averageDelay }}</span>
                   <!-- <span v-else>-</span> -->
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Avg. Delay
+                  {{ $t('image_metadata.average_delay') }}
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute">{{ preview_attribute.delay_info }}</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.averageDelay }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <span v-if="orig_attribute && orig_attribute.loop_duration">{{ roundPrecise(orig_attribute.loop_duration, 3) }} seconds</span>
+                  <span v-if="orig_attribute">{{ origAttributesTable.loopDuration }}</span>
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Loop duration
+                  {{ $t('image_metadata.loop_duration') }}
                 </td>
                 <td class="mod-info-data">
-                  <span v-if="preview_attribute && preview_attribute.loop_duration">{{ roundPrecise(preview_attribute.loop_duration, 3) }} seconds</span>
+                  <span v-if="preview_attribute">{{ previewAttributesTable.loopDuration }}</span>
                 </td>
               </tr>
               <tr>
                 <td class="mod-info-data">
-                  <template v-if="orig_attribute">
-                    {{ orig_attribute.loop_count_info }}
-                    <!-- <span v-if="orig_attribute.loop_count == 0">Infinite</span>
-                    <span v-else>{{ orig_attribute.loop_count }}</span> -->
-                  </template>
-                  <!-- <template v-else>-</template> -->
+                  {{ origAttributesTable.loopCount }}
                 </td>
                 <td class="mod-info-label is-cyan">
-                  Loop count
+                  {{ $t('image_metadata.loop_count') }}
                 </td>
                 <td class="mod-info-data">
-                  <template v-if="preview_attribute">
-                    {{ preview_attribute.loop_count_info }}
-                    <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
-                    <span v-else>{{ preview_attribute.loop_count }}</span> -->
-                  </template>
+                  {{ previewAttributesTable.loopCount }}
+                  <!-- <span v-if="preview_attribute.loop_count == 0">Infinite</span>
+                  <span v-else>{{ preview_attribute.loop_count }}</span> -->
                 </td>
               </tr>
             </tbody>
@@ -151,26 +144,48 @@
       </div>
       <div class="modify-panel-middlebar">
         <div class="mpb-load-buttons">
-          <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': buttonIsFrozen}" @click="loadImage">
+          <!-- <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': isButtonFrozen}" @click="loadImage">
             <span class="icon is-small">
               <font-awesome-icon icon="plus" />
             </span>
             <span>Load Image</span>
-          </a>
-          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearImage">
-            <span class="icon is-small">
-              <font-awesome-icon icon="times" />
-            </span>
-            <span>Clear</span>
-          </a>
-          <a
+          </a> -->
+
+          <ButtonField label="Load Image" color="green" hint="Load an animated image"
+                       :icons="['fas', 'plus']"
+                       icon-size="medium"
+                       :is-loading="MOD_IS_LOADING"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="loadImage"
+          />
+          
+          <!-- <a
             class="button is-neon-white" :class="{'is-active': orig_checkerbg_active}"
             @click="toggleOrigCheckerBG"
           >
             <span class="icon is-medium">
               <font-awesome-icon icon="chess-board" />
             </span>
-          </a>
+          </a> -->
+          
+          <ButtonField :icons="['fas', 'chess-board']"
+                       :is-active="orig_checkerbg_active"
+                       icon-size="medium"
+                       @click="toggleOrigCheckerBG"
+          />
+
+          <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearImage">
+            <span class="icon is-small">
+              <font-awesome-icon icon="times" />
+            </span>
+            <span>Clear</span>
+          </a> -->
+          
+          <ButtonField label="Clear" color="red" hint="Clear the original image, preview image and the modification criteria"
+                       :icons="['fas', 'times']"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="clearImage"
+          />
         </div>
         <div class="mpb-center-buttons">
           <p class="is-white-d">
@@ -178,31 +193,54 @@
           </p>
         </div>
         <div class="mpb-preview-buttons">
-          <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': buttonIsFrozen}" @click="btnPreviewModImg">
+          <!-- <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': isButtonFrozen}" @click="btnPreviewModImg">
             <span class="icon is-small">
               <font-awesome-icon :icon="['far', 'eye']" />
             </span>
             <span>Preview</span>
-          </a>
-          <a class="button is-neon-cyan" @click="btnPreviewSaveAIMG">
+          </a> -->
+          <ButtonField label="Preview" color="cyan" hint="SaPreview the modified animated image"
+                       :icons="['far', 'eye']"
+                       icon-size="medium"
+                       :is-loading="MOD_IS_PREVIEWING"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="btnPreviewModImg"
+          />
+          <!-- <a class="button is-neon-cyan" :class="{'non-interactive': isButtonFrozen}" @click="btnPreviewSaveAIMG">
             <span class="icon is-medium">
               <font-awesome-icon icon="save" />
             </span>
-          </a>
-          <a class="button is-neon-crimson" :class="{'non-interactive': buttonIsFrozen}" @click="clearPreviewImage">
-            <span class="icon is-small">
-              <font-awesome-icon icon="times" />
-            </span>
-            <span>Clear</span>
-          </a>
-          <a
+          </a> -->
+          <ButtonField color="cyan" hint="Save the preview image"
+                       :icons="['fas', 'save']"
+                       icon-size="medium"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="btnPreviewSaveAIMG"
+          />
+          <!-- <a
             class="button is-neon-white" :class="{'is-active': new_checkerbg_active}"
             @click="toggleNewCheckerBG"
           >
             <span class="icon is-medium">
               <font-awesome-icon icon="chess-board" />
             </span>
-          </a>
+          </a> -->
+          <ButtonField :icons="['fas', 'chess-board']"
+                       :is-active="new_checkerbg_active"
+                       icon-size="medium"
+                       @click="toggleNewCheckerBG"
+          />
+          <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearPreviewImage">
+            <span class="icon is-small">
+              <font-awesome-icon icon="times" />
+            </span>
+            <span>Clear</span>
+          </a> -->
+          <ButtonField label="Clear" color="red" hint="Clear the preview image"
+                       :icons="['fas', 'times']"
+                       :is-non-interactive="isButtonFrozen"
+                       @click="clearPreviewImage"
+          />
         </div>
       </div>
       <div class="modify-panel-controls">
@@ -221,11 +259,20 @@
                   <p class="is-white-d">General</p>
                 </a>
               </li>
+              <li class="subtab-menu-item" :class="{ 'is-selected': modSubMenuSelection == 1 }">
+                <a @click="modSubMenuSelection = 1">
+                  <span class="icon is-large">
+                    <font-awesome-icon :icon="['fas', 'layer-group']" size="2x" inverse />
+                    <!-- <i class="fas fa-image fa-2x fa-inverse"></i> -->
+                  </span>
+                  <p class="is-white-d">Frames</p>
+                </a>
+              </li>
               <li
                 id="MOD_box_gif" class="subtab-menu-item is-cyan"
-                :class="{'is-selected': modSubMenuSelection == 1}"
+                :class="{'is-selected': modSubMenuSelection == 2}"
               >
-                <a id="MOD_menu_gif" @click="modSubMenuSelection = 1">
+                <a id="MOD_menu_gif" @click="modSubMenuSelection = 2">
                   <span class="icon is-large">
                     <font-awesome-icon icon="sliders" size="2x" inverse />
                     <!-- <i class="far fa-images fa-2x fa-inverse"></i> -->
@@ -239,273 +286,398 @@
         <div class="mpc-right-panel">
           <div class="mpc-right-top-panel">
             <div v-show="modSubMenuSelection == 0">
-              <table class="" width="100%">
-                <tr>
-                  <td width="16.7%">
-                    <div class="field">
-                      <label class="label">Name</label>
-                      <div class="control">
-                        <input v-model="fname" class="input is-neon-white" type="text" />
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%">
-                    <div class="field">
-                      <label class="label">Width</label>
-                      <div class="control">
-                        <input
-                          :value="criteria.width" class="input is-neon-white" type="number" 
-                          min="1" step="1" @keydown="numConstrain($event, true, true)" @input="widthHandler(criteria.width, $event)"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%">
-                    <div class="field">
-                      <label class="label">Height</label>
-                      <div class="control">
-                        <input
-                          :value="criteria.height" class="input is-neon-white" type="number"
-                          min="1" step="1" @keydown="numConstrain($event, true, true)" @input="heightHandler(criteria.height, $event)"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%">
-                    <div class="field">
-                      <label
-                        class="label"
-                        title="Which algorithm to use when resizing the image. Default is Bicubic"
-                      >Resize Method</label>
-                      <div class="control">
-                        <div class="select is-neon-cyan">
-                          <select v-model="criteria.resize_method">
-                            <option
-                              value="BICUBIC"
-                              title="General-use resizing algorithm for most images"
-                            >
-                              Bicubic
-                            </option>
-                            <option
-                              value="NEAREST"
-                              title="Preserve sharp edges. Ideal for pixel art"
-                            >
-                              Nearest
-                            </option>
-                            <option
-                              value="BILINEAR"
-                              title="Similar to Bicubic, but not as smooth"
-                            >
-                              Bilinear
-                            </option>
-                            <option value="BOX">
-                              Box
-                            </option>
-                            <option value="HAMMING">
-                              Hamming
-                            </option>
-                            <option value="LANCZOS">
-                              Lanczos
-                            </option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%" class="force-vcenter">
-                    <label class="checkbox" title="Flip the image horizontally">
-                      <input v-model="criteria.flip_x" type="checkbox" />
-                      Flip X
-                    </label>
-                    <br />
-                    <label class="checkbox" title="Flip the image vertically">
-                      <input v-model="criteria.flip_y" type="checkbox" />
-                      Flip Y
-                    </label>
-                  </td>
-                  <td width="16.7%" class="force-vcenter">
-                    <label class="checkbox" title="Reverse the animation">
-                      <input v-model="criteria.is_reversed" type="checkbox" />
-                      Reversed
-                    </label>
-                    <br />
-                    <!-- <label class="checkbox" title="Preserve transparent pixels">
-                      <input v-model="preserve_alpha" type="checkbox" />
-                      Preserve Alpha
-                    </label> -->
-                    <label class="checkbox">
-                      <input v-model="lock_aspect_ratio" type="checkbox" />
-                      Lock aspect ratio
-                    </label>
-                  </td>
-                </tr>
-                <tr>
-                  <td width="16.7%">
-                    <div class="field">
-                      <label class="label">Frame rate</label>
-                      <div class="control">
-                        <input
-                          v-model="criteria.fps" class="input is-neon-white" type="number" min="0"
-                          @input="fpsConstrain" @keydown="numConstrain($event, true, false)"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%">
-                    <div class="field">
-                      <label class="label">Delay (seconds)</label>
-                      <div class="control">
-                        <input
-                          v-model="criteria.delay" class="input is-neon-white" type="number" min="0"
-                          @input="delayConstrain" @keydown="numConstrain($event, true, false)"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%">
-                    <div class="field">
-                      <label class="label">Loop count</label>
-                      <div class="control">
-                        <input
-                          v-model="criteria.loop_count" class="input is-neon-white" type="number" min="0"
-                          @keydown="numConstrain($event, true, true)"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td width="16.7%">
-                    <!-- <div class="field">
-                      <label class="label">Rotation</label>
-                      <div class="control">
-                        <input v-model="criteria.rotation" v-on:keydown="numConstrain($event, true, true)" class="input is-neon-white" type="number" />
-                      </div>
-                    </div> -->
-                  </td>
-                  <!-- <td width="20%">
-                    <div class="field">
-                      <label class="label">Skip Frames</label>
-                      <div class="control">
-                        <input v-model="skip_frame" class="input is-neon-white" type="number" min="0"/>
-                      </div>
-                    </div>
-                  </td> -->
-                  <td width="16.7%" />
-                  <td width="16.7%" class="force-vcenter">
-                    <!-- <label class="checkbox">
-                      <input v-model="lock_aspect_ratio" type="checkbox"/>
-                      Lock aspect ratio
-                    </label> -->
-                    <br />
-                    <template v-if="aspect_ratio && aspect_ratio.text">
-                      <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.5em;" readonly="readonly" />
-                    </template>
-                    <template v-else>
-                      &nbsp;
-                    </template>
-                  </td>
-                </tr>
-                <tr />
-                <tr>
-                  <td colspan="4">
-                    <div class="field has-addons">
-                      <div class="control">
-                        <a class="button is-neon-cyan" @click="btnSetSavePath">
-                          <span class="icon is-small">
-                            <font-awesome-icon icon="save" />
-                            <!-- <i class="fas fa-save"></i> -->
-                          </span>
-                          <span>Save to</span>
-                        </a>
-                      </div>
-                      <div class="control is-expanded">
-                        <input
-                          v-model="save_dir"
-                          class="input is-neon-white"
-                          type="text"
-                          placeholder="Output folder"
-                        />
-                      </div>
-                    </div>
-                  </td>
-                  <td colspan="1">
-                    <div class="field">
-                      <div class="control">
-                        <div class="select is-neon-cyan" :class="{'non-interactive': buttonIsFrozen}">
-                          <select v-model="criteria.format">
-                            <option v-for="(item, name, index) in SUPPORTED_MODIFY_EXTENSIONS" :key="index" :value="name">
-                              {{ item }}
-                            </option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td colspan="1">
-                    <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_MODIFYING, 'non-interactive': buttonIsFrozen}" @click="btnModifyImage">
-                      MODIFY</a>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan="6">
-                    <input
-                      v-model="modify_msgbox"
-                      type="text"
-                      class="input is-left-paddingless is-border-colorless"
-                      readonly="readonly"
+              <div class="general-form row-7">
+                <div class="field-cell span-2">
+                  <InputField v-model="fname" :label="$t('general.fname')" type="text" hint="The name of the GIF/APNG" />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.width" :label="$t('criterion.width')" type="number" hint="The width of the animated image"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                              @input="widthHandler"
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.height" :label="$t('criterion.height')" type="number" hint="The height of the animated image"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                              @input="heightHandler"
+                  />
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.resize_method" :options-list="RESIZE_METHODS" :label="$t('criterion.resize_method')" :is-fullwidth="true" />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="criteria.flip_x" :label="$t('criterion.flip_x')" hint="Flip the image horizontally" />
+                  <br />
+                  <CheckboxField v-model="criteria.flip_y" :label="$t('criterion.flip_y')" hint="Flip the image vertically" />
+                </div>
+                <div class="field-cell">
+                  <CheckboxField v-model="lockAspectRatio" :label="$t('forms.lock_aspect_ratio')" hint="Lock the width and height ratio" />
+                  <br />
+                  <template v-if="aspect_ratio && aspect_ratio.text">
+                    <input v-model="aspect_ratio.text" class="input is-border-colorless is-paddingless" style="height: 1.2em;" readonly="readonly" />
+                  </template>
+                  <template v-else>
+                    &nbsp;
+                  </template>
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.delay" :label="$t('criterion.delay')" type="number" hint="The time needed to move to the next frame"
+                              :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
+                              @input="delayHandler" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.fps" :label="$t('criterion.fps')" type="number" hint="How many frames will be consecutively displayed per second"
+                              :constraint-option="ENFORCE_UNSIGNED" :min-number="0"
+                              @input="fpsHandler" 
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.loop_count" :label="$t('criterion.loop_count')" type="number" hint="How many times the GIF/APNG will run. Zero/blank to run forever"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.start_frame" :label="$t('criterion.start_frame')" type="number" 
+                              hint="Choose which frame to start the animation from. Default is 1 (is also 1 if left blank or typed 0)"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.delay_handling" :options-list="DELAY_HANDLING_OPTIONS" :label="$t('criterion.delay_handling')" hint="How to modify the delay"
+                                 :is-fullwidth="true"
+                  />
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                  <!-- <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
+                  <br /> -->
+                  <CheckboxField v-model="criteria.is_reversed" label="Reversed" hint="Reverse the animation" />
+                </div>
+                <div class="separator">
+                  <div class="separator-space" />
+                </div>
+                <!-- <div class="field-cell span-3" /> -->
+                <!-- <div class="field-cell span-5"> -->
+                <FormModal :is-active="presetModal.modalIsActive"
+                          :is-wide="presetModal.presetOperation == 'preset_update'"
+                          @close-modal-clicked="closePresetModal"
+                          @close-modal-background-clicked="closePresetModal"
+                          @keydown.esc="presetModal.modalIsActive = false"
+                >
+                  <template #modalHeader>
+                    <p class="is-white-d">
+                      <template v-if="presetModal.presetOperation == 'preset_view'">
+                        View preset
+                      </template>
+                      <template v-else-if="presetModal.presetOperation == 'preset_create'">
+                        Create preset
+                      </template>
+                      <template v-else-if="presetModal.presetOperation == 'preset_update'">
+                        Update existing preset
+                      </template>
+                    </p>
+                  </template>
+                  <template #modalDisplay>
+                    <KeyValueTable :rows="presetModal.presetDraft.draftAttributes" 
+                                  keyHeader="Attribute" 
+                                  :valueHeader="presetModal.presetOperation == 'preset_update'? 'Current value' : 'Value'"
+                    >
+                      <template v-if="presetModal.presetOperation != 'preset_view'" #rowControlsHeaderLeft>
+                        <th class="kvp-control-fit" hint="Include this attribute to the preset?">
+                          Include?
+                        </th>
+                      </template>
+                      <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsHeaderRight>
+                        <th>
+                          New value
+                        </th>
+                        <th class="kvp-control-fit" hint="Update the current value of the preset with this new one?">
+                          Update?
+                        </th>
+                        <th class="kvp-desc-short-column">
+                          Conclusion
+                        </th>
+                      </template>
+                      <template v-if="presetModal.presetOperation != 'preset_view'" #rowControlsLeft="draftAttr">
+                        <td class="center">
+                          <CheckboxField :modelValue="draftAttr.include" 
+                                        @update:modelValue="newVal => updatePresetDraftInclude(draftAttr, newVal)"
+                                        @mouse-over-down="updatePresetDraftInclude(draftAttr, !draftAttr.include)"
+                          />
+                        </td>
+                      </template>
+                      <template #dataRow="draftAttr">
+                        <td>
+                          <p>
+                            {{ draftAttr.pLabel }}
+                          </p>
+                        </td>
+                        <td>
+                          <p>
+                            {{ draftAttr.pValue }}
+                          </p>
+                        </td>
+                      </template>
+                      <template v-if="presetModal.presetOperation == 'preset_update'" #rowControlsRight="draftAttr">
+                        <td>
+                          <p>
+                            {{ draftAttr.pValueNew }}
+                          </p>
+                        </td>
+                        <td class="center">
+                          <CheckboxField :modelValue="draftAttr.updateValue" 
+                                        @update:modelValue="newVal => updatePresetDraftUpdate(draftAttr, newVal)"
+                                        @mouse-over-down="updatePresetDraftUpdate(draftAttr, !draftAttr.updateValue)"
+                          />
+                        </td>
+                        <td>
+                          {{ getPresetDraftAttributeConclusion(draftAttr).label }}
+                        </td>
+                      </template>
+                    </KeyValueTable>
+                  </template>
+                  <template #modalForm>
+                    <InputField v-model="presetModal.newPresetName" type="text" hint="Name of the new preset"
+                                :label="presetModal.presetOperation == 'preset_update'? 'Change preset name' : 'Preset name'"
+                                @input="presetModal.noPresetName = false;"
+                                :is-readonly="presetModal.presetOperation == 'preset_view'"
                     />
-                  </td>
-                </tr>
-              </table>
+                  </template>
+                  <template #modalControls>
+                    <ButtonField v-if="presetModal.presetOperation == 'preset_create'" label="Create preset" color="blue" @click="createNewPreset" />
+                    <ButtonField v-if="presetModal.presetOperation == 'preset_update'" label="Update preset" color="blue" @click="updatePreset" />
+                    <ButtonField :label="presetModal.presetOperation == 'preset_view'? 'Close' : 'Cancel'" @click="closePresetModal" />
+                    <p v-if="presetModal.noPresetName">
+                      <font-awesome-icon icon="circle-exclamation" class="is-crimson" />
+                      Preset name is required!
+                    </p>
+                  </template>
+                </FormModal>
+                <PresetSelector>
+                  <template #presetContextMenu>
+                    <ContextMenu ref="modPresetContextMenu" ctx-menu-id="modifyPanelPresetContextMenu" 
+                                anchor-element-id="modPanelPresetPopperBtn" placement="top-start"
+                                @ctx-option-click="handlePresetsCtxMenuOptionClick"
+                                @ctx-menu-click-outside="handlePresetsCtxMenuClickOutside"
+                    >
+                      <template #contextMenuItem="ctxItemData">
+                        <ContextMenuItem>
+                          <template #contextMenuOptionIcon>
+                            <ContextMenuItemIcon v-if="ctxItemData.icon">
+                              <font-awesome-icon :icon="ctxItemData.icon" />
+                            </ContextMenuItemIcon>
+                          </template>
+                          <template #contextMenuOptionLabel>
+                            {{ ctxItemData.name }}
+                          </template>
+                        </ContextMenuItem>
+                      </template>
+                    </ContextMenu>
+                  </template>
+                  <template #presetControlsLeft>
+                    <div class="field-cell">
+                      <ButtonField id="modPanelPresetPopperBtn" label="Presets..." color="blue" text-padding="small"
+                                :listen-to-outside-clicks="true"
+                                :icons="['fas', 'paint-roller']"
+                                :is-square="true"
+                                @click="btnTogglePresetPopper"
+                                @click-outside="debugHandler"
+                    />
+                    </div>
+                  </template>
+                  <template #presetSelection>
+                    <div class="field-cell span-2">
+                      <DropdownField 
+                      v-model="presetSelectionValue"
+                      :options-list="localPresetsSelection" 
+                      :is-non-interactive="false" 
+                      :is-fullwidth="true"
+                    />
+                    </div>
+                  </template>
+                  <template #presetControlsRight>
+                    <div class="field-cell">
+
+                      <ButtonField label="View preset" color="blue"
+                                @click="viewPreset"
+                    />
+                    </div>
+                    <div class="field-cell">
+                      
+                    <ButtonField label="Apply preset" color="purple" text-padding="small"
+                                @click="applyPreset"
+                    />
+                    </div>
+                  </template>
+                </PresetSelector>
+                <div class="separator">
+                  <div class="separator-space" />
+                </div>
+                <div class="field-cell span-5">
+                  <ButtonInputField>
+                    <template #buttonControl>
+                      <ButtonField label="Save to" color="blue" :is-square="true" :icons="['fas', 'folder-open']"
+                                   @click="btnSetSavePath"
+                      />
+                    </template>
+                    <template #inputControl>
+                      <InputField v-model="saveDir" type="text" />
+                    </template>
+                  </ButtonInputField>
+                </div>
+                <div class="field-cell">
+                  <DropdownField v-model="criteria.format" :options-list="SUPPORTED_MODIFY_EXTENSIONS" label="" :is-non-interactive="isButtonFrozen" />
+                </div>
+                <div class="field-cell">
+                  <ButtonField label="MODIFY" color="cyan"
+                               :is-loading="MOD_IS_MODIFYING == true" :is-non-interactive="isButtonFrozen"
+                               @click="btnModifyImage"
+                  />
+                </div>
+              </div>
+
             </div>
-            <div v-show="modSubMenuSelection == 1 && criteria.format == 'gif'">
-              <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
-                <GIFOptimizationRow
-                  v-model:hasOptimization="hasGIFOptimization"
-                  v-model:is_optimized="gif_opt_criteria.is_optimized"
-                  v-model:optimization_level="gif_opt_criteria.optimization_level"
-                  v-model:is_lossy="gif_opt_criteria.is_lossy"
-                  v-model:lossy_value="gif_opt_criteria.lossy_value"
-                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
-                  v-model:color_space="gif_opt_criteria.color_space"
-                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
-                  v-model:dither_method="gif_opt_criteria.dither_method"
-                  v-model:palletization_method="gif_opt_criteria.palletization_method"
-                  v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
-                  v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
-                  v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
-                />
-                <GIFUnoptimizationRow
-                  v-model:is_optimized="gif_opt_criteria.is_optimized"
-                  v-model:is_lossy="gif_opt_criteria.is_lossy"
-                  v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
-                  v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
-                />
-              </table>
+            <div v-show="modSubMenuSelection == 1">
+              <div class="general-form row-7">
+                <div class="field-cell">
+                  Skip {x} frames
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.frame_skip_count" :label="$t('criterion.frame_skip_count')" type="number" 
+                              hint="Amount of frames to skip."
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  After every {y} frames
+                </div>
+                <div class="field-cell">
+                  <InputField v-model="criteria.frame_skip_gap" :label="$t('criterion.frame_skip_gap')" type="number" 
+                              hint="Amount of frames to preserve between skippings"
+                              :constraint-option="ENFORCE_UNSIGNED_WHOLE" :min-number="0"
+                  />
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                  <InputField v-model="criteria.frame_skip_offset" :label="$t('criterion.frame_skip_offset')" type="number" 
+                              hint="Amount of frames to preserve between skippings"
+                              :constraint-option="ENFORCE_UNSIGNED"
+                  />
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+                <div class="field-cell">
+                  
+                  <CheckboxField v-model="criteria.frame_skip_maintain_delay" :label="$t('criterion.frame_skip_maintain_delay')" 
+                                 hint="(For GIFs) Preserve transparent pixels" 
+                  />
+                </div>
+                <div class="field-cell">
+                  
+                </div>
+              </div>
             </div>
-            <div v-show="modSubMenuSelection == 1 && criteria.format == 'png'">
-              <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%">
-                <APNGOptimizationRow 
-                  ref="apngOptimRow"
-                  v-model:hasOptimizaton="hasAPNGOptimization"
-                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
-                  v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
-                  v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
-                  v-model:apng_color_count="apng_opt_criteria.apng_color_count"
-                  v-model:apng_quantization_enabled="apng_opt_criteria.apng_quantization_enabled"
-                  v-model:apng_quantization_quality_min="apng_opt_criteria.apng_quantization_quality_min"
-                  v-model:apng_quantization_quality_max="apng_opt_criteria.apng_quantization_quality_max"
-                  v-model:apng_quantization_speed="apng_opt_criteria.apng_quantization_speed"
-                  v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
-                  v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
-                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
-                />
-                <APNGUnoptimizationRow
-                  ref="apngUnoptimRow"
-                  v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
-                  v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
-                  v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
-                />
-              </table>
+            <div v-show="modSubMenuSelection == 2 && criteria.format == 'gif'">
+              <!-- <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%"> -->
+              <GIFOptimizationRow
+                v-model:hasOptimization="hasGIFOptimization"
+                v-model:is_optimized="gif_opt_criteria.is_optimized"
+                v-model:optimization_level="gif_opt_criteria.optimization_level"
+                v-model:is_lossy="gif_opt_criteria.is_lossy"
+                v-model:lossy_value="gif_opt_criteria.lossy_value"
+                v-model:is_reduced_color="gif_opt_criteria.is_reduced_color"
+                v-model:color_space="gif_opt_criteria.color_space"
+                v-model:is_unoptimized="gif_opt_criteria.is_unoptimized"
+                v-model:dither_method="gif_opt_criteria.dither_method"
+                v-model:palletization_method="gif_opt_criteria.palletization_method"
+                v-model:is_dither_alpha="gif_opt_criteria.is_dither_alpha"
+                v-model:dither_alpha_method="gif_opt_criteria.dither_alpha_method"
+                v-model:dither_alpha_threshold="gif_opt_criteria.dither_alpha_threshold"
+                :is-unoptimized="gif_opt_criteria.is_unoptimized"
+              />
+              <GIFUnoptimizationRow
+                :is-disabled="gif_opt_criteria.is_optimized || 
+                              gif_opt_criteria.is_lossy || 
+                              gif_opt_criteria.is_reduced_color || 
+                              gif_opt_criteria.is_dither_alpha"
+                v-model:isUnoptimized="gif_opt_criteria.is_unoptimized"
+              />
+              <!-- </table> -->
+            </div>
+            <div v-show="modSubMenuSelection == 2 && criteria.format == 'png'">
+              <!-- <table class="table mod-new-control-table is-hpaddingless medium-size-label" width="100%"> -->
+              <APNGOptimizationRow 
+                ref="apngOptimRow"
+                v-model:hasOptimizaton="hasAPNGOptimization"
+                v-model:apng_is_optimized="apng_opt_criteria.apng_is_optimized"
+                v-model:apng_optimization_level="apng_opt_criteria.apng_optimization_level"
+                v-model:apng_is_reduced_color="apng_opt_criteria.apng_is_reduced_color"
+                v-model:apng_color_count="apng_opt_criteria.apng_color_count"
+                v-model:apng_quantization_enabled="apng_opt_criteria.apng_quantization_enabled"
+                v-model:apng_quantization_quality_min="apng_opt_criteria.apng_quantization_quality_min"
+                v-model:apng_quantization_quality_max="apng_opt_criteria.apng_quantization_quality_max"
+                v-model:apng_quantization_speed="apng_opt_criteria.apng_quantization_speed"
+                v-model:apng_convert_color_mode="apng_opt_criteria.apng_convert_color_mode"
+                v-model:apng_new_color_mode="apng_opt_criteria.apng_new_color_mode"
+                v-model:apng_is_unoptimized="apng_opt_criteria.apng_is_unoptimized"
+              />
+              <APNGUnoptimizationRow
+                ref="apngUnoptimRow"
+                :is-disabled="apng_opt_criteria.apng_is_optimized || 
+                              apng_opt_criteria.apng_is_reduced_color || 
+                              apng_opt_criteria.apng_quantization_enabled"
+                v-model:isUnoptimized="apng_opt_criteria.apng_is_unoptimized"
+              />
+              <!-- </table> -->
             </div>
           </div>
           <div class="mpc-right-bottom-panel">
@@ -529,6 +701,7 @@ import { randString } from "../modules/utility/stringutils";
 import { escapeLocalPath, stem, validateFilename } from "../modules/utility/pathutils";
 import { structuredClone } from "../modules/utility/objectutils";
 import { PREVIEWS_PATH } from "../common/paths";
+import { ConstraintOption } from '../models/componentProps';
 
 import { dirname, join, basename } from "path";
 import GIFOptimizationRow from "./components/GIFOptimizationRow.vue";
@@ -536,16 +709,97 @@ import GIFUnoptimizationRow from "./components/GIFUnoptimizationRow.vue";
 import APNGOptimizationRow from "./components/APNGOptimizationRow.vue";
 import APNGUnoptimizationRow from "./components/APNGUnoptimizationRow.vue";
 import { existsSync } from 'fs';
+import { copyFile }  from 'fs/promises';
 
 import StatusBar from "./components/StatusBar.vue";
+import InputField from "./components/Form/InputField.vue";
+import CheckboxField from './components/Form/CheckboxField.vue';
+import DropdownField from './components/Form/DropdownField.vue';
+import ButtonField from './components/Form/ButtonField.vue';
+import ButtonInputField from './components/Form/ButtonInputField.vue';
+import ContextMenu from './components/ContextMenu/ContextMenu.vue';
+import ContextMenuItem from './components/ContextMenu/ContextMenuItem.vue';
+import ContextMenuItemIcon from './components/ContextMenu/ContextMenuItemIcon.vue';
+import FormModal from './components/Overlays/FormModal.vue';
+import PresetSelector from './components/Presets/PresetSelector.vue';
+import KeyValueTable from './components/Displays/KeyValueTable.vue';
+import KeyValueTableDataRow from './components/Displays/KeyValueTableDataRow.vue';
+import KeyValueTableRowControl from './components/Displays/KeyValueTableRowControl.vue';
+
 import { EnumStatusLogLevel } from "../modules/constants/loglevels";
 import { logStatus } from "../modules/events/statusBarEmitter";
+
+import { PreviewImageSaveNameBehaviour, PreviewImageSummary } from "../models/previewImage";
+import { APNGOptimizationCriteria, GIFOptimizationCriteria, ModificationCriteria } from '../models/criterion';
+import { Preset, PresetDraft, PresetType, PresetDraftAttribute } from '../models/presets';
 // import Vue from 'vue';
 
-const SUPPORTED_MODIFY_EXTENSIONS = {
-  'gif': 'GIF',
-  'png': 'APNG',
-}
+const SUPPORTED_MODIFY_EXTENSIONS = [
+  {
+    name: "gif",
+    label: "GIF",
+    description: "", 
+  },
+  {
+    name: "png",
+    label: "APNG",
+    description: "", 
+  }
+];
+
+const RESIZE_METHODS = [
+  {
+    name: "BICUBIC",
+    label: "Bicubic",
+    description: "General-use resizing algorithm for most images"
+  },
+  {
+    name: "NEAREST",
+    label: "Nearest",
+    description: "Preserve sharp edges. Ideal for pixel art"
+  },
+  {
+    name: "BILINEAR",
+    label: "Bilinear",
+    description: "Similar to Bicubic, but not as smooth"
+  },
+  {
+    name: "BOX",
+    label: "Box",
+    description: ""
+  },
+  {
+    name: "HAMMING",
+    label: "Hamming",
+    description: ""
+  },
+  {
+    name: "LANCZOS",
+    label: "Lanczos",
+    description: ""
+  },
+];
+
+const DELAY_HANDLING_OPTIONS = [
+  {
+    name: "MULTIPLY_AVERAGE",
+    label: "Multiply average",
+    description: "Multiply all frames based on the ratio between the current average and the value specified in the Delay field"
+  },
+  {
+    name: "EVEN_OUT",
+    label: "Even-out",
+    description: "Change all frame delay to the specified Delay field"
+  },
+  {
+    name: "DO_NOTHING",
+    label: "Do nothing",
+    description: "Don't alter the current frames delays at all"
+  },
+]
+const ENFORCE_UNSIGNED = new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: false });
+const ENFORCE_UNSIGNED_WHOLE = new ConstraintOption('numConstraint', {enforceUnsigned: true, enforceWhole: true });
+const ENFORCE_WHOLE = new ConstraintOption('numConstraint', {enforceUnsigned: false, enforceWhole: true });
 
 let common_metadata = {
   fname: "",
@@ -570,7 +824,7 @@ let common_metadata = {
 };
 
 let extension_filters = [
-    { name: 'Images', extensions: Object.keys(SUPPORTED_MODIFY_EXTENSIONS) },
+    { name: 'Images', extensions: SUPPORTED_MODIFY_EXTENSIONS.map(ext => ext.name) },
 ];
 let file_dialog_props = ['openfile'];
 let dir_dialog_props = ['openDirectory', 'createDirectory'];
@@ -583,67 +837,48 @@ export default {
     APNGOptimizationRow,
     APNGUnoptimizationRow,
     StatusBar,
+    InputField,
+    CheckboxField,
+    DropdownField,
+    ButtonField,
+    ButtonInputField,
+    ContextMenu,
+    ContextMenuItem,
+    ContextMenuItemIcon,
+    FormModal,
+    PresetSelector,
+    KeyValueTable,
+    KeyValueTableDataRow,
+    KeyValueTableRowControl,
+  },
+  props: {
+    presets: {
+      type: Object,
+      default() {
+        return {}
+      },
+      required: false,
+    }
   },
   data() {
     return {
       orig_attribute: structuredClone(common_metadata),
       preview_attribute: structuredClone(common_metadata),
-      criteria: {
-        width: "",
-        height: "",
-        resize_method: "BICUBIC",
-        rotation: "",
-        fps: "",
-        delay: "",
-        loop_count: "",
-        format: "gif",
-        skip_frame: "",
-        flip_x: false,
-        flip_y: false,
-        is_reversed: false,
-        preserve_alpha: false,
-        start_frame: 0,
-      },
-      gif_opt_criteria: {
-        is_optimized: false,
-        optimization_level: "1",
-        is_lossy: false,
-        lossy_value: 30,
-        is_reduced_color: false,
-        color_space: 256,
-        is_unoptimized: false,
-        dither_method: "FLOYD_STEINBERG",
-        palletization_method: "ADAPTIVE",
-        is_dither_alpha: false,
-        dither_alpha_method: "SCREENDOOR",
-        dither_alpha_threshold: 50,
-      },
+      criteria: new ModificationCriteria(),
+      gif_opt_criteria: new GIFOptimizationCriteria(),
       hasGIFOptimization: false,
-      apng_opt_criteria: {
-        apng_is_optimized: false,
-        apng_optimization_level: "1",
-        apng_is_reduced_color: false,
-        apng_color_count: 256,
-        apng_quantization_enabled: false,
-        apng_quantization_quality_min: 65,
-        apng_quantization_quality_max: 80,
-        apng_quantization_speed: 3,
-        apng_is_unoptimized: false,
-        apng_convert_color_mode: false,
-        apng_new_color_mode: "RGBA",
-      },
+      apng_opt_criteria: new APNGOptimizationCriteria(),
       hasAPNGOptimization: false,
-
       fname: "",
       previewPath: "",
       previewPathCB: "",
       preview_info: "",
       // save_fstem: "",
-      save_dir: "",
+      saveDir: "",
       preview_size: "",
       preview_size_hr: "",
       aspect_ratio: "",
-      lock_aspect_ratio: false,
+      lockAspectRatio: false,
       modSubMenuSelection: 0,
       orig_checkerbg_active: false,
       new_checkerbg_active: false,
@@ -652,12 +887,31 @@ export default {
       MOD_IS_PREVIEWING: false,
       modify_msgbox: "",
       SUPPORTED_MODIFY_EXTENSIONS: SUPPORTED_MODIFY_EXTENSIONS,
+      RESIZE_METHODS: RESIZE_METHODS,
+      DELAY_HANDLING_OPTIONS: DELAY_HANDLING_OPTIONS,
+      ENFORCE_UNSIGNED: ENFORCE_UNSIGNED,
+      ENFORCE_UNSIGNED_WHOLE: ENFORCE_UNSIGNED_WHOLE,
       statusBarId: "modifyPanelStatusBar",
       // statusBarBus: new Vue(),
+      presetsCtxMenuVisible: false,
+      presetModal: {
+        modalIsActive: false,
+        presetOperation: "preset_create",
+        newPresetName: "",
+        presetDraft: {},
+        noPresetName: false,
+      },
+      presetSelectionValue: "",
+      localPresetsSelection: [],
+      presetCtxMenuOptions: [
+        {id: 'preset_delete', name: "Delete preset", icon: ['fas', 'trash-can'], color: 'red'},
+        {id: 'preset_update', name: "Update to preset", icon: ['fas', 'square-pen'], color: 'blue'},
+        {id: 'preset_create', name: "Create new preset", icon: ['fas', 'plus'], color: 'green'},
+      ],
     };
   },
   computed: {
-    origDimensions() {
+    origDimensionsText() {
       if (this.orig_attribute.width && this.orig_attribute.height) {
         return `${this.orig_attribute.width} x ${this.orig_attribute.height}`;
       }
@@ -665,7 +919,7 @@ export default {
         return "";
       }
     },
-    previewDimensions() {
+    previewDimensionsText() {
       if (this.preview_attribute.width && this.preview_attribute.height) {
         return `${this.preview_attribute.width} x ${this.preview_attribute.height}`;
       }
@@ -673,7 +927,35 @@ export default {
         return "";
       }
     },
-    buttonIsFrozen() {
+    origAttributesTable() {
+      let origAttributes = {
+        dimensions: this.origDimensionsText,
+        fileSize: this.orig_attribute.file_size_hr,
+        format: this.orig_attribute.format.toUpperCase(),
+        frameCount: this.orig_attribute.frame_count,
+        fps: this.orig_attribute.fps? `${this.orig_attribute.fps} FPS` : '',
+        averageDelay: this.orig_attribute.delay? `${roundPrecise(this.orig_attribute.delay, 3)} ms` : '',
+        loopDuration: this.orig_attribute && this.orig_attribute.loop_duration? `${roundPrecise(this.orig_attribute.loop_duration, 3) } seconds` : '',
+        loopCount: this.orig_attribute.loop_count && this.orig_attribute.loop_count == 0? "Infinite" : this.orig_attribute.loop_count,
+      }
+      console.table(origAttributes);
+      return origAttributes;
+    },
+    previewAttributesTable() {
+      let previewAttributes = {
+        dimensions: this.previewDimensionsText,
+        fileSize: this.preview_attribute.file_size_hr,
+        format: this.preview_attribute.format.toUpperCase(),
+        frameCount: this.preview_attribute.frame_count,
+        fps: this.preview_attribute.fps? `${this.preview_attribute.fps} FPS` : '',
+        averageDelay: this.preview_attribute.delay? `${roundPrecise(this.preview_attribute.delay, 3)} ms` : '',
+        loopDuration: this.preview_attribute && this.preview_attribute.loop_duration? `${roundPrecise(this.preview_attribute.loop_duration, 3) } seconds` : '',
+        loopCount: this.preview_attribute.loop_count && this.preview_attribute.loop_count == 0? "Infinite" : this.preview_attribute.loop_count,
+      }
+      console.table(previewAttributes);
+      return previewAttributes;
+    },
+    isButtonFrozen() {
       if (this.MOD_IS_LOADING || this.MOD_IS_MODIFYING || this.MOD_IS_PREVIEWING) return true;
       else return false;
     },
@@ -737,8 +1019,282 @@ export default {
       console.debug(`hasModification: ${this.hasGeneralModification} ${this.hasFormatOptimization}`)
       return this.orig_attribute.path !== "" && this.hasGeneralModification || this.hasFormatOptimization;
     },
+    // Triggers everytime this.presets property is updated on App.vue
+    computeModifiedPresets() {
+      console.log('computeModifiedPresets triggered');
+      const modifiedDateTimes = Object.entries(this.presets).map(([k, v]) => v.lastModifiedDateTime);
+      return modifiedDateTimes
+    },
+  },
+  watch: {
+    'computeModifiedPresets': {
+      // When this property is updated, refresh the preset selector values
+      handler: function(newVal, oldVal) {
+        console.debug(`Preset updated\nOld/New count: ${oldVal}/${newVal}`);
+        const presetCount = this.populatePresetsSelector();
+        if (presetCount == 0) {
+          this.presetSelectionValue = "";
+        }
+      },
+    }
+  },
+  created() {
+    window.addEventListener("resize", () => {
+      this.closePresetPopper();
+    });
+  },
+  beforeMount: function () {
+    const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
+    try {
+      const defaultOutDir = SETTINGS.directories.default_out_dir.modify_panel;
+      if (defaultOutDir) {
+        this.saveDir = defaultOutDir
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  mounted() {
+    // console.log(this.$i18n.availableLocales);
+    // console.log(this.$i18n.messages);
+    // console.log(this.$t('general.fname'));
+    // Load all 
+    this.populatePresetsSelector();
+    // this.emitter.on('global-presets-refresh', presetCollection => { this.addPreset(args); }))
+  },
+  unmounted() {
+    window.removeEventListener("resize", () => {
+      this.closePresetPopper();
+    });
   },
   methods: {
+    populatePresetsSelector() {
+      // console.log('populatePresetsSelector');
+      // console.log(this.presets);
+      const presets = JSON.parse(JSON.stringify(this.presets));
+      console.log(presets);
+      this.localPresetsSelection = [];
+      for (const [id, preset] of Object.entries(this.presets)) {
+        this.localPresetsSelection.push({
+          name: id,
+          label: preset.name,
+          description: "",
+        })
+      }
+      return this.localPresetsSelection.length;
+    },
+    openPresetModal(event, presetOperation) {
+      this.presetModal.presetOperation = presetOperation;
+      const activateModal = this.populatePresetModalTable(presetOperation);
+      this.presetModal.modalIsActive = activateModal;
+    },
+    populatePresetModalTable(presetOperation) {
+      if (presetOperation == 'preset_view') {
+        const id = this.presetSelectionValue;
+        console.log(id);
+        if (id) {
+          const presetJson = this.presets[id];
+          console.log(presetJson);
+          if (!presetJson) {
+            this._logWarning(`Please select a preset from the dropdown to view!`);
+            return false;
+          }
+          const currPreset = Preset.fromJSON(presetJson);
+          const attrJson = JSON.parse(JSON.stringify(currPreset.presetObject));
+          const presetType = currPreset.presetType;
+          const presetViewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
+          presetViewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+          this.presetModal.presetDraft = presetViewDraft;
+          this.presetModal.newPresetName = currPreset.name;
+          return true;
+        } 
+        else {
+          this._logWarning(`Please select a preset from the dropdown to view!`);
+          return false;
+        }
+      }
+      else if (presetOperation == 'preset_create') {
+        const attrJson = JSON.parse(JSON.stringify(this.criteria));
+        const presetType = PresetType.ModificationCriteria;
+        const presetNewDraft = PresetDraft.createFromAttributesObject(presetType, attrJson, true);
+        presetNewDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+        console.debug(`populatePresetModalTable`);
+        console.log(presetNewDraft);
+        this.presetModal.presetDraft = presetNewDraft;
+        return true;
+      }
+      else if (presetOperation == 'preset_update') {
+        const id = this.presetSelectionValue;
+        console.log(id);
+        if (id) {
+          console.log(id);
+          const presetJson = this.presets[id];
+          if (!presetJson) {
+            this._logWarning(`Please select a preset from the dropdown to update!`);
+            return false;
+          }
+          const currPreset = Preset.fromJSON(presetJson);
+          const attrObj = JSON.parse(JSON.stringify(this.criteria));
+          const presetUpdateDraft = PresetDraft.buildUpdatePresetDraft(currPreset, attrObj);
+          presetUpdateDraft.nameAttributesUsingTranslator(this.$i18n.t, 'criterion');
+          console.log('presetUpdateDraft');
+          console.log(presetUpdateDraft);
+          this.presetModal.presetDraft = presetUpdateDraft;
+          this.presetModal.newPresetName = currPreset.name;
+          return true;
+        } 
+        else {
+          this._logWarning(`Please select a preset from the dropdown to update!`);
+          return false;
+        }
+      }
+    },
+    getPresetDraftAttributeConclusion(draftAttrJson) {
+      const draftAttr = PresetDraftAttribute.fromJSON(draftAttrJson);
+      return draftAttr.conclusion();
+    },
+    updatePresetDraftInclude(draftAttr, checkValue) {
+      console.log(draftAttr);
+      console.log(checkValue);
+      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == draftAttr.pKey);
+      if (attr) {
+        attr.include = checkValue;
+      }
+    },
+    updatePresetDraftUpdate(draftAttr, checkValue) {
+      console.log(draftAttr);
+      console.log(checkValue);
+      const attr = this.presetModal.presetDraft.draftAttributes.find(a => a.pKey == draftAttr.pKey);
+      if (attr) {
+        attr.updateValue = checkValue;
+      }
+    },
+    createNewPreset(event) {
+      console.log(this.presetModal.presetDraft);
+      const presetName = this.presetModal.newPresetName;
+      if (!presetName) {
+        this.presetModal.noPresetName = true;
+        return;
+      }
+      const presetType = this.presetModal.presetDraft.presetType;
+      const preset = Preset.createFromDraft(presetName, presetType, this.presetModal.presetDraft)
+      console.log(preset);
+      this.emitter.emit('add-preset', preset);
+      console.log('after emit');
+      console.log(this.presets);
+      this.closePresetModal(event);
+      this._logInfo(`Created new preset ${preset.name}`);
+    },
+    updatePreset(event) {
+      const presetName = this.presetModal.newPresetName;
+      if (!presetName) {
+        this.presetModal.noPresetName = true;
+        return;
+      }
+      const id = this.presetSelectionValue;
+      console.log(id);
+      if (id) {
+        console.log(id);
+        const presetJson = this.presets[id];
+        if (!presetJson) {
+          this._logWarning(`Please select a preset from the dropdown to update!`);
+          this.closePresetModal(event);
+          return;
+        }
+        const preset = Preset.fromJSON(presetJson);
+        console.log(preset);
+        preset.updateFromDraft(this.presetModal.newPresetName, this.presetModal.presetDraft);
+        this.emitter.emit('update-preset', preset);
+        this.closePresetModal(event);
+        this._logInfo(`Updated preset ${preset.name}`);
+      }
+    },
+    async deletePresetAsync(event){
+      const id = this.presetSelectionValue;
+      if (id) {
+        console.log(id);
+        const presetJson = this.presets[id];
+        if (!presetJson) {
+          this._logWarning(`Please select a preset from the dropdown to delete!`);
+          return;
+        }
+        let options = {
+          title: "TridentFrame Preset Deletion",
+          buttons: ["Yes", "No"],
+          message:
+            `Are you sure you want to delete the preset '${presetJson.name}'?`,
+        };
+        const promptResult = await ipcRenderer.invoke("IPC-SHOW-MESSAGE-BOX", options);
+        console.log(`msgbox promptResult:`);
+        console.log(promptResult);
+        if (promptResult.response == 0) {
+          this.emitter.emit('delete-preset', id);
+          this._logInfo(`Deleted preset ${presetJson.name}`);
+        }
+      }
+      else this._logWarning(`Please select a preset from the dropdown to delete!`);
+    },
+    closePresetModal(event) {
+      this.presetModal.noPresetName = false;
+      this.presetModal.newPresetName = "";
+      this.presetModal.modalIsActive = false;
+    },
+    viewPreset(event) {
+      this.openPresetModal(event, 'preset_view');
+    },
+    applyPreset(event) {
+      const id = this.presetSelectionValue;
+      if (id) {
+        console.log(id);
+        const presetJson = this.presets[id];
+        const preset = Preset.fromJSON(presetJson);
+        this.criteria.updateFromPreset(preset);
+      }
+      else this._logWarning(`Please select a preset from the dropdown to delete!`);
+    },
+    handlePresetsCtxMenuOptionClick(event, optionId) {
+      // console.log(`=== handlePresetsCtxMenuOptionClick START vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(event);
+      // console.log(optionId);
+      this.closePresetPopper(event);
+      if (optionId == 'preset_create') {
+        this.openPresetModal(event, optionId);
+      }
+      else if (optionId == 'preset_update') {
+        this.openPresetModal(event, optionId);
+      }
+      else if (optionId == 'preset_delete') {
+        this.deletePresetAsync(event);
+      }
+      // console.log(`=== handlePresetsCtxMenuOptionClick END vis: ${this.presetsCtxMenuVisible} ===`);
+    },
+    handlePresetsCtxMenuClickOutside(event, args) {
+      // console.log(`=== handlePresetsCtxMenuClickOutside START vis: ${this.presetsCtxMenuVisible} ===`);
+      // console.log(event);
+      // console.log(args);
+      this.closePresetPopper(event);
+      // console.log(`=== handlePresetsCtxMenuClickOutside END vis: ${this.presetsCtxMenuVisible}===`);
+    },
+    btnTogglePresetPopper(event) {
+      // console.log(`=== btnTogglePresetPopper START vis: ${this.presetsCtxMenuVisible} ===`);
+      if (this.presetsCtxMenuVisible) {
+        this.closePresetPopper(event);
+      }
+      else {
+        this.openPresetPopper(event);
+      }
+      // console.log(`=== btnTogglePresetPopper END vis: ${this.presetsCtxMenuVisible} ===`);
+    },
+    openPresetPopper(event) {
+      // console.log('check this one');
+      // console.log(event);
+      this.$refs.modPresetContextMenu.openPopper(event, this.presetCtxMenuOptions);
+      this.presetsCtxMenuVisible = true;
+    },
+    closePresetPopper(event) {
+      this.$refs.modPresetContextMenu.closePopper();
+      this.presetsCtxMenuVisible = false;
+    },
     loadOrigMetadata(res) {
       let geninfo = res.general_info;
       let ainfo = res.animation_info;
@@ -780,7 +1336,7 @@ export default {
       this.preview_attribute.name = geninfo.name.value;
       this.preview_attribute.width = geninfo.width.value;
       this.preview_attribute.height = geninfo.height.value;
-      this.preview_attribute.fps = `${ainfo.fps.value} FPS`;
+      this.preview_attribute.fps = ainfo.fps.value;
       this.preview_attribute.frame_count= ainfo.frame_count.value;
       this.preview_attribute.format = geninfo.format.value.toLowerCase();
       this.preview_attribute.format_info = geninfo.format.value.toUpperCase();
@@ -810,7 +1366,7 @@ export default {
     populateForm(res) {
       var geninfo = res.general_info;
       var ainfo = res.animation_info;
-      this.fname = geninfo.base_filename.value;
+      this.fname = geninfo.sanitized_namestem.value;
       this.criteria.format = geninfo.format.value.toLowerCase();
       this.criteria.width = geninfo.width.value;
       this.criteria.height = geninfo.height.value;
@@ -821,7 +1377,7 @@ export default {
     },
     updateAspectRatio(width, height) {
       if (this.criteria.width && this.criteria.height) {
-        console.log('uAR', width, height);
+        // console.log('uAR', width, height);
         let divisor = gcd(width, height);
         let w_ratio = width / divisor;
         let h_ratio = height / divisor;
@@ -830,8 +1386,46 @@ export default {
           "h_ratio": h_ratio,
           "text": `${w_ratio}:${h_ratio}`,
         };
-        console.log(ARData);
+        // console.log(ARData);
         this.aspect_ratio = ARData;
+      }
+    },
+    delayHandler(event) {
+      console.log("delay event", event);
+      let value = event.target.value;
+      console.log("delay", value);
+      if (value && value.includes(".")) {
+        let numdec = value.split(".");
+        console.log("numdec", numdec);
+        let precision = GIF_DELAY_DECIMAL_PRECISION;
+        if (this.criteria.format.toUpperCase() == "GIF") {
+          precision = GIF_DELAY_DECIMAL_PRECISION;
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
+          precision = APNG_DELAY_DECIMAL_PRECISION;
+        }
+        if (numdec[1].length > precision) {
+          let decs = numdec[1].substring(0, precision);
+          console.log("decs limit triggered", decs);
+          value = `${numdec[0]}.${decs}`;
+          this.criteria.delay = value;
+        }
+      }
+      this.criteria.fps = Math.round(1000 / value) / 1000;
+    },
+    fpsHandler(event) {
+      console.log("fps event", event);
+      let value = event.target.value;
+      console.log("fps", value);
+      if (value) {
+        let mult = 100;
+        if (this.criteria.format.toUpperCase() == "GIF") {
+          mult = 100;
+        } else if (this.criteria.format.toUpperCase() == "PNG") {
+          mult = 1000;
+        }
+        console.log("this.criteria.delay before", this.criteria.delay);
+        this.criteria.delay = Math.round(mult / value) / mult;
+        console.log("this.criteria.delay after", this.criteria.delay);
       }
     },
     loadImage() {
@@ -867,10 +1461,10 @@ export default {
               this._logSuccess("Image loaded.");
             }
             this.MOD_IS_LOADING = false;
-            this.lock_aspect_ratio = true;
+            this.lockAspectRatio = true;
           }
         });
-        console.log("registered!");
+        // console.log("registered!");
       });
     },
     clearOrigMetadata() {
@@ -885,15 +1479,17 @@ export default {
       this.orig_attribute.delay_info = "";
       this.orig_attribute.loop_duration = "";
       this.orig_attribute.loop_count = "";
+      this.orig_attribute.loop_count_info = "";
       this.orig_attribute.file_size = "";
       this.orig_attribute.file_size_hr = "";
       this.orig_attribute.format = "";
+      this.orig_attribute.format_info = "";
       this.orig_attribute.path = "";
       this.orig_attribute.hash_sha1 = "";
       this.orig_attribute.last_modified_dt = "";
       this._logClear();
     },
-    clearPreiewMetadata() {
+    clearPreviewMetadata() {
       this.preview_attribute.name = "";
       this.preview_attribute.width = "";
       this.preview_attribute.height = "";
@@ -922,7 +1518,7 @@ export default {
       this.criteria.fps = "";
       this.criteria.delay = "";
       this.criteria.loop_count = "";
-      this.criteria.skip_frame = "";
+      this.criteria.frame_skip_count = "";
       this._logClear();
       // this.criteria.modify_msgbox = "";
       let ARData = {
@@ -936,14 +1532,14 @@ export default {
       this.clearOrigMetadata();
       this.clearCriteriaFields();
       this.clearPreviewImage();
-      this.lock_aspect_ratio = false;
+      this.lockAspectRatio = false;
     },
     clearPreviewImage() {
       this.previewPath = "";
       this.previewPathCB = "";
       this.preview_size = "";
       this.preview_size_hr = "";
-      this.clearPreiewMetadata();
+      this.clearPreviewMetadata();
     },
     btnSetSavePath() {
       // setSavePath();
@@ -958,7 +1554,7 @@ export default {
       let out_dirs = result.filePaths;
       console.log(out_dirs);
       if (out_dirs && out_dirs.length > 0) { 
-        this.save_dir = out_dirs[0];
+        this.saveDir = out_dirs[0];
       }
       this._logClear();
       return {canceled: false, result: dirPath};
@@ -975,19 +1571,17 @@ export default {
         return;
       }
 
-
-
       this.validateFilenameAsync().then(async (isValid) => {
         if (isValid) {
-          if (!this.save_dir) {
+          if (!this.saveDir) {
             const result = await this.setSaveDirFromDialogAsync()
             if (result.canceled)
               return Promise.reject("Directory selection cancelled");
             else
-              return this._checkFileOverwriteAsync();
+              return this._checkFileOverwriteAsync(this._getSavePath());
           }
           else 
-            return this._checkFileOverwriteAsync();
+            return this._checkFileOverwriteAsync(this._getSavePath());
         }
         else {
           let errMsg = "File name contains characters that are not allowed";
@@ -1006,7 +1600,7 @@ export default {
 
 
       
-    // if (this.save_dir)
+    // if (this.saveDir)
     //   this.modifyImage();
     // else
     //   this.setSaveDirFromDialogAsync().then((result) => {
@@ -1022,16 +1616,16 @@ export default {
     //       return Promise.reject("Cancelled modification");
     //   });
     },
-    async _checkFileOverwriteAsync() {
+    async _checkFileOverwriteAsync(fullPath) {
       let proceed = true;
-      if (existsSync(this._getSavePath())) {
+      if (existsSync(fullPath)) {
         let options = {
           title: "TridentFrame",
           buttons: ["Yes", "No"],
           message:
-            "A file with the same name already exists in the output folder and it will get overwritten. Do you want to proceed?",
+            `A file with the same name (${this.fname}.${this.criteria.format}) already exists in the output folder and it will get overwritten. Do you want to proceed?`,
         };
-        const promptResult = await ipcRenderer.invoke("show-msg-box", options);
+        const promptResult = await ipcRenderer.invoke("IPC-SHOW-MESSAGE-BOX", options);
         console.log(`msgbox promptResult:`);
         console.log(promptResult);
         if (promptResult.response == 1) proceed = false;
@@ -1040,7 +1634,7 @@ export default {
     },
     // chooseOutDir: chooseOutDir,
     btnPreviewModImg() {
-      this.previewModImg();
+      this.previewModImg(); 
     },
     previewModImg() {
       if (this.orig_attribute.path == "") {
@@ -1086,8 +1680,8 @@ export default {
           }
         } else if (res && res.data) {
           let preview_data = res.data;
-          console.log(`res -> ${res}`);
-          console.log("preview inspect");
+          // console.log(`res -> ${res}`);
+          // console.log("preview inspect");
           this.loadPreviewMetadata(preview_data);
           this.preview_info = preview_data;
           this.preview_size = preview_data.general_info.fsize.value;
@@ -1099,37 +1693,77 @@ export default {
     },
     btnPreviewSaveAIMG() {
       (async () => {
+        let skipManualExistingFileCheck = false;
+
         if (!this.previewPath) {
           this._logError("No image in the preview to be saved!");
           return Promise.reject("No image in the preview to be saved!");
         }
-        let targetDir = this.saveDir;
-        if (!targetDir) {
-          let options = { properties: dir_dialog_props };
-          const result = await ipcRenderer.invoke('open-dialog', options);
+        
+        const SETTINGS = ipcRenderer.sendSync("IPC-GET-SETTINGS");
+        let behaviourName = SETTINGS.preview_image.name_save_behaviour;
+        const nameSaveBehaviour = PreviewImageSaveNameBehaviour.fromName(behaviourName);
+        // console.error(`name save behaviour`);
+        // console.error(nameSaveBehaviour);
+        // console.error(nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.AutoGenerated.name);
+        
+        if (!nameSaveBehaviour) {
+          throw new Error(`Unknown preview name save behaviour: ${behaviourName}`);
+        }
+
+        let saveAbsolutePath = "";
+        let previewFormat = this.previewPath.split('.').pop().toLowerCase();
+        
+        if (nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.OpenWindowDialog.name) {
+          let fName = `${this.fname}.${previewFormat}`;
+          console.log(fName);
+          const result = await ipcRenderer.invoke('IPC-SHOW-SAVE-DIALOG', { 
+            defaultPath: fName, 
+            filters: [{ name: SUPPORTED_MODIFY_EXTENSIONS.find(ext => ext.name == previewFormat).label, extensions: [previewFormat]}],
+            properties: ["createDirectory"]});
           if (result.canceled)
-            return Promise.reject("Directory selection cancelled");
-          else{
-            let out_dirs = result.filePaths;
-            console.log(out_dirs);
-            if (out_dirs && out_dirs.length > 0) { 
-              targetDir = out_dirs[0];
-            }
-            else {
-              return Promise.reject("No directories are selected")
-            }
+            return Promise.reject("Image saving cancelled");
+          else {
+            let finalPath = result.filePath;
+            console.log(finalPath);
+            saveAbsolutePath = finalPath;
+            skipManualExistingFileCheck = true;
           }
         }
-        let targetFormat = this.previewPath.split('.').pop();
-        let targetName = `create_preview_${Date.now()}_${randString(7)}.${this.previewPath.split('.').pop().toLowerCase()}`;
-        // let targetName = basename(this.previewPath);
-        let targetFullPath = join(targetDir, targetName);
-        console.debug(targetFullPath);
-        let proceed = await this._checkFileOverwriteAsync(targetFullPath);
+        else {
+          let targetDir = this.saveDir;
+          if (!targetDir) {
+            let options = { properties: dir_dialog_props };
+            const result = await ipcRenderer.invoke('open-dialog', options);
+            if (result.canceled)
+              return Promise.reject("Directory selection cancelled");
+            else{
+              let out_dirs = result.filePaths;
+              console.log(out_dirs);
+              if (out_dirs && out_dirs.length > 0) { 
+                targetDir = out_dirs[0];
+              }
+              else {
+                return Promise.reject("No directories are selected")
+              }
+            }
+          }
+          let saveName = "";
+          if (nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.AutoGenerated.name)
+            saveName = `modify_preview_${Date.now()}_${randString(7)}.${this.previewPath.split('.').pop().toLowerCase()}`;
+          else if (nameSaveBehaviour.name == PreviewImageSaveNameBehaviour.FromNameField.name)
+            saveName = `${this.fname}.${previewFormat}`;
+          saveAbsolutePath = join(targetDir, saveName);
+        }
+        
+        console.debug(`Skip existing check: ${skipManualExistingFileCheck}\nObtained saveAbsolutePath: ${saveAbsolutePath}`);
+        let proceed = true;
+        if (!skipManualExistingFileCheck)
+          proceed = await this._checkFileOverwriteAsync(saveAbsolutePath);
         console.log(`proceed? ${proceed}`)
         if (proceed){
-          await copyFile(this.previewPath, targetFullPath);
-          this._logSuccess(`Saved preview image to ${targetDir}`);
+          await copyFile(this.previewPath, saveAbsolutePath);
+          this._logSuccess(`Saved preview image to ${saveAbsolutePath}`);
         }
         else {
         }
@@ -1177,12 +1811,12 @@ export default {
         });
       }
     },
-    widthHandler(width, event) {
+    widthHandler(event) {
       // data.orig_attribute.width = parseInt(width);
       console.log(event);
       let newWidth = event.target.value;
       this.criteria.width = newWidth;
-      if (this.lock_aspect_ratio && this.aspect_ratio.h_ratio > 0) { // Change height if lock_aspect_ratio is true and height is not 0
+      if (this.lockAspectRatio && this.aspect_ratio.h_ratio > 0) { // Change height if lockAspectRatio is true and height is not 0
         let raHeight = Math.round(newWidth / this.aspect_ratio.w_ratio * this.aspect_ratio.h_ratio);
         this.criteria.height = raHeight > 0? raHeight : "";
       }
@@ -1190,11 +1824,11 @@ export default {
         this.updateAspectRatio(this.criteria.width, this.criteria.height);
       }
     },
-    heightHandler(height, event) {
+    heightHandler(event) {
       // data.orig_attribute.height = parseInt(height);
       let newHeight = event.target.value;
       this.criteria.height = newHeight;
-      if (this.lock_aspect_ratio && this.aspect_ratio.w_ratio > 0) {
+      if (this.lockAspectRatio && this.aspect_ratio.w_ratio > 0) {
         let raWidth = Math.round(newHeight / this.aspect_ratio.h_ratio * this.aspect_ratio.w_ratio);
         console.log(raWidth);
         this.criteria.width = raWidth > 0? raWidth : "";
@@ -1213,7 +1847,7 @@ export default {
     },
     _getSavePath() {
       let file_name = `${this.fname}.${this.criteria.format}`;
-      let save_path = join(this.save_dir, file_name);
+      let save_path = join(this.saveDir, file_name);
       console.log(`getSavePath ${save_path}`);
       return save_path;
     },
@@ -1253,7 +1887,7 @@ export default {
     _logClear() {
       logStatus(this.statusBarId, EnumStatusLogLevel.CLEAR, null);
     },
-    _logMessage(message) {
+    _logInfo(message) {
       logStatus(this.statusBarId, EnumStatusLogLevel.INFO, message);
     },
     _logProcessing(message) {
