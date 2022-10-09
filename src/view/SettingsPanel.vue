@@ -586,8 +586,8 @@ export default {
       
     },
     populatePresetsListTable() {
-      console.log('populatePresetsSelector');
-      console.log(this.presets);
+      // console.log('populatePresetsSelector');
+      // console.log(this.presets);
       const presets = JSON.parse(JSON.stringify(this.presets));
       console.log(presets);
       this.localPresetsList = [];

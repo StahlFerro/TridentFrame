@@ -871,8 +871,8 @@ export default {
       console.log('debugHandler');
     },
     populatePresetsSelector() {
-      console.log('populatePresetsSelector');
-      console.log(this.presets);
+      // console.log('populatePresetsSelector');
+      // console.log(this.presets);
       const presets = JSON.parse(JSON.stringify(this.presets));
       console.log(presets);
       this.localPresetsSelection = [];
@@ -1556,9 +1556,9 @@ export default {
             this._logWarning(err.warning);
           }
         } else if (res) {
-          console.log(`res -> ${res}`);
+          // console.log(`res -> ${res}`);
           if (res) {
-            console.log(res);
+            // console.log(res);
             if (res.msg) {
               this._logProcessing(res.msg);
               // this.create_msgbox = res.msg;

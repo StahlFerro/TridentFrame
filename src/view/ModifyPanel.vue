@@ -1069,8 +1069,8 @@ export default {
   },
   methods: {
     populatePresetsSelector() {
-      console.log('populatePresetsSelector');
-      console.log(this.presets);
+      // console.log('populatePresetsSelector');
+      // console.log(this.presets);
       const presets = JSON.parse(JSON.stringify(this.presets));
       console.log(presets);
       this.localPresetsSelection = [];
@@ -1680,8 +1680,8 @@ export default {
           }
         } else if (res && res.data) {
           let preview_data = res.data;
-          console.log(`res -> ${res}`);
-          console.log("preview inspect");
+          // console.log(`res -> ${res}`);
+          // console.log("preview inspect");
           this.loadPreviewMetadata(preview_data);
           this.preview_info = preview_data;
           this.preview_size = preview_data.general_info.fsize.value;
