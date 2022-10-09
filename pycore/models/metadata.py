@@ -135,7 +135,7 @@ class AnimatedImageMetadata(ImageMetadata):
             "category": "animation_info",
         }
         self.average_delay = {
-            "value": sum(self.delays["value"]) / len(self.delays["value"]),
+            "value": round(sum(self.delays["value"]) / len(self.delays["value"]), 6),
             # "label": "Average delay (ms)",
             "category": "animation_info",
         }
@@ -145,7 +145,7 @@ class AnimatedImageMetadata(ImageMetadata):
             "category": "animation_info",
         }
         self.loop_duration = {
-            "value": sum(self.delays["value"]) / 1000,
+            "value": round(sum(self.delays["value"]) / 1000, 6),
             "category": "animation_info",
         }
         self.loop_count = {

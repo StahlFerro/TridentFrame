@@ -285,7 +285,7 @@
                 TridentFrame
               </h1>
               <p class="about-software-version">
-                v0.1.0-beta.12
+                v0.1.0-beta.13
               </p>
               <p class="about-software-copyright">
                 Author: StahlFerro

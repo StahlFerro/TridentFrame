@@ -136,7 +136,8 @@ class GifsicleAPI:
         criteria = crbundle.create_aimg_criteria
         gif_opt_criteria = crbundle.gif_opt_criteria
         delay = criteria.delay if criteria.frame_skip_maintain_delay else AnimationCriteria.compute_average_delay(frames_info)
-        g_delay = int(delay * 100)
+        g_delay = int(round(delay, 2) * 100)
+        stdio.debug(g_delay)
         # stdio.error('final average delay')
         # stdio.error(delay)
         # delay = int(criteria.delay * 100)

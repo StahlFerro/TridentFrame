@@ -144,12 +144,6 @@
       </div>
       <div class="modify-panel-middlebar">
         <div class="mpb-load-buttons">
-          <!-- <a class="button is-neon-emerald" :class="{'is-loading': MOD_IS_LOADING, 'non-interactive': isButtonFrozen}" @click="loadImage">
-            <span class="icon is-small">
-              <font-awesome-icon icon="plus" />
-            </span>
-            <span>Load Image</span>
-          </a> -->
 
           <ButtonField label="Load Image" color="green" hint="Load an animated image"
                        :icons="['fas', 'plus']"
@@ -159,14 +153,6 @@
                        @click="loadImage"
           />
           
-          <!-- <a
-            class="button is-neon-white" :class="{'is-active': orig_checkerbg_active}"
-            @click="toggleOrigCheckerBG"
-          >
-            <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board" />
-            </span>
-          </a> -->
           
           <ButtonField :icons="['fas', 'chess-board']"
                        :is-active="orig_checkerbg_active"
@@ -174,12 +160,6 @@
                        @click="toggleOrigCheckerBG"
           />
 
-          <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearImage">
-            <span class="icon is-small">
-              <font-awesome-icon icon="times" />
-            </span>
-            <span>Clear</span>
-          </a> -->
           
           <ButtonField label="Clear" color="red" hint="Clear the original image, preview image and the modification criteria"
                        :icons="['fas', 'times']"
@@ -193,49 +173,24 @@
           </p>
         </div>
         <div class="mpb-preview-buttons">
-          <!-- <a class="button is-neon-cyan" :class="{'is-loading': MOD_IS_PREVIEWING, 'non-interactive': isButtonFrozen}" @click="btnPreviewModImg">
-            <span class="icon is-small">
-              <font-awesome-icon :icon="['far', 'eye']" />
-            </span>
-            <span>Preview</span>
-          </a> -->
-          <ButtonField label="Preview" color="cyan" hint="SaPreview the modified animated image"
+          <ButtonField label="Preview" color="cyan" hint="Preview the modified animated image"
                        :icons="['far', 'eye']"
                        icon-size="medium"
                        :is-loading="MOD_IS_PREVIEWING"
                        :is-non-interactive="isButtonFrozen"
                        @click="btnPreviewModImg"
           />
-          <!-- <a class="button is-neon-cyan" :class="{'non-interactive': isButtonFrozen}" @click="btnPreviewSaveAIMG">
-            <span class="icon is-medium">
-              <font-awesome-icon icon="save" />
-            </span>
-          </a> -->
           <ButtonField color="cyan" hint="Save the preview image"
                        :icons="['fas', 'save']"
                        icon-size="medium"
                        :is-non-interactive="isButtonFrozen"
                        @click="btnPreviewSaveAIMG"
           />
-          <!-- <a
-            class="button is-neon-white" :class="{'is-active': new_checkerbg_active}"
-            @click="toggleNewCheckerBG"
-          >
-            <span class="icon is-medium">
-              <font-awesome-icon icon="chess-board" />
-            </span>
-          </a> -->
           <ButtonField :icons="['fas', 'chess-board']"
                        :is-active="new_checkerbg_active"
                        icon-size="medium"
                        @click="toggleNewCheckerBG"
           />
-          <!-- <a class="button is-neon-crimson" :class="{'non-interactive': isButtonFrozen}" @click="clearPreviewImage">
-            <span class="icon is-small">
-              <font-awesome-icon icon="times" />
-            </span>
-            <span>Clear</span>
-          </a> -->
           <ButtonField label="Clear" color="red" hint="Clear the preview image"
                        :icons="['fas', 'times']"
                        :is-non-interactive="isButtonFrozen"
