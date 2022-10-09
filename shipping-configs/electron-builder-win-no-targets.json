@@ -2,7 +2,7 @@
   "productName": "TridentFrame",
   "appId": "com.stahlferro.tridentframe",
   "copyright": "Copyright 2021 StahlFerro",
-  "buildVersion": "0.1.0.2012",
+  "buildVersion": "0.1.0.2013",
   "directories": {
     "output": "release/tridentframe"
   },
