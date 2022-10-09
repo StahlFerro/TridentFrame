@@ -111,8 +111,8 @@ def rebuild_aimg(img_path: Path, out_path: Path, metadata: AnimatedImageMetadata
     return new_image_path
 
 
-
 def modify_aimg(img_path: Path, out_path: Path, crbundle: CriteriaBundle) -> Path:
+    stdio.message("Verifying image attributes...")
     orig_attribute = inspect_general(img_path, filter_on="animated")
     if orig_attribute is None:
         raise Exception("Error: cannot load image")

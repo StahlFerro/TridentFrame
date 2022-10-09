@@ -90,7 +90,7 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
             im: Image.Image
             orig_width, orig_height = im.size
             has_transparency = im.info.get("transparency") is not None or im.mode == "RGBA"
-            stdio.debug(f"Color mode im: {im.mode}")
+            # stdio.debug(f"Color mode im: {im.mode}")
             if criteria.must_resize(width=orig_width, height=orig_height):
                 resize_method_enum = getattr(Resampling, criteria.resize_method)
                 # yield {"resize_method_enum": resize_method_enum}
@@ -110,8 +110,8 @@ def create_animated_png(image_paths: List[Path], out_full_path: Path, crbundle: 
             # logger.debug(f"Modes comparison: {im.mode}, {aopt_criteria.new_color_mode}")
             quant_method = Quantize.FASTOCTREE if has_transparency else Quantize.MEDIANCUT
             if aopt_criteria.is_reduced_color:
-                stdio.debug(f"Frame #{index}, has transparency: {has_transparency}, transparency: "
-                             f"{im.info.get('transparency')}, quantization method: {quant_method}")
+                # stdio.debug(f"Frame #{index}, has transparency: {has_transparency}, transparency: "
+                #              f"{im.info.get('transparency')}, quantization method: {quant_method}")
                 im = im.quantize(aopt_criteria.color_count, method=quant_method).convert("RGBA")
             if aopt_criteria.convert_color_mode:
                 im = im.convert(aopt_criteria.new_color_mode)

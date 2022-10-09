@@ -901,8 +901,8 @@ class PNGQuantAPI:
                 raise Exception("Please specify at least a max quality value!")
             if speed:
                 args.append(f"--speed={speed}")
-        stdio.debug(f"aopt_criteria ------> {apngopt_criteria}")
-        stdio.debug(f"internal args ------> {args}")
+        # stdio.debug(f"aopt_criteria ------> {apngopt_criteria}")
+        # stdio.debug(f"internal args ------> {args}")
         # if criteria.is_reduced_color:
         # args.append(())
         return args
@@ -941,12 +941,17 @@ class PNGQuantAPI:
             str(image_path),
         ]
         cmd = " ".join(args)
-        stdio.debug(f"PNGQUANT ARGS ---------> {cmd}")
+        # stdio.debug(f"PNGQUANT ARGS ---------> {cmd}")
         try:
-            result = subprocess.check_output(args)
-        except CalledProcessError as err:
+            result = subprocess.run(args)
+        except Exception as err:
             # raise err
-            stdio.warn(f'{err}')
+            stdio.error(f'{err}')
+        # if result.stdout:
+        #     stdio.warn(result.stdout.decode('ascii'))
+        # if result.stderr:
+        #     stdio.warn(result.stderr.decode('ascii'))
+        stdio.debug(f'pngquant.exe status code: {result.returncode}')
         # Convert back to RGBA image
         with Image.open(image_path).convert("RGBA") as rgba_im:
             rgba_im.save(image_path)
