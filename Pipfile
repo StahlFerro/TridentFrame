@@ -5,7 +5,7 @@ verify_ssl = true
 
 [packages]
 apng = "*"
-pillow = "~=9.2.0"
+pillow = "~=9.3.0"
 psutil = "*"
 toml = "*"
 hitherdither = {git = "https://www.github.com/hbldh/hitherdither"}
