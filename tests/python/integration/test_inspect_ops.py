@@ -9,12 +9,16 @@ from apng import APNG
 #                  if p.stem.startswith("checker_4x4_")]
 
 
-def test_inspect_static_image(fx_samples_checkers_01_sequence):
+def test_inspect_static_images(fx_samples_checkers_01_sequence, fx_samples_static_dir_images):
     metadata = inspect_general(fx_samples_checkers_01_sequence[0])
     assert not metadata.is_animated['value']
     assert metadata.format['value'] == 'PNG'
     assert metadata.width['value'] == 4
     assert metadata.height['value'] == 4
+    
+    for im_path in fx_samples_static_dir_images:
+        metadata = inspect_general(im_path)
+        assert not metadata.is_animated['value']
 
 
 def test_inspect_agif(fx_samples_checker_agif_path):
