@@ -58,11 +58,11 @@ module.exports = env => {
     module: {
       rules: [{
           test: /\.js$/,
-          use: 'babel-loader'
+          loader: 'babel-loader'
         },
         {
           test: /\.vue$/,
-          use: 'vue-loader',
+          loader: 'vue-loader',
         },
         {
           test: /\.css$|\.s[ac]ss$/i,
@@ -129,13 +129,13 @@ module.exports = env => {
         //     path.resolve(__dirname, './src/locales/**')
         //   ]
         // },
-        { 
-          test: /\.json$/, 
-          loader: 'json-loader', 
-          include: [
-            path.resolve(__dirname, "./node_modules/mime-db/db.json")
-          ]
-        },
+        // { 
+        //   test: /\.json$/, 
+        //   loader: 'json-loader', 
+        //   include: [
+        //     path.resolve(__dirname, "./node_modules/mime-db/db.json")
+        //   ]
+        // },
         // ... Rules for other loaders ... //
         {
           test: /\.node$/,
@@ -160,6 +160,9 @@ module.exports = env => {
         new JsonMinimizerPlugin(),
       ],
     }: {},
+    stats: {
+      children: true,
+    },
     output: {
       filename: "bundle.js",
       path: path.resolve(__dirname, "./dist"),

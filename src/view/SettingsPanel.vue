@@ -444,7 +444,7 @@ export default {
         return null;
       }
       const presetCount = this.localPresetsList.length;
-      const dateText = this.formatUnixTimestamp(this.APP_SETTINGS.statistics.last_backup);
+      const lastBkTimeText = this.APP_SETTINGS.statistics.last_backup? this.formatUnixTimestamp(this.APP_SETTINGS.statistics.last_backup) : 'Never';
       // console.log('dateText');
       // console.log(dateText);
       const stats = {
@@ -454,7 +454,7 @@ export default {
         },
         "lastBackupTime": {
           name: "Last backup time",
-          value: this.formatUnixTimestamp(this.APP_SETTINGS.statistics.last_backup),
+          value: lastBkTimeText,
         },
       };
       console.log(this.APP_SETTINGS);
@@ -657,7 +657,7 @@ export default {
       this.intermediate.directories.default_out_dir.modify_panel = this.APP_SETTINGS.directories.default_out_dir.modify_panel;
     },
     refreshWindow() {
-      ipcRenderer.invoke("reload-window");
+      ipcRenderer.send("IPC-RELOAD-WINDOW-SYNC");
     },
     openInspector() {
       ipcRenderer.invoke("open-inspector");
