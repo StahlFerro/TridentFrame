@@ -129,13 +129,13 @@ module.exports = env => {
         //     path.resolve(__dirname, './src/locales/**')
         //   ]
         // },
-        // { 
-        //   test: /\.json$/, 
-        //   loader: 'json-loader', 
-        //   include: [
-        //     path.resolve(__dirname, "./node_modules/mime-db/db.json")
-        //   ]
-        // },
+        { 
+          test: /\.json$/, 
+          loader: 'json-loader', 
+          include: [
+            path.resolve(__dirname, "./node_modules/mime-db/db.json")
+          ]
+        },
         // ... Rules for other loaders ... //
         {
           test: /\.node$/,

@@ -285,7 +285,7 @@
                 TridentFrame
               </h1>
               <p class="about-software-version">
-                v0.1.0-beta.13
+                v0.1.0-beta.14
               </p>
               <p class="about-software-copyright">
                 Author: StahlFerro
@@ -549,7 +549,7 @@ export default {
           if (outDirs && outDirs.length > 0) { 
             return {
               outDirs: outDirs, 
-              backup: new ApplicationBackup("0.1.0-beta.13", settings, presets)
+              backup: new ApplicationBackup("0.1.0-beta.14", settings, presets)
             };
           }
           else {
