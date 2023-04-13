@@ -13,6 +13,9 @@ const _DEFAULT_SETTINGS = {
       "open_debugger": false,
       "open_devtools": false
   },
+  "locale": {
+    "lang": "en"
+  },
   "preview_image": {
       "name_save_behaviour": "auto_generated"
   },

@@ -24,6 +24,7 @@
     "src/common/paths.js",
     "src/models/**",
     "src/store/**",
-    "LICENSE.md"
+    "LICENSE.md",
+    "config/app.toml"
   ]
 }
