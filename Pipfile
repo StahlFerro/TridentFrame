@@ -9,13 +9,12 @@ pillow = "~=9.2.0"
 psutil = "*"
 toml = "*"
 hitherdither = {git = "https://www.github.com/hbldh/hitherdither"}
-pyinstaller = "~=5.3"
+pyinstaller = "*"
 
 [dev-packages]
 pywin32 = {version = "*", sys_platform = "== 'win32'"}
 black = "*"
 pylint = "*"
-pyinstaller = "*"
 pytest = "*"
 pytest-html = "*"
 

@@ -9,7 +9,6 @@ from typing import Iterator, List, Dict, Union, Any, Tuple
 
 from PIL import Image
 from apng import APNG
-from isort import file
 
 from pycore.core_funcs import stdio
 from pycore.models.image_formats import ImageFormat
