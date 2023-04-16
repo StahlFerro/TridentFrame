@@ -1,7 +1,7 @@
 {
   "name": "tridentframe",
   "productName": "TridentFrame",
-  "version": "0.1.0-beta.13",
+  "version": "0.1.0-beta.14",
   "description": "Desktop animated images swiss-army knife",
   "author": {
     "name": "StahlFerro",
@@ -42,9 +42,10 @@
     "buildpy-linux": "npm run clean-engine && npm run clean-engine-prebuild && pyinstaller tripy_linux.spec",
     "updatepy-windows": "npm run buildpy-windows && rimraf ./release/tridentframe/win-unpacked/resources/app/engine/ && xcopy engine release\\tridentframe\\win-unpacked\\resources\\app\\engine\\ /E",
     "updatepy-linux": "npm run buildpy-linux && rimraf ./release/tridentframe/linux-unpacked/resources/app/engine/ && cp -r ./engine/ ./release/tridentframe/linux-unpacked/resources/app/engine/",
-    "release-windows": "npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-windows && npm run elbuild-windows && npm run scribe-version",
-    "release-windows-no-targets": "npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-windows && npm run elbuild-windows-no-targets && npm run scribe-version",
-    "release-linux": "npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-linux && npm run elbuild-linux && npm run scribe-version",
+    "release-windows": "npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-windows && npm run reset-config && npm run elbuild-windows && npm run scribe-version",
+    "release-windows-no-targets": "npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-windows && npm run reset-config && npm run elbuild-windows-no-targets && npm run scribe-version",
+    "release-linux": "npm run clean-cache && npm run clean-previews && npm run wpbuild && npm run buildpy-linux && npm run reset-config && npm run elbuild-linux && npm run scribe-version",
+    "reset-config": "python tools/config-reset/config_reset.py",
     "scribe-version": "python tools/writer/info_scribe.py",
     "test-py": "python -m pytest tests/python/unit/ tests/python/integration/ --html=tests/python/pytest-report/report.html --self-contained-html",
     "test-py-prod": "python -m pytest tests/python/production/ --html=tests/python/pytest-report/report.html --self-contained-html",

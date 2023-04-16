@@ -4,15 +4,15 @@
       <div class="toggle-cell">
         <label class="checkbox" title="Unoptimizes the APNG">
           <input
-            v-model="isUnoptimized" type="checkbox" :disabled="isDisabled"
+            v-model="isUnoptimized"
+            type="checkbox"
+            :disabled="isDisabled"
             @change="$emit('update:isUnoptimized', isUnoptimized)"
           />
           Unoptimize
         </label>
       </div>
-      <div class="field-cell">
-
-      </div>
+      <div class="field-cell"></div>
     </div>
   </div>
 </template>
@@ -27,10 +27,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    isUnoptimized: {
-      type: Boolean,
-      default: false,
-    },
+  },
+  data: function() {
+    return {
+      isUnoptimized: false,
+    };
   },
   emits: ['update:isUnoptimized'],
   // components: { Fragment },

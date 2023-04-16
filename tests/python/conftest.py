@@ -51,6 +51,20 @@ def fx_samples_spaced_dir_apng_checker(scaffold_spaced_dir: Path, fx_samples_che
 def fx_samples_path() -> Path:
     return Path(__file__).resolve().parents[1].joinpath("_samples/")
 
+@pytest.fixture(scope="session")
+def fx_samples_static_dir(fx_samples_path) -> Path:
+    return fx_samples_path.joinpath("static/")
+
+@pytest.fixture(scope="session")
+def fx_samples_static_dir_images(fx_samples_static_dir: Path) -> List[Path]:
+    images = [
+        p for p in
+        fx_samples_static_dir.iterdir()
+        if (p.suffix.lower() == ".png" or p.suffix.lower() == ".gif")
+    ]
+    images.sort()
+    return images
+
 
 @pytest.fixture(scope="session")
 def fx_samples_sequence_dir(fx_samples_path) -> Path:
@@ -60,6 +74,10 @@ def fx_samples_sequence_dir(fx_samples_path) -> Path:
 @pytest.fixture(scope="session")
 def fx_samples_checkers_01_dir(fx_samples_path) -> Path:
     return fx_samples_path.joinpath("sequence/tiny_checkers_01/")
+
+@pytest.fixture(scope="session")
+def fx_samples_static_01_image(fx_samples_static_dir) -> Path:
+    return fx_samples_static_dir.joinpath("static + - = # $ @ & % ,.png")
 
 
 @pytest.fixture(scope="session")

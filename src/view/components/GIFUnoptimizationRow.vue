@@ -29,10 +29,11 @@ export default {
       type: Boolean,
       default: false,
     },
-    isUnoptimized: {
-      type: Boolean,
-      default: false,
-    },
+  },
+  data: function() {
+    return {
+      isUnoptimized: false,
+    };
   },
   emits: ['update:isUnoptimized'],
 };

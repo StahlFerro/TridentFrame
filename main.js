@@ -123,11 +123,15 @@ ipcMain.on("IPC-SHOW-MESSAGE-BOX-SYNC", function (event, args) {
 	event.returnValue = dialog.showMessageBoxSync(args);
 })
 
+ipcMain.on('IPC-RELOAD-WINDOW-SYNC', async (event, args) => {
+	reloadWindow();
+});
+
 ipcMain.handle("IPC-SHOW-MESSAGE-BOX", async (event, args) => {
 	return dialog.showMessageBox(mainWindow, args);
 })
 
-ipcMain.handle('reload-window', async (event, args) => {
+ipcMain.handle('IPC-RELOAD-WINDOW', async (event, args) => {
 	reloadWindow();
 });
 
@@ -137,11 +141,10 @@ ipcMain.handle("relaunch-application", async (event, args) => {
 });
 
 function reloadWindow() {
-	mainWindow.reload();
-	mainWindow.webContents.session.clearCache(() => {});
+	mainWindow.webContents.reloadIgnoringCache();
 }
 
-ipcMain.handle('reload-window-once', async (event, args) => {
+ipcMain.handle('IPC-RELOAD-WINDOW-ONCE', async (event, args) => {
 	if (process.platform == 'linux' && onceReload == 0) {
 		onceReload = 1;
 		reloadWindow();

@@ -21,7 +21,7 @@
   "nsis": {
     "artifactName": "${productName}-${version}-windows-installer-nsis.${ext}",
     "oneClick": false,
-    "perMachine": true,
+    "perMachine": false,
     "allowToChangeInstallationDirectory": true
   },
   "files": [
@@ -31,6 +31,7 @@
     "src/common/paths.js",
     "src/models/**",
     "src/store/**",
-    "LICENSE.md"
+    "LICENSE.md",
+    "config/app.toml"
   ]
 }

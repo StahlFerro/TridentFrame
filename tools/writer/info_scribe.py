@@ -30,32 +30,41 @@ if os_name == "Windows":
     with open(ELECTRON_BUILDER_CONF_FILE, "r") as jsonfile:
         build_config = json.load(jsonfile)
     targets = build_config["win"]["target"]
-    scribe_texts.append(f"- Windows 7 SP1, 10 (64bit)")
+    scribe_texts.append(f"- Windows 10+ (64bit)")
 elif os_name == "Linux":
     ELECTRON_BUILDER_CONF_FILE = PROJECT_DIR.joinpath("shipping-configs/electron-builder-linux.json")
     with open(ELECTRON_BUILDER_CONF_FILE, "r") as jsonfile:
         build_config = json.load(jsonfile)
     targets = build_config["linux"]["target"]
-    scribe_texts.append(f"- Ubuntu 18.04 LTS (64bit)")
+    scribe_texts.append(f"- Linux")
 release_files = [RELEASES_DIR.joinpath(diritem) for diritem in RELEASES_DIR.glob("*") if Path.is_file(diritem)]
 for target in targets:
     release_file = next((r for r in release_files if target == r.suffix[1:] or target in r.name), None)
-    sha256_hash = hashlib.sha256()
+    sha512_hash = hashlib.sha512()
     hash_obj = ""
     if release_file:
         with open(release_file, "rb") as f:
             for byte_block in iter(lambda: f.read(4096), b""):
-                sha256_hash.update(byte_block)
-            hash_obj = sha256_hash
+                sha512_hash.update(byte_block)
+            hash_obj = sha512_hash
         checksum = hash_obj.hexdigest()
         scribe_texts.append(f"  - **{target}** {release_file.name}")
-        scribe_texts.append(f"    SHA256: `{checksum}`")
+        scribe_texts.append(f"    SHA512: `{checksum}`")
         hash_info.append(f"{checksum} - {Path.resolve(release_file).name}")
 scribe_texts.append("")
 hash_info.append("")
 
-with open(MD_DIR.joinpath("version.md"), "w") as mdfile:
-    mdfile.write("\n".join(scribe_texts))
 
-with open(RELEASES_DIR.joinpath("SHA256SUMS.txt"), "w") as sumsfile:
-    sumsfile.write("\n".join(hash_info))
+MD_DIR.mkdir(parents=True, exist_ok=True)
+MD_FILE = MD_DIR.joinpath("version.md")
+MD_FILE.touch(exist_ok=True)
+
+CHKSUM_FILE = RELEASES_DIR.joinpath("SHA512SUMS.txt")
+CHKSUM_FILE.touch(exist_ok=True)
+
+
+with open(MD_FILE, "w") as md_file:
+    md_file.write("\n".join(scribe_texts))
+
+with open(CHKSUM_FILE, "w") as chksums_file:
+    chksums_file.write("\n".join(hash_info))

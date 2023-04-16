@@ -58,11 +58,11 @@ module.exports = env => {
     module: {
       rules: [{
           test: /\.js$/,
-          use: 'babel-loader'
+          loader: 'babel-loader'
         },
         {
           test: /\.vue$/,
-          use: 'vue-loader',
+          loader: 'vue-loader',
         },
         {
           test: /\.css$|\.s[ac]ss$/i,
@@ -160,6 +160,9 @@ module.exports = env => {
         new JsonMinimizerPlugin(),
       ],
     }: {},
+    stats: {
+      children: true,
+    },
     output: {
       filename: "bundle.js",
       path: path.resolve(__dirname, "./dist"),

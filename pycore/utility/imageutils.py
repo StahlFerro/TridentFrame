@@ -9,7 +9,6 @@ from typing import Iterator, List, Dict, Union, Any, Tuple
 
 from PIL import Image
 from apng import APNG
-from isort import file
 
 from pycore.core_funcs import stdio
 from pycore.models.image_formats import ImageFormat
@@ -18,7 +17,7 @@ from pycore.utility import vectorutils
 
 PNG_BLOCK_SIZE = 64
 ACTL_CHUNK = b"\x61\x63\x54\x4C"
-FILENAME_GROUPING_REGEX = re.compile('^(?P<filestem>.*?)(?P<sequence>[0-9]+)(?P<extension>\..{1,4})?$')
+FILENAME_GROUPING_REGEX = re.compile('^(?P<filestem>.*?)(?P<sequence>\d*)?(?P<extension>\..{1,4})?$', flags=re.M|re.S)
 ALPHANUMERIC_RSTRIP_REGEX = re.compile('(?P<filtered_name>.*[A-Za-z0-9])')
 
 
@@ -131,6 +130,9 @@ def sequence_nameget(f: Union[Path, str]) -> str:
     """Get the stem filename without sequence numbers
     Example: sequence_nameget('dogs_0024.png') = 'dogs'
     
+    However, file names containing only sequence of numbers will be returned
+    Example: sequence_nameget('04185.png') = '04185'
+    
     Args:
         f: File path or filename.
 
@@ -139,9 +141,12 @@ def sequence_nameget(f: Union[Path, str]) -> str:
 
     """
     fname_parts = get_filename_components(f)
-    # stdio.error(fname_parts.groups())
-    if fname_parts:
-        return fname_parts.group('filestem')
+    file_stem = fname_parts.group('filestem')
+    file_sequence = fname_parts.group('sequence')
+    if fname_parts and file_stem:
+        return file_stem
+    elif fname_parts and file_sequence:
+        return file_stem + file_sequence
     else:
         return ''
 
